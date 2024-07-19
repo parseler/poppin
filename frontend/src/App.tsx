@@ -5,9 +5,8 @@ function App() {
 
   return (
     <div>
-      <PopDetail />
     </div>
   )
 }
 
-export default App
+export default App;

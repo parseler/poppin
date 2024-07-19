@@ -1,10 +1,11 @@
 import './App.css'
+import PopDetail from './pages/Pop/PopDetail';
 
 function App() {
 
   return (
     <div>
-      팝핀 프로젝트 파이팅 :)
+      <PopDetail />
     </div>
   )
 }

@@ -1,4 +1,5 @@
 import './App.css'
+import PopDetail from './pages/Pop/PopDetail';
 
 function App() {
 

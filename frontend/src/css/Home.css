@@ -46,7 +46,7 @@
     top: 0; left: 0;
     width: 100%;
     height: 100%;
-    background: linear-gradient(to bottom, rgba(0, 0, 0, 0) 40%, rgba(0, 0, 0, 0.8) 100%);
+    background: linear-gradient(to bottom, rgba(0, 0, 0, 0) 40%, rgba(0, 0, 0, 0.9) 100%);
     z-index: 2;
 }
 
@@ -101,5 +101,112 @@
 .category-text {
     display: inline-block;
     font-size: 12px;
-    margin-top: 8px;
+    margin: 8px 0;
+}
+
+/* best-section & open-section */
+#best-section, #open-section {
+    margin-bottom: 32px;
+}
+
+.best-title, .open-title {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin: 0 20px 24px;
+}
+
+#best-section h1, #open-section h1 {
+    font-size: 20px;
+    font-weight: 800;
+}
+
+#best-section a, #open-section a {
+    font-size: 12px;
+}
+
+.best-content, .open-content {
+    display: flex;
+    margin-left: 20px;
+    overflow-x: scroll; /* 가로 스크롤을 허용 */
+    scroll-snap-type: x mandatory; /* 스크롤 스냅 설정 */
+    -webkit-overflow-scrolling: touch; /* 스무스 스크롤을 위한 설정 (iOS) */
+    scrollbar-width: none; /* Firefox에서 스크롤바 숨김 */
+}
+
+.best-content::-webkit-scrollbar, .open-content::-webkit-scrollbar {
+    display: none; /* Chrome, Safari에서 스크롤바 숨김 */
+}
+
+/* PopupBig */
+#pop-up-big {
+    width: 200px;
+    height: 200px;
+    position: relative;
+    
+    flex: 0 0 auto; /* 아이템이 가로로 나열되도록 설정 */
+    scroll-snap-align: start; /* 각 아이템이 스냅 포인트에 맞춰지도록 설정 */
+    margin-right: 16px;
+}
+
+#pop-up-big .like {
+    position: absolute;
+    top: 8px; right: 8px;
+    z-index: 3;
+}
+
+#pop-up-big path {
+    box-shadow: 0px 0px 8px 4px rgba(0, 0, 0, 0.25);
+}
+
+.big-content {
+    width: 100%;
+    height: 200px;
+    border-radius: 16px;
+    overflow: hidden;
+    position: relative;
+}
+
+.big-content img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.big-gradiant {
+    position: absolute;
+    top: 0; left: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(to bottom, rgba(0, 0, 0, 0) 40%, rgba(0, 0, 0, 0.9) 100%);
+    z-index: 2;
+}
+
+.big-name {
+    position: absolute;
+    bottom: 32px; left: 16px;
+    color: white;
+    font-size: 16px;
+    font-weight: 700;
+    line-height: 1.4;
+    width: 176px;
+    word-break: keep-all;
+    overflow-wrap: break-word;
+    word-wrap: break-word;
+    z-index: 3;
+
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: normal; 
+}
+
+.big-date {
+    position: absolute;
+    bottom: 16px; left: 16px;
+    color: white;
+    font-size: 10px;
+    z-index: 3;
 }

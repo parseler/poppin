@@ -1,10 +1,15 @@
-import './App.css'
-import PopDetail from './pages/Pop/PopDetail';
+import { Route, Routes } from "react-router-dom";
+import Layout from "@components/common/Layout";
+
+import Home from "@pages/Home";
 
 function App() {
 
   return (
-    <div>
+    <div className="App">
+      <Routes>
+        <Route path="/" element={<Layout><Home /></Layout>} />
+      </Routes>
     </div>
   )
 }

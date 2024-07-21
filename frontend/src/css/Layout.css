@@ -1,0 +1,6 @@
+main {
+    margin-top: 56px;
+    margin-bottom: 56px;
+    overflow-y: auto;
+    flex-grow: 1;
+}

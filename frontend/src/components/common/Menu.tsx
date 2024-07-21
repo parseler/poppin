@@ -9,7 +9,7 @@ const Menu = () => {
   };
 
   return (
-    <div id="Menu">
+    <div id="menu">
       <div
         className={`home ${active === "home" ? "active" : ""}`}
         onClick={() => onMenuClick("home")}

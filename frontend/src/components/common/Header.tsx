@@ -3,7 +3,7 @@ import logo from "@assets/poppin_gradiant.svg"
 
 const Header = () => {
   return (
-    <div id="Header">
+    <div id="header">
       <div className="notification">
         <svg
           xmlns="http://www.w3.org/2000/svg"

@@ -4,6 +4,7 @@ import Banner from "@components/Home/Banner";
 import banners from "@utils/get-banner-image";
 import CategoryButton from "@components/Home/CategoryButton";
 import PopupBig from "@components/Home/PopupBig";
+import PopupSmall from "@components/Home/PopupSmall";
 
 const Home = () => {
   return (
@@ -58,7 +59,20 @@ const Home = () => {
           ))}
         </div>
       </section>
-      <section id="recommend-section"></section>
+      <section id="recommend-section">
+        {/* 비로그인이면 담당자 픽 & 로그인이면 닉네임 추천 픽 */}
+        <h1>담당자 픽 추천 팝업</h1>
+        <div className="recommend-content">
+        {banners.map((banner, index) => (
+            <PopupSmall
+              key={index}
+              image={banner.image}
+              text={banner.text}
+              date={banner.date}
+            />
+          ))}
+        </div>
+      </section>
     </div>
   );
 };

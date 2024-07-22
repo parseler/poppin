@@ -1,4 +1,5 @@
 import "@css/Home.css";
+import { Link } from "react-router-dom";
 import categories from "@utils/get-category-image";
 import Banner from "@components/Home/Banner";
 import banners from "@utils/get-banner-image";
@@ -29,7 +30,7 @@ const Home = () => {
       <section id="best-section">
         <div className="best-title">
           <h1>오늘 가장 인기있는 팝업</h1>
-          <a>더보기</a>
+          <Link to={`/rank`}>더보기</Link>
         </div>
         <div className="best-content">
           {banners.map((banner, index) => (

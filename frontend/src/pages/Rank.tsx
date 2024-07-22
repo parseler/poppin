@@ -1,6 +1,6 @@
 import "@css/Rank.css";
 import banners from "@utils/get-banner-image";
-import PopMedium from "@components/Home/PopMedium";
+import PopMedium01 from "@components/Home/PopMedium01";
 
 const Rank = () => {
   const repeat = Array.from(
@@ -16,7 +16,7 @@ const Rank = () => {
       </div>
       <div className="rank-contents">
         {repeat.map((banner, index) => (
-          <PopMedium
+          <PopMedium01
             key={index}
             rank={index + 1}
             change={index % 2 === 0 ? 1 : -1} // 임시 등락
@@ -25,6 +25,9 @@ const Rank = () => {
             date={banner.date}
           />
         ))}
+      </div>
+      <div id="page">
+        
       </div>
     </div>
   );

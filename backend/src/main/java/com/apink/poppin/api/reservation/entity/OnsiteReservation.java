@@ -1,6 +1,5 @@
 package com.apink.poppin.api.reservation.entity;
 
-import com.apink.poppin.api.popup.entity.Popup;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;

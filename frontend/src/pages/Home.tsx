@@ -48,7 +48,7 @@ const Home = () => {
       <section id="open-section">
         <div className="open-title">
           <h1>곧 오픈 예정인 팝업</h1>
-          <a>더보기</a>
+          <Link to={`/open`}>더보기</Link>
         </div>
         <div className="open-content">
           {banners.map((banner, index) => (

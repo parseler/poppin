@@ -5,7 +5,7 @@ interface PopMediumProps extends BannerProps {
   change: number;
 }
 
-const PopMedium = ({image, text, date, rank, change} : PopMediumProps) => {
+const PopMedium01 = ({image, text, date, rank, change} : PopMediumProps) => {
   const formatRank = rank < 10 ? `0${rank}` : rank;
   const changeGrade = change > 0 ? `▲ ${change}` : change < 0 ? `▼ ${Math.abs(change)}` : '-';
   const changeColor = change > 0 ? '#D4145A' : change < 0 ? '#FBB03B' : 'black';
@@ -27,4 +27,4 @@ const PopMedium = ({image, text, date, rank, change} : PopMediumProps) => {
   );
 }
 
-export default PopMedium;
+export default PopMedium01;

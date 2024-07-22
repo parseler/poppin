@@ -18,6 +18,7 @@ const Home = () => {
         {categories.map((category, index) => (
           <CategoryButton
             key={index}
+            id={category.id}
             image={category.image}
             text={category.text}
           />
@@ -63,7 +64,7 @@ const Home = () => {
         {/* 비로그인이면 담당자 픽 & 로그인이면 닉네임 추천 픽 */}
         <h1>담당자 픽 추천 팝업</h1>
         <div className="recommend-content">
-        {banners.map((banner, index) => (
+          {banners.map((banner, index) => (
             <PopupSmall
               key={index}
               image={banner.image}

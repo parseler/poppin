@@ -90,6 +90,10 @@
     margin: 0 auto 32px;
 }
 
+#category-section a {
+    color: black;
+}
+
 .category-image {
     border-radius: 10px;
     width: 60px;

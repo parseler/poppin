@@ -1,3 +1,5 @@
+import "@css/Pop/PopDetailReservation.css"
+
 const Info = () => {
      return (
         <div>
@@ -13,8 +15,8 @@ const Info = () => {
             <div>
                 주의사항
             </div>
-            <div>
-                <button>다음 단계로 이동</button>
+            <div className="next">
+                <button className="next">다음 단계로 이동</button>
             </div>
         </div>
      );

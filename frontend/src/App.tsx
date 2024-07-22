@@ -2,6 +2,7 @@ import { Route, Routes } from "react-router-dom";
 import Layout from "@components/common/Layout";
 
 import Home from "@pages/Home";
+import PopDetail from "@pages/Pop/PopDetail";
 
 function App() {
 
@@ -11,6 +12,7 @@ function App() {
         <Route path="/" element={<Layout><Home /></Layout>} />
       </Routes>
     </div>
+    // <PopDetail />
   )
 }
 

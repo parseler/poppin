@@ -1,21 +1,12 @@
 import "@css/Menu.css";
-import { useState } from "react";
-import { Link } from "react-router-dom";
+import { NavLink } from "react-router-dom";
 
 const Menu = () => {
-  const [active, setActive] = useState<string | null>("home");
-
-  const onMenuClick = (menu: string) => {
-    setActive(menu);
-  };
 
   return (
     <div id="menu">
-      <Link to={`/`}>
-        <div
-          className={`home ${active === "home" ? "active" : ""}`}
-          onClick={() => onMenuClick("home")}
-        >
+      <NavLink to="/" className={({ isActive }) => (isActive ? "active" : "")}>
+        <div className="home">
           <svg
             xmlns="http://www.w3.org/2000/svg"
             width="33"
@@ -46,12 +37,9 @@ const Menu = () => {
           </svg>
           <span>홈</span>
         </div>
-      </Link>
-      <Link to={`/calendar`}>
-        <div
-          className={`calendar ${active === "calendar" ? "active" : ""}`}
-          onClick={() => onMenuClick("calendar")}
-        >
+      </NavLink>
+      <NavLink to="/calendar" className={({ isActive }) => (isActive ? "active" : "")}>
+        <div className="calendar">
           <svg
             xmlns="http://www.w3.org/2000/svg"
             width="33"
@@ -106,12 +94,9 @@ const Menu = () => {
           </svg>
           <span>캘린더</span>
         </div>
-      </Link>
-      <Link to={`/map`}>
-        <div
-          className={`map ${active === "map" ? "active" : ""}`}
-          onClick={() => onMenuClick("map")}
-        >
+      </NavLink>
+      <NavLink to="/map" className={({ isActive }) => (isActive ? "active" : "")}>
+        <div className="map">
           <svg
             xmlns="http://www.w3.org/2000/svg"
             width="33"
@@ -150,12 +135,9 @@ const Menu = () => {
           </svg>
           <span>내주변</span>
         </div>
-      </Link>
-      <Link to={`/review`}>
-        <div
-          className={`review ${active === "review" ? "active" : ""}`}
-          onClick={() => onMenuClick("review")}
-        >
+      </NavLink>
+      <NavLink to="/review" className={({ isActive }) => (isActive ? "active" : "")}>
+        <div className="review">
           <svg
             xmlns="http://www.w3.org/2000/svg"
             width="33"
@@ -210,12 +192,9 @@ const Menu = () => {
           </svg>
           <span>후기</span>
         </div>
-      </Link>
-      <Link to={`/mypage`}>
-        <div
-          className={`mypage ${active === "mypage" ? "active" : ""}`}
-          onClick={() => onMenuClick("mypage")}
-        >
+      </NavLink>
+      <NavLink to="/mypage" className={({ isActive }) => (isActive ? "active" : "")}>
+        <div className="mypage">
           <svg
             xmlns="http://www.w3.org/2000/svg"
             width="33"
@@ -262,7 +241,7 @@ const Menu = () => {
           </svg>
           <span>마이페이지</span>
         </div>
-      </Link>
+      </NavLink>
     </div>
   );
 };

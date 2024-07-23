@@ -2,8 +2,9 @@ import "@css/Review.css";
 import ReviewMedium from "@components/Review/ReviewMedium";
 import CreateButton from "@components/CreateButton";
 import banners from "@utils/get-banner-image";
+import { Link } from "react-router-dom";
 
-const Review = () => {
+const ReviewList = () => {
   return (
     <div id="reviews">
       {/*  데이터 받아와서 수정해야 함 */}
@@ -16,9 +17,11 @@ const Review = () => {
           />
         ))}
       </div>
-      <CreateButton />
+      <Link to={`/review/write`}>
+        <CreateButton />
+      </Link>
     </div>
   );
 };
 
-export default Review;
+export default ReviewList;

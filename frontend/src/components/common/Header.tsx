@@ -8,22 +8,35 @@ interface IconProps {
   rightIcon: string;
 }
 
-const Header = ({leftIcon, rightIcon} : IconProps) => {
+const Header = ({ leftIcon, rightIcon }: IconProps) => {
   const navigate = useNavigate();
-  const haandleBackIcon = () => {
-    if (leftIcon === getIncon("back")) navigate(-1);
-  }
+
+  const handleBackIcon = () => {
+    if (leftIcon === getIncon("back") || leftIcon === "취소") navigate(-1);
+  };
+
+  const isImage = (icon: string) => {
+    return /\.(jpg|jpeg|png|svg|gif)$/.test(icon);
+  };
 
   return (
     <div id="header">
       <div className="left-icon">
-        <img src={leftIcon} alt="Left" onClick={haandleBackIcon} />
+        {isImage(leftIcon) ? (
+          <img src={leftIcon} alt="Left" onClick={handleBackIcon} />
+        ) : (
+          <span onClick={handleBackIcon}>{leftIcon}</span>
+        )}
       </div>
       <div className="logo">
         <img src={logo} alt="poppin_logo" />
       </div>
       <div className="right-icon">
-        <img src={rightIcon} alt="Right" />
+      {isImage(rightIcon) ? (
+          <img src={rightIcon} alt="Right" />
+        ) : (
+          <span>{rightIcon}</span>
+        )}
       </div>
     </div>
   );

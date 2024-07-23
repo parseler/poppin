@@ -16,6 +16,7 @@
     "@types/express": "^4.17.21",
     "@types/node": "^20.14.11",
     "esm": "^3.2.25",
+    "date-fns": "^3.6.0",
     "react": "^18.3.1",
     "react-calendar": "^5.0.0",
     "react-dom": "^18.3.1",

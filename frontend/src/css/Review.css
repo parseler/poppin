@@ -76,3 +76,63 @@
   box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.4);
   z-index: 2;
 }
+
+/* ReviewWrite */
+#review-write {
+  margin: 16px 16px 0;
+  display: flex;
+  flex-direction: column;
+  height: calc(100vh - 169.5px);
+}
+
+.review-input-title input, .review-input-search input {
+  width: 100%;
+  padding: 8px 8px;
+  margin-bottom: 8px;
+  font-size: 14px;
+  outline: none;
+  border: none;
+  border-bottom: 1px solid #ccc;
+  box-sizing: border-box;
+}
+
+.review-input-thumbnail {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 24px;
+}
+
+.review-input-thumbnail input[type="text"] {
+  width: calc(100% - 116px);
+  padding: 8px 8px;
+  border: none;
+  outline: none;
+  border-bottom: 1px solid #ccc;
+  font-size: 14px;
+  pointer-events: none;
+}
+
+.review-input-thumbnail label {
+  width: 90px;
+  padding: 10px 0;
+  text-align: center;
+  font-size: 12px;
+  color: #fff;
+  background-color: #ccc;
+  border-radius: 4px;
+}
+
+.review-input-thumbnail input[type="file"] {
+  position: absolute;
+  width: 0;
+  height: 0;
+  padding: 0;
+  overflow: hidden;
+  border: 0;
+}
+
+.quill {
+  height: calc(100% - 230px);
+}
+

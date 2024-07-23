@@ -1,13 +1,14 @@
-import { Category } from "@utils/get-category-image";
+import { Link } from "react-router-dom";
+import { CategoryProps } from "@utils/get-category-image";
 
-const CategoryButton = ({ image, text }: Category) => {
+const CategoryButton = ({ id, image, text }: CategoryProps) => {
   return (
-    <div className="category-button">
+    <Link to={`/${id}`} className="category-button">
       <div className="category-image">
         <img src={image} alt={text} />
       </div>
       <span className="category-text">{text}</span>
-    </div>
+    </Link>
   );
 };
 

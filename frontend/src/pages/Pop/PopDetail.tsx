@@ -1,21 +1,21 @@
 import { useState } from "react";
 import Slider from "react-slick";
-import PopDetailInfo from "../../components/Pop/PopDetailInfo";
-import PopDetailReservation from "../../components/Pop/PopDetailReservation";
-import PopDetailReview from "../../components/Pop/PopDetailReview";
-import PopDetailChat from "../../components/Pop/PopDetailChat";
+import PopDetailInfo from "@components/Pop/PopDetailInfo";
+import PopDetailReservation from "@components/Pop/PopDetailReservation";
+import PopDetailReview from "@components/Pop/PopDetailReview";
+import PopDetailChat from "@components/Pop/PopDetailChat";
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
 import "@css/Pop/PopDetail.css";
 
-import image1 from "../../assets/image1.svg";
-import image2 from "../../assets/sponge2.jpg";
-import image3 from "../../assets/sponge.jpg";
+import image1 from "@assets/image1.svg";
+import image2 from "@assets/sponge2.jpg";
+import image3 from "@assets/sponge.jpg";
 import backButton from "@assets/backButton.svg";
-import scoreIcon from "../../assets/scoreIcon.svg";
-import likeIcon from "../../assets/likeIcon.svg";
-import noneLike from "../../assets/noneLike.svg";
-import fillLike from "../../assets/fillLike.svg";
+import scoreIcon from "@assets/scoreIcon.svg";
+import likeIcon from "@assets/likeIcon.svg";
+import noneLike from "@assets/noneLike.svg";
+import fillLike from "@assets/fillLike.svg";
 
 function PopDetail() {
   const [activeTab, setActiveTab] = useState<string | null>("info");

@@ -61,10 +61,9 @@ const Reservation = () => {
           }
           prevLabel={<button>{'<'}</button>} // 이전 버튼 커스터마이징
           nextLabel={<button>{'>'}</button>} // 다음 버튼 커스터마이징
-          navigationAriaLabel=""
           prev2Label={<button>{'<<'}</button>}
           next2Label={<button>{'>>'}</button>}
-          navigationLabel={({ date, label, locale, view }) => (
+          navigationLabel={({ label }) => (
             <div className="nav-label">{label}</div>
           )} // 네비게이션 라벨 커스터마이징
         />
@@ -102,7 +101,7 @@ const Reservation = () => {
         </div>
       </div>
       <div className="next">
-        <button className="next">다음 단계로 이동</button>
+        <button>다음 단계로 이동</button>
       </div>
     </div>
   );

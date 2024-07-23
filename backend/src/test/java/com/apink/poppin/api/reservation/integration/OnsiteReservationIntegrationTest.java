@@ -17,6 +17,8 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
 
+import java.time.LocalDate;
+
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -51,15 +53,13 @@ public class OnsiteReservationIntegrationTest {
                 .onsiteReservationId(null)
                 .popupId(1L)
                 .phoneNumber("010-1234-5678")
-//                .visitedDate(LocalDate.now())
+                .visitedDate(LocalDate.now())
                 .reservationCount(2)
                 .reservationStatementId(1)
                 .waitNumber(null)
                 .build();
 
         String jsonContent = jacksonObjectMapper.writeValueAsString(dto);
-
-        // Debug: Print the JSON content to verify it
         System.out.println("jsonContent = " + jsonContent);
 
         mockMvc.perform(post("/api/onsite-reservations").with(csrf())
@@ -70,13 +70,12 @@ public class OnsiteReservationIntegrationTest {
         mockMvc.perform(get("/api/onsite-reservations/010-1234-5678/1"))
                 .andExpect(status().isOk());
 
-        // Verify the data is saved in Redis
         OnsiteReservationDto redisDto = (OnsiteReservationDto) redisTemplate.opsForHash()
                 .get("onsite_reservation:" + dto.getPopupId(), dto.getPhoneNumber());
 
         assertThat(redisDto).isNotNull();
         assertThat(redisDto.getPhoneNumber()).isEqualTo(dto.getPhoneNumber());
         assertThat(redisDto.getPopupId()).isEqualTo(dto.getPopupId());
-//        assertThat(redisDto.getVisitedDate()).isEqualTo(dto.getVisitedDate());
+        assertThat(redisDto.getVisitedDate()).isEqualTo(dto.getVisitedDate());
     }
 }

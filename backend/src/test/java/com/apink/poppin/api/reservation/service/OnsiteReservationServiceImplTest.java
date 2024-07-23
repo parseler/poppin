@@ -10,6 +10,7 @@ import org.mockito.MockitoAnnotations;
 import org.springframework.data.redis.core.HashOperations;
 import org.springframework.data.redis.core.RedisTemplate;
 
+import java.time.LocalDate;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -59,7 +60,7 @@ class OnsiteReservationServiceImplTest {
         OnsiteReservationDto dto = OnsiteReservationDto.builder()
                 .popupId(1L)
                 .phoneNumber("1234567890")
-//                .visitedDate(LocalDate.now())
+                .visitedDate(LocalDate.now())
                 .reservationStatementId(1)
                 .reservationCount(1)
                 .waitNumber(1)

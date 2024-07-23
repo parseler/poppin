@@ -11,6 +11,8 @@ import org.springframework.http.MediaType;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
 
+import java.time.LocalDate;
+
 import static org.mockito.Mockito.when;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -36,7 +38,7 @@ public class OnsiteReservationControllerTest {
                 .onsiteReservationId(null)
                 .popupId(1L)
                 .phoneNumber("010-1234-5678")
-//                .visitedDate(LocalDate.now())
+                .visitedDate(LocalDate.now())
                 .reservationCount(2)
                 .reservationStatementId(1)
                 .waitNumber(null)

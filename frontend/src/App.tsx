@@ -5,7 +5,7 @@ import Layout02 from "@components/common/Layout02";
 import Home from "@pages/Home";
 import Calendar from "@pages/Calender";
 import Map from "@pages/Map";
-import Review from "@pages/Review/Review";
+import Review from "@pages/Review/ReviewList";
 import Mypage from "@pages/Mypage";
 import Category from "@pages/Category";
 import Rank from "@pages/Rank";

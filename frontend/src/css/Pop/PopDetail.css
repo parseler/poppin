@@ -1,0 +1,145 @@
+.slider-container {
+  position: relative;
+  width: 100%;
+  overflow: hidden;
+}
+
+.slider-container img {
+  width: 100%;
+  height: auto;
+  object-fit: contain;
+}
+
+.back-button{
+  position: absolute;
+  top: 15px;
+  left: 10px;
+  background: none;
+  border: none;
+  cursor: pointer;
+}
+
+.like-button {
+  position: absolute;
+  bottom: 10px;
+  right: 10px;
+  background: none;
+  border: none;
+  cursor: pointer;
+}
+
+.main-info {
+  padding-left: 20px;
+  padding-top: 20px;
+  height: 85px;
+  flex-shrink: 0;
+  margin: 5px;
+}
+
+.title {
+  padding-bottom: 5px;
+  color: #000;
+  font-feature-settings: "clig" off, "liga" off;
+  font-family: "NanumSquare Neo OTF";
+  font-size: 20px;
+  font-style: normal;
+  font-weight: 800;
+  line-height: normal;
+  letter-spacing: -0.2px;
+  margin-left: 2px;
+}
+
+.date {
+  color: #000;
+  font-family: "NanumSquare Neo OTF";
+  font-size: 14px;
+  font-style: normal;
+  font-weight: 700;
+  line-height: normal;
+  padding-bottom: 5px;
+  margin-left: 2px;
+}
+
+.score-like {
+  display: flex;
+  height: 25px;
+  justify-content: left;
+  align-items: center;
+  flex-shrink: 0;
+}
+
+.score {
+  color: #222;
+  font-family: "NanumSquare Neo OTF";
+  font-size: 14px;
+  font-style: normal;
+  font-weight: 400;
+  line-height: normal;
+  display: flex;
+  margin-right: 10px;
+}
+
+.score img{
+  margin-right: 2px;
+}
+
+.like {
+  color: #222;
+  font-family: "NanumSquare Neo OTF";
+  font-size: 14px;
+  font-style: normal;
+  font-weight: 400;
+  line-height: normal;
+  display: flex;
+  justify-content: center;
+}
+
+.like img{
+  margin-right: 2px;
+}
+
+.tab {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 50px;
+  flex-shrink: 0;
+  position: relative;
+  margin: 0 16px;
+  border-bottom: 1px solid#8b8b8b;
+}
+
+.tab div {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex: 1;
+  height: 100%;
+  margin: 0;
+  background: none;
+  border: none;
+  color: #8b8b8b;
+  font-family: "NanumSquare Neo OTF";
+  font-size: 16px;
+  font-weight: 400;
+  cursor: pointer;
+  outline: none;
+  position: relative;
+}
+
+.tab div:hover {
+  color: #d4145a;
+}
+
+.tab div.active {
+  color: #d4145a;
+  border-bottom: 1px solid #d4145a;
+}
+
+.tab-content {
+  display: flex;
+  flex-direction: column; /* 내용이 세로로 배치되도록 설정 */
+  padding: 20px;
+  height: calc(100vh - 50px); /* 탭 높이를 제외한 나머지 높이 사용 */
+  box-sizing: border-box;
+}

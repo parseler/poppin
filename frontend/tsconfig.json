@@ -1,6 +1,7 @@
 {
   "files": [],
   "compilerOptions": {
+    "typeRoots": ["./node_modules/@types", "./global.d.ts"],
     "baseUrl": "./src",
     "paths": {
       "@pages/*": ["pages/*"],
@@ -10,6 +11,7 @@
       "@utils/*": ["utils/*"]
     }
   },
+  "include": ["src", "global.d.ts"],
   "references": [
     {
       "path": "./tsconfig.app.json"

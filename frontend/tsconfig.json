@@ -9,9 +9,17 @@
       "@css/*": ["css/*"],
       "@assets/*": ["assets/*"],
       "@utils/*": ["utils/*"]
-    }
+    },
+    "target": "ESNext",
+    "module": "ESNext",
+    "moduleResolution": "node",
+    "strict": true,
+    "esModuleInterop": true,
+    "skipLibCheck": true,
+    "forceConsistentCasingInFileNames": true,
+    "outDir": "./dist"
   },
-  "include": ["src", "global.d.ts"],
+  "include": ["src", "global.d.ts", "server.js"],
   "references": [
     {
       "path": "./tsconfig.app.json"

@@ -12,7 +12,12 @@
     z-index: 10;
 }
 
-#menu > div {
+#map a span {
+    color: black;
+    text-decoration: none;
+}
+
+.home, .calendar, .map, .review, .mypage {
     width: 48px;
     display: flex;
     flex-direction: column;
@@ -27,10 +32,11 @@
 #menu span {
     font-size: 10px;
     margin-bottom: 4px;
+    color: black;
 }
 
-.active {
-    color: #D4145A;
+.active span {
+    color: #D4145A !important;
 }
 
 .active .icon-path {

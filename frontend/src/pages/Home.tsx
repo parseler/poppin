@@ -1,8 +1,8 @@
 import "@css/Home.css";
 import { Link } from "react-router-dom";
 import categories from "@utils/get-category-image";
-import Banner from "@components/Home/Banner";
 import banners from "@utils/get-banner-image";
+import Banner from "@components/Home/Banner";
 import CategoryButton from "@components/Home/CategoryButton";
 import PopupBig from "@components/Home/PopupBig";
 import PopupSmall from "@components/Home/PopupSmall";

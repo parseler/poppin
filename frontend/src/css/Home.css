@@ -238,6 +238,7 @@
 /* PopupSmall */
 #pop-up-small {
     max-width: calc(50% - 4px); /* 최대 너비를 동일하게 설정 */
+    min-width: calc(50% - 4px); /* 최대 너비를 동일하게 설정 */
     height: auto; /* 높이를 자동으로 설정 */
     position: relative;
 }

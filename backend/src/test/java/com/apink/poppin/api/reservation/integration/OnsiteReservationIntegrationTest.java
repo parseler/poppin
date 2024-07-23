@@ -2,6 +2,7 @@ package com.apink.poppin.api.reservation.integration;
 
 import com.apink.poppin.api.reservation.dto.OnsiteReservationDto;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -16,6 +17,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -33,12 +35,13 @@ public class OnsiteReservationIntegrationTest {
 
     private MockMvc mockMvc;
 
-    @Autowired
-    private ObjectMapper mapper;
+    private ObjectMapper jacksonObjectMapper;
 
     @BeforeEach
     public void setUp() {
-        mapper.registerModule(new JavaTimeModule());
+        jacksonObjectMapper = new ObjectMapper();
+        jacksonObjectMapper.registerModule(new JavaTimeModule());
+        jacksonObjectMapper.disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
         mockMvc = MockMvcBuilders.webAppContextSetup(webApplicationContext).build();
     }
 
@@ -54,7 +57,9 @@ public class OnsiteReservationIntegrationTest {
                 .waitNumber(null)
                 .build();
 
-        String jsonContent = mapper.writeValueAsString(dto);
+        String jsonContent = jacksonObjectMapper.writeValueAsString(dto);
+
+        // Debug: Print the JSON content to verify it
         System.out.println("jsonContent = " + jsonContent);
 
         mockMvc.perform(post("/api/onsite-reservations").with(csrf())
@@ -64,5 +69,14 @@ public class OnsiteReservationIntegrationTest {
 
         mockMvc.perform(get("/api/onsite-reservations/010-1234-5678/1"))
                 .andExpect(status().isOk());
+
+        // Verify the data is saved in Redis
+        OnsiteReservationDto redisDto = (OnsiteReservationDto) redisTemplate.opsForHash()
+                .get("onsite_reservation:" + dto.getPopupId(), dto.getPhoneNumber());
+
+        assertThat(redisDto).isNotNull();
+        assertThat(redisDto.getPhoneNumber()).isEqualTo(dto.getPhoneNumber());
+        assertThat(redisDto.getPopupId()).isEqualTo(dto.getPopupId());
+//        assertThat(redisDto.getVisitedDate()).isEqualTo(dto.getVisitedDate());
     }
 }

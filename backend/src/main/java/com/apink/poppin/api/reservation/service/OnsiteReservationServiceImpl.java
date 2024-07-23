@@ -1,7 +1,6 @@
 package com.apink.poppin.api.reservation.service;
 
 import com.apink.poppin.api.reservation.dto.OnsiteReservationDto;
-import com.apink.poppin.api.reservation.entity.OnsiteReservation;
 import com.apink.poppin.api.reservation.repository.OnsiteReservationRepository;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;

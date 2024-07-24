@@ -3,6 +3,7 @@ package com.apink.poppin.api.service;
 import com.apink.poppin.User;
 import com.apink.poppin.api.popup.entity.Popup;
 import com.apink.poppin.api.review.dto.ReviewDto;
+import com.apink.poppin.api.review.dto.ReviewUpdateRequestDto;
 import com.apink.poppin.api.review.entity.Comment;
 import com.apink.poppin.api.review.entity.Review;
 import com.apink.poppin.api.review.repository.ReviewRepository;
@@ -97,10 +98,7 @@ public class ReviewServiceImplTest {
                 .comments(comments)
                 .build();
 
-        ReviewDto updatedReviewDto = ReviewDto.builder()
-                .reviewId(reviewId)
-                .popupId(popup.getPopupId())
-                .userTsid(user.getUserTsid())
+        ReviewUpdateRequestDto requestDto = ReviewUpdateRequestDto.builder()
                 .rating(4.0F)
                 .title("updated title")
                 .thumbnail("updated thumbnail")
@@ -111,12 +109,12 @@ public class ReviewServiceImplTest {
         when(reviewRepository.findById(reviewId)).thenReturn(Optional.ofNullable(existingReview));
 
         // then
-        reviewService.updateReview(updatedReviewDto);
+        reviewService.updateReview(reviewId, requestDto);
 
-        assertEquals(existingReview.getRating(), updatedReviewDto.getRating());
-        assertEquals(existingReview.getTitle(), updatedReviewDto.getTitle());
-        assertEquals(existingReview.getThumbnail(), updatedReviewDto.getThumbnail());
-        assertEquals(existingReview.getContent(), updatedReviewDto.getContent());
+        assertEquals(existingReview.getRating(), requestDto.getRating());
+        assertEquals(existingReview.getTitle(), requestDto.getTitle());
+        assertEquals(existingReview.getThumbnail(), requestDto.getThumbnail());
+        assertEquals(existingReview.getContent(), requestDto.getContent());
         verify(reviewRepository, times(1)).findById(reviewId);
         verify(reviewRepository, times(1)).save(existingReview);
     }

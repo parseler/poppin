@@ -1,5 +1,6 @@
 package com.apink.poppin.api.popup.service;
 
+import com.apink.poppin.api.popup.dto.PopupDTO;
 import com.apink.poppin.api.popup.entity.Popup;
 
 import java.util.List;
@@ -7,11 +8,11 @@ import java.util.List;
 public interface PopupService {
 
     // 전체 팝업 목록 조회 및 검색
-    List<Popup> getPopupList(String keyword);
+    List<PopupDTO> getPopupList(String keyword);
 
 
     // 팝업 상세 조회
-    Popup getPopup(long popupId);
+    PopupDTO getPopup(Long popupId);
 
     // 인기 팝업 조회
 //    List<PopupDTO> getPopupRank();
@@ -20,5 +21,5 @@ public interface PopupService {
 //    List<PopupDTO> getSimilarPopup(long popupId);
 
     // 오픈 예정 팝업 조회
-    List<Popup> getOpenPopup();
+    List<PopupDTO> getOpenPopup();
 }

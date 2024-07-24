@@ -1,5 +1,6 @@
 package com.apink.poppin.api.popup.service;
 
+import com.apink.poppin.api.popup.dto.PopupDTO;
 import com.apink.poppin.api.popup.entity.Popup;
 import com.apink.poppin.api.popup.repository.PopupRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -7,6 +8,7 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class PopupServiceImpl implements PopupService {
@@ -15,13 +17,18 @@ public class PopupServiceImpl implements PopupService {
     private PopupRepository popupRepository;
 
     // 팝업 전체 목록 조회 및 검색
-    public List<Popup> getPopupList(String keyword) {
-        return popupRepository.findAllByNameContaining(keyword);
+    public List<PopupDTO> getPopupList(String keyword) {
+        List<Popup> popups = popupRepository.findAllByNameContaining(keyword);
+        return popups.stream()
+                .map(popup -> new PopupDTO(popup.getPopupId(), popup.getName(), popup.getStartDate(), popup.getEndDate()))
+                .collect(Collectors.toList());
     }
 
     // 팝업 상세 조회
-    public Popup getPopup(long popupId) {
-        return popupRepository.findById(popupId);
+    public PopupDTO getPopup(Long popupId) {
+        Popup popup = popupRepository.findById(popupId)
+                .orElseThrow(() -> new IllegalArgumentException("Invalid popup ID"));
+        return new PopupDTO(popup.getPopupId(), popup.getName(), popup.getStartDate(), popup.getEndDate());
     }
 
     // 인기 팝업 조회
@@ -35,9 +42,12 @@ public class PopupServiceImpl implements PopupService {
 //    }
 
     // 오픈 예정 팝업 조회
-    public List<Popup> getOpenPopup() {
+    public List<PopupDTO> getOpenPopup() {
         LocalDateTime now = LocalDateTime.now();
-        return popupRepository.findAllByStartDateAfter(now);
+        List<Popup> popups = popupRepository.findAllByStartDateAfter(now);
+        return popups.stream()
+                .map(popup -> new PopupDTO(popup.getPopupId(), popup.getName(), popup.getStartDate(), popup.getEndDate()))
+                .collect(Collectors.toList());
     }
 
 }

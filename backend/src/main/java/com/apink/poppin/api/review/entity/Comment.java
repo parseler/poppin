@@ -45,4 +45,9 @@ public class Comment {
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "parent")
     private Comment parent;
+
+    @NotNull
+    @ColumnDefault("0")
+    @Column(name = "is_deleted", nullable = false)
+    private boolean isDeleted;
 }

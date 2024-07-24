@@ -39,7 +39,7 @@ public class Review {
 
     @NotNull
     @Column(name = "rating", nullable = false)
-    private Float rating;
+    private float rating;
 
     @Size(max = 50)
     @NotNull
@@ -61,6 +61,11 @@ public class Review {
 
     @OneToMany(mappedBy = "review", fetch = FetchType.LAZY)
     private List<Comment> comments;
+
+    @NotNull
+    @ColumnDefault("0")
+    @Column(name = "is_deleted", nullable = false)
+    private boolean isDeleted;
 
     public void updateReview(ReviewUpdateRequestDto requestDto) {
         this.rating = requestDto.getRating();

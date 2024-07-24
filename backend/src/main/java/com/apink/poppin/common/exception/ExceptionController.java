@@ -15,12 +15,12 @@ public class ExceptionController {
     @ExceptionHandler(Exception.class)
     public ResponseEntity<?> exception(Exception e) {
         log.error(e.getMessage());
-
         return ResponseEntity.internalServerError().body(e.getMessage());
     }
 
     @ExceptionHandler(NoSuchElementException.class)
     public ResponseEntity<?> exception(NoSuchElementException e) {
+        log.error(e.getMessage());
         return ResponseEntity.notFound().build();
     }
 }

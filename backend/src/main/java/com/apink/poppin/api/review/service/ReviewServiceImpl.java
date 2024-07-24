@@ -50,4 +50,19 @@ public class ReviewServiceImpl implements ReviewService {
                 .commentDtoList(comments)
                 .build();
     }
+
+    @Override
+    public void updateReview(ReviewDto updatedReviewDto) {
+
+        Review review = reviewRepository.findById(updatedReviewDto.getReviewId())
+                .orElseThrow(() -> new NoSuchElementException("Review not found"));
+
+        review.updateReview(
+                updatedReviewDto.getRating(),
+                updatedReviewDto.getTitle(),
+                updatedReviewDto.getThumbnail(),
+                updatedReviewDto.getContent());
+
+        reviewRepository.save(review);
+    }
 }

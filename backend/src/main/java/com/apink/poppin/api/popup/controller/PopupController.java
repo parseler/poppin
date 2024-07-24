@@ -33,4 +33,18 @@ public class PopupController {
         return new ResponseEntity<>(popup, HttpStatus.OK);
     }
 
+    // 인기 팝업 조회
+//    @GetMapping("/rank")
+//    public ResponseEntity<List<PopupDTO>> getPopupRank() {
+//        List<PopupDTO> list = popupService.getPopupRank();
+//        return new ResponseEntity<>(list, HttpStatus.OK);
+//    }
+
+    // 유사 팝업 조회
+//    @GetMapping("/{popupId}/tag")
+//    public ResponseEntity<List<Popup>> getSimilarPopup(@PathVariable("popupId") long popupId) {
+//        List<Popup> list = popupService.getSimilarPopup(popupId);
+//        return new ResponseEntity<>(list, HttpStatus.OK);
+//    }
+
 }

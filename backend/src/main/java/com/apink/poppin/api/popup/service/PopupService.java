@@ -13,5 +13,10 @@ public interface PopupService {
     // 팝업 상세 조회
     Popup getPopup(long popupId);
 
+    // 인기 팝업 조회
+//    List<PopupDTO> getPopupRank();
+
+    // 유사 팝업 조회
+//    List<PopupDTO> getSimilarPopup(long popupId);
 
 }

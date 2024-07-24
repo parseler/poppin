@@ -24,4 +24,14 @@ public class PopupServiceImpl implements PopupService {
         return popupRepository.findById(popupId);
     }
 
+    // 인기 팝업 조회
+//    public List<PopupDTO> getPopupRank() {
+//
+//    }
+
+    // 유사 팝업 조회
+//    public List<PopupDTO> getSimilarPopup(long popupId) {
+//
+//    }
+
 }

@@ -60,4 +60,11 @@ public class Review {
 
     @OneToMany(mappedBy = "review", fetch = FetchType.LAZY)
     private List<Comment> comments;
+
+    public void updateReview(float rating, String title, String thumbnail, String content) {
+        this.rating = rating;
+        this.title = title;
+        this.thumbnail = thumbnail;
+        this.content = content;
+    }
 }

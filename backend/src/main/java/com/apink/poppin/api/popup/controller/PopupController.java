@@ -28,4 +28,12 @@ public class PopupController {
         return new ResponseEntity<>(list, HttpStatus.OK);
     }
 
+    // 팝업 상세 조회
+    @GetMapping("/{popupId}")
+    public ResponseEntity<Popup> getPopup(@PathVariable("popupId") long popupId) {
+        Popup popup = popupService.getPopup(popupId);
+
+        return new ResponseEntity<>(popup, HttpStatus.OK);
+    }
+
 }

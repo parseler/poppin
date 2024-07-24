@@ -19,6 +19,9 @@ public class PopupServiceImpl implements PopupService {
         return popupRepository.findAll();
     }
 
-
+    // 팝업 상세 조회
+    public Popup getPopup(long popupId) {
+        return popupRepository.findById(popupId);
+    }
 
 }

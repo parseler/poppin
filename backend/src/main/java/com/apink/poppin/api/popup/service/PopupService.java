@@ -9,4 +9,8 @@ public interface PopupService {
     // 전체 팝업 목록 조회
     List<Popup> getPopupList();
 
+    // 팝업 상세 조회
+    Popup getPopup(long popupId);
+
+
 }

@@ -15,8 +15,8 @@ public class PopupServiceImpl implements PopupService {
     private PopupRepository popupRepository;
 
     // 팝업 전체 목록 조회 및 검색
-    public List<Popup> getPopupList() {
-        return popupRepository.findAll();
+    public List<Popup> getPopupList(String keyword) {
+        return popupRepository.findAllByNameContaining(keyword);
     }
 
     // 팝업 상세 조회

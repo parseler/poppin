@@ -10,8 +10,8 @@ import java.util.List;
 @Repository
 public interface PopupRepository extends JpaRepository<Popup, Long> {
 
-    // 전체 목록 조회
-    List<Popup> findAll();
+    // 전체 목록 조회 및 검색
+    List<Popup> findAllByNameContaining(String keyword);
 
     // 팝업 상세 조회
     Popup findById(long popupId);

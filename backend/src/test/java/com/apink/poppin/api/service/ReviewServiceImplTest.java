@@ -118,4 +118,24 @@ public class ReviewServiceImplTest {
         verify(reviewRepository, times(1)).findById(reviewId);
         verify(reviewRepository, times(1)).save(existingReview);
     }
+
+    @Test
+    void updateReviewNotFound() {
+
+        long reviewId = 1L;
+        ReviewUpdateRequestDto requestDto = ReviewUpdateRequestDto.builder()
+                .rating(4.0F)
+                .title("updated title")
+                .thumbnail("updated thumbnail")
+                .content("updated content")
+                .build();
+
+        // when
+        when(reviewRepository.findById(anyLong())).thenThrow(NoSuchElementException.class);
+
+        // then
+
+        assertThrows(NoSuchElementException.class,
+                () -> reviewService.updateReview(reviewId, requestDto));
+    }
 }

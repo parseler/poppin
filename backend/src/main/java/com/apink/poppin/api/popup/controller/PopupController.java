@@ -47,4 +47,11 @@ public class PopupController {
 //        return new ResponseEntity<>(list, HttpStatus.OK);
 //    }
 
+    // 오픈 예정 팝업 조회
+    @GetMapping("/open")
+    public ResponseEntity<List<Popup>> getOpenPopup() {
+        List<Popup> list = popupService.getOpenPopup();
+        return new ResponseEntity<>(list, HttpStatus.OK);
+    }
+
 }

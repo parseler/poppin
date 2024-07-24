@@ -19,4 +19,6 @@ public interface PopupService {
     // 유사 팝업 조회
 //    List<PopupDTO> getSimilarPopup(long popupId);
 
+    // 오픈 예정 팝업 조회
+    List<Popup> getOpenPopup();
 }

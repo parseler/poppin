@@ -19,4 +19,8 @@ public interface PopupRepository extends JpaRepository<Popup, Long> {
     // 인기 팝업 조회
 
     // 유사 팝업 조회
+
+    // 오픈 예정 팝업 조회
+    List<Popup> findAllByStartDateAfter(LocalDateTime now);
+
 }

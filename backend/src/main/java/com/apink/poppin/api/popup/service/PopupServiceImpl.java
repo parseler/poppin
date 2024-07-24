@@ -34,4 +34,10 @@ public class PopupServiceImpl implements PopupService {
 //
 //    }
 
+    // 오픈 예정 팝업 조회
+    public List<Popup> getOpenPopup() {
+        LocalDateTime now = LocalDateTime.now();
+        return popupRepository.findAllByStartDateAfter(now);
+    }
+
 }

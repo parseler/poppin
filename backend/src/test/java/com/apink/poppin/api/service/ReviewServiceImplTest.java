@@ -8,6 +8,7 @@ import com.apink.poppin.api.review.entity.Comment;
 import com.apink.poppin.api.review.entity.Review;
 import com.apink.poppin.api.review.repository.ReviewRepository;
 import com.apink.poppin.api.review.service.ReviewServiceImpl;
+import com.apink.poppin.common.exception.dto.BusinessLogicException;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -17,9 +18,9 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.NoSuchElementException;
 import java.util.Optional;
 
+import static com.apink.poppin.common.exception.dto.ExceptionCode.REVIEW_NOT_FOUND;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
@@ -34,8 +35,6 @@ public class ReviewServiceImplTest {
 
     @Test
     void getReviewByIdFound() {
-
-        // given
         long reviewId = 1L;
         Popup popup = mock(Popup.class);
         User user = mock(User.class);
@@ -52,10 +51,8 @@ public class ReviewServiceImplTest {
                 .build();
         when(reviewRepository.findById(reviewId)).thenReturn(Optional.ofNullable(review));
 
-        // when
         ReviewDto reviewDto  = reviewService.getReviewById(reviewId);
 
-        // then
         assertNotNull(reviewDto);
         assertEquals(reviewDto.getReviewId(), reviewId);
         assertEquals(reviewDto.getTitle(), "Test");
@@ -64,23 +61,17 @@ public class ReviewServiceImplTest {
 
     @Test
     void getReviewByIdNotFound() {
-
-        // given
         long reviewId = 1L;
         when(reviewRepository.findById(reviewId)).thenReturn(Optional.empty());
 
-        // when
-        NoSuchElementException exception = assertThrows(NoSuchElementException.class,
+        BusinessLogicException exception = assertThrows(BusinessLogicException.class,
                 () -> reviewService.getReviewById(reviewId));
-
-        // then
-        assertEquals("Review not found", exception.getMessage());
+        assertEquals(REVIEW_NOT_FOUND.getMessage(), exception.getMessage());
         verify(reviewRepository, times(1)).findById(reviewId);
     }
 
     @Test
     void updateReviewSuccess() {
-        // given
         long reviewId = 1L;
         Popup popup = mock(Popup.class);
         User user = mock(User.class);
@@ -105,10 +96,8 @@ public class ReviewServiceImplTest {
                 .content("updated content")
                 .build();
 
-        // when
         when(reviewRepository.findById(reviewId)).thenReturn(Optional.ofNullable(existingReview));
 
-        // then
         reviewService.updateReview(reviewId, requestDto);
 
         assertEquals(existingReview.getRating(), requestDto.getRating());
@@ -121,7 +110,6 @@ public class ReviewServiceImplTest {
 
     @Test
     void updateReviewNotFound() {
-
         long reviewId = 1L;
         ReviewUpdateRequestDto requestDto = ReviewUpdateRequestDto.builder()
                 .rating(4.0F)
@@ -130,12 +118,35 @@ public class ReviewServiceImplTest {
                 .content("updated content")
                 .build();
 
-        // when
-        when(reviewRepository.findById(anyLong())).thenThrow(NoSuchElementException.class);
+        when(reviewRepository.findById(anyLong())).thenReturn(Optional.empty());
 
-        // then
-
-        assertThrows(NoSuchElementException.class,
+        BusinessLogicException exception = assertThrows(BusinessLogicException.class,
                 () -> reviewService.updateReview(reviewId, requestDto));
+
+        assertEquals(REVIEW_NOT_FOUND.getMessage(), exception.getMessage());
     }
+
+//    @Test
+//    void deleteReviewSuccess() {
+//        long reviewId = 1L;
+//        Review review = mock(Review.class);
+//        when(reviewRepository.findById(reviewId)).thenReturn(Optional.of(review));
+//
+//        reviewService.deleteReview(reviewId);
+//
+//        verify(reviewRepository, times(1)).findById(reviewId);
+//        verify(reviewRepository, times(1)).delete(review);
+//    }
+//
+//    @Test
+//    void deleteReviewNotFound() {
+//        long reviewId = 1L;
+//        when(reviewRepository.findById(reviewId)).thenReturn(Optional.empty());
+//
+//        BusinessLogicException exception = assertThrows(BusinessLogicException.class,
+//                () -> reviewService.deleteReview(reviewId));
+//
+//        assertEquals(REVIEW_NOT_FOUND.getMessage(), exception.getMessage());
+//        verify(reviewRepository, times(1)).findById(reviewId);
+//    }
 }

@@ -6,12 +6,14 @@ import com.apink.poppin.api.review.dto.ReviewUpdateRequestDto;
 import com.apink.poppin.api.review.entity.Comment;
 import com.apink.poppin.api.review.entity.Review;
 import com.apink.poppin.api.review.repository.ReviewRepository;
+import com.apink.poppin.common.exception.dto.BusinessLogicException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.NoSuchElementException;
+
+import static com.apink.poppin.common.exception.dto.ExceptionCode.REVIEW_NOT_FOUND;
 
 @Service
 @RequiredArgsConstructor
@@ -22,8 +24,8 @@ public class ReviewServiceImpl implements ReviewService {
     @Override
     public ReviewDto getReviewById(long reviewId) {
 
-        Review review = reviewRepository.findById(reviewId).orElseThrow(
-                () -> new NoSuchElementException("Review not found"));
+        Review review = reviewRepository.findById(reviewId)
+                .orElseThrow(() -> new BusinessLogicException(REVIEW_NOT_FOUND));
 
         List<CommentDto> comments = new ArrayList<>();
 
@@ -56,7 +58,7 @@ public class ReviewServiceImpl implements ReviewService {
     public void updateReview(long reviewId, ReviewUpdateRequestDto requestDto) {
 
         Review review = reviewRepository.findById(reviewId)
-                .orElseThrow(() -> new NoSuchElementException("Review not found"));
+                .orElseThrow(() -> new BusinessLogicException(REVIEW_NOT_FOUND));
 
         review.updateReview(requestDto);
 

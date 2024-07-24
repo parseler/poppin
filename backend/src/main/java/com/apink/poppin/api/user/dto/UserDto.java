@@ -1,14 +1,11 @@
 package com.apink.poppin.api.user.dto;
 
 import jakarta.validation.constraints.NotBlank;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 
 public class UserDto {
 
     @Getter
-    @Setter
     @Builder
     public static class Put {
         @NotBlank
@@ -21,11 +18,18 @@ public class UserDto {
     @Getter
     @Builder
     public static class Response {
-        private long tsid;
+        private long userTsid;
         private String nickname;
         private String email;
         private String phoneNumber;
 //        private List<@Valid UserCategory> userCategories;
+    }
+
+    @Getter
+    @Builder
+    public static class Login {
+        private long userTsid;
+        private String role;
     }
 
 

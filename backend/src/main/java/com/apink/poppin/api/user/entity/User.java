@@ -1,12 +1,18 @@
 package com.apink.poppin.api.user.entity;
 
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import org.hibernate.annotations.ColumnDefault;
 
 @Entity
 @Table(name = "users")
 @Getter
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
 public class User {
 
     @Id
@@ -29,7 +35,7 @@ public class User {
     private String email;
 
     @Column(nullable = false)
-    private int age;
+    private String age;
 
     @Column(nullable = false)
     private String gender;
@@ -41,7 +47,7 @@ public class User {
     private String role;
 
     @Column(nullable = false)
-    @ColumnDefault("img_url")
+    @ColumnDefault("'img_url'")
     private String img;
 
 //    @OneToMany(mappedBy = "userCategory")

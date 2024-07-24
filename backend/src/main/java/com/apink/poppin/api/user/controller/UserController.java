@@ -7,7 +7,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-@RestController("/api/users")
+@RestController
+@RequestMapping("/api/users")
 @RequiredArgsConstructor
 public class UserController {
 
@@ -15,25 +16,26 @@ public class UserController {
 
     @GetMapping("/{nickname}/check")
     public ResponseEntity<?> checkNickname(@PathVariable String nickname) {
-        userService.isAvailableNickname(nickname);
+        userService.verifyNicknameAvailable(nickname);
 
-        return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+        return ResponseEntity.notFound().build();
     }
 
     @GetMapping("/me")
     public ResponseEntity<?> findUser() {
-        String userTsid = "";
+        long userTsid = 0L;
+        UserDto.Response user = userService.findUser(userTsid);
 
-        UserDto.Response user = userService.findUserByTsid(userTsid);
-
-        return ResponseEntity.status(HttpStatus.OK).body(user);
+        return ResponseEntity.ok(user);
     }
 
     @PutMapping("/me")
     public ResponseEntity<?> updateUser(@RequestBody UserDto.Put userDto) {
         String userTsid = "";
 
+        userService.updateUser(userDto);
 
+        return ResponseEntity.ok().build();
     }
 
 }

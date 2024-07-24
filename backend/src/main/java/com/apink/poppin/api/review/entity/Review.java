@@ -2,6 +2,7 @@ package com.apink.poppin.api.review.entity;
 
 import com.apink.poppin.User;
 import com.apink.poppin.api.popup.entity.Popup;
+import com.apink.poppin.api.review.dto.ReviewUpdateRequestDto;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
@@ -61,10 +62,10 @@ public class Review {
     @OneToMany(mappedBy = "review", fetch = FetchType.LAZY)
     private List<Comment> comments;
 
-    public void updateReview(float rating, String title, String thumbnail, String content) {
-        this.rating = rating;
-        this.title = title;
-        this.thumbnail = thumbnail;
-        this.content = content;
+    public void updateReview(ReviewUpdateRequestDto requestDto) {
+        this.rating = requestDto.getRating();
+        this.title = requestDto.getTitle();
+        this.thumbnail = requestDto.getThumbnail();
+        this.content = requestDto.getContent();
     }
 }

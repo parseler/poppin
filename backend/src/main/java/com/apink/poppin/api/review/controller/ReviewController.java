@@ -1,13 +1,11 @@
 package com.apink.poppin.api.review.controller;
 
 import com.apink.poppin.api.review.dto.ReviewDto;
+import com.apink.poppin.api.review.dto.ReviewUpdateRequestDto;
 import com.apink.poppin.api.review.service.ReviewService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/api/reviews")
@@ -21,5 +19,11 @@ public class ReviewController {
         ReviewDto reviewDto = reviewService.getReviewById(reviewId);
 
         return ResponseEntity.ok(reviewDto);
+    }
+
+    @PutMapping("/{reviewId}")
+    public ResponseEntity<?> updateReview(@PathVariable long reviewId, @RequestBody ReviewUpdateRequestDto requestDto) {
+        reviewService.updateReview(reviewId, requestDto);
+        return ResponseEntity.ok().build();
     }
 }

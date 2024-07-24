@@ -2,6 +2,7 @@ package com.apink.poppin.api.review.service;
 
 import com.apink.poppin.api.review.dto.CommentDto;
 import com.apink.poppin.api.review.dto.ReviewDto;
+import com.apink.poppin.api.review.dto.ReviewUpdateRequestDto;
 import com.apink.poppin.api.review.entity.Comment;
 import com.apink.poppin.api.review.entity.Review;
 import com.apink.poppin.api.review.repository.ReviewRepository;
@@ -52,16 +53,12 @@ public class ReviewServiceImpl implements ReviewService {
     }
 
     @Override
-    public void updateReview(ReviewDto updatedReviewDto) {
+    public void updateReview(long reviewId, ReviewUpdateRequestDto requestDto) {
 
-        Review review = reviewRepository.findById(updatedReviewDto.getReviewId())
+        Review review = reviewRepository.findById(reviewId)
                 .orElseThrow(() -> new NoSuchElementException("Review not found"));
 
-        review.updateReview(
-                updatedReviewDto.getRating(),
-                updatedReviewDto.getTitle(),
-                updatedReviewDto.getThumbnail(),
-                updatedReviewDto.getContent());
+        review.updateReview(requestDto);
 
         reviewRepository.save(review);
     }

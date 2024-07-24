@@ -12,6 +12,7 @@ import Category from "@pages/Category";
 import Rank from "@pages/Rank";
 import Open from "@pages/Open";
 import ReviewWrite from "@pages/Review/ReviewWrite";
+import ReviewDetail from "@pages/Review/ReviewDetail";
 
 function App() {
 
@@ -23,6 +24,7 @@ function App() {
         <Route path="/map" element={<Layout01><Map /></Layout01>} />
         <Route path="/review" element={<Layout01><ReviewList /></Layout01>} />
         <Route path="/review/write" element={<Layout03><ReviewWrite /></Layout03>} />
+        <Route path="/review/:reviewId" element={<Layout02><ReviewDetail /></Layout02>} />
         <Route path="/mypage" element={<Layout01><Mypage /></Layout01>} />
         <Route path="/:categoryId" element={<Layout02><Category /></Layout02>} />
         <Route path="/rank" element={<Layout02><Rank /></Layout02>} />

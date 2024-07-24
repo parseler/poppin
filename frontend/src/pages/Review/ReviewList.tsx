@@ -10,11 +10,13 @@ const ReviewList = () => {
       {/*  데이터 받아와서 수정해야 함 */}
       <div className="review-content">
         {banners.map((banner, index) => (
-          <ReviewMedium
-            key={index}
-            image={banner.image}
-            title={banner.text}
-          />
+          <Link key={index} to={`/review/${index}`}>
+            <ReviewMedium
+              reviewId={index}
+              image={banner.image}
+              title={banner.text}
+            />
+          </Link>
         ))}
       </div>
       <Link to={`/review/write`}>

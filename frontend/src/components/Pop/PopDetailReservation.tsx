@@ -43,8 +43,8 @@ const Reservation = () => {
   };
 
   return (
-    <div>
-      <div className="calendar">
+    <div id="pop-reservation">
+      <div className="pop-calendar">
         <div className="content-title">
           예약 날짜
         </div>

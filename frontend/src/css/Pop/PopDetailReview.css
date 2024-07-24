@@ -1,10 +1,10 @@
-.reviews {
+.pop-reviews {
   display: flex;
   flex-direction: column;
   gap: 20px;
 }
 
-.review {
+.pop-review {
   border-bottom: 1px solid #ddd;
   padding-bottom: 15px;
   margin-bottom: 5px;

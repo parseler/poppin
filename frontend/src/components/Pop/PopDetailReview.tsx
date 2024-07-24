@@ -195,9 +195,9 @@ const Review = () => {
     }
 
      return (
-        <div className="reviews">
+        <div className="pop-reviews">
             {reviews.map((review, index) => (
-                <div className="review" key={index}>
+                <div className="pop-review" key={index}>
                     <div className="profile">
                         <img src={review.profile} />
                         <div>

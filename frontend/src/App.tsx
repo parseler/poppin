@@ -4,7 +4,7 @@ import Layout02 from "@components/common/Layout02";
 import Layout03 from "@components/common/Layout03";
 
 import Home from "@pages/Home";
-import Calendar from "@pages/Calender";
+import CalendarPage from "@pages/Calendar";
 import Map from "@pages/Map";
 import ReviewList from "@pages/Review/ReviewList";
 import Mypage from "@pages/Mypage";
@@ -20,7 +20,7 @@ function App() {
     <div className="App">
       <Routes>
         <Route path="/" element={<Layout01><Home /></Layout01>} />
-        <Route path="/calendar" element={<Layout01><Calendar /></Layout01>} />
+        <Route path="/calendar" element={<Layout01><CalendarPage /></Layout01>} />
         <Route path="/map" element={<Layout01><Map /></Layout01>} />
         <Route path="/review" element={<Layout01><ReviewList /></Layout01>} />
         <Route path="/review/write" element={<Layout03><ReviewWrite /></Layout03>} />
@@ -30,6 +30,7 @@ function App() {
         <Route path="/rank" element={<Layout02><Rank /></Layout02>} />
         <Route path="/open" element={<Layout02><Open /></Layout02>} />
       </Routes>
+      {/* <PopDetail /> */}
     </div>
   )
 }

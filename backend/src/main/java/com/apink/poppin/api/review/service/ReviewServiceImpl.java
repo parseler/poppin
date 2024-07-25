@@ -77,9 +77,9 @@ public class ReviewServiceImpl implements ReviewService {
 
         if (review.isDeleted()) {
             throw new BusinessLogicException(REVIEW_ALREADY_DELETED);
-        } else {
-            review.deleteReview();
-            reviewRepository.save(review);
         }
+
+        review.deleteReview();
+        reviewRepository.save(review);
     }
 }

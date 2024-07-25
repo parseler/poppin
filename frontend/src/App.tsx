@@ -3,6 +3,7 @@ import Layout01 from "@components/common/Layout01";
 import Layout02 from "@components/common/Layout02";
 import Layout03 from "@components/common/Layout03";
 
+import Splash from "@pages/Splash";
 import Home from "@pages/Home";
 import CalendarPage from "@pages/Calendar";
 import Map from "@pages/Map";
@@ -13,11 +14,23 @@ import Rank from "@pages/Rank";
 import Open from "@pages/Open";
 import ReviewWrite from "@pages/Review/ReviewWrite";
 import ReviewDetail from "@pages/Review/ReviewDetail";
+import { useEffect, useState } from "react";
 
 function App() {
+  const [isLoading, setIsLoading] = useState(true);
+  
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setIsLoading(false);
+    }, 3000);
+
+    return () => clearTimeout(timer);
+  }, []);
 
   return (
     <div className="App">
+      {isLoading ? <Splash/> : ''}
+
       <Routes>
         <Route path="/" element={<Layout01><Home /></Layout01>} />
         <Route path="/calendar" element={<Layout01><CalendarPage /></Layout01>} />

@@ -1,25 +1,26 @@
 package com.apink.poppin.api.review.service;
 
-import com.apink.poppin.api.test.entity.User;
-import com.apink.poppin.api.test.entity.Popup;
 import com.apink.poppin.api.review.dto.ReviewDto;
 import com.apink.poppin.api.review.dto.ReviewUpdateRequestDto;
 import com.apink.poppin.api.review.entity.Comment;
 import com.apink.poppin.api.review.entity.Review;
 import com.apink.poppin.api.review.repository.ReviewRepository;
+import com.apink.poppin.api.test.entity.Popup;
+import com.apink.poppin.api.test.entity.User;
 import com.apink.poppin.common.exception.dto.BusinessLogicException;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.security.test.context.support.WithMockUser;
 
-import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-import static com.apink.poppin.common.exception.dto.ExceptionCode.*;
+import static com.apink.poppin.common.exception.dto.ExceptionCode.REVIEW_ALREADY_DELETED;
+import static com.apink.poppin.common.exception.dto.ExceptionCode.REVIEW_NOT_FOUND;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
@@ -41,14 +42,11 @@ public class ReviewServiceImplTest {
         Review review = Review.builder()
                 .reviewId(reviewId)
                 .title("Test")
-                .popup(popup)
-                .content("Test Content")
-                .rating(4.0F)
-                .user(user)
-                .createdAt(Instant.now())
                 .comments(comments)
+                .popup(popup)
+                .user(user)
                 .build();
-        when(reviewRepository.findById(reviewId)).thenReturn(Optional.ofNullable(review));
+        when(reviewRepository.findById(reviewId)).thenReturn(Optional.of(review));
 
         ReviewDto reviewDto  = reviewService.getReviewById(reviewId);
 
@@ -71,61 +69,10 @@ public class ReviewServiceImplTest {
 
     @Test
     void updateReviewSuccess() {
-        long reviewId = 1L;
-        Popup popup = mock(Popup.class);
-        User user = mock(User.class);
-        List<Comment> comments = new ArrayList<>();
 
         Review existingReview = Review.builder()
-                .reviewId(reviewId)
-                .popup(popup)
-                .user(user)
                 .rating(5.0F)
                 .title("existing title")
-                .thumbnail("existing thumbnail")
-                .content("existing content")
-                .createdAt(Instant.now())
-                .comments(comments)
-                .deleted(false)
-                .build();
-
-        ReviewUpdateRequestDto requestDto = ReviewUpdateRequestDto.builder()
-                .rating(4.0F)
-                .title("updated title")
-                .thumbnail("updated thumbnail")
-                .content("updated content")
-                .build();
-
-        when(reviewRepository.findById(reviewId)).thenReturn(Optional.of(existingReview));
-
-        reviewService.updateReview(reviewId, requestDto);
-
-        assertEquals(existingReview.getRating(), requestDto.getRating());
-        assertEquals(existingReview.getTitle(), requestDto.getTitle());
-        assertEquals(existingReview.getThumbnail(), requestDto.getThumbnail());
-        assertEquals(existingReview.getContent(), requestDto.getContent());
-        verify(reviewRepository, times(1)).findById(reviewId);
-        verify(reviewRepository, times(1)).save(existingReview);
-    }
-
-    @Test
-    void updateReviewFailure() {
-
-        Popup popup = mock(Popup.class);
-        User user = mock(User.class);
-        List<Comment> comments = new ArrayList<>();
-
-        Review existingReview = Review.builder()
-                .reviewId(1L)
-                .popup(popup)
-                .user(user)
-                .rating(5.0F)
-                .title("existing title")
-                .thumbnail("existing thumbnail")
-                .content("existing content")
-                .createdAt(Instant.now())
-                .comments(comments)
-                .deleted(true)
                 .build();
 
         ReviewUpdateRequestDto requestDto = ReviewUpdateRequestDto.builder()
@@ -137,8 +84,37 @@ public class ReviewServiceImplTest {
 
         when(reviewRepository.findById(anyLong())).thenReturn(Optional.of(existingReview));
 
+        reviewService.updateReview(1L, requestDto);
+
+        assertEquals(existingReview.getRating(), requestDto.getRating());
+        assertEquals(existingReview.getTitle(), requestDto.getTitle());
+        verify(reviewRepository, times(1)).findById(anyLong());
+        verify(reviewRepository, times(1)).save(existingReview);
+    }
+
+    @Test
+    @WithMockUser
+    void updateReviewNotFound() {
+        long reviewId = 1L;
+        ReviewUpdateRequestDto requestDto = ReviewUpdateRequestDto.builder().build();
+        when(reviewRepository.findById(anyLong())).thenReturn(Optional.empty());
+
         BusinessLogicException exception = assertThrows(BusinessLogicException.class,
-                () -> reviewService.updateReview(anyLong(), requestDto));
+                () -> reviewService.updateReview(reviewId, requestDto));
+
+        assertEquals(REVIEW_NOT_FOUND.getMessage(), exception.getMessage());
+    }
+
+    @Test
+    @WithMockUser
+    void updateDeletedReview() {
+        long reviewId = 1L;
+        ReviewUpdateRequestDto requestDto = ReviewUpdateRequestDto.builder().build();
+        Review review = Review.builder().deleted(true).build();
+        when(reviewRepository.findById(anyLong())).thenReturn(Optional.of(review));
+
+        BusinessLogicException exception = assertThrows(BusinessLogicException.class,
+                () -> reviewService.updateReview(reviewId, requestDto));
 
         assertEquals(REVIEW_ALREADY_DELETED.getMessage(), exception.getMessage());
     }
@@ -157,7 +133,17 @@ public class ReviewServiceImplTest {
     }
 
     @Test
-    void deleteReviewFailure() {
+    @WithMockUser
+    void deleteReviewNotFound() {
+        when(reviewRepository.findById(anyLong())).thenReturn(Optional.empty());
+        BusinessLogicException exception = assertThrows(BusinessLogicException.class,
+                () -> reviewService.deleteReview(anyLong()));
+
+        assertEquals(REVIEW_NOT_FOUND.getMessage(), exception.getMessage());
+    }
+
+    @Test
+    void deleteDeletedReview() {
         // given
         Review review = Review.builder().deleted(true).build();
         when(reviewRepository.findById(anyLong())).thenReturn(Optional.of(review));

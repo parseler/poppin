@@ -21,7 +21,12 @@ public class CommentServiceImpl implements CommentService {
     private final UserRepository userRepository;
 
     @Override
-    public Comment createComment(CommentDto commentDto) {
+    public Comment createComment(long reviewId, CommentDto commentDto) {
+
+        if (reviewId != commentDto.getReviewId()) {
+            throw new BusinessLogicException(ExceptionCode.COMMENT_CREATE_FAILED);
+        }
+
         Review review = getReview(commentDto.getReviewId());
         User user = getUser(commentDto.getUserTsid());
         Comment parent = getParent(commentDto.getParent());
@@ -33,9 +38,17 @@ public class CommentServiceImpl implements CommentService {
     }
 
     @Override
-    public void updateComment(CommentDto commentDto) {
+    public void updateComment(long reviewId, long commentId, CommentDto commentDto) {
         Comment comment = commentRepository.findById(commentDto.getCommentId())
                 .orElseThrow(() -> new BusinessLogicException(ExceptionCode.COMMENT_NOT_FOUND));
+
+        if (reviewId != commentDto.getReviewId()) {
+            throw new BusinessLogicException(ExceptionCode.COMMENT_UPDATE_FAILED);
+        }
+
+        if (commentId != commentDto.getCommentId()) {
+            throw new BusinessLogicException(ExceptionCode.COMMENT_UPDATE_FAILED);
+        }
 
         if (comment.isDeleted()) {
             throw new BusinessLogicException(ExceptionCode.COMMENT_ALREADY_DELETED);
@@ -43,6 +56,19 @@ public class CommentServiceImpl implements CommentService {
 
         comment.updateComment(commentDto.getContent());
 
+        commentRepository.save(comment);
+    }
+
+    @Override
+    public void deleteComment(long reviewId, long commentId) {
+        Comment comment = commentRepository.findById(commentId)
+                .orElseThrow(() -> new BusinessLogicException(ExceptionCode.COMMENT_NOT_FOUND));
+
+        if (comment.isDeleted()) {
+            throw new BusinessLogicException(ExceptionCode.COMMENT_ALREADY_DELETED);
+        }
+
+        comment.deleteComment();
         commentRepository.save(comment);
     }
 

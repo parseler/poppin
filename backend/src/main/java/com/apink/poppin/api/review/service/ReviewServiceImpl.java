@@ -61,6 +61,10 @@ public class ReviewServiceImpl implements ReviewService {
         Review review = reviewRepository.findById(reviewId)
                 .orElseThrow(() -> new BusinessLogicException(REVIEW_NOT_FOUND));
 
+        if (review.isDeleted()) {
+            throw new BusinessLogicException(REVIEW_ALREADY_DELETED);
+        }
+
         review.updateReview(requestDto);
 
         reviewRepository.save(review);

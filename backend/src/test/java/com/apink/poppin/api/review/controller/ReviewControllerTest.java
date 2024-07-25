@@ -1,10 +1,14 @@
 package com.apink.poppin.api.review.controller;
 
+import com.apink.poppin.api.review.dto.CommentDto;
 import com.apink.poppin.api.review.dto.ReviewDto;
 import com.apink.poppin.api.review.dto.ReviewUpdateRequestDto;
+import com.apink.poppin.api.review.entity.Comment;
+import com.apink.poppin.api.review.service.CommentService;
 import com.apink.poppin.api.review.service.ReviewService;
 import com.apink.poppin.common.exception.dto.BusinessLogicException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
@@ -37,13 +41,16 @@ public class ReviewControllerTest {
     @MockBean
     private ReviewService reviewService;
 
-    @Test
-    @WithMockUser
-    void getReviewFound() throws Exception {
+    @MockBean
+    private CommentService commentService;
+    ReviewDto reviewDto;
+    CommentDto commentDto;
+    ReviewUpdateRequestDto requestDto;
 
-        long reviewId = 1L;
-        ReviewDto reviewDto = ReviewDto.builder()
-                .reviewId(reviewId)
+    @BeforeEach
+    void setUp() {
+        reviewDto = ReviewDto.builder()
+                .reviewId(1L)
                 .title("Test")
                 .popupId(1L)
                 .content("Test Content")
@@ -52,6 +59,27 @@ public class ReviewControllerTest {
                 .createdAt(Instant.now())
                 .commentDtoList(new ArrayList<>())
                 .build();
+
+        commentDto = CommentDto.builder()
+                .userTsid(1234567890L)
+                .reviewId(1L)
+                .content("Test Content")
+                .build();
+
+        requestDto = ReviewUpdateRequestDto.builder()
+                .rating(4.0F)
+                .title("updated title")
+                .thumbnail("updated thumbnail")
+                .content("updated content")
+                .build();
+    }
+
+    @Test
+    @WithMockUser
+    void getReviewFound() throws Exception {
+
+        long reviewId = 1L;
+
 
         when(reviewService.getReviewById(reviewId)).thenReturn(reviewDto);
 
@@ -80,12 +108,6 @@ public class ReviewControllerTest {
     @WithMockUser
     void updateReviewSuccess() throws Exception {
         long reviewId = 1L;
-        ReviewUpdateRequestDto requestDto = ReviewUpdateRequestDto.builder()
-                .rating(4.0F)
-                .title("updated title")
-                .thumbnail("updated thumbnail")
-                .content("updated content")
-                .build();
 
         doNothing().when(reviewService).updateReview(eq(reviewId), any(ReviewUpdateRequestDto.class));
 
@@ -101,14 +123,8 @@ public class ReviewControllerTest {
 
     @Test
     @WithMockUser
-    void updateReviewFailure() throws Exception {
+    void updateReviewNotFound() throws Exception {
         long reviewId = 1L;
-        ReviewUpdateRequestDto requestDto = ReviewUpdateRequestDto.builder()
-                .rating(4.0F)
-                .title("updated title")
-                .thumbnail("updated thumbnail")
-                .content("updated content")
-                .build();
 
         doThrow(new BusinessLogicException(REVIEW_NOT_FOUND)).when(reviewService).updateReview(eq(reviewId), any(ReviewUpdateRequestDto.class));
 
@@ -146,5 +162,39 @@ public class ReviewControllerTest {
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.message").value("Review already deleted"))
                 .andDo(print());
+    }
+
+    @Test
+    @WithMockUser
+    void createCommentSuccess() throws Exception {
+
+        Comment comment = Comment.builder()
+                .content("Test Content")
+                .build();
+
+        when(commentService.createComment(anyLong(), eq(commentDto))).thenReturn(comment);
+
+        String json = objectMapper.writeValueAsString(commentDto);
+
+        mockMvc.perform(post("/api/reviews/{reviewId}/comments", 1L)
+                .with(csrf())
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(json))
+                .andExpect(status().isOk());
+    }
+
+    @Test
+    @WithMockUser
+    void updateCommentSuccess() throws Exception {
+
+        doNothing().when(commentService).updateComment(commentDto.getReviewId(), commentDto.getCommentId(), commentDto);
+
+        String json = objectMapper.writeValueAsString(commentDto);
+
+        mockMvc.perform(put("/api/reviews/{reviewId}/comments/{commentId}", 1L, 1L)
+        .with(csrf())
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(json))
+                .andExpect(status().isOk());
     }
 }

@@ -1,7 +1,7 @@
 package com.apink.poppin.api.review.entity;
 
-import com.apink.poppin.User;
-import com.apink.poppin.api.popup.entity.Popup;
+import com.apink.poppin.api.test.entity.User;
+import com.apink.poppin.api.test.entity.Popup;
 import com.apink.poppin.api.review.dto.ReviewUpdateRequestDto;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
@@ -65,12 +65,16 @@ public class Review {
     @NotNull
     @ColumnDefault("0")
     @Column(name = "is_deleted", nullable = false)
-    private boolean isDeleted;
+    private boolean deleted;
 
     public void updateReview(ReviewUpdateRequestDto requestDto) {
         this.rating = requestDto.getRating();
         this.title = requestDto.getTitle();
         this.thumbnail = requestDto.getThumbnail();
         this.content = requestDto.getContent();
+    }
+
+    public void deleteReview() {
+        this.deleted = true;
     }
 }

@@ -1,11 +1,14 @@
 package com.apink.poppin.api.popup.controller;
 
 
+import com.apink.poppin.api.heart.dto.HeartRequestDTO;
+import com.apink.poppin.api.heart.service.HeartService;
 import com.apink.poppin.api.popup.dto.PopupDTO;
 import com.apink.poppin.api.popup.dto.PreReservationRequestDTO;
 import com.apink.poppin.api.popup.entity.Popup;
 import com.apink.poppin.api.popup.entity.PreReservation;
 import com.apink.poppin.api.popup.service.PopupService;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -19,6 +22,9 @@ public class PopupController {
 
     @Autowired
     private PopupService popupService;
+
+    @Autowired
+    private HeartService heartService;
 
 
     // 팝업 전체 목록 조회 및 검색
@@ -61,6 +67,20 @@ public class PopupController {
     public ResponseEntity<PreReservation> createPreReservation(@RequestBody PreReservationRequestDTO req, @PathVariable("popupId") Long popupId) {
         PreReservation preReservation = popupService.createPreReservation(req);
         return new ResponseEntity<>(preReservation, HttpStatus.CREATED);
+    }
+
+    // 팝업 좋아요
+    @PostMapping("/{popupId}/heart")
+    public ResponseEntity<String> insertHeart (@RequestBody @Valid HeartRequestDTO reqDto, @PathVariable("popupId") Long popupId) throws Exception {
+        heartService.insert(reqDto);
+        return new ResponseEntity<>("좋아요 추가 완료", HttpStatus.OK);
+    }
+
+    // 팝업 좋아요 해제
+    @DeleteMapping("/{popupId}/heart")
+    public ResponseEntity<String> deleteHeart (@RequestBody @Valid HeartRequestDTO reqDto, @PathVariable("popupId") Long popupId) throws Exception {
+        heartService.delete(reqDto);
+        return new ResponseEntity<>("좋아요 해제 완료", HttpStatus.OK);
     }
 
 }

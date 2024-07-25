@@ -51,8 +51,8 @@ public class Popup {
 //    @NotNull
 //    private Double lon;
 //
-//    @ColumnDefault("0")
-//    private int heart;
+    @ColumnDefault("0")
+    private int heart;
 //    @ColumnDefault("0")
 //    private int hit;
 //    @ColumnDefault("0.0")

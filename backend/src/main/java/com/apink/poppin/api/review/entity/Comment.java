@@ -1,6 +1,7 @@
 package com.apink.poppin.api.review.entity;
 
-import com.apink.poppin.User;
+import com.apink.poppin.api.review.dto.CommentDto;
+import com.apink.poppin.api.test.entity.User;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
@@ -50,4 +51,17 @@ public class Comment {
     @ColumnDefault("0")
     @Column(name = "is_deleted", nullable = false)
     private boolean isDeleted;
+
+    public void createComment(CommentDto commentDto, Review review, User user, Comment parent) {
+        this.review = review;
+        this.content = commentDto.getContent();
+        this.createdAt = Instant.now();
+        this.user = user;
+        this.isDeleted = false;
+        this.parent = parent;
+    }
+
+    public void updateComment(String content) {
+        this.content = content;
+    }
 }

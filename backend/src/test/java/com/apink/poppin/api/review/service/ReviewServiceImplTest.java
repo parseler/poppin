@@ -1,13 +1,12 @@
-package com.apink.poppin.api.service;
+package com.apink.poppin.api.review.service;
 
-import com.apink.poppin.User;
-import com.apink.poppin.api.popup.entity.Popup;
+import com.apink.poppin.api.test.entity.User;
+import com.apink.poppin.api.test.entity.Popup;
 import com.apink.poppin.api.review.dto.ReviewDto;
 import com.apink.poppin.api.review.dto.ReviewUpdateRequestDto;
 import com.apink.poppin.api.review.entity.Comment;
 import com.apink.poppin.api.review.entity.Review;
 import com.apink.poppin.api.review.repository.ReviewRepository;
-import com.apink.poppin.api.review.service.ReviewServiceImpl;
 import com.apink.poppin.common.exception.dto.BusinessLogicException;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -20,6 +19,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
+import static com.apink.poppin.common.exception.dto.ExceptionCode.REVIEW_ALREADY_DELETED;
 import static com.apink.poppin.common.exception.dto.ExceptionCode.REVIEW_NOT_FOUND;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
@@ -87,6 +87,7 @@ public class ReviewServiceImplTest {
                 .content("existing content")
                 .createdAt(Instant.now())
                 .comments(comments)
+                .deleted(false)
                 .build();
 
         ReviewUpdateRequestDto requestDto = ReviewUpdateRequestDto.builder()
@@ -96,7 +97,7 @@ public class ReviewServiceImplTest {
                 .content("updated content")
                 .build();
 
-        when(reviewRepository.findById(reviewId)).thenReturn(Optional.ofNullable(existingReview));
+        when(reviewRepository.findById(reviewId)).thenReturn(Optional.of(existingReview));
 
         reviewService.updateReview(reviewId, requestDto);
 
@@ -110,7 +111,6 @@ public class ReviewServiceImplTest {
 
     @Test
     void updateReviewNotFound() {
-        long reviewId = 1L;
         ReviewUpdateRequestDto requestDto = ReviewUpdateRequestDto.builder()
                 .rating(4.0F)
                 .title("updated title")
@@ -121,32 +121,36 @@ public class ReviewServiceImplTest {
         when(reviewRepository.findById(anyLong())).thenReturn(Optional.empty());
 
         BusinessLogicException exception = assertThrows(BusinessLogicException.class,
-                () -> reviewService.updateReview(reviewId, requestDto));
+                () -> reviewService.updateReview(anyLong(), requestDto));
 
         assertEquals(REVIEW_NOT_FOUND.getMessage(), exception.getMessage());
     }
 
-//    @Test
-//    void deleteReviewSuccess() {
-//        long reviewId = 1L;
-//        Review review = mock(Review.class);
-//        when(reviewRepository.findById(reviewId)).thenReturn(Optional.of(review));
-//
-//        reviewService.deleteReview(reviewId);
-//
-//        verify(reviewRepository, times(1)).findById(reviewId);
-//        verify(reviewRepository, times(1)).delete(review);
-//    }
-//
-//    @Test
-//    void deleteReviewNotFound() {
-//        long reviewId = 1L;
-//        when(reviewRepository.findById(reviewId)).thenReturn(Optional.empty());
-//
-//        BusinessLogicException exception = assertThrows(BusinessLogicException.class,
-//                () -> reviewService.deleteReview(reviewId));
-//
-//        assertEquals(REVIEW_NOT_FOUND.getMessage(), exception.getMessage());
-//        verify(reviewRepository, times(1)).findById(reviewId);
-//    }
+    @Test
+    void deleteReviewSuccess() {
+        Review review = Review.builder()
+                        .deleted(false).build();
+        when(reviewRepository.findById(anyLong())).thenReturn(Optional.of(review));
+
+        reviewService.deleteReview(anyLong());
+
+        assertTrue(review.isDeleted());
+        verify(reviewRepository, times(1)).findById(anyLong());
+        verify(reviewRepository, times(1)).save(review);
+    }
+
+    @Test
+    void deleteReviewFailure() {
+        // given
+        Review review = Review.builder().deleted(true).build();
+        when(reviewRepository.findById(anyLong())).thenReturn(Optional.of(review));
+
+        // when
+        BusinessLogicException exception = assertThrows(BusinessLogicException.class,
+                () -> reviewService.deleteReview(anyLong()));
+
+        // then
+        assertEquals(REVIEW_ALREADY_DELETED.getMessage(), exception.getMessage());
+        verify(reviewRepository, times(1)).findById(anyLong());
+    }
 }

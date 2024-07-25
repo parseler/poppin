@@ -1,9 +1,9 @@
-package com.apink.poppin.api.controller;
+package com.apink.poppin.api.review.controller;
 
-import com.apink.poppin.api.review.controller.ReviewController;
 import com.apink.poppin.api.review.dto.ReviewDto;
 import com.apink.poppin.api.review.dto.ReviewUpdateRequestDto;
 import com.apink.poppin.api.review.service.ReviewService;
+import com.apink.poppin.common.exception.dto.BusinessLogicException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,12 +15,12 @@ import org.springframework.test.web.servlet.MockMvc;
 
 import java.time.Instant;
 import java.util.ArrayList;
-import java.util.NoSuchElementException;
 
+import static com.apink.poppin.common.exception.dto.ExceptionCode.REVIEW_ALREADY_DELETED;
+import static com.apink.poppin.common.exception.dto.ExceptionCode.REVIEW_NOT_FOUND;
 import static org.mockito.Mockito.*;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -68,10 +68,11 @@ public class ReviewControllerTest {
 
         long reviewId = 1L;
 
-        when(reviewService.getReviewById(reviewId)).thenThrow(new NoSuchElementException());
+        when(reviewService.getReviewById(reviewId)).thenThrow(new BusinessLogicException(REVIEW_NOT_FOUND));
 
         mockMvc.perform(get("/api/reviews/{reviewId}", reviewId))
                 .andExpect(status().isNotFound())
+                .andExpect(jsonPath("$.message").value("Review not found"))
                 .andDo(print());
     }
 
@@ -109,7 +110,7 @@ public class ReviewControllerTest {
                 .content("updated content")
                 .build();
 
-        doThrow(new NoSuchElementException("Review not found")).when(reviewService).updateReview(eq(reviewId), any(ReviewUpdateRequestDto.class));
+        doThrow(new BusinessLogicException(REVIEW_NOT_FOUND)).when(reviewService).updateReview(eq(reviewId), any(ReviewUpdateRequestDto.class));
 
         String json = objectMapper.writeValueAsString(requestDto);
 
@@ -118,6 +119,32 @@ public class ReviewControllerTest {
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(json))
                 .andExpect(status().isNotFound())
+                .andExpect(jsonPath("$.message").value("Review not found"))
+                .andDo(print());
+    }
+
+    @Test
+    @WithMockUser
+    void deleteReviewSuccess() throws Exception {
+
+        doNothing().when(reviewService).deleteReview(anyLong());
+
+        mockMvc.perform(delete("/api/reviews/{reviewId}", 1L)
+                        .with(csrf()))
+                .andExpect(status().isOk())
+                .andDo(print());
+    }
+
+    @Test
+    @WithMockUser
+    void deleteReviewFailure() throws Exception {
+
+        doThrow(new BusinessLogicException(REVIEW_ALREADY_DELETED)).when(reviewService).deleteReview(anyLong());
+
+        mockMvc.perform(delete("/api/reviews/{reviewId}", 1L)
+                        .with(csrf()))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.message").value("Review already deleted"))
                 .andDo(print());
     }
 }

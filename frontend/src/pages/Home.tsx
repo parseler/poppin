@@ -1,5 +1,5 @@
 import "@css/Home.css";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import categories from "@utils/get-category-image";
 import banners from "@utils/get-banner-image";
 import Banner from "@components/Home/Banner";
@@ -8,6 +8,12 @@ import PopupBig from "@components/Home/PopupBig";
 import PopupSmall from "@components/Home/PopupSmall";
 
 const Home = () => {
+  const navigate = useNavigate();
+
+  const goPopDetail = () => {
+    navigate("/popdetail");
+  };
+
   return (
     <div id="home">
       {/* 후순위 */}
@@ -34,12 +40,14 @@ const Home = () => {
         </div>
         <div className="best-content">
           {banners.map((banner, index) => (
-            <PopupBig
-              key={index}
-              image={banner.image}
-              text={banner.text}
-              date={banner.date}
-            />
+            <div key={index} onClick={index === 0 ? goPopDetail : undefined}>
+              <PopupBig
+                key={index}
+                image={banner.image}
+                text={banner.text}
+                date={banner.date}
+              />
+            </div>
           ))}
         </div>
       </section>

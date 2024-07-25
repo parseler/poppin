@@ -1,12 +1,14 @@
 import { useState } from "react";
 import Calendar from "react-calendar";
+import { useNavigate, useLocation } from "react-router-dom";
 import "@css/Pop/PopDetailReservation.css";
 import "react-calendar/dist/Calendar.css";
 
-const Reservation = () => {
+const Reservation = ({ title }) => {
   const [selectedDate, setSelectedDate] = useState(new Date());
   const [selectedTime, setSelectedTime] = useState<string | null>(null);
   const [peopleCount, setPeopleCount] = useState(0);
+  const navigate = useNavigate();
 
   const times = ["9시", "10시", "11시", "12시", "14시", "15시"];
   const caution = `예약시간 10분 경과시, 자동 취소 됩니다.
@@ -42,12 +44,28 @@ const Reservation = () => {
     return "";
   };
 
+  const goNextStep = () => {
+    if (peopleCount > 0 && selectedTime) {
+      navigate("/reservation-check", {
+        state: {
+          title,
+          selectedDate,
+          selectedTime,
+          peopleCount,
+          name: "홍길동",
+          contact: "010-1234-5678",
+          email: "test@example.com",
+        },
+      });
+    } else {
+      alert("예약 인원과 시간을 선택해주세요.");
+    }
+  };
+
   return (
     <div id="pop-reservation">
       <div className="pop-calendar">
-        <div className="content-title">
-          예약 날짜
-        </div>
+        <div className="content-title">예약 날짜</div>
         <Calendar
           onChange={setSelectedDate}
           value={selectedDate}
@@ -59,10 +77,10 @@ const Reservation = () => {
               ? "selected-date"
               : getTileClassName({ date, view })
           }
-          prevLabel={<button>{'<'}</button>} // 이전 버튼 커스터마이징
-          nextLabel={<button>{'>'}</button>} // 다음 버튼 커스터마이징
-          prev2Label={<button>{'<<'}</button>}
-          next2Label={<button>{'>>'}</button>}
+          prevLabel={<button>{"<"}</button>} // 이전 버튼 커스터마이징
+          nextLabel={<button>{">"}</button>} // 다음 버튼 커스터마이징
+          prev2Label={<button>{"<<"}</button>}
+          next2Label={<button>{">>"}</button>}
           navigationLabel={({ label }) => (
             <div className="nav-label">{label}</div>
           )} // 네비게이션 라벨 커스터마이징
@@ -101,7 +119,7 @@ const Reservation = () => {
         </div>
       </div>
       <div className="next">
-        <button>다음 단계로 이동</button>
+        <button onClick={goNextStep}>다음 단계로 이동</button>
       </div>
     </div>
   );

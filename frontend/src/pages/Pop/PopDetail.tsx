@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import Slider from "react-slick";
 import PopDetailInfo from "@components/Pop/PopDetailInfo";
 import PopDetailReservation from "@components/Pop/PopDetailReservation";
@@ -20,6 +21,7 @@ import fillLike from "@assets/fillLike.svg";
 function PopDetail() {
   const [activeTab, setActiveTab] = useState<string | null>("info");
   const [liked, setLiked] = useState(false);
+  const navigate = useNavigate();
 
   const settings = {
     dots: true,
@@ -39,22 +41,27 @@ function PopDetail() {
     setActiveTab(tab);
   };
 
+  const onClickBack = () => {
+    navigate("/");
+  };
+
+  const title = "베베 더 월드 팝업스토어";
+
   return (
-    <div>
+    <div id="pop-detail">
       <div className="slider-container">
-        
         <Slider {...settings}>
-          <div>
+          <div className="slider-slide">
             <img src={image1} alt="팝업스토어 이미지 1" />
           </div>
-          <div>
+          <div className="slider-slide">
             <img src={image2} alt="팝업스토어 이미지 2" />
           </div>
-          <div>
+          <div className="slider-slide">
             <img src={image3} alt="팝업스토어 이미지 3" />
           </div>
         </Slider>
-        <button className="back-button">
+        <button className="back-button" onClick={onClickBack}>
           <img src={backButton} />
         </button>
         <button onClick={toggleLike} className="like-button">
@@ -62,7 +69,7 @@ function PopDetail() {
         </button>
       </div>
       <div className="main-info">
-        <div className="title">베베 더 월드 팝업스토어</div>
+        <div className="title">{title}</div>
         <div className="date">
           <h5>24.07.05. ~ 24.07.18.</h5>
         </div>
@@ -105,7 +112,7 @@ function PopDetail() {
       </div>
       <div className="tab-content">
         {activeTab === "info" && <PopDetailInfo />}
-        {activeTab === "reservation" && <PopDetailReservation />}
+        {activeTab === "reservation" && <PopDetailReservation title={title} />}
         {activeTab === "review" && <PopDetailReview />}
         {activeTab === "chat" && <PopDetailChat />}
       </div>

@@ -1,16 +1,16 @@
-.slider-container {
+#pop-detail .slider-container {
   position: relative;
   width: 100%;
   overflow: hidden;
 }
 
-.slider-container img {
+#pop-detail .slider-container img {
   width: 100%;
   height: auto;
   object-fit: contain;
 }
 
-.back-button{
+#pop-detail .back-button{
   position: absolute;
   top: 15px;
   left: 10px;
@@ -19,7 +19,7 @@
   cursor: pointer;
 }
 
-.like-button {
+#pop-detail .like-button {
   position: absolute;
   bottom: 10px;
   right: 10px;
@@ -28,7 +28,7 @@
   cursor: pointer;
 }
 
-.main-info {
+#pop-detail .main-info {
   padding-left: 20px;
   padding-top: 20px;
   height: 85px;
@@ -36,7 +36,7 @@
   margin: 5px;
 }
 
-.title {
+#pop-detail .title {
   padding-bottom: 5px;
   color: #000;
   font-feature-settings: "clig" off, "liga" off;
@@ -49,7 +49,7 @@
   margin-left: 2px;
 }
 
-.date {
+#pop-detail .date {
   color: #000;
   font-family: "NanumSquare Neo OTF";
   font-size: 14px;
@@ -60,7 +60,7 @@
   margin-left: 2px;
 }
 
-.score-like {
+#pop-detail .score-like {
   display: flex;
   height: 25px;
   justify-content: left;
@@ -68,7 +68,7 @@
   flex-shrink: 0;
 }
 
-.score {
+#pop-detail .score {
   color: #222;
   font-family: "NanumSquare Neo OTF";
   font-size: 14px;
@@ -79,11 +79,11 @@
   margin-right: 10px;
 }
 
-.score img{
+#pop-detail .score img{
   margin-right: 2px;
 }
 
-.like {
+#pop-detail .like {
   color: #222;
   font-family: "NanumSquare Neo OTF";
   font-size: 14px;
@@ -94,11 +94,11 @@
   justify-content: center;
 }
 
-.like img{
+#pop-detail .like img{
   margin-right: 2px;
 }
 
-.tab {
+#pop-detail .tab {
   display: flex;
   justify-content: center;
   align-items: center;
@@ -109,7 +109,7 @@
   border-bottom: 1px solid#8b8b8b;
 }
 
-.tab div {
+#pop-detail .tab div {
   display: flex;
   align-items: center;
   justify-content: center;
@@ -127,19 +127,19 @@
   position: relative;
 }
 
-.tab div:hover {
+#pop-detail .tab div:hover {
   color: #d4145a;
 }
 
-.tab div.active {
+#pop-detail .tab div.active {
   color: #d4145a;
   border-bottom: 1px solid #d4145a;
 }
 
-.tab-content {
+#pop-detail .tab-content {
   display: flex;
-  flex-direction: column; /* 내용이 세로로 배치되도록 설정 */
+  flex-direction: column;
   padding: 20px;
-  height: calc(100vh - 50px); /* 탭 높이를 제외한 나머지 높이 사용 */
+  height: calc(100vh - 50px);
   box-sizing: border-box;
 }

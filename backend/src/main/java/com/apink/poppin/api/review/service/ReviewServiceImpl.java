@@ -13,6 +13,7 @@ import org.springframework.stereotype.Service;
 import java.util.ArrayList;
 import java.util.List;
 
+import static com.apink.poppin.common.exception.dto.ExceptionCode.REVIEW_ALREADY_DELETED;
 import static com.apink.poppin.common.exception.dto.ExceptionCode.REVIEW_NOT_FOUND;
 
 @Service
@@ -63,5 +64,18 @@ public class ReviewServiceImpl implements ReviewService {
         review.updateReview(requestDto);
 
         reviewRepository.save(review);
+    }
+
+    @Override
+    public void deleteReview(long reviewId) {
+        Review review = reviewRepository.findById(reviewId)
+                .orElseThrow(() -> new BusinessLogicException(REVIEW_NOT_FOUND));
+
+        if (review.isDeleted()) {
+            throw new BusinessLogicException(REVIEW_ALREADY_DELETED);
+        } else {
+            review.deleteReview();
+            reviewRepository.save(review);
+        }
     }
 }

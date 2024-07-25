@@ -159,7 +159,6 @@ public class CommentServiceImplTest {
     @Test
     @WithMockUser
     public void deleteCommentNotFound() {
-        Comment comment = Comment.builder().build();
         when(commentRepository.findById(anyLong())).thenReturn(Optional.empty());
 
         BusinessLogicException exception = assertThrows(BusinessLogicException.class,

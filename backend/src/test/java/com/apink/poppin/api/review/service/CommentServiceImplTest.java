@@ -19,6 +19,7 @@ import org.springframework.security.test.context.support.WithMockUser;
 import java.time.Instant;
 import java.util.Optional;
 
+import static com.apink.poppin.common.exception.dto.ExceptionCode.*;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
@@ -83,7 +84,7 @@ public class CommentServiceImplTest {
 
         BusinessLogicException exception = assertThrows(BusinessLogicException.class,
                 () -> commentService.createComment(reviewId, commentDto));
-        assertEquals(exception.getMessage(), "Comment creation failed");
+        assertEquals(exception.getMessage(), COMMENT_CREATE_FAILED.getMessage());
     }
 
     @Test
@@ -115,7 +116,7 @@ public class CommentServiceImplTest {
         BusinessLogicException exception = assertThrows(BusinessLogicException.class,
                 () -> commentService.updateComment(commentDto.getReviewId(), commentDto.getCommentId(), commentDto));
 
-        assertEquals(exception.getMessage(), "Comment already deleted");
+        assertEquals(exception.getMessage(), COMMENT_ALREADY_DELETED.getMessage());
     }
 
     @Test
@@ -128,7 +129,7 @@ public class CommentServiceImplTest {
         BusinessLogicException exception = assertThrows(BusinessLogicException.class,
                 () -> commentService.updateComment(2L, commentDto.getCommentId(), commentDto));
 
-        assertEquals(exception.getMessage(), "Comment update failed");
+        assertEquals(exception.getMessage(), COMMENT_UPDATE_FAILED.getMessage());
     }
 
     @Test
@@ -152,7 +153,7 @@ public class CommentServiceImplTest {
         BusinessLogicException exception = assertThrows(BusinessLogicException.class,
                 () -> commentService.deleteComment(2L, commentDto.getCommentId()));
 
-        assertEquals(exception.getMessage(), "Comment already deleted");
+        assertEquals(exception.getMessage(), COMMENT_ALREADY_DELETED.getMessage());
     }
 
     @Test
@@ -163,6 +164,6 @@ public class CommentServiceImplTest {
 
         BusinessLogicException exception = assertThrows(BusinessLogicException.class,
                 () -> commentService.deleteComment(commentDto.getReviewId(), commentDto.getCommentId()));
-        assertEquals(exception.getMessage(), "Comment not found");
+        assertEquals(exception.getMessage(), COMMENT_NOT_FOUND.getMessage());
     }
 }

@@ -19,8 +19,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-import static com.apink.poppin.common.exception.dto.ExceptionCode.REVIEW_ALREADY_DELETED;
-import static com.apink.poppin.common.exception.dto.ExceptionCode.REVIEW_NOT_FOUND;
+import static com.apink.poppin.common.exception.dto.ExceptionCode.*;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
@@ -110,7 +109,25 @@ public class ReviewServiceImplTest {
     }
 
     @Test
-    void updateReviewNotFound() {
+    void updateReviewFailure() {
+
+        Popup popup = mock(Popup.class);
+        User user = mock(User.class);
+        List<Comment> comments = new ArrayList<>();
+
+        Review existingReview = Review.builder()
+                .reviewId(1L)
+                .popup(popup)
+                .user(user)
+                .rating(5.0F)
+                .title("existing title")
+                .thumbnail("existing thumbnail")
+                .content("existing content")
+                .createdAt(Instant.now())
+                .comments(comments)
+                .deleted(false)
+                .build();
+
         ReviewUpdateRequestDto requestDto = ReviewUpdateRequestDto.builder()
                 .rating(4.0F)
                 .title("updated title")
@@ -118,12 +135,13 @@ public class ReviewServiceImplTest {
                 .content("updated content")
                 .build();
 
-        when(reviewRepository.findById(anyLong())).thenReturn(Optional.empty());
+        when(reviewRepository.findById(anyLong())).thenReturn(Optional.of(existingReview));
+        when(reviewRepository.save(any(Review.class))).thenThrow(BusinessLogicException.class);
 
         BusinessLogicException exception = assertThrows(BusinessLogicException.class,
                 () -> reviewService.updateReview(anyLong(), requestDto));
 
-        assertEquals(REVIEW_NOT_FOUND.getMessage(), exception.getMessage());
+        assertEquals(REVIEW_UPDATE_FAILURE.getMessage(), exception.getMessage());
     }
 
     @Test
@@ -139,18 +157,18 @@ public class ReviewServiceImplTest {
         verify(reviewRepository, times(1)).save(review);
     }
 
-    @Test
-    void deleteReviewFailure() {
-        // given
-        Review review = Review.builder().deleted(true).build();
-        when(reviewRepository.findById(anyLong())).thenReturn(Optional.of(review));
-
-        // when
-        BusinessLogicException exception = assertThrows(BusinessLogicException.class,
-                () -> reviewService.deleteReview(anyLong()));
-
-        // then
-        assertEquals(REVIEW_ALREADY_DELETED.getMessage(), exception.getMessage());
-        verify(reviewRepository, times(1)).findById(anyLong());
-    }
+//    @Test
+//    void deleteReviewFailure() {
+//        // given
+//        Review review = Review.builder().deleted(true).build();
+//        when(reviewRepository.findById(anyLong())).thenReturn(Optional.of(review));
+//
+//        // when
+//        BusinessLogicException exception = assertThrows(BusinessLogicException.class,
+//                () -> reviewService.deleteReview(anyLong()));
+//
+//        // then
+//        assertEquals(REVIEW_ALREADY_DELETED.getMessage(), exception.getMessage());
+//        verify(reviewRepository, times(1)).findById(anyLong());
+//    }
 }

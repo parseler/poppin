@@ -45,11 +45,12 @@ public class PopupController {
     }
 
     // 인기 팝업 조회
-//    @GetMapping("/rank")
-//    public ResponseEntity<List<PopupDTO>> getPopupRank() {
-//        List<PopupDTO> rankList = popupService.getPopupRank();
-//        return new ResponseEntity<>(rankList, HttpStatus.OK);
-//    }
+    // 일단 좋아요 순으로 해뒀습니다!
+    @GetMapping("/rank")
+    public ResponseEntity<List<PopupDTO>> getPopupRank() {
+        List<PopupDTO> rankList = popupService.getPopupRank();
+        return new ResponseEntity<>(rankList, HttpStatus.OK);
+    }
 
     // 유사 팝업 조회
 //    @GetMapping("/{popupId}/tag")

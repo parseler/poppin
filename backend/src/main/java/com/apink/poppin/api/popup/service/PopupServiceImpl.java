@@ -41,9 +41,13 @@ public class PopupServiceImpl implements PopupService {
     }
 
     // 인기 팝업 조회
-//    public List<PopupDTO> getPopupRank() {
-//
-//    }
+    public List<PopupDTO> getPopupRank() {
+        List<Popup> list = popupRepository.findAllByOrderByHeartDesc();
+
+        return list.stream()
+                .map(popup -> new PopupDTO(popup.getPopupId(), popup.getName(), popup.getStartDate(), popup.getEndDate()))
+                .collect(Collectors.toList());
+    }
 
     // 유사 팝업 조회
 //    public List<PopupDTO> getSimilarPopup(long popupId) {

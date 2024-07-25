@@ -19,7 +19,7 @@ public interface PopupService {
     PopupDTO getPopup(Long popupId);
 
     // 인기 팝업 조회
-//    List<PopupDTO> getPopupRank();
+    List<PopupDTO> getPopupRank();
 
     // 유사 팝업 조회
 //    List<PopupDTO> getSimilarPopup(long popupId);

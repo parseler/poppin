@@ -17,6 +17,7 @@ public interface PopupRepository extends JpaRepository<Popup, Long> {
     Popup findById(long popupId);
 
     // 인기 팝업 조회
+    List<Popup> findAllByOrderByHeartDesc();
 
     // 유사 팝업 조회
 

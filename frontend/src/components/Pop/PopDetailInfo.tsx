@@ -164,7 +164,7 @@ const Info = () => {
   };
 
   return (
-    <div>
+    <div id="pop-detail-info">
       <div className="locate">
         <img src={locateIcon} alt="위치 아이콘" />
         서울특별시 성동구 성수이로 77 라인프렌즈 스퀘어 성수
@@ -242,7 +242,7 @@ const Info = () => {
           </p>
         ))}
       </div>
-      <div className="map">
+      <div className="map-location">
         <div className="map-title">팝업 스토어 위치</div>
         <div
           id="map"

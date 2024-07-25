@@ -13,6 +13,9 @@ import Rank from "@pages/Rank";
 import Open from "@pages/Open";
 import ReviewWrite from "@pages/Review/ReviewWrite";
 import ReviewDetail from "@pages/Review/ReviewDetail";
+import PopDetail from "@pages/Pop/PopDetail";
+import PopReservationCheck from "@pages/Pop/PopReservationCheck";
+import PopReservationFin from "@pages/Pop/PopReservationFin";
 
 function App() {
 
@@ -29,8 +32,10 @@ function App() {
         <Route path="/:categoryId" element={<Layout02><Category /></Layout02>} />
         <Route path="/rank" element={<Layout02><Rank /></Layout02>} />
         <Route path="/open" element={<Layout02><Open /></Layout02>} />
+        <Route path="/popdetail" element={<PopDetail />} />
+        <Route path="/reservation-check" element={<Layout02><PopReservationCheck /></Layout02>} />
+        <Route path="/reservation-check/finish" element={<Layout02><PopReservationFin /></Layout02>} />
       </Routes>
-      {/* <PopDetail /> */}
     </div>
   )
 }

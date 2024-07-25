@@ -64,7 +64,7 @@
   height: 400px;
 }
 
-.current-location {
+#mappage .current-location {
   padding: 0;
   display: flex;
   align-items: center;
@@ -88,7 +88,7 @@
   justify-content: center;
 }
 
-.store-info {
+#mappage .store-info {
   position: absolute;
   bottom: 10px;
   width: calc(100% - 60px);
@@ -101,13 +101,13 @@
   height: 80px;
 }
 
-.store-info img {
+#mappage .store-info img {
   width: 80px;
   height: 80px;
   border-radius: 10px;
 }
 
-.store-details {
+#mappage .store-details {
   margin-left: 10px;
   display: flex;
   flex-direction: column;
@@ -115,7 +115,7 @@
   width: calc(100% - 100px);
 }
 
-.store-details h2 {
+#mappage .store-details h2 {
   color: #000;
   font-family: "NanumSquare Neo OTF";
   font-size: 16px;
@@ -130,7 +130,7 @@
   text-overflow: ellipsis;
 }
 
-.store-details p {
+#mappage .store-details p {
   color: #000;
   font-family: "NanumSquare Neo OTF";
   font-size: 10px;
@@ -139,10 +139,10 @@
   line-height: normal;
 }
 
-.store-details .open {
+#mappage .store-details .open {
   color: #d4145a;
 }
 
-.store-details .upcoming {
+#mappage .store-details .upcoming {
   color: #b3b3b3;
 }

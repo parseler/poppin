@@ -125,7 +125,7 @@ public class ReviewServiceImplTest {
                 .content("existing content")
                 .createdAt(Instant.now())
                 .comments(comments)
-                .deleted(false)
+                .deleted(true)
                 .build();
 
         ReviewUpdateRequestDto requestDto = ReviewUpdateRequestDto.builder()
@@ -136,12 +136,11 @@ public class ReviewServiceImplTest {
                 .build();
 
         when(reviewRepository.findById(anyLong())).thenReturn(Optional.of(existingReview));
-        when(reviewRepository.save(any(Review.class))).thenThrow(BusinessLogicException.class);
 
         BusinessLogicException exception = assertThrows(BusinessLogicException.class,
                 () -> reviewService.updateReview(anyLong(), requestDto));
 
-        assertEquals(REVIEW_UPDATE_FAILURE.getMessage(), exception.getMessage());
+        assertEquals(REVIEW_ALREADY_DELETED.getMessage(), exception.getMessage());
     }
 
     @Test
@@ -157,18 +156,18 @@ public class ReviewServiceImplTest {
         verify(reviewRepository, times(1)).save(review);
     }
 
-//    @Test
-//    void deleteReviewFailure() {
-//        // given
-//        Review review = Review.builder().deleted(true).build();
-//        when(reviewRepository.findById(anyLong())).thenReturn(Optional.of(review));
-//
-//        // when
-//        BusinessLogicException exception = assertThrows(BusinessLogicException.class,
-//                () -> reviewService.deleteReview(anyLong()));
-//
-//        // then
-//        assertEquals(REVIEW_ALREADY_DELETED.getMessage(), exception.getMessage());
-//        verify(reviewRepository, times(1)).findById(anyLong());
-//    }
+    @Test
+    void deleteReviewFailure() {
+        // given
+        Review review = Review.builder().deleted(true).build();
+        when(reviewRepository.findById(anyLong())).thenReturn(Optional.of(review));
+
+        // when
+        BusinessLogicException exception = assertThrows(BusinessLogicException.class,
+                () -> reviewService.deleteReview(anyLong()));
+
+        // then
+        assertEquals(REVIEW_ALREADY_DELETED.getMessage(), exception.getMessage());
+        verify(reviewRepository, times(1)).findById(anyLong());
+    }
 }

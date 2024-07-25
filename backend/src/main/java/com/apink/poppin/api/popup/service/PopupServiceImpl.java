@@ -1,8 +1,12 @@
 package com.apink.poppin.api.popup.service;
 
 import com.apink.poppin.api.popup.dto.PopupDTO;
+import com.apink.poppin.api.popup.dto.PreReservationRequestDTO;
 import com.apink.poppin.api.popup.entity.Popup;
+import com.apink.poppin.api.popup.entity.PreReservation;
 import com.apink.poppin.api.popup.repository.PopupRepository;
+import com.apink.poppin.api.popup.repository.PreReservationRepository;
+import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -15,6 +19,9 @@ public class PopupServiceImpl implements PopupService {
 
     @Autowired
     private PopupRepository popupRepository;
+
+    @Autowired
+    private PreReservationRepository preReservationRepository;
 
     // 팝업 전체 목록 조회 및 검색
     public List<PopupDTO> getPopupList(String keyword) {
@@ -48,6 +55,32 @@ public class PopupServiceImpl implements PopupService {
         return popups.stream()
                 .map(popup -> new PopupDTO(popup.getPopupId(), popup.getName(), popup.getStartDate(), popup.getEndDate()))
                 .collect(Collectors.toList());
+    }
+
+    // 사전 예약
+    @Override
+    @Transactional
+    public PreReservation createPreReservation(PreReservationRequestDTO req) {
+        // 유저 확인
+//        Member member = memberRepository.findById(req.getUserId())
+//                .orElseThrow(() -> new IllegalArgumentException("Invalid user ID"));
+        // 팝업 확인
+        Popup popup = popupRepository.findById(req.getPopupId())
+                .orElseThrow(() -> new IllegalArgumentException("Invalid popup ID"));
+        // 예약 상태 확인 ?
+//        ReservationStatement reservationStatement = reservationStatementRepository.findById(req.getReservationStatementId())
+//                .orElseThrow(() -> new IllegalArgumentException("Invalid reservation statement ID"));
+
+        PreReservation preReservation = PreReservation.builder()
+//                .user(user)
+                .popup(popup)
+                .reservationDate(req.getReservationDate())
+                .reservationTime(req.getReservationTime())
+                .reservationCount(req.getReservationCount())
+//                .reservationStatement(reservationStatement)
+                .build();
+
+        return preReservationRepository.save(preReservation);
     }
 
 }

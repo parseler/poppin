@@ -2,7 +2,9 @@ package com.apink.poppin.api.popup.controller;
 
 
 import com.apink.poppin.api.popup.dto.PopupDTO;
+import com.apink.poppin.api.popup.dto.PreReservationRequestDTO;
 import com.apink.poppin.api.popup.entity.Popup;
+import com.apink.poppin.api.popup.entity.PreReservation;
 import com.apink.poppin.api.popup.service.PopupService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -52,6 +54,13 @@ public class PopupController {
     public ResponseEntity<List<PopupDTO>> getOpenPopup() {
         List<PopupDTO> openList = popupService.getOpenPopup();
         return new ResponseEntity<>(openList, HttpStatus.OK);
+    }
+
+    // 팝업 사전 예약하기
+    @PostMapping("/{popupId}/pre-reservations")
+    public ResponseEntity<PreReservation> createPreReservation(@RequestBody PreReservationRequestDTO req, @PathVariable("popupId") Long popupId) {
+        PreReservation preReservation = popupService.createPreReservation(req);
+        return new ResponseEntity<>(preReservation, HttpStatus.CREATED);
     }
 
 }

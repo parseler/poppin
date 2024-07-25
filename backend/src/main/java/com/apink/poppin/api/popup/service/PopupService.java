@@ -1,7 +1,9 @@
 package com.apink.poppin.api.popup.service;
 
 import com.apink.poppin.api.popup.dto.PopupDTO;
+import com.apink.poppin.api.popup.dto.PreReservationRequestDTO;
 import com.apink.poppin.api.popup.entity.Popup;
+import com.apink.poppin.api.popup.entity.PreReservation;
 
 import java.util.List;
 
@@ -22,4 +24,7 @@ public interface PopupService {
 
     // 오픈 예정 팝업 조회
     List<PopupDTO> getOpenPopup();
+
+    // 사전 예약
+    PreReservation createPreReservation(PreReservationRequestDTO req);
 }

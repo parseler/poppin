@@ -10,7 +10,7 @@ import java.util.Optional;
 
 @Repository
 public interface ReviewRepository extends JpaRepository<Review, Long> {
-    @EntityGraph(attributePaths = "comments")
+    @EntityGraph(attributePaths = "comments", type = EntityGraph.EntityGraphType.FETCH)
     @NonNull
     Optional<Review> findById(@NonNull Long reviewId);
 }

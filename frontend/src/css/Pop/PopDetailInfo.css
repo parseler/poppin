@@ -1,4 +1,4 @@
-.locate {
+#pop-detail-info .locate {
   color: #222;
   font-family: "NanumSquare Neo OTF";
   font-size: 14px;
@@ -9,11 +9,11 @@
   margin-bottom: 10px;
 }
 
-.locate img {
+#pop-detail-info .locate img {
   margin-right: 3px;
 }
 
-.schedule-isToggleOpen {
+#pop-detail-info .schedule-isToggleOpen {
   color: #222;
   font-family: "NanumSquare Neo OTF";
   font-size: 14px;
@@ -24,16 +24,16 @@
   text-align: center;
 }
 
-.schedule-isToggleOpen img {
+#pop-detail-info .schedule-isToggleOpen img {
   margin-right: 3px;
 }
-.schedule-isToggleOpen button {
+#pop-detail-info .schedule-isToggleOpen button {
   border: none;
   background-color: transparent;
   margin-left: 5px;
 }
 
-.schedule-detail {
+#pop-detail-info .schedule-detail {
   color: #222;
   font-family: "NanumSquare Neo OTF";
   font-size: 12px;
@@ -46,7 +46,7 @@
   margin-bottom: 10px;
 }
 
-.homepage {
+#pop-detail-info .homepage {
   color: #222;
   font-family: "NanumSquare Neo OTF";
   font-size: 12px;
@@ -59,11 +59,11 @@
   margin-bottom: 10px;
 }
 
-.homepage img {
+#pop-detail-info .homepage img {
   margin-right: 3px;
 }
 
-.insta {
+#pop-detail-info .insta {
   color: #222;
   font-family: "NanumSquare Neo OTF";
   font-size: 12px;
@@ -75,11 +75,11 @@
   margin-bottom: 10px;
 }
 
-.insta img {
+#pop-detail-info .insta img {
   margin-right: 3px;
 }
 
-.service {
+#pop-detail-info .service {
   color: #000;
   font-family: "NanumSquare Neo OTF";
   font-size: 10px;
@@ -90,13 +90,13 @@
   margin-bottom: 20px;
 }
 
-.service-icons {
+#pop-detail-info .service-icons {
   display: flex;
   flex-wrap: wrap;
   gap: 10px;
 }
 
-.service-icon {
+#pop-detail-info .service-icon {
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -107,14 +107,14 @@
   margin-bottom: 20px;
 }
 
-.service-icon img {
+#pop-detail-info .service-icon img {
   width: 40px;
   height: 40px;
   margin-bottom: 3px;
   object-fit: contain;
 }
 
-.introduce {
+#pop-detail-info .introduce {
   color: #222;
   font-family: "NanumSquare Neo OTF";
   font-size: 12px;
@@ -123,7 +123,7 @@
   line-height: normal;
 }
 
-.introduce-title {
+#pop-detail-info .introduce-title {
   color: #222;
   font-family: "NanumSquare Neo OTF";
   font-size: 18px;
@@ -133,7 +133,7 @@
   margin-bottom: 10px;
 }
 
-.introduce-content {
+#pop-detail-info .introduce-content {
   color: #222;
   font-family: "NanumSquare Neo OTF";
   font-size: 12px;
@@ -144,7 +144,7 @@
   margin-bottom: 3px;
 }
 
-.map-title {
+#pop-detail-info .map-title {
   color: #222;
   font-family: "NanumSquare Neo OTF";
   font-size: 18px;
@@ -154,7 +154,7 @@
   margin-top: 20px;
   margin-bottom: 15px;
 }
-.rel-pop-title {
+#pop-detail-info .rel-pop-title {
   color: #222;
   font-family: "NanumSquare Neo OTF";
   font-size: 18px;
@@ -165,7 +165,7 @@
   margin-bottom: 7px;
 }
 
-.related-popups {
+#pop-detail-info .related-popups {
   display: flex;
   overflow-x: auto;
   padding: 10px 0;
@@ -174,13 +174,13 @@
   margin-bottom: 10px;
 }
 
-.related-popups .popup-item {
+#pop-detail-info .related-popups .popup-item {
   display: inline-block;
   margin-right: 10px;
   text-align: center;
 }
 
-.rel-pop-info {
+#pop-detail-info .rel-pop-info {
   position: static;
   color: #222;
   font-family: "NanumSquare Neo OTF";

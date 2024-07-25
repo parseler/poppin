@@ -20,26 +20,27 @@
     border-radius: 20px;
 }
 
-.slick-list {
+
+#home .slick-list {
     width: 100%;
     height: calc(100vw - 40px);
     border-radius: 20px;
 }
 
-.banner-content {
+#home .banner-content {
     width: 100%;
     height: calc(100vw - 40px);
     overflow: hidden;
     position: relative;
 }
 
-.banner-content img {
+#home .banner-content img {
     width: 100%;
     height: 100%;
     object-fit: cover;
 }
 
-.banner-gradiant {
+#home .banner-gradiant {
     position: absolute;
     top: 0; left: 0;
     width: 100%;
@@ -48,7 +49,7 @@
     z-index: 2;
 }
 
-.banner-name {
+#home .banner-name {
     position: absolute;
     bottom: 48px; left: 16px;
     color: white;
@@ -92,7 +93,7 @@
     color: black;
 }
 
-.category-image {
+#home .category-image {
     border-radius: 10px;
     width: 60px;
     height: 60px;
@@ -100,7 +101,7 @@
     box-shadow: 0px 0px 8px 2px rgba(196, 196, 196, 0.25);
 }
 
-.category-text {
+#home .category-text {
     display: inline-block;
     font-size: 12px;
     margin: 8px 0;

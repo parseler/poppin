@@ -5,15 +5,18 @@ import com.apink.poppin.api.heart.dto.HeartRequestDTO;
 import com.apink.poppin.api.heart.service.HeartService;
 import com.apink.poppin.api.popup.dto.PopupDTO;
 import com.apink.poppin.api.popup.dto.PreReservationRequestDTO;
+import com.apink.poppin.api.popup.dto.PreReservationResponseDTO;
 import com.apink.poppin.api.popup.entity.Popup;
 import com.apink.poppin.api.popup.entity.PreReservation;
 import com.apink.poppin.api.popup.service.PopupService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Date;
 import java.util.List;
 
 @RestController
@@ -67,6 +70,14 @@ public class PopupController {
     public ResponseEntity<PreReservation> createPreReservation(@RequestBody PreReservationRequestDTO req, @PathVariable("popupId") Long popupId) {
         PreReservation preReservation = popupService.createPreReservation(req);
         return new ResponseEntity<>(preReservation, HttpStatus.CREATED);
+    }
+
+    // 날짜 별 사전 예약자 정보 조회
+    @GetMapping("/{popupId}/pre-reservations")
+    public ResponseEntity<List<PreReservationResponseDTO>> getPreReservation(@RequestParam("reservationDate") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) Date reservationDate,
+                                                                             @PathVariable("popupId") Long popupId) {
+        List<PreReservationResponseDTO> list = popupService.getPreReservationsByDate(reservationDate);
+        return new ResponseEntity<>(list, HttpStatus.OK);
     }
 
     // 팝업 좋아요

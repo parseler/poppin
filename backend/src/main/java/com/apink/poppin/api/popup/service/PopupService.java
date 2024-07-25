@@ -2,9 +2,11 @@ package com.apink.poppin.api.popup.service;
 
 import com.apink.poppin.api.popup.dto.PopupDTO;
 import com.apink.poppin.api.popup.dto.PreReservationRequestDTO;
+import com.apink.poppin.api.popup.dto.PreReservationResponseDTO;
 import com.apink.poppin.api.popup.entity.Popup;
 import com.apink.poppin.api.popup.entity.PreReservation;
 
+import java.util.Date;
 import java.util.List;
 
 public interface PopupService {
@@ -27,4 +29,8 @@ public interface PopupService {
 
     // 사전 예약
     PreReservation createPreReservation(PreReservationRequestDTO req);
+
+    // 날짜 별 사전예약 정보
+    List<PreReservationResponseDTO> getPreReservationsByDate(Date reservationDate);
+
 }

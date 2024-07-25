@@ -2,6 +2,7 @@ package com.apink.poppin.api.popup.service;
 
 import com.apink.poppin.api.popup.dto.PopupDTO;
 import com.apink.poppin.api.popup.dto.PreReservationRequestDTO;
+import com.apink.poppin.api.popup.dto.PreReservationResponseDTO;
 import com.apink.poppin.api.popup.entity.Popup;
 import com.apink.poppin.api.popup.entity.PreReservation;
 import com.apink.poppin.api.popup.repository.PopupRepository;
@@ -11,6 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -81,6 +83,30 @@ public class PopupServiceImpl implements PopupService {
                 .build();
 
         return preReservationRepository.save(preReservation);
+    }
+
+    // 날짜 별 사전예약자 정보 (매니저)
+    // 유저 코드 합치면 유저 정보 같이 보여주기!
+    public List<PreReservationResponseDTO> getPreReservationsByDate(Date reservationDate) {
+        List<PreReservation> preReservations = preReservationRepository.findAllByReservationDate(reservationDate);
+
+        return preReservations.stream()
+                .map(this::convertToResponseDTO)
+                .collect(Collectors.toList());
+    }
+
+    // DTO 변환
+    private PreReservationResponseDTO convertToResponseDTO(PreReservation preReservation) {
+        PreReservationResponseDTO res = new PreReservationResponseDTO();
+        res.setPreReservationId(preReservation.getPreReservationId());
+//        res.setUserId(preReservation.getMember().getUserId());
+        res.setPopupId(preReservation.getPopup().getPopupId());
+        res.setReservationDate(preReservation.getReservationDate());
+        res.setReservationTime(preReservation.getReservationTime());
+        res.setReservationCount(preReservation.getReservationCount());
+        res.setCreatedAt(preReservation.getCreatedAt());
+//        res.setReservationStatementId(preReservation.getReservationStatement().getReservationStatementId());
+        return res;
     }
 
 }

@@ -10,8 +10,8 @@ import java.util.Date;
 @NoArgsConstructor
 @AllArgsConstructor
 public class PreReservationResponseDTO {
-//    private Long preReservationId;
-    private Long userId;
+    private Long preReservationId;
+//    private Long userId;
     private Long popupId;
     private Date reservationDate;
     private Date reservationTime;

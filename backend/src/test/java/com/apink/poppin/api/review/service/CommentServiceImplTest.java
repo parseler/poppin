@@ -19,8 +19,7 @@ import org.springframework.security.test.context.support.WithMockUser;
 import java.time.Instant;
 import java.util.Optional;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
@@ -68,13 +67,23 @@ public class CommentServiceImplTest {
         when(commentRepository.findById(anyLong())).thenReturn(Optional.ofNullable(any(Comment.class)));
         when(commentRepository.save(comment)).thenReturn(comment);
 
-        Comment createdComment = commentService.createComment(commentDto);
+        Comment createdComment = commentService.createComment(commentDto.getReviewId(), commentDto);
 
         assertEquals(commentDto.getContent(), createdComment.getContent());
         verify(reviewRepository, times(1)).findById(anyLong());
         verify(userRepository, times(1)).findById(anyLong());
         verify(commentRepository, times(1)).findById(anyLong());
         verify(commentRepository, times(1)).save(any(Comment.class));
+    }
+
+    @Test
+    @WithMockUser
+    public void createCommentFailure() {
+        long reviewId = 2L;
+
+        BusinessLogicException exception = assertThrows(BusinessLogicException.class,
+                () -> commentService.createComment(reviewId, commentDto));
+        assertEquals(exception.getMessage(), "Comment creation failed");
     }
 
     @Test
@@ -87,7 +96,7 @@ public class CommentServiceImplTest {
 
         when(commentRepository.findById(anyLong())).thenReturn(Optional.of(comment));
 
-        commentService.updateComment(commentDto);
+        commentService.updateComment(commentDto.getReviewId(), commentDto.getCommentId(), commentDto);
 
         assertEquals(comment.getContent(), commentDto.getContent());
         verify(commentRepository, times(1)).findById(anyLong());
@@ -98,16 +107,62 @@ public class CommentServiceImplTest {
     @WithMockUser
     public void updateDeletedComment() {
         Comment comment = Comment.builder()
-                .content("Deleted Content")
-                .createdAt(Instant.now())
                 .isDeleted(true)
                 .build();
 
         when(commentRepository.findById(anyLong())).thenReturn(Optional.of(comment));
 
         BusinessLogicException exception = assertThrows(BusinessLogicException.class,
-                () -> commentService.updateComment(commentDto));
+                () -> commentService.updateComment(commentDto.getReviewId(), commentDto.getCommentId(), commentDto));
 
         assertEquals(exception.getMessage(), "Comment already deleted");
+    }
+
+    @Test
+    @WithMockUser
+    public void updateCommentFailure() {
+
+        Comment comment = Comment.builder().build();
+        when(commentRepository.findById(anyLong())).thenReturn(Optional.of(comment));
+
+        BusinessLogicException exception = assertThrows(BusinessLogicException.class,
+                () -> commentService.updateComment(2L, commentDto.getCommentId(), commentDto));
+
+        assertEquals(exception.getMessage(), "Comment update failed");
+    }
+
+    @Test
+    @WithMockUser
+    public void deleteCommentSuccess() {
+        Comment comment = Comment.builder().isDeleted(false).build();
+        when(commentRepository.findById(anyLong())).thenReturn(Optional.of(comment));
+
+        commentService.deleteComment(commentDto.getReviewId(), commentDto.getCommentId());
+
+        assertTrue(comment.isDeleted());
+        verify(commentRepository, times(1)).findById(anyLong());
+        verify(commentRepository, times(1)).save(any(Comment.class));
+    }
+
+    @Test
+    @WithMockUser
+    public void deleteDeletedComment() {
+        Comment comment = Comment.builder().isDeleted(true).build();
+        when(commentRepository.findById(anyLong())).thenReturn(Optional.of(comment));
+        BusinessLogicException exception = assertThrows(BusinessLogicException.class,
+                () -> commentService.deleteComment(2L, commentDto.getCommentId()));
+
+        assertEquals(exception.getMessage(), "Comment already deleted");
+    }
+
+    @Test
+    @WithMockUser
+    public void deleteCommentNotFound() {
+        Comment comment = Comment.builder().build();
+        when(commentRepository.findById(anyLong())).thenReturn(Optional.empty());
+
+        BusinessLogicException exception = assertThrows(BusinessLogicException.class,
+                () -> commentService.deleteComment(commentDto.getReviewId(), commentDto.getCommentId()));
+        assertEquals(exception.getMessage(), "Comment not found");
     }
 }

@@ -1,0 +1,279 @@
+#regist-pop {
+  max-width: 600px;
+  margin: 0 auto;
+  padding: 20px;
+  background-color: white;
+}
+
+#regist-pop .essential-info-title {
+  color: #000;
+  text-align: center;
+  font-family: "NanumSquare Neo OTF";
+  font-size: 16px;
+  font-style: normal;
+  font-weight: 700;
+  line-height: normal;
+  margin-bottom: 20px;
+}
+
+#regist-pop input[type="file"] {
+  display: none;
+}
+
+#regist-pop label {
+  display: block;
+  margin-bottom: 5px;
+  color: #000;
+  font-family: "NanumSquare Neo OTF";
+  font-size: 16px;
+  font-style: normal;
+  font-weight: 400;
+  line-height: normal;
+  cursor: pointer;
+  margin-bottom: 10px;
+}
+
+#regist-pop input,
+#regist-pop textarea,
+#regist-pop select,
+#regist-pop button {
+  width: 100%;
+  padding: 10px;
+  margin-top: 5px;
+  border: 1px solid #ccc;
+  border-radius: 10px;
+  box-sizing: border-box;
+  color: #8b8b8b;
+  font-family: "NanumSquare Neo OTF";
+  font-size: 12px;
+  font-style: normal;
+  font-weight: 400;
+  line-height: normal;
+}
+
+#regist-pop textarea {
+  height: auto;
+  margin-bottom: 20px;
+}
+
+#regist-pop .regist-photo {
+  border-radius: 10px;
+  border: 0.7px solid #cacaca;
+  background: #fff;
+  padding: 10px;
+  color: #8b8b8b;
+  text-align: center;
+  font-family: "NanumSquare Neo OTF";
+  font-size: 12px;
+  font-style: normal;
+  font-weight: 400;
+  line-height: 40px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+#regist-pop .regist-photo img {
+  border: none;
+  width: 32px;
+  height: 32px;
+}
+
+#regist-pop img {
+  max-width: 100%;
+  height: auto;
+  margin-top: 10px;
+  border: 1px solid #ccc;
+  border-radius: 10px;
+}
+
+#regist-pop .image-preview {
+  display: flex;
+  overflow-x: auto;
+}
+
+#regist-pop .image-preview img {
+  width: 200px;
+  height: 200px;
+  margin-right: 10px;
+  margin-bottom: 15px;
+}
+
+#regist-pop .category-buttons button {
+  width: auto;
+  padding: 10px 15px;
+  margin: 5px;
+  background-color: white;
+  color: #8b8b8b;
+  text-align: center;
+  font-family: "NanumSquare Neo OTF";
+  font-size: 12px;
+  font-style: normal;
+  font-weight: 400;
+  line-height: normal;
+  cursor: pointer;
+  border-radius: 10px;
+  border: 0.7px solid #cacaca;
+  background: #fff;
+}
+
+#regist-pop .category-buttons button.selected {
+  background-color: #d4145a;
+  border: 0.7px solid #d4145a;
+  color: white;
+  text-align: center;
+  font-family: "NanumSquare Neo OTF";
+  font-size: 12px;
+  font-style: normal;
+  font-weight: 400;
+  line-height: normal;
+}
+
+#regist-pop .category-buttons button:disabled {
+  background-color: #ccc;
+  cursor: not-allowed;
+}
+
+#regist-pop .go-next button {
+  border: none;
+  border-radius: 10px;
+  background: linear-gradient(90deg, #d4145a 0%, #fbb03b 100%);
+  box-shadow: 0px 4px 12px 0px rgba(153, 153, 153, 0.25);
+  color: #fff;
+  text-align: center;
+  font-family: "NanumSquare Neo OTF";
+  font-size: 16px;
+  font-style: normal;
+  font-weight: 700;
+  line-height: normal;
+}
+
+#regist-pop .date-term {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+#regist-pop .react-datepicker-wrapper {
+  width: auto;
+  margin: 0 10px;
+}
+
+.react-datepicker-popper {
+  z-index: 2;
+}
+
+#regist-pop .react-datepicker__input-container {
+  text-align: center;
+}
+
+#regist-pop .inline {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+#regist-pop .inline input,
+#regist-pop .inline select {
+  width: auto;
+  flex: 1;
+  margin: 0 5px;
+  text-align: center;
+}
+
+#regist-pop .inline button {
+  background-color: #d4145a;
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  border: none;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 0;
+  margin: 0 5px;
+  box-sizing: border-box;
+  color: white;
+  text-align: center;
+  font-family: "NanumSquare Neo OTF";
+  font-size: 12px;
+  font-style: normal;
+  font-weight: 400;
+  line-height: normal;
+}
+
+#regist-pop .address-search {
+  border-radius: 10px;
+  border: 0.7px solid #cacaca;
+  background: #fff;
+  padding: 10px;
+  color: #8b8b8b;
+  font-family: "NanumSquare Neo OTF";
+  font-size: 12px;
+  font-style: normal;
+  font-weight: 400;
+}
+
+#regist-pop .address-modal {
+  display: none;
+}
+
+#regist-pop .address-modal.active {
+  display: block;
+}
+
+#regist-pop .regist-popup-name input {
+  margin-bottom: 20px;
+}
+
+#regist-pop .date-term-input {
+  width: 80%;
+  text-align: center;
+  margin-bottom: 10px;
+}
+
+#regist-pop .added-time,
+#regist-pop .added-address {
+  margin-bottom: 10px;
+  border: none;
+  border-radius: 10px;
+  padding: 10px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+}
+
+#regist-pop .added-time-detail {
+  text-align: center;
+  align-items: center;
+  line-height: 25px;
+}
+
+#regist-pop .react-datepicker {
+  font-size: 10px;
+  width: 170px;
+}
+
+#regist-pop .react-datepicker__month {
+  margin: 0.4rem;
+}
+
+#regist-pop .react-datepicker__day-name,
+#regist-pop .react-datepicker__day,
+#regist-pop .react-datepicker__time-name {
+    width: 1rem;
+    line-height: 1rem;
+}
+
+#regist-pop .react-datepicker__current-month {
+  font-size: 12px;
+}
+
+#regist-pop .react-datepicker-popper {
+    z-index: 10; /* 필요에 따라 z-index 값을 조정 */
+  }
+  

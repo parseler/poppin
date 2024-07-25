@@ -2,6 +2,7 @@ import { Route, Routes } from "react-router-dom";
 import Layout01 from "@components/common/Layout01";
 import Layout02 from "@components/common/Layout02";
 import Layout03 from "@components/common/Layout03";
+import Layout04 from "@components/common/Layout04";
 
 import Home from "@pages/Home";
 import CalendarPage from "@pages/Calendar";
@@ -17,6 +18,7 @@ import PopDetail from "@pages/Pop/PopDetail";
 import PopReservationCheck from "@pages/Pop/PopReservationCheck";
 import PopReservationFin from "@pages/Pop/PopReservationFin";
 import Waiting from "@pages/Waiting";
+import RegistPop from "@pages/ManagerPage/RegistPop";
 
 function App() {
 
@@ -34,9 +36,10 @@ function App() {
         <Route path="/rank" element={<Layout02><Rank /></Layout02>} />
         <Route path="/open" element={<Layout02><Open /></Layout02>} />
         <Route path="/popdetail" element={<PopDetail />} />
-        <Route path="/reservation-check" element={<Layout02><PopReservationCheck /></Layout02>} />
-        <Route path="/reservation-check/finish" element={<Layout02><PopReservationFin /></Layout02>} />
+        <Route path="/reservation-check" element={<Layout04><PopReservationCheck /></Layout04>} />
+        <Route path="/reservation-check/finish" element={<Layout04><PopReservationFin /></Layout04>} />
         <Route path="/waiting" element={<Waiting />} />
+        <Route path="/regist-pop" element={<Layout04><RegistPop /></Layout04>} />
       </Routes>
     </div>
   )

@@ -22,27 +22,32 @@ public class KakaoResponse implements OAuth2UserResponse{
     @Override
     public String getName() {
         Map<String, Object> properties = (Map<String, Object>) attributes.get("properties");
-        return (String) properties.get("nickname");
+        return  properties.get("nickname").toString();
     }
 
     @Override
     public String getEmail() {
+
         Map<String, Object> kakaoAccount = (Map<String, Object>) attributes.get("kakao_account");
-        return (String) kakaoAccount.get("email");
+        return  kakaoAccount.get("email").toString();
     }
 
     @Override
     public String getAge() {
-        return "대";
+        Map<String, Object> kakaoAccount = (Map<String, Object>) attributes.get("kakao_account");
+        String age = kakaoAccount.get("age_range").toString().split("~")[0];
+        return age + "대";
     }
 
     @Override
     public String getGender() {
-        return "F";
+        Map<String, Object> kakaoAccount = (Map<String, Object>) attributes.get("kakao_account");
+        return kakaoAccount.get("gender").equals("male") ? "M" : "F";
     }
 
     @Override
     public String getPhoneNumber() {
-        return "010-1234-5678";
+        Map<String, Object> kakaoAccount = (Map<String, Object>) attributes.get("kakao_account");
+        return kakaoAccount.get("phone_number").toString();
     }
 }

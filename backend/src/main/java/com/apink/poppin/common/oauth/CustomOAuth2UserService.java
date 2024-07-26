@@ -18,7 +18,6 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 public class CustomOAuth2UserService extends DefaultOAuth2UserService {
 
-    private final SnowflakeTsidUtil tsidUtil;
     private final UserRepository userRepository;
     private final SnowflakeTsidUtil snowflakeTsidUtil;
     private static int nick = 1;

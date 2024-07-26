@@ -10,6 +10,7 @@ import com.apink.poppin.api.popup.entity.Popup;
 import com.apink.poppin.api.popup.entity.PreReservation;
 import com.apink.poppin.api.popup.service.PopupService;
 import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
@@ -20,14 +21,12 @@ import java.util.Date;
 import java.util.List;
 
 @RestController
+@RequiredArgsConstructor
 @RequestMapping("/api/popups")
 public class PopupController {
 
-    @Autowired
-    private PopupService popupService;
-
-    @Autowired
-    private HeartService heartService;
+    private final PopupService popupService;
+    private final HeartService heartService;
 
 
     // 팝업 전체 목록 조회 및 검색

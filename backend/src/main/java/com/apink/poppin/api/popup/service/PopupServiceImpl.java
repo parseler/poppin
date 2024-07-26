@@ -8,6 +8,7 @@ import com.apink.poppin.api.popup.entity.PreReservation;
 import com.apink.poppin.api.popup.repository.PopupRepository;
 import com.apink.poppin.api.popup.repository.PreReservationRepository;
 import jakarta.transaction.Transactional;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -17,13 +18,11 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
+@RequiredArgsConstructor
 public class PopupServiceImpl implements PopupService {
 
-    @Autowired
-    private PopupRepository popupRepository;
-
-    @Autowired
-    private PreReservationRepository preReservationRepository;
+    private final PopupRepository popupRepository;
+    private final PreReservationRepository preReservationRepository;
 
     // 팝업 전체 목록 조회 및 검색
     public List<PopupDTO> getPopupList(String keyword) {

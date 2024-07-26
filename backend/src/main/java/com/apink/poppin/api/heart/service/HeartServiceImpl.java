@@ -6,17 +6,17 @@ import com.apink.poppin.api.heart.repository.HeartRepository;
 import com.apink.poppin.api.popup.entity.Popup;
 import com.apink.poppin.api.popup.repository.PopupRepository;
 import jakarta.transaction.Transactional;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
+@Service
+@RequiredArgsConstructor
 public class HeartServiceImpl implements HeartService {
-    @Autowired
-    private HeartRepository heartRepository;
 
-    @Autowired
-    private PopupRepository popupRepository;
-
-    @Autowired
-//    private MemberRepository memberRepository;
+    private final HeartRepository heartRepository;
+    private final PopupRepository popupRepository;
+//    private final MemberRepository memberRepository;
 
 
     // 좋아요 추가

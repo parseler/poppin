@@ -1,10 +1,14 @@
 import React, { useState } from "react";
 import "@css/ManagerPage/RegistPop.css";
-import DatePicker from "react-datepicker";
+import DatePicker, { registerLocale } from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
+import { ko } from "date-fns/locale";
 import DaumPostcode from "react-daum-postcode";
 
 import registPhoto from "@assets/registPhoto.svg";
+import firstStep from "@assets/firstStep.svg";
+
+registerLocale("ko", ko);
 
 function RegistPop() {
   const [storeName, setStoreName] = useState("");
@@ -13,10 +17,18 @@ function RegistPop() {
   const [startDate, setStartDate] = useState<Date | null>(null);
   const [endDate, setEndDate] = useState<Date | null>(null);
   const [selectedDays, setSelectedDays] = useState<string[]>([]);
-  const [timeSlots, setTimeSlots] = useState<{ day: string; startTime: string; endTime: string; }[]>([]);
-  const [selectedStartTime, setSelectedStartTime] = useState<string>("");
-  const [selectedEndTime, setSelectedEndTime] = useState<string>("");
+  const [timeSlots, setTimeSlots] = useState<
+    { day: string; startTime: string; endTime: string }[]
+  >([]);
+  const [selectedStartTimeHour, setSelectedStartTimeHour] =
+    useState<string>("");
+  const [selectedStartTimeMinute, setSelectedStartTimeMinute] =
+    useState<string>("");
+  const [selectedEndTimeHour, setSelectedEndTimeHour] = useState<string>("");
+  const [selectedEndTimeMinute, setSelectedEndTimeMinute] =
+    useState<string>("");
   const [address, setAddress] = useState("");
+  const [detailedAddress, setDetailedAddress] = useState("");
   const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
   const [showAddressModal, setShowAddressModal] = useState(false);
 
@@ -46,17 +58,67 @@ function RegistPop() {
   };
 
   const handleAddTimeSlot = () => {
-    if (selectedDays.length > 0 && selectedStartTime && selectedEndTime) {
-      setTimeSlots([...timeSlots, { day: selectedDays[selectedDays.length - 1], startTime: selectedStartTime, endTime: selectedEndTime }]);
-      setSelectedStartTime("");
-      setSelectedEndTime("");
+    const startTime = `${selectedStartTimeHour}:${selectedStartTimeMinute}`;
+    const endTime = `${selectedEndTimeHour}:${selectedEndTimeMinute}`;
+
+    if (
+      selectedDays.length > 0 &&
+      selectedStartTimeHour &&
+      selectedStartTimeMinute &&
+      selectedEndTimeHour &&
+      selectedEndTimeMinute
+    ) {
+      setTimeSlots([
+        ...timeSlots,
+        { day: selectedDays[selectedDays.length - 1], startTime, endTime },
+      ]);
+      setSelectedStartTimeHour("");
+      setSelectedStartTimeMinute("");
+      setSelectedEndTimeHour("");
+      setSelectedEndTimeMinute("");
     }
   };
+
+  const renderCustomHeader = ({
+    date,
+    changeMonth,
+    decreaseMonth,
+    increaseMonth,
+    prevMonthButtonDisabled,
+    nextMonthButtonDisabled,
+  }) => (
+    <div className="custom-header">
+      <button onClick={decreaseMonth} disabled={prevMonthButtonDisabled}>
+        {"<"}
+      </button>
+      <span className="custom-header__date">
+        {date.toLocaleString("ko", { month: "long" })}
+      </span>
+      <button onClick={increaseMonth} disabled={nextMonthButtonDisabled}>
+        {">"}
+      </button>
+    </div>
+  );
+
+  const hourOptions = Array.from({ length: 24 }, (_, i) => (
+    <option key={i} value={i < 10 ? `0${i}` : i}>
+      {i < 10 ? `0${i}` : i}
+    </option>
+  ));
+
+  const minuteOptions = Array.from({ length: 60 }, (_, i) => (
+    <option key={i} value={i < 10 ? `0${i}` : i}>
+      {i < 10 ? `0${i}` : i}
+    </option>
+  ));
 
   return (
     <div id="regist-pop">
       <div className="essential-info-title">팝업스토어 필수 정보</div>
-      <div>
+      <div className="step-one">
+        <img src={firstStep} />
+      </div>
+      <div className="regist-photo-content">
         <label>팝업스토어 사진</label>
         <label htmlFor="store-images" className="regist-photo">
           <img src={registPhoto} />
@@ -95,6 +157,9 @@ function RegistPop() {
             selected={startDate}
             onChange={(date) => setStartDate(date)}
             placeholderText="운영 시작일"
+            dateFormat="Y. M. d." // 날짜 형식 설정
+            locale="ko" // 로케일 설정
+            renderCustomHeader={renderCustomHeader} // 커스텀 헤더 설정
           />
           <div className="wave"> ~ </div>
           <DatePicker
@@ -102,6 +167,9 @@ function RegistPop() {
             selected={endDate}
             onChange={(date) => setEndDate(date)}
             placeholderText="운영 종료일"
+            dateFormat="Y. M. d." // 날짜 형식 설정
+            locale="ko" // 로케일 설정
+            renderCustomHeader={renderCustomHeader} // 커스텀 헤더 설정
           />
         </div>
       </div>
@@ -109,30 +177,59 @@ function RegistPop() {
         <label>팝업스토어 운영 시간</label>
         <div className="inline">
           <select onChange={handleDayChange}>
-            <option value="">요일 선택</option>
-            <option value="월요일">월요일</option>
-            <option value="화요일">화요일</option>
-            <option value="수요일">수요일</option>
-            <option value="목요일">목요일</option>
-            <option value="금요일">금요일</option>
-            <option value="토요일">토요일</option>
-            <option value="일요일">일요일</option>
+            <option value="">-</option>
+            <option value="월요일">월</option>
+            <option value="화요일">화</option>
+            <option value="수요일">수</option>
+            <option value="목요일">목</option>
+            <option value="금요일">금</option>
+            <option value="토요일">토</option>
+            <option value="일요일">일</option>
           </select>
-          <input
-            type="time"
-            value={selectedStartTime}
-            onChange={(e) => setSelectedStartTime(e.target.value)}
-          />
-          <input
-            type="time"
-            value={selectedEndTime}
-            onChange={(e) => setSelectedEndTime(e.target.value)}
-          />
+          <div className="time-input-group">
+            <select
+              value={selectedStartTimeHour}
+              onChange={(e) => setSelectedStartTimeHour(e.target.value)}
+              className="time-picker"
+            >
+              <option value="">-</option>
+              {hourOptions}
+            </select>
+            <span className="time-colon">:</span>
+            <select
+              value={selectedStartTimeMinute}
+              onChange={(e) => setSelectedStartTimeMinute(e.target.value)}
+              className="time-picker"
+            >
+              <option value="">-</option>
+              {minuteOptions}
+            </select>
+          </div>
+          <span className="time-separator">~</span>
+          <div className="time-input-group">
+            <select
+              value={selectedEndTimeHour}
+              onChange={(e) => setSelectedEndTimeHour(e.target.value)}
+              className="time-picker"
+            >
+              <option value="">-</option>
+              {hourOptions}
+            </select>
+            <span className="time-colon">:</span>
+            <select
+              value={selectedEndTimeMinute}
+              onChange={(e) => setSelectedEndTimeMinute(e.target.value)}
+              className="time-picker"
+            >
+              <option value="">-</option>
+              {minuteOptions}
+            </select>
+          </div>
           <button onClick={handleAddTimeSlot}>+</button>
         </div>
         <div className="added-time">
           {timeSlots.map((slot, index) => (
-            <div key={index}  className="added-time-detail">
+            <div key={index} className="added-time-detail">
               {slot.day} - {slot.startTime} ~ {slot.endTime}
             </div>
           ))}
@@ -142,14 +239,24 @@ function RegistPop() {
         <label>주소 검색하기</label>
         <label
           className="address-search"
-          onClick={() => setShowAddressModal(!showAddressModal)}
+          onClick={() => setShowAddressModal(true)}
         >
           주소를 검색해주세요.
         </label>
         <div className={`address-modal ${showAddressModal ? "active" : ""}`}>
           <DaumPostcode onComplete={handleAddressComplete} />
         </div>
-        <div className="added-address">{address}</div>
+        <div>
+          <input
+            className="detail-address"
+            placeholder="상세 주소를 입력해주세요."
+            value={detailedAddress}
+            onChange={(e) => setDetailedAddress(e.target.value)}
+          />
+        </div>
+        <div className="address-container">
+          <div className="added-address">{`${address} ${detailedAddress}`}</div>
+        </div>
       </div>
       <div>
         <label>팝업스토어 소개 및 설명</label>

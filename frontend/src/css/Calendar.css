@@ -12,7 +12,7 @@
 }
 
 #calendar.small .react-calendar {
-  height: 250px;
+  height: auto;
   overflow: hidden;
   transition: height 0.3s ease;
 }

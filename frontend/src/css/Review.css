@@ -33,7 +33,7 @@
   object-fit: cover;
 }
 
-.review-gradiant {
+#review-medium .review-gradiant {
   position: absolute;
   top: 0; left: 0;
   width: 100%;
@@ -42,7 +42,7 @@
   z-index: 2;
 }
 
-.review-title {
+#review-medium .review-title {
   position: absolute;
   bottom: 16px; left: 16px;
   color: white;

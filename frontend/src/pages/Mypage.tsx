@@ -69,7 +69,7 @@ const Mypage = () => {
       <div className="mypage-menu-section">
         <ul>
           <li>
-            <Link to="">
+            <Link to="/mypage/review">
               <p>내가 작성한 팝업 후기</p>
               <svg
                 xmlns="http://www.w3.org/2000/svg"

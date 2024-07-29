@@ -6,12 +6,13 @@ import com.apink.poppin.api.heart.service.HeartService;
 import com.apink.poppin.api.popup.dto.PopupDTO;
 import com.apink.poppin.api.popup.dto.PreReservationRequestDTO;
 import com.apink.poppin.api.popup.dto.PreReservationResponseDTO;
-import com.apink.poppin.api.popup.entity.Popup;
 import com.apink.poppin.api.popup.entity.PreReservation;
 import com.apink.poppin.api.popup.service.PopupService;
+import com.apink.poppin.api.review.dto.ReviewDto;
+import com.apink.poppin.api.review.dto.ReviewListDto;
+import com.apink.poppin.api.review.service.ReviewService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -27,6 +28,7 @@ public class PopupController {
 
     private final PopupService popupService;
     private final HeartService heartService;
+    private final ReviewService reviewService;
 
 
     // 팝업 전체 목록 조회 및 검색
@@ -94,4 +96,15 @@ public class PopupController {
         return new ResponseEntity<>("좋아요 해제 완료", HttpStatus.OK);
     }
 
+    @PostMapping("/{popupId}/reviews")
+    public ResponseEntity<?> createReview(@PathVariable long popupId, @RequestBody ReviewDto reviewDto) {
+        reviewService.createReview(popupId, reviewDto);
+        return ResponseEntity.ok().build();
+    }
+
+    @GetMapping("/{popupId}/reviews")
+    public ResponseEntity<?> getReviews(@PathVariable long popupId) {
+        List<ReviewListDto> list = reviewService.getReviews(popupId);
+        return ResponseEntity.ok(list);
+    }
 }

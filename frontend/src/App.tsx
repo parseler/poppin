@@ -1,4 +1,5 @@
 import { Route, Routes } from "react-router-dom";
+import { useEffect, useState } from "react";
 import Layout01 from "@components/common/Layout01";
 import Layout02 from "@components/common/Layout02";
 import Layout03 from "@components/common/Layout03";
@@ -24,8 +25,10 @@ import RegistPop from "@pages/ManagerPage/RegistPop";
 import RegistPopOptional from "@pages/ManagerPage/RegistPopOptional";
 import RegistFin from "@pages/ManagerPage/RegistFin";
 import RegistPopReservationInfo from "@pages/ManagerPage/RegistPopReservationInfo";
+import UserUpdate from "@pages/UserPage/UserUpdate";
+import MyReviewList from "@pages/UserPage/MyReviewList";
+import MyLikeList from "@pages/UserPage/MyLikeList";
 
-import { useEffect, useState } from "react";
 
 function App() {
   const [isLoading, setIsLoading] = useState(true);
@@ -62,6 +65,9 @@ function App() {
         <Route path="/regist-pop-optional" element={<Layout04><RegistPopOptional /></Layout04>} />
         <Route path="/regist-pop-fin" element={<Layout04><RegistFin /></Layout04>} />
         <Route path="/regist-pop-reservation" element={<Layout04><RegistPopReservationInfo /></Layout04>} />
+        <Route path="/mypage/update" element={<Layout03><UserUpdate /></Layout03>} />
+        <Route path="/mypage/review" element={<Layout04><MyReviewList /></Layout04>} />
+        <Route path="/mypage/like" element={<Layout04><MyLikeList /></Layout04>} />
       </Routes>
     </div>
   )

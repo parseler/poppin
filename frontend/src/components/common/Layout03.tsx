@@ -10,7 +10,7 @@ type LayoutProps = {
 const Layout03 = (props: LayoutProps) => {
   return (
     <div>
-      <Header leftIcon={"취소"} rightIcon={"등록"} />
+      <Header leftIcon={"취소"} rightIcon={"완료"} />
       <main>{props.children}</main>
       <Menu />
     </div>

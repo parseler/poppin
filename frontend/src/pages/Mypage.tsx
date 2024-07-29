@@ -35,7 +35,6 @@ const Mypage = () => {
           </svg>
         </Link>
       </div>
-
       <div className="login-section">
         {/* 로그인 후 */}
         <div className="login-wrap">
@@ -47,7 +46,7 @@ const Mypage = () => {
               />
             </div>
             <span className="mypage-nickname">팝팝 터지는 커비</span>님
-            <Link to="" className="profile-update">
+            <Link to="/mypage/update" className="profile-update">
               <svg
                 xmlns="http://www.w3.org/2000/svg"
                 width="16"
@@ -70,7 +69,7 @@ const Mypage = () => {
       <div className="mypage-menu-section">
         <ul>
           <li>
-            <Link to="">
+            <Link to="/mypage/review">
               <p>내가 작성한 팝업 후기</p>
               <svg
                 xmlns="http://www.w3.org/2000/svg"
@@ -87,7 +86,7 @@ const Mypage = () => {
             </Link>
           </li>
           <li>
-            <Link to="">
+            <Link to="/mypage/like">
               <p>내가 좋아요한 팝업</p>
               <svg
                 xmlns="http://www.w3.org/2000/svg"

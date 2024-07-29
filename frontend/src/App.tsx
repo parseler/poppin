@@ -21,6 +21,8 @@ import PopReservationCheck from "@pages/Pop/PopReservationCheck";
 import PopReservationFin from "@pages/Pop/PopReservationFin";
 import Waiting from "@pages/Waiting";
 import RegistPop from "@pages/ManagerPage/RegistPop";
+import RegistPopOptional from "@pages/ManagerPage/RegistPopOptional";
+import RegistFin from "@pages/ManagerPage/RegistFin";
 
 import { useEffect, useState } from "react";
 
@@ -56,6 +58,8 @@ function App() {
         <Route path="/reservation-check/finish" element={<Layout04><PopReservationFin /></Layout04>} />
         <Route path="/waiting" element={<Waiting />} />
         <Route path="/regist-pop" element={<Layout04><RegistPop /></Layout04>} />
+        <Route path="/regist-pop-optional" element={<Layout04><RegistPopOptional /></Layout04>} />
+        <Route path="/regist-pop-fin" element={<Layout04><RegistFin /></Layout04>} />
       </Routes>
     </div>
   )

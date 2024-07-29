@@ -1,4 +1,5 @@
 import { Route, Routes } from "react-router-dom";
+import { useEffect, useState } from "react";
 import Layout01 from "@components/common/Layout01";
 import Layout02 from "@components/common/Layout02";
 import Layout03 from "@components/common/Layout03";
@@ -21,8 +22,7 @@ import PopReservationCheck from "@pages/Pop/PopReservationCheck";
 import PopReservationFin from "@pages/Pop/PopReservationFin";
 import Waiting from "@pages/Waiting";
 import RegistPop from "@pages/ManagerPage/RegistPop";
-
-import { useEffect, useState } from "react";
+import UserUpdate from "@pages/UserPage/UserUpdate";
 
 function App() {
   const [isLoading, setIsLoading] = useState(true);
@@ -56,6 +56,7 @@ function App() {
         <Route path="/reservation-check/finish" element={<Layout04><PopReservationFin /></Layout04>} />
         <Route path="/waiting" element={<Waiting />} />
         <Route path="/regist-pop" element={<Layout04><RegistPop /></Layout04>} />
+        <Route path="/mypage/update" element={<Layout03><UserUpdate /></Layout03>} />
       </Routes>
     </div>
   )

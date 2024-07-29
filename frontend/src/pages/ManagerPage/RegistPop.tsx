@@ -1,9 +1,10 @@
 import React, { useState } from "react";
-import "@css/ManagerPage/RegistPop.css";
 import DatePicker, { registerLocale } from "react-datepicker";
-import "react-datepicker/dist/react-datepicker.css";
-import { ko } from "date-fns/locale";
 import DaumPostcode from "react-daum-postcode";
+import { ko } from "date-fns/locale";
+import { useNavigate } from "react-router-dom";
+import "@css/ManagerPage/RegistPop.css";
+import "react-datepicker/dist/react-datepicker.css";
 
 import registPhoto from "@assets/registPhoto.svg";
 import firstStep from "@assets/firstStep.svg";
@@ -31,6 +32,11 @@ function RegistPop() {
   const [detailedAddress, setDetailedAddress] = useState("");
   const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
   const [showAddressModal, setShowAddressModal] = useState(false);
+  const navigate = useNavigate();
+
+  const goNextStep = () =>{
+    navigate("/regist-pop-optional");
+  }
 
   const handleImageChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     if (event.target.files) {
@@ -192,7 +198,7 @@ function RegistPop() {
               onChange={(e) => setSelectedStartTimeHour(e.target.value)}
               className="time-picker"
             >
-              <option value="">-</option>
+              <option value="">--</option>
               {hourOptions}
             </select>
             <span className="time-colon">:</span>
@@ -201,7 +207,7 @@ function RegistPop() {
               onChange={(e) => setSelectedStartTimeMinute(e.target.value)}
               className="time-picker"
             >
-              <option value="">-</option>
+              <option value="">--</option>
               {minuteOptions}
             </select>
           </div>
@@ -298,7 +304,7 @@ function RegistPop() {
         </div>
       </div>
       <div className="go-next">
-        <button>다음 단계 진행</button>
+        <button onClick={goNextStep}>다음 단계 진행</button>
       </div>
     </div>
   );

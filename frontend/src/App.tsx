@@ -22,9 +22,13 @@ import PopReservationCheck from "@pages/Pop/PopReservationCheck";
 import PopReservationFin from "@pages/Pop/PopReservationFin";
 import Waiting from "@pages/Waiting";
 import RegistPop from "@pages/ManagerPage/RegistPop";
+import RegistPopOptional from "@pages/ManagerPage/RegistPopOptional";
+import RegistFin from "@pages/ManagerPage/RegistFin";
+import RegistPopReservationInfo from "@pages/ManagerPage/RegistPopReservationInfo";
 import UserUpdate from "@pages/UserPage/UserUpdate";
 import MyReviewList from "@pages/UserPage/MyReviewList";
 import MyLikeList from "@pages/UserPage/MyLikeList";
+
 
 function App() {
   const [isLoading, setIsLoading] = useState(true);
@@ -58,6 +62,9 @@ function App() {
         <Route path="/reservation-check/finish" element={<Layout04><PopReservationFin /></Layout04>} />
         <Route path="/waiting" element={<Waiting />} />
         <Route path="/regist-pop" element={<Layout04><RegistPop /></Layout04>} />
+        <Route path="/regist-pop-optional" element={<Layout04><RegistPopOptional /></Layout04>} />
+        <Route path="/regist-pop-fin" element={<Layout04><RegistFin /></Layout04>} />
+        <Route path="/regist-pop-reservation" element={<Layout04><RegistPopReservationInfo /></Layout04>} />
         <Route path="/mypage/update" element={<Layout03><UserUpdate /></Layout03>} />
         <Route path="/mypage/review" element={<Layout04><MyReviewList /></Layout04>} />
         <Route path="/mypage/like" element={<Layout04><MyLikeList /></Layout04>} />

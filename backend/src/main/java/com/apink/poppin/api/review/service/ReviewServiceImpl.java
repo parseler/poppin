@@ -13,8 +13,6 @@ import com.apink.poppin.api.user.entity.User;
 import com.apink.poppin.api.user.repository.UserRepository;
 import com.apink.poppin.common.exception.dto.BusinessLogicException;
 import lombok.RequiredArgsConstructor;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import java.time.Instant;
@@ -94,10 +92,8 @@ public class ReviewServiceImpl implements ReviewService {
 
     @Override
     public void createReview(long popupId, ReviewDto reviewDto) {
-
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         
-        User user = userRepository.findUserByUserTsid(Long.parseLong(authentication.getName()))
+        User user = userRepository.findUserByUserTsid(reviewDto.getUserTsid())
                 .orElseThrow(() -> new BusinessLogicException(USER_NOT_FOUND));
 
         Popup popup = popupRepository.findById(popupId)

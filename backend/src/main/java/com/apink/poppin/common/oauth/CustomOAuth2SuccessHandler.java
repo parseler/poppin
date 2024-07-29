@@ -21,7 +21,7 @@ import java.util.Iterator;
 
 @Component
 @RequiredArgsConstructor
-public class CustomOAuth2SuceessHandler extends SimpleUrlAuthenticationSuccessHandler {
+public class CustomOAuth2SuccessHandler extends SimpleUrlAuthenticationSuccessHandler {
 
     private final JwtTokenUtil jwtTokenUtil;
     private final UserRefreshTokenRepository userRefreshTokenRepository;

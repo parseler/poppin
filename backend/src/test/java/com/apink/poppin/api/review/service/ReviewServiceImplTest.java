@@ -1,12 +1,12 @@
 package com.apink.poppin.api.review.service;
 
+import com.apink.poppin.api.popup.entity.Popup;
 import com.apink.poppin.api.review.dto.ReviewDto;
 import com.apink.poppin.api.review.dto.ReviewUpdateRequestDto;
 import com.apink.poppin.api.review.entity.Comment;
 import com.apink.poppin.api.review.entity.Review;
 import com.apink.poppin.api.review.repository.ReviewRepository;
-import com.apink.poppin.api.test.entity.Popup;
-import com.apink.poppin.api.test.entity.User;
+import com.apink.poppin.api.user.entity.User;
 import com.apink.poppin.common.exception.dto.BusinessLogicException;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -34,6 +34,7 @@ public class ReviewServiceImplTest {
     private ReviewServiceImpl reviewService;
 
     @Test
+    @WithMockUser
     void getReviewByIdFound() {
         long reviewId = 1L;
         Popup popup = mock(Popup.class);
@@ -57,6 +58,7 @@ public class ReviewServiceImplTest {
     }
 
     @Test
+    @WithMockUser
     void getReviewByIdNotFound() {
         long reviewId = 1L;
         when(reviewRepository.findById(reviewId)).thenReturn(Optional.empty());
@@ -68,6 +70,7 @@ public class ReviewServiceImplTest {
     }
 
     @Test
+    @WithMockUser
     void updateReviewSuccess() {
 
         Review existingReview = Review.builder()
@@ -120,6 +123,7 @@ public class ReviewServiceImplTest {
     }
 
     @Test
+    @WithMockUser
     void deleteReviewSuccess() {
         Review review = Review.builder()
                         .deleted(false).build();
@@ -143,6 +147,7 @@ public class ReviewServiceImplTest {
     }
 
     @Test
+    @WithMockUser
     void deleteDeletedReview() {
         // given
         Review review = Review.builder().deleted(true).build();

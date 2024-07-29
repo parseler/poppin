@@ -119,7 +119,7 @@ public class ReviewServiceImpl implements ReviewService {
     @Override
     public List<ReviewListDto> getReviews(long popupId) {
 
-        List<Review> reviews = reviewRepository.findReviewsByPopupId(popupId);
+        List<Review> reviews = reviewRepository.findReviewsByPopup_PopupId(popupId);
 
         List<ReviewListDto> list = new ArrayList<>();
         for (Review review : reviews) {

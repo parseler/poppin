@@ -15,5 +15,5 @@ public interface ReviewRepository extends JpaRepository<Review, Long> {
     @NonNull
     Optional<Review> findById(@NonNull Long reviewId);
 
-    List<Review> findReviewsByPopupId(@NonNull Long popupId);
+    List<Review> findReviewsByPopup_PopupId(@NonNull Long popupId);
 }

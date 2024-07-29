@@ -7,9 +7,8 @@ import com.apink.poppin.common.auth.filter.JwtAuthenticationFilter;
 //import com.apink.poppin.common.auth.repository.ManagerRefreshTokenRepository;
 import com.apink.poppin.common.auth.filter.LoginFilter;
 import com.apink.poppin.common.auth.repository.CustomClientRegistrationRepo;
-import com.apink.poppin.common.auth.repository.UserRefreshTokenRepository;
 import com.apink.poppin.common.auth.service.AuthService;
-import com.apink.poppin.common.oauth.CustomOAuth2SuceessHandler;
+import com.apink.poppin.common.oauth.CustomOAuth2SuccessHandler;
 import com.apink.poppin.common.oauth.CustomOAuth2UserService;
 import com.apink.poppin.common.util.JwtTokenUtil;
 import lombok.RequiredArgsConstructor;
@@ -20,7 +19,6 @@ import org.springframework.security.config.annotation.authentication.configurati
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.security.web.authentication.logout.LogoutFilter;
@@ -35,7 +33,7 @@ public class SecurityConfig {
     private final AuthService authService;
 //    private final ManagerRefreshTokenRepository managerRefreshTokenRepository;
     private final CustomOAuth2UserService customOAuth2UserService;
-    private final CustomOAuth2SuceessHandler customOAuth2SuccessHandler;
+    private final CustomOAuth2SuccessHandler customOAuth2SuccessHandler;
     private final CustomClientRegistrationRepo customClientRegistrationRepo;
 
     @Bean

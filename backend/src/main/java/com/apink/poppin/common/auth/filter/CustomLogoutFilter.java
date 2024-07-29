@@ -1,7 +1,5 @@
 package com.apink.poppin.common.auth.filter;
 
-import com.apink.poppin.common.auth.repository.ManagerRefreshTokenRepository;
-import com.apink.poppin.common.auth.repository.UserRefreshTokenRepository;
 import com.apink.poppin.common.auth.service.AuthService;
 import com.apink.poppin.common.util.JwtTokenUtil;
 import io.jsonwebtoken.ExpiredJwtException;

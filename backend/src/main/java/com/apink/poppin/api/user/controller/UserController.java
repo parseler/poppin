@@ -5,6 +5,7 @@ import com.apink.poppin.api.user.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -23,7 +24,7 @@ public class UserController {
 
     @GetMapping("/me")
     public ResponseEntity<?> findUser() {
-        long userTsid = 0L;
+        long userTsid = Long.parseLong(SecurityContextHolder.getContext().getAuthentication().getName());
         UserDto.Response user = userService.findUser(userTsid);
 
         return ResponseEntity.ok(user);
@@ -31,8 +32,6 @@ public class UserController {
 
     @PutMapping("/me")
     public ResponseEntity<?> updateUser(@RequestBody UserDto.Put userDto) {
-        String userTsid = "";
-
         userService.updateUser(userDto);
 
         return ResponseEntity.ok().build();

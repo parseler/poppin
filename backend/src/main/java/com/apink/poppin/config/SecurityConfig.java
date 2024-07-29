@@ -1,10 +1,12 @@
 package com.apink.poppin.config;
 
-import com.apink.poppin.api.manager.repository.ManagerRepository;
+//import com.apink.poppin.api.manager.repository.ManagerRepository;
 import com.apink.poppin.common.auth.filter.CustomLogoutFilter;
 import com.apink.poppin.common.auth.filter.JwtAuthenticationFilter;
+//import com.apink.poppin.common.auth.filter.LoginFilter;
+//import com.apink.poppin.common.auth.repository.ManagerRefreshTokenRepository;
 import com.apink.poppin.common.auth.filter.LoginFilter;
-import com.apink.poppin.common.auth.repository.ManagerRefreshTokenRepository;
+import com.apink.poppin.common.auth.repository.CustomClientRegistrationRepo;
 import com.apink.poppin.common.auth.repository.UserRefreshTokenRepository;
 import com.apink.poppin.common.auth.service.AuthService;
 import com.apink.poppin.common.oauth.CustomOAuth2SuceessHandler;
@@ -29,11 +31,12 @@ import org.springframework.security.web.authentication.logout.LogoutFilter;
 public class SecurityConfig {
 
     private final JwtTokenUtil jwtTokenUtil;
-    private final ManagerRepository managerRepository;
+//    private final ManagerRepository managerRepository;
     private final AuthService authService;
-    private final ManagerRefreshTokenRepository managerRefreshTokenRepository;
+//    private final ManagerRefreshTokenRepository managerRefreshTokenRepository;
     private final CustomOAuth2UserService customOAuth2UserService;
     private final CustomOAuth2SuceessHandler customOAuth2SuccessHandler;
+    private final CustomClientRegistrationRepo customClientRegistrationRepo;
 
     @Bean
     public AuthenticationManager authenticationManager(AuthenticationConfiguration configuration) throws Exception {
@@ -59,12 +62,13 @@ public class SecurityConfig {
                 );
 
         http
-                .addFilterBefore(new JwtAuthenticationFilter(jwtTokenUtil, managerRepository), LoginFilter.class)
+                .addFilterBefore(new JwtAuthenticationFilter(jwtTokenUtil), LoginFilter.class)
                 .addFilterBefore(new CustomLogoutFilter(jwtTokenUtil, authService), LogoutFilter.class)
-                .addFilterAt(new LoginFilter(authenticationManager(authenticationConfiguration), jwtTokenUtil, managerRepository, managerRefreshTokenRepository), UsernamePasswordAuthenticationFilter.class);
+                .addFilterAt(new LoginFilter(authenticationManager(authenticationConfiguration), jwtTokenUtil), UsernamePasswordAuthenticationFilter.class);
 
         http
                 .oauth2Login((oauth2) -> oauth2
+                        .clientRegistrationRepository(customClientRegistrationRepo.clientRegistrationRepository())
                         .userInfoEndpoint((userInfoEndpointConfig) -> userInfoEndpointConfig
                                 .userService(customOAuth2UserService))
                         .successHandler(customOAuth2SuccessHandler)

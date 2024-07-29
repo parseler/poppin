@@ -28,7 +28,7 @@ function RegistPopOptional() {
   };
 
   const goReservationRegist = () => {
-    navigate("/");
+    navigate("/regist-pop-reservation");
   };
 
   return (

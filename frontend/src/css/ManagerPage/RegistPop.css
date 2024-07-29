@@ -22,7 +22,7 @@
   font-style: normal;
   font-weight: 700;
   line-height: normal;
-  margin-bottom: 20px;
+  margin-bottom: 15px;
 }
 
 #regist-pop input[type="file"] {
@@ -279,6 +279,7 @@
   line-height: 25px;
 }
 
+/* 달력 시작 */
 #regist-pop .react-datepicker {
   font-size: 10px;
   width: 170px;

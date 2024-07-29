@@ -23,6 +23,7 @@ import PopReservationFin from "@pages/Pop/PopReservationFin";
 import Waiting from "@pages/Waiting";
 import RegistPop from "@pages/ManagerPage/RegistPop";
 import UserUpdate from "@pages/UserPage/UserUpdate";
+import MyLikeList from "@pages/UserPage/MyLikeList";
 
 function App() {
   const [isLoading, setIsLoading] = useState(true);
@@ -57,6 +58,7 @@ function App() {
         <Route path="/waiting" element={<Waiting />} />
         <Route path="/regist-pop" element={<Layout04><RegistPop /></Layout04>} />
         <Route path="/mypage/update" element={<Layout03><UserUpdate /></Layout03>} />
+        <Route path="/mypage/like" element={<Layout04><MyLikeList /></Layout04>} />
       </Routes>
     </div>
   )

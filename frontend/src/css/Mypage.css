@@ -332,3 +332,14 @@
 #pop-medium-03 .pop-date-03 {
   font-size: 12px;
 }
+
+/* MyReviewList */
+#my-review-list {
+  margin: 32px 0;
+}
+
+#my-review-list h1 {
+  font-size: 20px;
+  font-weight: 800;
+  margin: 0 20px 32px;
+}

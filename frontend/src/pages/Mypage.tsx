@@ -35,7 +35,6 @@ const Mypage = () => {
           </svg>
         </Link>
       </div>
-
       <div className="login-section">
         {/* 로그인 후 */}
         <div className="login-wrap">
@@ -47,7 +46,7 @@ const Mypage = () => {
               />
             </div>
             <span className="mypage-nickname">팝팝 터지는 커비</span>님
-            <Link to="" className="profile-update">
+            <Link to="/mypage/update" className="profile-update">
               <svg
                 xmlns="http://www.w3.org/2000/svg"
                 width="16"

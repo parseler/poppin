@@ -49,6 +49,7 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
 
         if(existData == null) {
             long tsid = snowflakeTsidUtil.nextId();
+            System.out.println(tsid);
 
             User user = User.builder()
                     .userTsid(tsid)

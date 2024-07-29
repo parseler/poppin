@@ -1,9 +1,9 @@
 package com.apink.poppin.common.auth.service;
 
-import com.apink.poppin.api.manager.dto.ManagerDto;
-import com.apink.poppin.api.manager.entity.Manager;
-import com.apink.poppin.api.manager.repository.ManagerRepository;
-import com.apink.poppin.common.auth.repository.ManagerRefreshTokenRepository;
+//import com.apink.poppin.api.manager.dto.ManagerDto;
+//import com.apink.poppin.api.manager.entity.Manager;
+//import com.apink.poppin.api.manager.repository.ManagerRepository;
+//import com.apink.poppin.common.auth.repository.ManagerRefreshTokenRepository;
 import com.apink.poppin.common.auth.repository.UserRefreshTokenRepository;
 import com.apink.poppin.common.util.JwtTokenUtil;
 import com.apink.poppin.common.util.SnowflakeTsidUtil;
@@ -28,10 +28,10 @@ public class AuthServiceImpl implements AuthService {
         return new BCryptPasswordEncoder();
     }
 
-    private final ManagerRepository managerRepository;
+//    private final ManagerRepository managerRepository;
     private final UserRefreshTokenRepository userRefreshTokenRepository;
     private final JwtTokenUtil jwtTokenUtil;
-    private final ManagerRefreshTokenRepository managerRefreshTokenRepository;
+//    private final ManagerRefreshTokenRepository managerRefreshTokenRepository;
     private final SnowflakeTsidUtil snowflakeTsidUtil;
 
     BCryptPasswordEncoder bCryptPasswordEncoder = bCryptPasswordEncoder();
@@ -70,7 +70,7 @@ public class AuthServiceImpl implements AuthService {
         String role = jwtTokenUtil.getRole(refresh);
 
         if(role.equals("manager")) {
-            isExist = managerRefreshTokenRepository.existsManagerRefreshTokenByRefresh(refresh);
+//            isExist = managerRefreshTokenRepository.existsManagerRefreshTokenByRefresh(refresh);
         } else {
             isExist = userRefreshTokenRepository.existsUserRefreshTokenByRefresh(refresh);
         }
@@ -94,34 +94,34 @@ public class AuthServiceImpl implements AuthService {
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
-    @Override
-    @Transactional
-    public void joinManager(ManagerDto.Join joinDto) {
-        String managerId = joinDto.getManagerId();
-        String password = joinDto.getPassword();
-        String nickname = joinDto.getNickname();
-
-        Boolean isExist = managerRepository.existsByManagerId(managerId);
-
-        if(isExist) {
-            return;
-        }
-
-        Manager data = Manager.builder()
-                .managerTsid(snowflakeTsidUtil.nextId())
-                .managerId(managerId)
-                .nickname(nickname)
-                .password(bCryptPasswordEncoder.encode(password))
-                .build();
-
-        managerRepository.save(data);
-    }
+//    @Override
+//    @Transactional
+//    public void joinManager(ManagerDto.Join joinDto) {
+//        String managerId = joinDto.getManagerId();
+//        String password = joinDto.getPassword();
+//        String nickname = joinDto.getNickname();
+//
+//        Boolean isExist = managerRepository.existsByManagerId(managerId);
+//
+//        if(isExist) {
+//            return;
+//        }
+//
+//        Manager data = Manager.builder()
+//                .managerTsid(snowflakeTsidUtil.nextId())
+//                .managerId(managerId)
+//                .nickname(nickname)
+//                .password(bCryptPasswordEncoder.encode(password))
+//                .build();
+//
+//        managerRepository.save(data);
+//    }
 
     @Override
     @Transactional
     public void deleteRefreshToken(String refreshToken, String role) {
         if ("ROLE_MANAGER".equals(role)) {
-            managerRefreshTokenRepository.deleteManagerRefreshTokenByRefresh(refreshToken);
+//            managerRefreshTokenRepository.deleteManagerRefreshTokenByRefresh(refreshToken);
         } else {
             userRefreshTokenRepository.deleteUserRefreshTokenByRefresh(refreshToken);
         }
@@ -131,7 +131,8 @@ public class AuthServiceImpl implements AuthService {
     @Transactional
     public boolean isExist(String refreshToken, String role) {
         if ("ROLE_MANAGER".equals(role)) {
-            return managerRefreshTokenRepository.existsManagerRefreshTokenByRefresh(refreshToken);
+            return true;
+//            return managerRefreshTokenRepository.existsManagerRefreshTokenByRefresh(refreshToken);
         } else {
             return userRefreshTokenRepository.existsUserRefreshTokenByRefresh(refreshToken);
         }

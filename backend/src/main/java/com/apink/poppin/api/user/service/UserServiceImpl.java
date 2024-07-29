@@ -4,6 +4,7 @@ import com.apink.poppin.api.user.dto.UserDto;
 import com.apink.poppin.api.user.entity.User;
 import com.apink.poppin.api.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -13,7 +14,7 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class UserServiceImpl implements UserService {
 
-    private UserRepository userRepository;
+    private final UserRepository userRepository;
 
     @Override
     @Transactional(readOnly = true)
@@ -39,7 +40,26 @@ public class UserServiceImpl implements UserService {
     @Override
     @Transactional
     public void updateUser(UserDto.Put userDto) {
+        long userTsid = Long.parseLong(SecurityContextHolder.getContext().getAuthentication().getName());
 
+        User findUser = userRepository.findUserByUserTsid(userTsid)
+                .orElseThrow();
+
+        User user = User.builder()
+                .userTsid(findUser.getUserTsid())
+                .providerId(findUser.getProviderId())
+                .providerName(findUser.getProviderName())
+                .name(findUser.getName())
+                .nickname(userDto.getNickname())
+                .email(findUser.getEmail())
+                .age(findUser.getAge())
+                .gender(findUser.getGender())
+                .phoneNumber(findUser.getPhoneNumber())
+                .role(findUser.getRole())
+                .img(userDto.getImg())
+                .build();
+
+        userRepository.save(user);
     }
 
 

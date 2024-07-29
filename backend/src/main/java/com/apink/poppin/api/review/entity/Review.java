@@ -1,8 +1,8 @@
 package com.apink.poppin.api.review.entity;
 
-import com.apink.poppin.api.test.entity.User;
-import com.apink.poppin.api.test.entity.Popup;
+import com.apink.poppin.api.popup.entity.Popup;
 import com.apink.poppin.api.review.dto.ReviewUpdateRequestDto;
+import com.apink.poppin.api.user.entity.User;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;

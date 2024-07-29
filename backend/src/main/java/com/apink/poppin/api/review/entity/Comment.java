@@ -1,7 +1,7 @@
 package com.apink.poppin.api.review.entity;
 
 import com.apink.poppin.api.review.dto.CommentDto;
-import com.apink.poppin.api.test.entity.User;
+import com.apink.poppin.api.user.entity.User;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;

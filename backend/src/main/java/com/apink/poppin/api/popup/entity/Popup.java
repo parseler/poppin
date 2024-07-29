@@ -34,28 +34,28 @@ public class Popup {
     private Date startDate;
     @NotNull
     private Date endDate;
-//    @NotNull
-//    private String hours;
-//    @NotNull
-//    private String description;
-//
-//    private String snsUrl;
-//    private String pageUrl;
-//
-//    @NotNull
-//    private String content;
-//
-////     위도 경도
-//    @NotNull
-//    private Double lat;
-//    @NotNull
-//    private Double lon;
-//
+    @NotNull
+    private String hours;
+    @NotNull
+    private String description;
+
+    private String snsUrl;
+    private String pageUrl;
+
+    @NotNull
+    private String content;
+
+//     위도 경도
+    @NotNull
+    private Double lat;
+    @NotNull
+    private Double lon;
+
     @ColumnDefault("0")
     private int heart;
-//    @ColumnDefault("0")
-//    private int hit;
-//    @ColumnDefault("0.0")
-//    private Double rating;
+    @ColumnDefault("0")
+    private int hit;
+    @ColumnDefault("0.0")
+    private Double rating;
 
 }

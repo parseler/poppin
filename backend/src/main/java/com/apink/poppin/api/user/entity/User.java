@@ -8,7 +8,7 @@ import lombok.NoArgsConstructor;
 import org.hibernate.annotations.ColumnDefault;
 
 @Entity
-@Table(name = "users")
+@Table(name = "user")
 @Getter
 @Builder
 @NoArgsConstructor

@@ -1,5 +1,6 @@
 package com.apink.poppin.api.popup.entity;
 
+import com.apink.poppin.api.reservation.entity.ReservationStatement;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
@@ -45,9 +46,9 @@ public class PreReservation {
     @CreationTimestamp
     private Date createdAt;
 
-//    @OneToOne(fetch = LAZY)
-//    @JoinColumn(name = "reservation_statement_id", nullable = false)
-//    private ReservationStatement reservationStatement;
+    @OneToOne(fetch = LAZY)
+    @JoinColumn(name = "reservation_statement_id", nullable = false)
+    private ReservationStatement reservationStatement;
 
 
 }

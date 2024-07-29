@@ -1,10 +1,9 @@
 package com.apink.poppin.api.popup.service;
 
 import com.apink.poppin.api.popup.dto.PopupDTO;
-import com.apink.poppin.api.popup.dto.PreReservationRequestDTO;
-import com.apink.poppin.api.popup.dto.PreReservationResponseDTO;
-import com.apink.poppin.api.popup.entity.Popup;
-import com.apink.poppin.api.popup.entity.PreReservation;
+import com.apink.poppin.api.reservation.dto.PreReservationRequestDTO;
+import com.apink.poppin.api.reservation.dto.PreReservationResponseDTO;
+import com.apink.poppin.api.reservation.entity.PreReservation;
 
 import java.util.Date;
 import java.util.List;

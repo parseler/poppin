@@ -7,12 +7,7 @@ import lombok.*;
 @AllArgsConstructor
 public class HeartRequestDTO {
 
-//    private Long userId;
+    private Long userTsid;
     private Long popupId;
 
-//    @Builder
-//    public HeartRequestDTO(Long userId, Long popupId) {
-//        this.userId = userId;
-//        this.popupId = popupId;
-//    }
 }

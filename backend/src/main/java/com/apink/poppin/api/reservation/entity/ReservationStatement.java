@@ -16,7 +16,7 @@ public class ReservationStatement {
     @Id
     @NotNull
     @Column(nullable = false)
-    private Integer reservationStatementId;
+    private Long reservationStatementId;
 
     @NotNull
     @Size(max = 16)

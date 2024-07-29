@@ -1,6 +1,7 @@
-package com.apink.poppin.api.popup.entity;
+package com.apink.poppin.api.reservation.entity;
 
-import com.apink.poppin.api.reservation.entity.ReservationStatement;
+import com.apink.poppin.api.popup.entity.Popup;
+import com.apink.poppin.api.user.entity.User;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
@@ -26,9 +27,9 @@ public class PreReservation {
     @GeneratedValue
     private Long preReservationId;
 
-//    @ManyToOne(fetch = LAZY)
-//    @JoinColumn(name = "user_id", nullable = false)
-//    private Member member;
+    @ManyToOne(fetch = LAZY)
+    @JoinColumn(name = "user_tsid", nullable = false)
+    private User user;
 
     @OneToOne(fetch = LAZY)
     @JoinColumn(name = "popup_id", nullable = false)

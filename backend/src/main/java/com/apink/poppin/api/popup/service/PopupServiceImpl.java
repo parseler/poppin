@@ -1,15 +1,18 @@
 package com.apink.poppin.api.popup.service;
 
 import com.apink.poppin.api.popup.dto.PopupDTO;
-import com.apink.poppin.api.popup.dto.PreReservationRequestDTO;
-import com.apink.poppin.api.popup.dto.PreReservationResponseDTO;
+import com.apink.poppin.api.reservation.dto.PreReservationRequestDTO;
+import com.apink.poppin.api.reservation.dto.PreReservationResponseDTO;
 import com.apink.poppin.api.popup.entity.Popup;
-import com.apink.poppin.api.popup.entity.PreReservation;
+import com.apink.poppin.api.reservation.entity.PreReservation;
 import com.apink.poppin.api.popup.repository.PopupRepository;
-import com.apink.poppin.api.popup.repository.PreReservationRepository;
+import com.apink.poppin.api.reservation.entity.ReservationStatement;
+import com.apink.poppin.api.reservation.repository.PreReservationRepository;
+import com.apink.poppin.api.reservation.repository.ReservationStatementRepository;
+import com.apink.poppin.api.user.entity.User;
+import com.apink.poppin.api.user.repository.UserRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -23,12 +26,15 @@ public class PopupServiceImpl implements PopupService {
 
     private final PopupRepository popupRepository;
     private final PreReservationRepository preReservationRepository;
+    private final UserRepository userRepository;
+    private final ReservationStatementRepository reservationStatementRepository;
+
 
     // 팝업 전체 목록 조회 및 검색
     public List<PopupDTO> getPopupList(String keyword) {
         List<Popup> popups = popupRepository.findAllByNameContaining(keyword);
         return popups.stream()
-                .map(popup -> new PopupDTO(popup.getPopupId(), popup.getName(), popup.getStartDate(), popup.getEndDate()))
+                .map(popup -> new PopupDTO(popup.getPopupId(), popup.getName(), popup.getStartDate(), popup.getEndDate(), popup.getHeart()))
                 .collect(Collectors.toList());
     }
 
@@ -36,7 +42,7 @@ public class PopupServiceImpl implements PopupService {
     public PopupDTO getPopup(Long popupId) {
         Popup popup = popupRepository.findById(popupId)
                 .orElseThrow(() -> new IllegalArgumentException("Invalid popup ID"));
-        return new PopupDTO(popup.getPopupId(), popup.getName(), popup.getStartDate(), popup.getEndDate());
+        return new PopupDTO(popup.getPopupId(), popup.getName(), popup.getStartDate(), popup.getEndDate(), popup.getHeart());
     }
 
     // 인기 팝업 조회
@@ -44,7 +50,7 @@ public class PopupServiceImpl implements PopupService {
         List<Popup> list = popupRepository.findAllByOrderByHeartDesc();
 
         return list.stream()
-                .map(popup -> new PopupDTO(popup.getPopupId(), popup.getName(), popup.getStartDate(), popup.getEndDate()))
+                .map(popup -> new PopupDTO(popup.getPopupId(), popup.getName(), popup.getStartDate(), popup.getEndDate(), popup.getHeart()))
                 .collect(Collectors.toList());
     }
 
@@ -58,7 +64,7 @@ public class PopupServiceImpl implements PopupService {
         LocalDateTime now = LocalDateTime.now();
         List<Popup> popups = popupRepository.findAllByStartDateAfter(now);
         return popups.stream()
-                .map(popup -> new PopupDTO(popup.getPopupId(), popup.getName(), popup.getStartDate(), popup.getEndDate()))
+                .map(popup -> new PopupDTO(popup.getPopupId(), popup.getName(), popup.getStartDate(), popup.getEndDate(), popup.getHeart()))
                 .collect(Collectors.toList());
     }
 
@@ -67,22 +73,22 @@ public class PopupServiceImpl implements PopupService {
     @Transactional
     public PreReservation createPreReservation(PreReservationRequestDTO req) {
         // 유저 확인
-//        Member member = memberRepository.findById(req.getUserId())
-//                .orElseThrow(() -> new IllegalArgumentException("Invalid user ID"));
+        User user = userRepository.findUserByUserTsid(req.getUserTsid())
+                .orElseThrow(() -> new IllegalArgumentException("Invalid user Tsid"));
         // 팝업 확인
         Popup popup = popupRepository.findById(req.getPopupId())
                 .orElseThrow(() -> new IllegalArgumentException("Invalid popup ID"));
         // 예약 상태 확인 ?
-//        ReservationStatement reservationStatement = reservationStatementRepository.findById(req.getReservationStatementId())
-//                .orElseThrow(() -> new IllegalArgumentException("Invalid reservation statement ID"));
+        ReservationStatement reservationStatement = reservationStatementRepository.findById(req.getReservationStatementId())
+                .orElseThrow(() -> new IllegalArgumentException("Invalid reservation statement ID"));
 
         PreReservation preReservation = PreReservation.builder()
-//                .user(user)
+                .user(user)
                 .popup(popup)
                 .reservationDate(req.getReservationDate())
                 .reservationTime(req.getReservationTime())
                 .reservationCount(req.getReservationCount())
-//                .reservationStatement(reservationStatement)
+                .reservationStatement(reservationStatement)
                 .build();
 
         return preReservationRepository.save(preReservation);
@@ -100,16 +106,16 @@ public class PopupServiceImpl implements PopupService {
 
     // DTO 변환
     private PreReservationResponseDTO convertToResponseDTO(PreReservation preReservation) {
-        PreReservationResponseDTO res = new PreReservationResponseDTO();
-        res.setPreReservationId(preReservation.getPreReservationId());
-//        res.setUserId(preReservation.getMember().getUserId());
-        res.setPopupId(preReservation.getPopup().getPopupId());
-        res.setReservationDate(preReservation.getReservationDate());
-        res.setReservationTime(preReservation.getReservationTime());
-        res.setReservationCount(preReservation.getReservationCount());
-        res.setCreatedAt(preReservation.getCreatedAt());
-//        res.setReservationStatementId(preReservation.getReservationStatement().getReservationStatementId());
-        return res;
+        return PreReservationResponseDTO.builder()
+                .preReservationId(preReservation.getPreReservationId())
+                .userTsid(preReservation.getUser().getUserTsid())
+                .popupId(preReservation.getPopup().getPopupId())
+                .reservationDate(preReservation.getReservationDate())
+                .reservationTime(preReservation.getReservationTime())
+                .reservationCount(preReservation.getReservationCount())
+                .createdAt(preReservation.getCreatedAt())
+                .reservationStatementId(preReservation.getReservationStatement().getReservationStatementId())
+                .build();
     }
 
 }

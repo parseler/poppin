@@ -1,4 +1,4 @@
-package com.apink.poppin.api.popup.dto;
+package com.apink.poppin.api.reservation.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -10,7 +10,7 @@ import java.util.Date;
 @AllArgsConstructor
 @NoArgsConstructor
 public class PreReservationRequestDTO {
-//    private Long userId;
+    private Long userTsid;
     private Long popupId;
     private Date reservationDate;
     private Date reservationTime;

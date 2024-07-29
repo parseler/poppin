@@ -1,10 +1,10 @@
 package com.apink.poppin.common.auth.filter;
 
-import com.apink.poppin.api.manager.dto.ManagerDto;
-import com.apink.poppin.api.manager.entity.Manager;
-import com.apink.poppin.api.manager.repository.ManagerRepository;
+//import com.apink.poppin.api.manager.dto.ManagerDto;
+//import com.apink.poppin.api.manager.entity.Manager;
+//import com.apink.poppin.api.manager.repository.ManagerRepository;
 import com.apink.poppin.api.user.dto.UserDto;
-import com.apink.poppin.common.auth.dto.CustomUserDetails;
+//import com.apink.poppin.common.auth.dto.CustomUserDetails;
 import com.apink.poppin.common.oauth.CustomOAuth2User;
 import com.apink.poppin.common.util.JwtTokenUtil;
 import io.jsonwebtoken.ExpiredJwtException;
@@ -25,7 +25,7 @@ import java.io.PrintWriter;
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
     private final JwtTokenUtil jwtTokenUtil;
-    private final ManagerRepository managerRepository;
+//    private final ManagerRepository managerRepository;
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
@@ -81,18 +81,18 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         String role = jwtTokenUtil.getRole(accessToken);
 
         if(role.equals("manager")) {
-            Manager managerData = managerRepository.findManagerByManagerId(String.valueOf(username));
-
-            ManagerDto.AuthManager manager = ManagerDto.AuthManager.builder()
-                    .managerTsid(managerData.getManagerTsid())
-                    .managerId(managerData.getManagerId())
-                    .role("manager")
-                    .build();
-
-            CustomUserDetails customUserDetails = new CustomUserDetails(manager);
-
-            Authentication authToken = new UsernamePasswordAuthenticationToken(customUserDetails, null, customUserDetails.getAuthorities());
-            SecurityContextHolder.getContext().setAuthentication(authToken);
+//            Manager managerData = managerRepository.findManagerByManagerId(String.valueOf(username));
+//
+//            ManagerDto.AuthManager manager = ManagerDto.AuthManager.builder()
+//                    .managerTsid(managerData.getManagerTsid())
+//                    .managerId(managerData.getManagerId())
+//                    .role("manager")
+//                    .build();
+//
+//            CustomUserDetails customUserDetails = new CustomUserDetails(manager);
+//
+//            Authentication authToken = new UsernamePasswordAuthenticationToken(customUserDetails, null, customUserDetails.getAuthorities());
+//            SecurityContextHolder.getContext().setAuthentication(authToken);
         }
 
         else {

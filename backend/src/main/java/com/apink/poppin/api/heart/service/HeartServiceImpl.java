@@ -5,9 +5,10 @@ import com.apink.poppin.api.heart.entity.Heart;
 import com.apink.poppin.api.heart.repository.HeartRepository;
 import com.apink.poppin.api.popup.entity.Popup;
 import com.apink.poppin.api.popup.repository.PopupRepository;
+import com.apink.poppin.api.user.entity.User;
+import com.apink.poppin.api.user.repository.UserRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -16,30 +17,30 @@ public class HeartServiceImpl implements HeartService {
 
     private final HeartRepository heartRepository;
     private final PopupRepository popupRepository;
-//    private final MemberRepository memberRepository;
+    private final UserRepository userRepository;
 
 
     // 좋아요 추가
     @Transactional
     public void insert(HeartRequestDTO reqDto) throws Exception {
         // 유저 확인
-//        Member member = memberRepository.findById(reqDto.getUserId())
-//                .orElseThrow(() -> new IllegalArgumentException("Invalid user ID"));
+        User user = userRepository.findUserByUserTsid(reqDto.getUserTsid())
+                .orElseThrow(() -> new IllegalArgumentException("Invalid user ID"));
 
         // 팝업 확인
         Popup popup = popupRepository.findById(reqDto.getPopupId())
                 .orElseThrow(() -> new IllegalArgumentException("Invalid popup ID"));
 
         // 이미 좋아요되어있으면 에러 반환
-//        if (heartRepository.findByMemberAndPopup(member, popup).isPresent()){
-//            throw new Exception("Heart is already exists");
-//        }
+        if (heartRepository.findByUserAndPopup(user, popup).isPresent()){
+            throw new Exception("Heart is already exists");
+        }
 
         popup.setHeart(popup.getHeart()+1);
 
         Heart heart = Heart.builder()
                 .popup(popup)
-//                .member(member)
+                .user(user)
                 .build();
 
         heartRepository.save(heart);
@@ -51,19 +52,19 @@ public class HeartServiceImpl implements HeartService {
     @Transactional
     public void delete(HeartRequestDTO reqDto) throws Exception {
         // 유저 확인
-//        Member member = memberRepository.findById(reqDto.getUserId())
-//                .orElseThrow(() -> new IllegalArgumentException("Invalid user ID"));
+        User user = userRepository.findUserByUserTsid(reqDto.getUserTsid())
+                .orElseThrow(() -> new IllegalArgumentException("Invalid user ID"));
 
         // 팝업 확인
         Popup popup = popupRepository.findById(reqDto.getPopupId())
                 .orElseThrow(() -> new IllegalArgumentException("Invalid popup ID"));
 
         // 좋아요 확인
-//        Heart heart = heartRepository.findByMemberAndPopup(member, popup)
-//                .orElseThrow(() -> new Exception("Could not found heart id"));
+        Heart heart = heartRepository.findByUserAndPopup(user, popup)
+                .orElseThrow(() -> new Exception("Could not found heart id"));
 
         popup.setHeart(popup.getHeart()-1);
 
-//        heartRepository.delete(heart);
+        heartRepository.delete(heart);
     }
 }

@@ -16,6 +16,6 @@ public class PopupDTO {
     private String name;
     private Date startDate;
     private Date endDate;
-
+    private int heart;
 
 }

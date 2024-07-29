@@ -1,6 +1,6 @@
-package com.apink.poppin.api.popup.repository;
+package com.apink.poppin.api.reservation.repository;
 
-import com.apink.poppin.api.popup.entity.PreReservation;
+import com.apink.poppin.api.reservation.entity.PreReservation;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 

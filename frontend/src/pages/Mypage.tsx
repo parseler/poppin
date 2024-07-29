@@ -86,7 +86,7 @@ const Mypage = () => {
             </Link>
           </li>
           <li>
-            <Link to="">
+            <Link to="/mypage/like">
               <p>내가 좋아요한 팝업</p>
               <svg
                 xmlns="http://www.w3.org/2000/svg"

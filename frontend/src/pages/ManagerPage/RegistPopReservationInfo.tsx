@@ -4,7 +4,7 @@ import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import "@css/ManagerPage/RegistPopReservationInfo.css";
 
-import thirdStep from "@assets/thirdStep.svg";
+import thirdStep from "@assets/registPop/thirdStep.svg";
 
 function RegistPopReservationInfo() {
   const [date, setDate] = useState<Date | null>(null);

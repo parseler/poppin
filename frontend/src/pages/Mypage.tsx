@@ -1,6 +1,5 @@
 import "@css/Mypage.css";
 import { Link } from "react-router-dom";
-import { useState } from "react";
 
 import loginBefore from "@assets/mypage/loginBefore.svg";
 import nextButton from "@assets/mypage/nextButton.svg";
@@ -9,7 +8,7 @@ import profileUpdate from "@assets/mypage/profileUpdateButton.svg";
 // 임시 사용자 데이터
 const user = {
   isLoggedIn: true, // 로그인 여부
-  role: 'admin', // 'user', 'manager', 'admin'
+  role: 'manager', // 'user', 'manager', 'admin'
   nickname: '터지는 커비', // 유저 닉네임
   profileImage: 'https://i.pinimg.com/564x/ac/53/e9/ac53e9b1cbb1069713a4b8b78986b5cd.jpg', // 유저 프로필 이미지
 };

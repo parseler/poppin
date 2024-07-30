@@ -6,8 +6,8 @@ import { useNavigate } from "react-router-dom";
 import "@css/ManagerPage/RegistPop.css";
 import "react-datepicker/dist/react-datepicker.css";
 
-import registPhoto from "@assets/registPhoto.svg";
-import firstStep from "@assets/firstStep.svg";
+import registPhoto from "@assets/registPop/registPhoto.svg";
+import firstStep from "@assets/registPop/firstStep.svg";
 
 registerLocale("ko", ko);
 

@@ -9,4 +9,5 @@ public interface HeartService {
 
     // 좋아요 해제
     void delete(HeartRequestDTO reqDto) throws Exception;
+
 }

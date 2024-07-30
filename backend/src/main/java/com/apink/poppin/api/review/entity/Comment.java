@@ -43,7 +43,7 @@ public class Comment {
     @JoinColumn(name = "user_tsid", nullable = false)
     private User user;
 
-    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+        @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "parent")
     private Comment parent;
 

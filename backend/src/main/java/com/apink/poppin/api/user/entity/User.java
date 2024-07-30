@@ -50,6 +50,10 @@ public class User {
     @ColumnDefault("'img_url'")
     private String img;
 
+    @Column(nullable = false)
+    @ColumnDefault("true")
+    private boolean state;
+
 //    @OneToMany(mappedBy = "userCategory")
 //    private List<UserCategory> userCategories = new ArrayList<>();
 //

@@ -16,7 +16,7 @@ public enum ExceptionCode {
     COMMENT_UPDATE_FAILED(401, "Comment update failed"),
 
     USER_NOT_FOUND(404, "User not found"),
-    ;
+    POPUP_NOT_FOUND(404, "Popup not found");
 
 
 

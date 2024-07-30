@@ -1,7 +1,7 @@
 import "@css/ManagerPage/RegistFin.css";
 
-import finalStep from "@assets/finalStep.svg";
-import finishCheck from "@assets/finishCheck.svg";
+import finalStep from "@assets/registPop/finalStep.svg";
+import finishCheck from "@assets/registPop/finishCheck.svg";
 
 function RegistFin() {
   return (

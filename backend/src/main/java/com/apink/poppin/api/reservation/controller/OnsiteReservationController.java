@@ -13,21 +13,24 @@ public class OnsiteReservationController {
 
     private final OnsiteReservationService onsiteReservationService;
 
-    @GetMapping("/{phoneNumber}/{popupId}")
-    public ResponseEntity<?> getOnsiteReservation(@PathVariable String phoneNumber, @PathVariable Long popupId) {
-        OnsiteReservationDto onsiteReservationDto = onsiteReservationService.getFromRedis(phoneNumber, popupId);
-
-        if (onsiteReservationDto == null) {
-            return ResponseEntity.notFound().build();
-        } else {
-            return ResponseEntity.ok(onsiteReservationDto);
-        }
-    }
-
     @PostMapping
     public ResponseEntity<?> createOnsiteReservation(@RequestBody OnsiteReservationDto onsiteReservationDto) {
-        onsiteReservationService.saveToRedis(onsiteReservationDto);
+        OnsiteReservationDto completed = onsiteReservationService.createOnsiteReservation(onsiteReservationDto);
 
-        return ResponseEntity.ok().build();
+        return ResponseEntity.ok().body(completed);
+    }
+
+    @GetMapping("/{onsiteReservationId}/popups/{popupId}")
+    public ResponseEntity<?> getOnsiteReservationByKakaoLink(@PathVariable Long onsiteReservationId, @PathVariable Long popupId) {
+        OnsiteReservationDto onsite = onsiteReservationService.getOnsiteReservationByKakaoLink(onsiteReservationId, popupId);
+
+        return ResponseEntity.ok(onsite);
+    }
+
+    @GetMapping("/{phoneNumber}")
+    public ResponseEntity<?> getOnsiteReservationByPhoneNumber(@PathVariable String phoneNumber) {
+        OnsiteReservationDto onsiteReservationDto = onsiteReservationService.getOnsiteReservationByPhoneNumber(phoneNumber);
+
+        return ResponseEntity.ok().body(onsiteReservationDto);
     }
 }

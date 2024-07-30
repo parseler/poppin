@@ -39,4 +39,8 @@ public class OnsiteReservation {
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "reservation_statement_id", nullable = false)
     private ReservationStatement reservationStatement;
+
+    @NotNull
+    @Column(name = "reservation_count", nullable = false)
+    private Integer reservationCount;
 }

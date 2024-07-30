@@ -17,9 +17,13 @@ interface IconProps {
 }
 
 const notifications = [
-  { type: "reserve", title: "예약 알림", content: "예약이 완료되었습니다.", date: "24. 7. 29.", icon: reserveIcon },
-  { type: "comment", title: "댓글 알림", content: "새로운 댓글이 달렸습니다.", date: "24. 7. 29.", icon: commentIcon },
-  { type: "advertisement", title: "광고", content: "새로운 광고가 도착했습니다.", date: "24. 7. 29.", icon: advertisementIcon },
+  { type: "reserve", category: "예약 알림", title: "[뉴진스 How Sweet 팝업스토어] 예약이 확정되었습니다.", content: "일시) 24.07.18 11:00  인원) 2명", date: "24. 7. 29.", icon: reserveIcon },
+  { type: "comment", category: "댓글 알림", title: "[파핑파핑 바나나] 님이 댓글을 작성했습니다.", content: "“뉴진스 팝업 사람 안많음? 뭐가 제일 이쁨?”", date: "24. 7. 29.", icon: commentIcon },
+  { type: "advertisement", category: "광고", title: "관심으로 설정한 카테고리에 새로운 팝업이 등록됐어요!", content: "완전 럭키비키자나~🍀", date: "24. 7. 29.", icon: advertisementIcon },
+  { type: "advertisement", category: "광고", title: "관심으로 설정한 카테고리에 새로운 팝업이 등록됐어요!", content: "완전 럭키비키자나~🍀", date: "24. 7. 29.", icon: advertisementIcon },
+  { type: "advertisement", category: "광고", title: "관심으로 설정한 카테고리에 새로운 팝업이 등록됐어요!", content: "완전 럭키비키자나~🍀", date: "24. 7. 29.", icon: advertisementIcon },
+  { type: "comment", category: "댓글 알림", title: "[파핑파핑 바나나] 님이 댓글을 작성했습니다.", content: "“뉴진스 팝업 사람 안많음? 뭐가 제일 이쁨?”", date: "24. 7. 29.", icon: commentIcon },
+  { type: "advertisement", category: "광고", title: "관심으로 설정한 카테고리에 새로운 팝업이 등록됐어요!", content: "완전 럭키비키자나~🍀", date: "24. 7. 29.", icon: advertisementIcon },
 ];
 
 const Header = ({ leftIcon, rightIcon }: IconProps) => {
@@ -84,10 +88,11 @@ const Header = ({ leftIcon, rightIcon }: IconProps) => {
             {notifications.map((notification, index) => (
               <div key={index} className={`notification-item ${notification.type}`}>
                 <div className="header">
-                  <img src={notification.icon} alt={notification.title} className="icon" />
-                  <div className="title">{notification.title}</div>
+                  <img src={notification.icon} alt={notification.category} className="icon" />
+                  <div className="category">{notification.category}</div>
                   <div className="date">{notification.date}</div>
                 </div>
+                <div className="title">{notification.title}</div>
                 <div className="content">{notification.content}</div>
               </div>
             ))}

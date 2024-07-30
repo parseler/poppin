@@ -13,6 +13,19 @@
   z-index: 10;
 }
 
+.left-icon img {
+  position: absolute;
+  left: 24px;
+  top: 12px;
+  height: 32px;
+}
+.right-icon img {
+  position: absolute;
+  right: 24px;
+  top: 12px;
+  height: 32px;
+}
+
 .logo img {
   height: 32px;
 }
@@ -63,15 +76,15 @@
 }
 
 .notification-item.reserve {
-  background: rgba(212, 20, 90, 0.10);
+  background: rgba(212, 20, 90, 0.1);
 }
 
 .notification-item.comment {
-  background: rgba(251, 176, 59, 0.10);
+  background: rgba(251, 176, 59, 0.1);
 }
 
 .notification-item.advertisement {
-  background: rgba(22, 138, 173, 0.10);
+  background: rgba(22, 138, 173, 0.1);
 }
 
 .notification-item .header {
@@ -115,9 +128,9 @@
 }
 
 .notification-footer {
-  color: #8B8B8B;
+  color: #8b8b8b;
   text-align: center;
-  font-feature-settings: 'clig' off, 'liga' off;
+  font-feature-settings: "clig" off, "liga" off;
   font-family: "NanumSquare Neo OTF";
   font-size: 12px;
   font-style: normal;

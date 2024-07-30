@@ -1,6 +1,7 @@
 package com.apink.poppin.api.user.dto;
 
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import lombok.*;
 
 public class UserDto {
@@ -8,6 +9,8 @@ public class UserDto {
     @Getter
     @Builder
     public static class Put {
+        @NotNull
+        private long userTsid;
         @NotBlank
         private String nickname;
         @NotBlank

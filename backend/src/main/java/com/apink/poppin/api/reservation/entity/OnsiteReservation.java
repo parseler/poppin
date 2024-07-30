@@ -36,6 +36,9 @@ public class OnsiteReservation {
     private LocalDate visitedDate;
 
     @NotNull
+    private int reservationCount;
+
+    @NotNull
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "reservation_statement_id", nullable = false)
     private ReservationStatement reservationStatement;

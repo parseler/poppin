@@ -10,6 +10,8 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.CreationTimestamp;
 
+import java.time.LocalDate;
+import java.time.LocalTime;
 import java.util.Date;
 
 import static jakarta.persistence.FetchType.LAZY;
@@ -36,16 +38,16 @@ public class PreReservation {
     private Popup popup;
 
     @NotNull
-    private Date reservationDate;
+    private LocalDate reservationDate;
 
     @NotNull
-    private Date reservationTime;
+    private LocalTime reservationTime;
 
     @NotNull
     private int reservationCount;
 
     @CreationTimestamp
-    private Date createdAt;
+    private LocalDate createdAt;
 
     @OneToOne(fetch = LAZY)
     @JoinColumn(name = "reservation_statement_id", nullable = false)

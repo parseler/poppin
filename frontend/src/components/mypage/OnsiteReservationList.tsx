@@ -1,40 +1,35 @@
-import { useState } from "react";
-import banners, { BannerProps } from "@utils/get-banner-image";
-import Modal from "@mui/material/Modal";
-import Box from "@mui/material/Box";
-import PopMedium03 from "@components/mypage/PopMedium03";
+import banners from "@utils/get-banner-image";
+import PopMedium03 from "./PopMedium03";
+import { Link } from "react-router-dom";
 
-
-const MyCancelList = () => {
-  const [isModal, setIsModal] = useState(false);
-  const [modalBanner, setModalBanner] = useState<BannerProps | null>(null);
-
-  const openModal = (banner: BannerProps) => {
-    setIsModal(true);
-    setModalBanner(banner);
-    document.body.style.overflow = "hidden";
-  };
-
-  const closeModal = () => {
-    setIsModal(false);
-    setModalBanner(null);
-    document.body.style.overflow = "unset";
-  };
-
+const OnsiteReservationList = () => {
   return (
-    <div id="my-cancel-list">
-      <h1>예약이 취소된 팝업</h1>
-      <div className="my-cancel-content">
+    <div id="onsite-reservation-list">
       {banners.length > 0 ? (
         banners.map((banner, index) => (
-          <div key={index} onClick={() => openModal(banner)}>
+          <Link to="/waiting" key={index}>
             <PopMedium03
               image={banner.image}
               text={banner.text}
               date={banner.date}
-              children={""}
-            />
-          </div>
+            >
+              <div className="waiting-link">
+                대기 순번 확인하기
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  width="12"
+                  height="12"
+                  viewBox="0 0 12 12"
+                  fill="none"
+                >
+                  <path
+                    d="M8.51552 6.26531L4.76552 10.0153C4.73068 10.0501 4.68932 10.0778 4.64379 10.0966C4.59827 10.1155 4.54948 10.1252 4.50021 10.1252C4.45094 10.1252 4.40214 10.1155 4.35662 10.0966C4.3111 10.0778 4.26974 10.0501 4.2349 10.0153C4.20005 9.98047 4.17242 9.9391 4.15356 9.89358C4.1347 9.84806 4.125 9.79927 4.125 9.75C4.125 9.70072 4.1347 9.65193 4.15356 9.60641C4.17242 9.56089 4.20005 9.51952 4.2349 9.48468L7.72005 5.99999L4.2349 2.51531C4.16453 2.44494 4.125 2.34951 4.125 2.24999C4.125 2.15048 4.16453 2.05505 4.2349 1.98468C4.30526 1.91432 4.4007 1.87479 4.50021 1.87479C4.59972 1.87479 4.69516 1.91432 4.76552 1.98468L8.51552 5.73468C8.55039 5.76951 8.57805 5.81087 8.59692 5.85639C8.61579 5.90192 8.6255 5.95071 8.6255 5.99999C8.6255 6.04928 8.61579 6.09807 8.59692 6.1436C8.57805 6.18912 8.55039 6.23048 8.51552 6.26531Z"
+                    fill="black"
+                  />
+                </svg>
+              </div>
+            </PopMedium03>
+          </Link>
         ))
       ) : (
         <div className="like-contents-none">
@@ -50,32 +45,11 @@ const MyCancelList = () => {
               fill="#8B8B8B"
             />
           </svg>
-          <p>사전 예약한 팝업이 없습니다.</p>
+          <p>현장 예약한 팝업이 없습니다.</p>
         </div>
       )}
-
-      {/* 모달 */}
-      {modalBanner && (
-        <Modal open={isModal} onClose={closeModal}>
-          <Box
-            id="reservation-modal-box"
-            onClick={(e) => e.stopPropagation()}>
-            <div className="modal-overlay">
-              <img src={modalBanner.image} alt={modalBanner.text} />
-              <p className="title">{modalBanner.text}</p>
-              <div className="reservation-info">
-                <p className="name">예약자명: 김윤</p>
-                <p className="date">취소 확정일: 24.07.31</p>
-                <p className="time">입장 시간: 24.08.05 17:00</p>
-                <p className="member">입장 인원: 2명</p>
-              </div>
-            </div>
-          </Box>
-        </Modal>
-      )}
-      </div>
     </div>
   );
-}
+};
 
-export default MyCancelList;
+export default OnsiteReservationList;

@@ -343,3 +343,120 @@
   font-weight: 800;
   margin: 0 20px 32px;
 }
+
+/* MyReservattionList */
+#my-reservation-list {
+  margin: 32px 0;
+}
+
+#my-reservation-list h1 {
+  font-size: 20px;
+  font-weight: 800;
+  margin: 0 20px 32px;
+}
+
+#my-reservation-list .reservation-tab {
+  margin: 0 20px;
+  display: flex;
+  justify-content: space-around;
+  border-bottom: 1px solid #8B8B8B;
+}
+
+#my-reservation-list .reservation-tab div {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding-bottom: 12px;
+  flex: 1;
+  color: #8b8b8b;
+  position: relative;
+}
+
+#my-reservation-list .reservation-tab .active {
+  color: #D4145A;
+  position: relative;
+  padding-bottom: 12px;
+  border-bottom: 1px solid #D4145A;
+}
+
+#pre-reservation-list {
+  margin: 0 20px;
+}
+
+#reservation-modal-box {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  margin: 0 32px;
+  padding: 32px 0;
+  background-color: white;
+  border-radius: 20px;
+}
+  
+#reservation-modal-box .modal-overlay {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+#reservation-modal-box img {
+  width: 50%;
+  margin-bottom: 16px;
+}
+
+#reservation-modal-box .title {
+  font-size: 18px;
+  font-weight: 700;
+  margin-bottom: 8px;
+  width: 80%;
+  line-height: 1.4;
+  text-align: center;
+}
+#reservation-modal-box .reservation-info p {
+  margin-top: 8px;
+}
+
+/* OnsiteReservation */
+#onsite-reservation-list {
+  margin: 0 20px;
+}
+
+#onsite-reservation-list a {
+  color: black;
+}
+
+#onsite-reservation-list .waiting-link {
+  margin-top: 8px;
+  font-size: 12px;
+  display: flex;
+  color: #6D6D6D;
+  font-weight: 700;
+}
+
+/* VisitCompletionList */
+#visit-completion-list {
+  margin: 0 20px;
+}
+
+#visit-completion-list a {
+  color: black;
+}
+
+#visit-completion-list .writing-link {
+  margin-top: 8px;
+  font-size: 12px;
+  display: flex;
+  color: #6D6D6D;
+  font-weight: 700;
+}
+
+/* MyCancelList */
+#my-cancel-list {
+  margin: 32px 20px;
+}
+
+#my-cancel-list h1 {
+  font-size: 20px;
+  font-weight: 800;
+  margin-bottom: 16px;
+}

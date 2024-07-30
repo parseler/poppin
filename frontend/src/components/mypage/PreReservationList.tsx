@@ -2,10 +2,9 @@ import { useState } from "react";
 import banners, { BannerProps } from "@utils/get-banner-image";
 import Modal from "@mui/material/Modal";
 import Box from "@mui/material/Box";
-import PopMedium03 from "@components/mypage/PopMedium03";
+import PopMedium03 from "./PopMedium03";
 
-
-const MyCancelList = () => {
+const PreReservationList = () => {
   const [isModal, setIsModal] = useState(false);
   const [modalBanner, setModalBanner] = useState<BannerProps | null>(null);
 
@@ -22,9 +21,7 @@ const MyCancelList = () => {
   };
 
   return (
-    <div id="my-cancel-list">
-      <h1>예약이 취소된 팝업</h1>
-      <div className="my-cancel-content">
+    <div id="pre-reservation-list">
       {banners.length > 0 ? (
         banners.map((banner, index) => (
           <div key={index} onClick={() => openModal(banner)}>
@@ -65,7 +62,7 @@ const MyCancelList = () => {
               <p className="title">{modalBanner.text}</p>
               <div className="reservation-info">
                 <p className="name">예약자명: 김윤</p>
-                <p className="date">취소 확정일: 24.07.31</p>
+                <p className="date">예약 확정일: 24.07.30</p>
                 <p className="time">입장 시간: 24.08.05 17:00</p>
                 <p className="member">입장 인원: 2명</p>
               </div>
@@ -73,9 +70,8 @@ const MyCancelList = () => {
           </Box>
         </Modal>
       )}
-      </div>
     </div>
   );
-}
+};
 
-export default MyCancelList;
+export default PreReservationList;

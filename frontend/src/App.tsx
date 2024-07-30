@@ -30,6 +30,7 @@ import MyReviewList from "@pages/UserPage/MyReviewList";
 import MyLikeList from "@pages/UserPage/MyLikeList";
 import MyReservationList from "@pages/UserPage/MyReservationList";
 import MyCancelList from "@pages/UserPage/MyCancelList";
+import Search from "@components/Search";
 
 function App() {
   const [isLoading, setIsLoading] = useState(true);
@@ -71,6 +72,7 @@ function App() {
         <Route path="/mypage/like" element={<Layout04><MyLikeList /></Layout04>} />
         <Route path="/mypage/reservation" element={<Layout04><MyReservationList /></Layout04>} />
         <Route path="/mypage/cancel" element={<Layout04><MyCancelList /></Layout04>} />
+        <Route path="/search" element={<Search />} />
       </Routes>
     </div>
   )

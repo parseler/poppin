@@ -51,12 +51,8 @@ public class ReviewIntegrationTest {
     @BeforeEach
     public void setUp() {
         // 팝업, 유저, 매니저 엔티티와 레포지토리가 있어야 통합테스트 가능
-        Popup popup = Popup.builder()
-                .popupId(1L)
-                .build();
-        User user = User.builder()
-                .userTsid(1L)
-                .build();
+        Popup popup = Popup.builder().build();
+        User user = User.builder().build();
 
         userRepository.save(user);
         popupRepository.save(popup);

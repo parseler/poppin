@@ -343,3 +343,137 @@
   font-weight: 800;
   margin: 0 20px 32px;
 }
+
+/* MyReservattionList */
+#my-reservation-list {
+  margin: 32px 0;
+}
+
+#my-reservation-list h1 {
+  font-size: 20px;
+  font-weight: 800;
+  margin: 0 20px 32px;
+}
+
+#my-reservation-list .reservation-tab {
+  margin: 0 20px;
+  display: flex;
+  justify-content: space-around;
+  border-bottom: 1px solid #8B8B8B;
+}
+
+#my-reservation-list .reservation-tab div {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding-bottom: 12px;
+  flex: 1;
+  color: #8b8b8b;
+  position: relative;
+}
+
+#my-reservation-list .reservation-tab .active {
+  color: #D4145A;
+  position: relative;
+  padding-bottom: 12px;
+  border-bottom: 1px solid #D4145A;
+}
+
+#pre-reservation-list {
+  margin: 0 20px;
+}
+
+/* PopReservationModal */
+#reservation-modal {
+  width: 100%;
+  height: 100%;
+  position: absolute;
+  top: 0; left: 0;
+  z-index: 2;
+}
+
+#reservation-modal .modal-gradiant {
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+  position: fixed;
+  top: 0; left: 0;
+  z-index: 3;
+}
+
+#reservation-modal .modal-overlay {
+  margin: 0 32px;
+  padding: 32px 0;
+  background-color: white;
+  position: fixed;
+  top: 50%;
+  transform: translateY(-50%);
+  border-radius: 20px;
+  z-index: 5;
+}
+
+#reservation-modal .modal-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+#reservation-modal button {
+  position: absolute;
+  top: 5%; right: 5%;
+  font-size: 32px;
+  background-color: transparent;
+  border: none;
+}
+
+#reservation-modal img {
+  width: 50%;
+  margin-bottom: 16px;
+}
+
+#reservation-modal .title {
+  font-size: 18px;
+  font-weight: 700;
+  margin-bottom: 8px;
+  width: 80%;
+  line-height: 1.4;
+  text-align: center;
+}
+
+#reservation-modal .reservation-info p {
+  margin-top: 8px;
+}
+
+/* OnsiteReservation */
+#onsite-reservation-list {
+  margin: 0 20px;
+}
+
+#onsite-reservation-list a {
+  color: black;
+}
+
+#onsite-reservation-list .waiting-link {
+  margin-top: 8px;
+  font-size: 12px;
+  display: flex;
+  color: #6D6D6D;
+  font-weight: 700;
+}
+
+/* VisitCompletionList */
+#visit-completion-list {
+  margin: 0 20px;
+}
+
+#visit-completion-list a {
+  color: black;
+}
+
+#visit-completion-list .writing-link {
+  margin-top: 8px;
+  font-size: 12px;
+  display: flex;
+  color: #6D6D6D;
+  font-weight: 700;
+}

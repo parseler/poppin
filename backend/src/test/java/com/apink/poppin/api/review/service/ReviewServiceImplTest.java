@@ -1,12 +1,12 @@
 package com.apink.poppin.api.review.service;
 
+import com.apink.poppin.api.popup.entity.Popup;
 import com.apink.poppin.api.review.dto.ReviewDto;
 import com.apink.poppin.api.review.dto.ReviewUpdateRequestDto;
 import com.apink.poppin.api.review.entity.Comment;
 import com.apink.poppin.api.review.entity.Review;
 import com.apink.poppin.api.review.repository.ReviewRepository;
-import com.apink.poppin.api.test.entity.Popup;
-import com.apink.poppin.api.test.entity.User;
+import com.apink.poppin.api.user.entity.User;
 import com.apink.poppin.common.exception.dto.BusinessLogicException;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;

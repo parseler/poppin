@@ -1,13 +1,13 @@
 package com.apink.poppin.api.review.integration;
 
+import com.apink.poppin.api.popup.entity.Popup;
+import com.apink.poppin.api.popup.repository.PopupRepository;
 import com.apink.poppin.api.review.dto.ReviewUpdateRequestDto;
 import com.apink.poppin.api.review.entity.Comment;
 import com.apink.poppin.api.review.entity.Review;
 import com.apink.poppin.api.review.repository.ReviewRepository;
-import com.apink.poppin.api.test.entity.Popup;
-import com.apink.poppin.api.test.entity.User;
-import com.apink.poppin.api.test.repository.PopupRepository;
-import com.apink.poppin.api.test.repository.UserRepository;
+import com.apink.poppin.api.user.entity.User;
+import com.apink.poppin.api.user.repository.UserRepository;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -51,8 +51,12 @@ public class ReviewIntegrationTest {
     @BeforeEach
     public void setUp() {
         // 팝업, 유저, 매니저 엔티티와 레포지토리가 있어야 통합테스트 가능
-        Popup popup = new Popup(1L);
-        User user = new User(1L);
+        Popup popup = Popup.builder()
+                .popupId(1L)
+                .build();
+        User user = User.builder()
+                .userTsid(1L)
+                .build();
 
         userRepository.save(user);
         popupRepository.save(popup);

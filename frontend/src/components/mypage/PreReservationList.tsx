@@ -1,21 +1,24 @@
 import { useState } from "react";
 import banners, { BannerProps } from "@utils/get-banner-image";
+import Modal from "@mui/material/Modal";
+import Box from "@mui/material/Box";
 import PopMedium03 from "./PopMedium03";
-import PopReservationModal from "./PopReservationModal";
 
 const PreReservationList = () => {
   const [isModal, setIsModal] = useState(false);
   const [modalBanner, setModalBanner] = useState<BannerProps | null>(null);
 
-  const openModal = (banner : BannerProps) => {
+  const openModal = (banner: BannerProps) => {
     setIsModal(true);
     setModalBanner(banner);
-  }
+    document.body.style.overflow = "hidden";
+  };
 
   const closeModal = () => {
     setIsModal(false);
     setModalBanner(null);
-  }
+    document.body.style.overflow = "unset";
+  };
 
   return (
     <div id="pre-reservation-list">
@@ -27,7 +30,7 @@ const PreReservationList = () => {
               text={banner.text}
               date={banner.date}
               children={""}
-            ></PopMedium03>
+            />
           </div>
         ))
       ) : (
@@ -50,16 +53,22 @@ const PreReservationList = () => {
 
       {/* 모달 */}
       {modalBanner && (
-        <PopReservationModal isOpen={isModal} onClose={closeModal}>
-          <img src={modalBanner.image} alt={modalBanner.text} />
-          <p className="title">{modalBanner.text}</p>
-          <div className="reservation-info">
-            <p className="name">예약자명: 김윤</p>
-            <p className="date">예약 확정일: 24.07.30</p>
-            <p className="time">입장 시간: 24.08.05 17:00</p>
-            <p className="member">입장 인원: 2명</p>
-          </div>
-        </PopReservationModal>
+        <Modal open={isModal} onClose={closeModal}>
+          <Box
+            id="reservation-modal-box"
+            onClick={(e) => e.stopPropagation()}>
+            <div className="modal-overlay">
+              <img src={modalBanner.image} alt={modalBanner.text} />
+              <p className="title">{modalBanner.text}</p>
+              <div className="reservation-info">
+                <p className="name">예약자명: 김윤</p>
+                <p className="date">예약 확정일: 24.07.30</p>
+                <p className="time">입장 시간: 24.08.05 17:00</p>
+                <p className="member">입장 인원: 2명</p>
+              </div>
+            </div>
+          </Box>
+        </Modal>
       )}
     </div>
   );

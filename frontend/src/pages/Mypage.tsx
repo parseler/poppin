@@ -120,7 +120,7 @@ const Mypage = () => {
             </Link>
           </li>
           <li>
-            <Link to="">
+            <Link to="/mypage/cancel">
               <p>예약이 취소된 팝업</p>
               <svg
                 xmlns="http://www.w3.org/2000/svg"

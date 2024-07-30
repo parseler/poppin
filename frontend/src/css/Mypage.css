@@ -383,55 +383,28 @@
   margin: 0 20px;
 }
 
-/* PopReservationModal */
-#reservation-modal {
-  width: 100%;
-  height: 100%;
+#reservation-modal-box {
   position: absolute;
-  top: 0; left: 0;
-  z-index: 2;
-}
-
-#reservation-modal .modal-gradiant {
-  width: 100%;
-  height: 100%;
-  background-color: rgba(0, 0, 0, 0.5);
-  position: fixed;
-  top: 0; left: 0;
-  z-index: 3;
-}
-
-#reservation-modal .modal-overlay {
+  top: 50%;
+  transform: translateY(-50%);
   margin: 0 32px;
   padding: 32px 0;
   background-color: white;
-  position: fixed;
-  top: 50%;
-  transform: translateY(-50%);
   border-radius: 20px;
-  z-index: 5;
 }
-
-#reservation-modal .modal-content {
+  
+#reservation-modal-box .modal-overlay {
   display: flex;
   flex-direction: column;
   align-items: center;
 }
 
-#reservation-modal button {
-  position: absolute;
-  top: 5%; right: 5%;
-  font-size: 32px;
-  background-color: transparent;
-  border: none;
-}
-
-#reservation-modal img {
+#reservation-modal-box img {
   width: 50%;
   margin-bottom: 16px;
 }
 
-#reservation-modal .title {
+#reservation-modal-box .title {
   font-size: 18px;
   font-weight: 700;
   margin-bottom: 8px;
@@ -439,8 +412,7 @@
   line-height: 1.4;
   text-align: center;
 }
-
-#reservation-modal .reservation-info p {
+#reservation-modal-box .reservation-info p {
   margin-top: 8px;
 }
 
@@ -476,4 +448,15 @@
   display: flex;
   color: #6D6D6D;
   font-weight: 700;
+}
+
+/* MyCancelList */
+#my-cancel-list {
+  margin: 32px 20px;
+}
+
+#my-cancel-list h1 {
+  font-size: 20px;
+  font-weight: 800;
+  margin-bottom: 16px;
 }

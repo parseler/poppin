@@ -1,3 +1,56 @@
+/* 수정 모드 입력 폼 스타일 */
+#pop-detail .edit-input {
+  width: calc(100% - 40px); /* 부모 요소의 너비를 기준으로 설정 */
+  padding: 8px;
+  margin-bottom: 2px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  font-size: 14px;
+}
+
+#pop-detail .edit-textarea {
+  width: calc(100% - 40px); /* 부모 요소의 너비를 기준으로 설정 */
+  height: 100px;
+  padding: 8px;
+  margin-bottom: 10px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  font-size: 14px;
+  resize: vertical;
+}
+
+#pop-detail .edit-checkbox {
+  margin-top: 5px;
+}
+
+#pop-detail .edit-button {
+  position: absolute;
+  top: 15px;
+  right: 10px;
+  background: none;
+  border: none;
+  color: white;
+  padding: 10px;
+  border-radius: 4px;
+  cursor: pointer;
+  font-family: "NanumSquare Neo OTF";
+  font-size: 14px;
+}
+/* 수정 완료 버튼 스타일 */
+#pop-detail .save-button {
+  position: absolute;
+  top: 20px;
+  right: 12px;
+  background: #d4145a;
+  border: none;
+  color: white;
+  padding: 10px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-family: "NanumSquare Neo OTF";
+  font-size: 14px;
+}
+/* 기존 스타일 유지 */
 #pop-detail .slider-container {
   position: relative;
   width: 100%;
@@ -10,7 +63,7 @@
   object-fit: contain;
 }
 
-#pop-detail .back-button{
+#pop-detail .back-button {
   position: absolute;
   top: 15px;
   left: 10px;
@@ -79,7 +132,7 @@
   margin-right: 10px;
 }
 
-#pop-detail .score img{
+#pop-detail .score img {
   margin-right: 2px;
 }
 
@@ -94,7 +147,7 @@
   justify-content: center;
 }
 
-#pop-detail .like img{
+#pop-detail .like img {
   margin-right: 2px;
 }
 
@@ -106,7 +159,7 @@
   flex-shrink: 0;
   position: relative;
   margin: 0 16px;
-  border-bottom: 1px solid#8b8b8b;
+  border-bottom: 1px solid #8b8b8b;
 }
 
 #pop-detail .tab div {

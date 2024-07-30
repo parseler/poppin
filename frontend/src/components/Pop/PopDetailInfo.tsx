@@ -1,5 +1,4 @@
 import { useState, useEffect } from "react";
-
 import "@css/Pop/PopDetailInfo.css";
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
@@ -101,7 +100,37 @@ const relatedPopups = [
   },
 ];
 
-const Info = () => {
+interface InfoProps {
+  isEditing: boolean;
+  location: string;
+  hours: string;
+  website: string;
+  instagram: string;
+  services: any;
+  description: string;
+  onLocationChange: (location: string) => void;
+  onHoursChange: (hours: string) => void;
+  onWebsiteChange: (website: string) => void;
+  onInstagramChange: (instagram: string) => void;
+  onServicesChange: (services: any) => void;
+  onDescriptionChange: (description: string) => void;
+}
+
+const Info: React.FC<InfoProps> = ({
+  isEditing,
+  location,
+  hours,
+  website,
+  instagram,
+  services,
+  description,
+  onLocationChange,
+  onHoursChange,
+  onWebsiteChange,
+  onInstagramChange,
+  onServicesChange,
+  onDescriptionChange,
+}) => {
   const [isToggleOpen, setIsToggleOpen] = useState(false);
   const [isBusinessOpen, setIsBusinessOpen] = useState(false);
   const [currentDay, setCurrentDay] = useState("");
@@ -167,7 +196,16 @@ const Info = () => {
     <div id="pop-detail-info">
       <div className="locate">
         <img src={locateIcon} alt="위치 아이콘" />
-        서울특별시 성동구 성수이로 77 라인프렌즈 스퀘어 성수
+        {isEditing ? (
+          <input
+            type="text"
+            value={location}
+            onChange={(e) => onLocationChange(e.target.value)}
+            className="edit-input"
+          />
+        ) : (
+          location
+        )}
       </div>
       <div className="schedule">
         <div className="schedule-isToggleOpen">
@@ -190,7 +228,16 @@ const Info = () => {
                   fontWeight: currentDay === day ? "bold" : "normal",
                 }}
               >
-                {day}:{time}
+                {isEditing ? (
+                  <input
+                    type="text"
+                    value={time}
+                    onChange={(e) => onHoursChange(e.target.value)}
+                    className="edit-input"
+                  />
+                ) : (
+                  `${day}: ${time}`
+                )}
               </div>
             ))}
           </div>
@@ -203,32 +250,60 @@ const Info = () => {
       </div>
       <div className="homepage">
         <img src={homepageIcon} />
-        <a
-          href={homepageLink ? homepageLink.link : "#"}
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          {homepageLink ? homepageLink.link : "-"}
-        </a>
+        {isEditing ? (
+          <input
+            type="text"
+            value={website}
+            onChange={(e) => onWebsiteChange(e.target.value)}
+            className="edit-input"
+          />
+        ) : (
+          <a
+            href={homepageLink ? homepageLink.link : "#"}
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            {homepageLink ? homepageLink.link : "-"}
+          </a>
+        )}
       </div>
       <div className="insta">
         <img src={insta} />
-        <a
-          href={instaLink ? instaLink.link : "#"}
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          {instaLink ? instaLink.link : "-"}
-        </a>
+        {isEditing ? (
+          <input
+            type="text"
+            value={instagram}
+            onChange={(e) => onInstagramChange(e.target.value)}
+            className="edit-input"
+          />
+        ) : (
+          <a
+            href={instaLink ? instaLink.link : "#"}
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            {instaLink ? instaLink.link : "-"}
+          </a>
+        )}
       </div>
       <div className="service">
         <div className="service-icons">
-          {Object.entries(service).map(
+          {Object.entries(services).map(
             ([key, value]) =>
               value !== undefined && (
                 <div key={key} className="service-icon">
                   <img src={serviceIcons[key][value]} />
                   {value ? "가능" : "불가능"}
+                  {isEditing && (
+                    <input
+                      type="checkbox"
+                      checked={value}
+                      onChange={(e) =>
+                        onServicesChange({ ...services, [key]: e.target.checked })
+                      }
+                      className="edit-checkbox"
+                    />
+                  )}
                 </div>
               )
           )}
@@ -236,11 +311,19 @@ const Info = () => {
       </div>
       <div className="introduce">
         <div className="introduce-title">팝업 스토어 소개</div>
-        {introduce.map((line, index) => (
-          <p key={index} className="introduce-content">
-            {line.trim() === "" ? <br /> : line}
-          </p>
-        ))}
+        {isEditing ? (
+          <textarea
+            value={description}
+            onChange={(e) => onDescriptionChange(e.target.value)}
+            className="edit-textarea"
+          />
+        ) : (
+          introduce.map((line, index) => (
+            <p key={index} className="introduce-content">
+              {line.trim() === "" ? <br /> : line}
+            </p>
+          ))
+        )}
       </div>
       <div className="map-location">
         <div className="map-title">팝업 스토어 위치</div>
@@ -249,7 +332,7 @@ const Info = () => {
           style={{ width: "100%", height: "250px", marginBottom: "30px" }}
         ></div>
       </div>
-        <div className="rel-pop-title">유사한 팝업 스토어</div>
+      <div className="rel-pop-title">유사한 팝업 스토어</div>
       <div className="related-popups">
         {relatedPopups.map((popup, index) => (
           <div key={index} className="popup-item">

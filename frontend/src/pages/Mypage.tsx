@@ -1,7 +1,8 @@
 import "@css/Mypage.css";
 import { Link } from "react-router-dom";
-import { useState } from "react";
 
+import { useState } from "react";
+import { Box, Modal } from "@mui/material";
 import loginBefore from "@assets/mypage/loginBefore.svg";
 import nextButton from "@assets/mypage/nextButton.svg";
 import profileUpdate from "@assets/mypage/profileUpdateButton.svg";
@@ -9,13 +10,25 @@ import profileUpdate from "@assets/mypage/profileUpdateButton.svg";
 // 임시 사용자 데이터
 const user = {
   isLoggedIn: true, // 로그인 여부
-  role: 'admin', // 'user', 'manager', 'admin'
-  nickname: '터지는 커비', // 유저 닉네임
-  profileImage: 'https://i.pinimg.com/564x/ac/53/e9/ac53e9b1cbb1069713a4b8b78986b5cd.jpg', // 유저 프로필 이미지
+  role: "user", // 'user', 'manager', 'admin'
+  nickname: "터지는 커비", // 유저 닉네임
+  profileImage:
+    "https://i.pinimg.com/564x/ac/53/e9/ac53e9b1cbb1069713a4b8b78986b5cd.jpg", // 유저 프로필 이미지
 };
 
 const Mypage: React.FC = () => {
   const { isLoggedIn, role, nickname, profileImage } = user;
+  const [isModal, setIsModal] = useState(false);
+
+  const openModal = () => {
+    setIsModal(true);
+    document.body.style.overflow = "hidden";
+  };
+
+  const closeModal = () => {
+    setIsModal(false);
+    document.body.style.overflow = "unset";
+  };
 
   return (
     <div id="my-page">
@@ -23,7 +36,11 @@ const Mypage: React.FC = () => {
         <div className="login-section">
           {/* 로그인 전 */}
           <Link to="/login">
-            <img src={loginBefore} className="login-before" alt="로그인 전 아이콘" />
+            <img
+              src={loginBefore}
+              className="login-before"
+              alt="로그인 전 아이콘"
+            />
             <span>로그인 해주세요</span>
             <img src={nextButton} alt="다음 버튼" />
           </Link>
@@ -50,7 +67,7 @@ const Mypage: React.FC = () => {
 
       <div className="mypage-menu-section">
         <ul>
-          {role === 'manager' ? (
+          {role === "manager" ? (
             <>
               <li>
                 <Link to="/regist-pop">
@@ -71,7 +88,7 @@ const Mypage: React.FC = () => {
                 </Link>
               </li>
             </>
-          ) : role === 'admin' ? (
+          ) : role === "admin" ? (
             <>
               <li>
                 <Link to="/mypage/manage-manager-codes">
@@ -143,6 +160,14 @@ const Mypage: React.FC = () => {
               <img src={nextButton} alt="다음 버튼" />
             </Link>
           </li>
+          {role === "user" && (
+            <li>
+              <Link to="" onClick={openModal}>
+                <p>회원 탈퇴</p>
+                <img src={nextButton} alt="다음 버튼" />
+              </Link>
+            </li>
+          )}
         </ul>
       </div>
       <div className="etc-section">
@@ -152,6 +177,22 @@ const Mypage: React.FC = () => {
         <span> | </span>
         <span>v.1.0.0</span>
       </div>
+
+      {/* 회원탈퇴 모달창 */}
+      <Modal open={isModal} onClose={closeModal}>
+          <Box
+            id="user-withdrawal-modal-box"
+            onClick={(e) => e.stopPropagation()}>
+            <div className="modal-overlay">
+              <p className="withdraw-title">회원 탈퇴를 진행하시겠습니까?</p>
+              <p className="withdraw-message">(작성한 후기와 댓글은 삭제되지 않습니다.)</p>
+              <div className="buttons">
+                <button onClick={closeModal}>취소</button>
+                <button>탈퇴</button>
+              </div>
+            </div>
+          </Box>
+        </Modal>
     </div>
   );
 };

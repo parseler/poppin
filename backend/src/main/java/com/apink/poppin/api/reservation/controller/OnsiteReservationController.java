@@ -2,17 +2,16 @@ package com.apink.poppin.api.reservation.controller;
 
 import com.apink.poppin.api.reservation.dto.OnsiteReservationDto;
 import com.apink.poppin.api.reservation.service.OnsiteReservationService;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/api/onsite-reservations")
+@RequiredArgsConstructor
 public class OnsiteReservationController {
-    private final OnsiteReservationService onsiteReservationService;
 
-    public OnsiteReservationController(OnsiteReservationService onsiteReservationService) {
-        this.onsiteReservationService = onsiteReservationService;
-    }
+    private final OnsiteReservationService onsiteReservationService;
 
     @GetMapping("/{phoneNumber}/{popupId}")
     public ResponseEntity<?> getOnsiteReservation(@PathVariable String phoneNumber, @PathVariable Long popupId) {

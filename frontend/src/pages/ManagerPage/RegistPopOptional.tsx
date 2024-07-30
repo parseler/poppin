@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import "@css/ManagerPage/RegistPopOptional.css";
 
-import secondStep from "@assets/secondStep.svg";
+import secondStep from "@assets/registPop/secondStep.svg";
 
 function RegistPopOptional() {
   const navigate = useNavigate();

@@ -32,6 +32,7 @@ import MyNotification from "@pages/AdminPage/MyNotification";
 import MyReservationList from "@pages/UserPage/MyReservationList";
 import MyCancelList from "@pages/UserPage/MyCancelList";
 import MyPopList from "@pages/ManagerPage/MyPopList";
+import Search from "@components/Search";
 
 function App() {
   const [isLoading, setIsLoading] = useState(true);
@@ -75,6 +76,7 @@ function App() {
         <Route path="/mypage/reservation" element={<Layout04><MyReservationList /></Layout04>} />
         <Route path="/mypage/cancel" element={<Layout04><MyCancelList /></Layout04>} />
         <Route path="/mypage/my-popups" element={<Layout04><MyPopList /></Layout04>} />
+        <Route path="/search" element={<Search />} />
       </Routes>
     </div>
   )

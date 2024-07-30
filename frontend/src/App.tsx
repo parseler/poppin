@@ -28,6 +28,7 @@ import RegistPopReservationInfo from "@pages/ManagerPage/RegistPopReservationInf
 import UserUpdate from "@pages/UserPage/UserUpdate";
 import MyReviewList from "@pages/UserPage/MyReviewList";
 import MyLikeList from "@pages/UserPage/MyLikeList";
+import MyNotification from "@pages/AdminPage/MyNotification";
 import MyReservationList from "@pages/UserPage/MyReservationList";
 import MyCancelList from "@pages/UserPage/MyCancelList";
 
@@ -69,6 +70,7 @@ function App() {
         <Route path="/mypage/update" element={<Layout03><UserUpdate /></Layout03>} />
         <Route path="/mypage/review" element={<Layout04><MyReviewList /></Layout04>} />
         <Route path="/mypage/like" element={<Layout04><MyLikeList /></Layout04>} />
+        <Route path="/admin/notification" element={<Layout04><MyNotification /></Layout04>} />
         <Route path="/mypage/reservation" element={<Layout04><MyReservationList /></Layout04>} />
         <Route path="/mypage/cancel" element={<Layout04><MyCancelList /></Layout04>} />
       </Routes>

@@ -6,6 +6,7 @@ import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDate;
@@ -13,6 +14,7 @@ import java.time.LocalDate;
 @Entity
 @Table(name = "onsite_reservation")
 @Builder
+@Getter
 @AllArgsConstructor
 @NoArgsConstructor
 public class OnsiteReservation {
@@ -43,4 +45,8 @@ public class OnsiteReservation {
     @NotNull
     @Column(name = "reservation_count", nullable = false)
     private Integer reservationCount;
+
+    @NotNull
+    @Column(name = "wait_number", nullable = false)
+    private Integer waitNumber;
 }

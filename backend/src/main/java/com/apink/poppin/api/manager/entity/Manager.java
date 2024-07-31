@@ -1,6 +1,7 @@
 package com.apink.poppin.api.manager.entity;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import lombok.*;
 
@@ -17,12 +18,19 @@ public class Manager {
     private Long managerTsid;
 
     @Size(max = 50)
-    @Column(name = "nickname", length = 50)
+    @NotNull
+    @Column(name = "nickname", nullable = false, length = 50)
     private String nickname;
 
-    @Size(max = 50)
-    @Column(name = "code", length = 50)
-    private String code;
+    @Size(max = 255)
+    @NotNull
+    @Column(name = "id", nullable = false)
+    private String id;
+
+    @Size(max = 255)
+    @NotNull
+    @Column(name = "password", nullable = false)
+    private String password;
 
     @Size(max = 255)
     @Column(name = "img")

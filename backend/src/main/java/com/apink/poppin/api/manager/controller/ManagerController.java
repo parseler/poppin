@@ -34,6 +34,20 @@ public class ManagerController {
         return ResponseEntity.ok(result);
     }
 
+    //FIXME: 이미 구현된 부분으로 대체
+    @PostMapping("/")
+    ResponseEntity<?> createManager(@RequestBody CreateManagerRequestDTO request) {
+        Manager manager = managerService.createManager(ManagerDTO.builder()
+                .nickname(request.getNickname())
+                .password(request.getPassword())
+                .img(request.getImg())
+                .build());
+        CreateManagerResponseDTO response = CreateManagerResponseDTO.builder()
+                .managerTsid(manager.getManagerTsid())
+                .build();
+        return ResponseEntity.ok(response);
+    }
+
     //TODO: JWT 토큰을 통한 조회 @PathVarialbe => @ManagerTsid
     @GetMapping("/me")
     ResponseEntity<?> getMyInfo(@PathVariable Long managerTsid) {
@@ -73,7 +87,7 @@ public class ManagerController {
     ResponseEntity<?> updateManager(@PathVariable Long managerTsid, @RequestBody UpdateManagerRequestDTO request) {
         managerService.updateManager(managerTsid, ManagerDTO.builder()
                 .nickname(request.getNickname())
-                .code(request.getCode())
+                .password(request.getPassword())
                 .img(request.getImg())
                 .build());
         Manager manager = managerService.getManager(managerTsid);

@@ -18,4 +18,5 @@ public interface PreReservationRepository extends JpaRepository<PreReservation, 
     List<PreReservation> findByUser(User user);
 
     List<PreReservation> findByUserAndReservationStatement_ReservationStatementId(User user, int reservationStatementId);
+
 }

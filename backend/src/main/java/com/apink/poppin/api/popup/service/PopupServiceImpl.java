@@ -4,6 +4,8 @@ import com.apink.poppin.api.popup.dto.PopupDTO;
 import com.apink.poppin.api.reservation.dto.PreReservationRequestDTO;
 import com.apink.poppin.api.reservation.dto.PreReservationResponseDTO;
 import com.apink.poppin.api.popup.entity.Popup;
+import com.apink.poppin.api.reservation.dto.PreStatementRequestDTO;
+import com.apink.poppin.api.reservation.dto.PreStatementResponseDTO;
 import com.apink.poppin.api.reservation.entity.PreReservation;
 import com.apink.poppin.api.popup.repository.PopupRepository;
 import com.apink.poppin.api.reservation.entity.ReservationStatement;
@@ -18,6 +20,7 @@ import org.springframework.stereotype.Service;
 import java.time.LocalDateTime;
 import java.util.Date;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -103,6 +106,36 @@ public class PopupServiceImpl implements PopupService {
                 .map(this::convertToResponseDTO)
                 .collect(Collectors.toList());
     }
+
+    // 사전 예약 상태 정보 변경하기
+    @Transactional
+    @Override
+    public PreStatementResponseDTO changePreReservation(PreStatementRequestDTO reqDto) {
+
+        // 유저 확인
+        User user = userRepository.findUserByUserTsid(reqDto.getUserTsid())
+                .orElseThrow(() -> new IllegalArgumentException("Invalid user Tsid"));
+        // 팝업 확인
+        Popup popup = popupRepository.findById(reqDto.getPopupId())
+                .orElseThrow(() -> new IllegalArgumentException("Invalid popup ID"));
+
+        PreReservation preReservation = preReservationRepository.findById(reqDto.getPreReservationId())
+                .orElseThrow(() -> new IllegalArgumentException("Invalid pre-reservation ID"));
+
+        ReservationStatement newStatement = reservationStatementRepository.findById(reqDto.getReservationStatementId())
+                .orElseThrow(() -> new IllegalArgumentException("Invalid reservationStatement ID"));
+
+        preReservation.setReservationStatement(newStatement);
+        preReservationRepository.save(preReservation);
+
+        return PreStatementResponseDTO.builder()
+                .preReservationId(preReservation.getPreReservationId())
+                .reservationStatementId(newStatement.getReservationStatementId())
+                .userTsid(preReservation.getUser().getUserTsid())
+                .popupId(preReservation.getPopup().getPopupId())
+                .build();
+    }
+
 
     // DTO 변환
     private PreReservationResponseDTO convertToResponseDTO(PreReservation preReservation) {

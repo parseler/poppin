@@ -4,21 +4,20 @@ import com.apink.poppin.api.popup.entity.Popup;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import java.time.LocalDate;
 
 @Entity
 @Table(name = "onsite_reservation")
 @Builder
+@Getter
 @AllArgsConstructor
 @NoArgsConstructor
 public class OnsiteReservation {
 
     @Id
-    @NotNull
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long onsiteReservationId;
 
     @NotNull
@@ -36,10 +35,15 @@ public class OnsiteReservation {
     private LocalDate visitedDate;
 
     @NotNull
-    private int reservationCount;
-
-    @NotNull
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "reservation_statement_id", nullable = false)
     private ReservationStatement reservationStatement;
+
+    @NotNull
+    @Column(name = "reservation_count", nullable = false)
+    private Integer reservationCount;
+
+    @NotNull
+    @Column(name = "wait_number", nullable = false)
+    private Integer waitNumber;
 }

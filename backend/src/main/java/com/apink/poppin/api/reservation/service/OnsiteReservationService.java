@@ -1,8 +1,14 @@
 package com.apink.poppin.api.reservation.service;
 
 import com.apink.poppin.api.reservation.dto.OnsiteReservationDto;
+import com.apink.poppin.api.reservation.dto.OnsiteReservationRequestDto;
 
 public interface OnsiteReservationService {
-    void saveToRedis(OnsiteReservationDto onsiteReservationDto);
-    OnsiteReservationDto getFromRedis(String phoneNumber, Long popupId);
+    OnsiteReservationDto createOnsiteReservation(OnsiteReservationDto onsiteReservationDto);
+
+    OnsiteReservationDto getOnsiteReservationByKakaoLink(long onsiteReservationId, long popupId);
+
+    OnsiteReservationDto getOnsiteReservationByPhoneNumber(String phoneNumber);
+
+    OnsiteReservationDto changeOnsiteReservation(OnsiteReservationRequestDto onsiteReservationRequestDto);
 }

@@ -33,7 +33,8 @@ class ManagerServiceImplTest {
         // Then
         System.out.println(manager.getManagerTsid());
         System.out.println(manager.getNickname());
-        System.out.println(manager.getCode());
+        System.out.println(manager.getId());
+        System.out.println(manager.getPassword());
         System.out.println(manager.getImg());
         assertEquals(manager.getManagerTsid(), managerTsid);
     }
@@ -46,7 +47,7 @@ class ManagerServiceImplTest {
         ManagerDTO managerDTO = ManagerDTO.builder()
                 .managerTsid(1L)
                 .nickname("nickname")
-                .code("code")
+                .password("password")
                 .img("img")
                 .build();
         // When
@@ -55,7 +56,8 @@ class ManagerServiceImplTest {
         Manager manager = managerService.getManager(managerTsid);
         System.out.println(manager.getManagerTsid());
         System.out.println(manager.getNickname());
-        System.out.println(manager.getCode());
+        System.out.println(manager.getId());
+        System.out.println(manager.getPassword());
         System.out.println(manager.getImg());
         assertEquals(managerService.getManager(managerTsid).getNickname(), managerDTO.getNickname());
     }
@@ -81,7 +83,7 @@ class ManagerServiceImplTest {
         for (Manager manager : managerList) {
             System.out.println(manager.getManagerTsid());
             System.out.println(manager.getNickname());
-            System.out.println(manager.getCode());
+            System.out.println(manager.getId());
             System.out.println(manager.getImg());
         }
     }

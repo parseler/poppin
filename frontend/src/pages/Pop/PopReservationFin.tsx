@@ -1,6 +1,6 @@
 import "@css/Pop/PopReservationFin.css";
 
-import finishCheck from "@assets/finishCheck.svg";
+import finishCheck from "@assets/registPop/finishCheck.svg";
 
 function ReservationFin() {
   return (

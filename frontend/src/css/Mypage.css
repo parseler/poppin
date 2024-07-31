@@ -324,7 +324,7 @@
 
 #pop-medium-03 .pop-name-03 {
   font-size: 16px;
-  font-weight: 800;
+  font-weight: 700;
   line-height: 1.4;
   width: calc(100%);
   margin-bottom: 8px;
@@ -422,6 +422,10 @@
   width: 80%;
   line-height: 1.4;
   text-align: center;
+
+  word-break: keep-all;
+  overflow-wrap: break-word;
+  word-wrap: break-word;
 }
 #reservation-modal-box .reservation-info p {
   margin-top: 8px;

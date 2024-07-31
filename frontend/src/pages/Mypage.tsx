@@ -10,7 +10,7 @@ import profileUpdate from "@assets/mypage/profileUpdateButton.svg";
 // 임시 사용자 데이터
 const user = {
   isLoggedIn: true, // 로그인 여부
-  role: 'manager', // 'user', 'manager', 'admin'
+  role: 'admin', // 'user', 'manager', 'admin'
   nickname: '터지는 커비', // 유저 닉네임
   profileImage: 'https://i.pinimg.com/564x/ac/53/e9/ac53e9b1cbb1069713a4b8b78986b5cd.jpg', // 유저 프로필 이미지
 };
@@ -90,13 +90,13 @@ const Mypage: React.FC = () => {
           ) : role === "admin" ? (
             <>
               <li>
-                <Link to="/mypage/manage-manager-codes">
+                <Link to="/admin/manage-code">
                   <p>매니저 코드 관리</p>
                   <img src={nextButton} alt="다음 버튼" />
                 </Link>
               </li>
               <li>
-                <Link to="/mypage/manage-banners">
+                <Link to="">
                   <p>배너 관리</p>
                   <img src={nextButton} alt="다음 버튼" />
                 </Link>
@@ -108,7 +108,7 @@ const Mypage: React.FC = () => {
                 </Link>
               </li>
               <li>
-                <Link to="/mypage/manage-reports">
+                <Link to="">
                   <p>신고 관리</p>
                   <img src={nextButton} alt="다음 버튼" />
                 </Link>

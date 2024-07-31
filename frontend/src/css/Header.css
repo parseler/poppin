@@ -14,12 +14,14 @@
 }
 
 .left-icon img {
+  width: 24px;
   position: absolute;
   left: 24px;
   top: 12px;
   height: 32px;
 }
 .right-icon img {
+  width: 24px;
   position: absolute;
   right: 24px;
   top: 12px;

@@ -55,7 +55,7 @@
   justify-content: flex-start;
   flex-direction: column;
   padding: 0px;
-  height: 80px;
+  height: 75px;
   transition: height 0.3s ease;
 }
 
@@ -133,7 +133,10 @@
 }
 
 #calendar .react-calendar__navigation {
-  height: 20px;
+  height: 30px;
+  align-items: center;
+  margin-top: 5px;
+  margin-bottom: 15px;
 }
 
 #calendar .react-calendar__navigation__label {
@@ -141,6 +144,12 @@
   display: flex;
   justify-content: center;
   align-items: last baseline;
+  color: #000;
+  font-family: "NanumSquare Neo OTF";
+  font-size: 16px;
+  font-style: normal;
+  font-weight: 800;
+  line-height: normal;
 }
 
 .react-calendar__navigation__prev-button {
@@ -162,21 +171,11 @@
 }
 
 .react-calendar__navigation__prev2-button {
-  font-size: 1.5em;
-  font-weight: bold;
-  margin: 0 10px;
-  display: flex;
-  justify-content: center;
-  align-items: last baseline;
+  display: none;
 }
 
 .react-calendar__navigation__next2-button {
-  font-size: 1.5em;
-  font-weight: bold;
-  margin: 0 10px;
-  display: flex;
-  justify-content: center;
-  align-items: last baseline;
+  display: none;
 }
 
 .event-tiles {

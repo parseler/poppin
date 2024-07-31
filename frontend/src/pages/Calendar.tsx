@@ -193,8 +193,6 @@ const CalendarPage = () => {
           tileContent={renderTileContent}
           prevLabel={<button>{"<"}</button>}
           nextLabel={<button>{">"}</button>}
-          prev2Label={<button>{"<<"}</button>}
-          next2Label={<button>{">>"}</button>}
           navigationLabel={({ label }) => (
             <div className="nav-label">{label}</div>
           )}

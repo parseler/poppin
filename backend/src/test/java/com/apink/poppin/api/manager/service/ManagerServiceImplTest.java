@@ -94,9 +94,37 @@ class ManagerServiceImplTest {
         // Given
         String nickname = "nickname";
         // When
-        Boolean result = managerService.checkNickname(nickname);
         // Then
-        assertFalse(result);
+        assertThrows(IllegalArgumentException.class, () -> managerService.checkNickname(nickname));
+    }
+
+    @Test
+    @DisplayName("중복X 닉네임")
+    void checkNotExistNickname() {
+        // Given
+        String nickname = "nidea";
+        // When
+        // Then
+        assertThrows(IllegalArgumentException.class, () -> managerService.checkNickname(nickname));
+    }
+
+    @Test
+    @DisplayName("이미 중복된 아이디")
+    void checkExistId() {
+        // Given
+        String id = "김싸피";
+        // When
+        // Then
+        assertThrows(IllegalArgumentException.class, () -> managerService.checkNickname(id));
+    }
+    @Test
+    @DisplayName("중복X 아이디")
+    void checkNotExistId() {
+        // Given
+        String id = "sfklasjeflak";
+        // When
+        // Then
+        assertThrows(IllegalArgumentException.class, () -> managerService.checkNickname(id));
     }
 
 }

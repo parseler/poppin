@@ -10,12 +10,14 @@ import lombok.*;
 import java.time.LocalDate;
 
 @Getter
-@Setter
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
+@ToString
 public class OnsiteReservationDto {
+
     private Long onsiteReservationId;
+
     private Long popupId;
     private String phoneNumber;
 
@@ -23,7 +25,33 @@ public class OnsiteReservationDto {
     @JsonDeserialize(using = LocalDateDeserializer.class)
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
     private LocalDate visitedDate;
-    private Integer reservationStatementId;
+    private Long reservationStatementId;
     private Integer reservationCount;
     private Integer waitNumber;
+    private Integer rank;
+
+    public void createReservation(long onsiteReservationId, int waitNumber) {
+        this.onsiteReservationId = onsiteReservationId;
+        this.visitedDate = LocalDate.now();
+        this.reservationStatementId = 1L;
+        this.waitNumber = waitNumber;
+    }
+
+    public void setRank(int rank) {
+        this.rank = rank;
+    }
+
+    public void changeStatement(long reservationStatementId) {
+        this.reservationStatementId = reservationStatementId;
+    }
+
+    public void makeDtoWithRedisDto(OnsiteReservationRedisDto onsiteReservationRedisDto) {
+        this.onsiteReservationId = onsiteReservationRedisDto.getOnsiteReservationRedisId();
+        this.popupId = onsiteReservationRedisDto.getPopupId();
+        this.phoneNumber = onsiteReservationRedisDto.getPhoneNumber();
+        this.visitedDate = onsiteReservationRedisDto.getVisitedDate();
+        this.reservationStatementId = onsiteReservationRedisDto.getReservationStatementId();
+        this.reservationCount = onsiteReservationRedisDto.getReservationCount();
+        this.waitNumber = onsiteReservationRedisDto.getWaitNumber();
+    }
 }

@@ -2,13 +2,14 @@ package com.apink.poppin.api.manager.entity;
 
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Size;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 
 @Getter
-@Setter
 @Entity
 @Table(name = "manager")
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
 public class Manager {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -26,5 +27,4 @@ public class Manager {
     @Size(max = 255)
     @Column(name = "img")
     private String img;
-
 }

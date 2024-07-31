@@ -1,6 +1,10 @@
-const CreateButton = () => {
+interface CreateButtonProps {
+  onClick: () => void;
+}
+
+const CreateButton = ({onClick} : CreateButtonProps) => {
   return (
-    <div id="create-button">
+    <div id="create-button" onClick={onClick}>
       <svg
         xmlns="http://www.w3.org/2000/svg"
         width="24"

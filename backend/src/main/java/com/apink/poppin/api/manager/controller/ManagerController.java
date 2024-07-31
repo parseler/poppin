@@ -20,7 +20,7 @@ public class ManagerController {
     private final PopupService  popupService;
 
     //TODO: Admin 권한 확인 후 매니저 전체 조회
-    @GetMapping("/")
+    @GetMapping("")
     ResponseEntity<?> getManagers() {
         List<Manager> managerList = managerService.getManagerList();
         List<ManagerListDTO> result = new ArrayList<>();
@@ -35,7 +35,7 @@ public class ManagerController {
     }
 
     //FIXME: 이미 구현된 부분으로 대체
-    @PostMapping("/")
+    @PostMapping("")
     ResponseEntity<?> createManager(@RequestBody CreateManagerRequestDTO request) {
         Manager manager = managerService.createManager(ManagerDTO.builder()
                 .nickname(request.getNickname())
@@ -67,7 +67,7 @@ public class ManagerController {
         return ResponseEntity.ok().build();
     }
 
-    @GetMapping("/{nickname}/check")
+    @GetMapping("/{nickname}/nickname-check")
     ResponseEntity<?> checkNickname(@PathVariable String nickname) {
         Boolean exist = managerService.checkNickname(nickname);
         return ResponseEntity.ok(exist);

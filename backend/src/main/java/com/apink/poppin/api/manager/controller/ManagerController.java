@@ -69,8 +69,14 @@ public class ManagerController {
 
     @GetMapping("/{nickname}/nickname-check")
     ResponseEntity<?> checkNickname(@PathVariable String nickname) {
-        Boolean exist = managerService.checkNickname(nickname);
-        return ResponseEntity.ok(exist);
+        managerService.checkNickname(nickname);
+        return ResponseEntity.ok().build();
+    }
+
+    @GetMapping("/{id}/id-check")
+    ResponseEntity<?> checkId(@PathVariable String id) {
+        managerService.checkId(id);
+        return ResponseEntity.ok().build();
     }
 
     @GetMapping("/{managerTsid}")

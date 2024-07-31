@@ -19,7 +19,7 @@ public class UserConsent {
     @NotNull
     @OneToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "user_tsid", nullable = false)
-    private User userTsid;
+    private User user;
 
     @NotNull
     @ColumnDefault("0")

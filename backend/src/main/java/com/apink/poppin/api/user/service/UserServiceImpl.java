@@ -61,7 +61,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     @Transactional
-    public void updateUser(UserDto.Put userDto) {
+    public UserDto.Response updateUser(UserDto.Put userDto) {
         long userTsid = userDto.getUserTsid();
 
         User findUser = userRepository.findUserByUserTsid(userTsid)
@@ -82,9 +82,12 @@ public class UserServiceImpl implements UserService {
                 .build();
 
         userRepository.save(user);
+
+        return convertToResponseDTO(user);
     }
 
     @Override
+    @Transactional
     public void deleteUser(long userTsid) {
         User findUser = userRepository.findUserByUserTsid(userTsid)
                 .orElseThrow(() -> new RuntimeException("user not exists"));
@@ -108,6 +111,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public List<PopupDTO> findHeartPopup() {
         long userTsid = Long.parseLong(SecurityContextHolder.getContext().getAuthentication().getName());
 
@@ -125,6 +129,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public List<ReviewDto> findReviews() {
         long userTsid = Long.parseLong(SecurityContextHolder.getContext().getAuthentication().getName());
 
@@ -149,6 +154,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public PreReservationResponseDTO findPreReservation(long prereservationId) {
         PreReservation pre = preReservationRepository.findById(prereservationId)
                 .orElseThrow(() -> new RuntimeException("pre-reservation is null"));
@@ -157,6 +163,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public List<PreReservationResponseDTO> findPreReservations() {
         long userTsid = Long.parseLong(SecurityContextHolder.getContext().getAuthentication().getName());
 
@@ -173,6 +180,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public List<PreReservationResponseDTO> findCancelledPreReservations() {
         long userTsid = Long.parseLong(SecurityContextHolder.getContext().getAuthentication().getName());
 
@@ -202,6 +210,15 @@ public class UserServiceImpl implements UserService {
                 .orElseThrow(() -> new RuntimeException("User not found"));
 
         return findUser;
+    }
+
+    private UserDto.Response convertToResponseDTO(User user) {
+        return UserDto.Response.builder()
+                .userTsid(user.getUserTsid())
+                .nickname(user.getNickname())
+                .email(user.getEmail())
+                .phoneNumber(user.getPhoneNumber())
+                .build();
     }
 
     // DTO 변환

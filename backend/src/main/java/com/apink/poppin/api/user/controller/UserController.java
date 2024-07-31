@@ -1,20 +1,11 @@
 package com.apink.poppin.api.user.controller;
 
-import com.apink.poppin.api.heart.service.HeartService;
 import com.apink.poppin.api.popup.dto.PopupDTO;
-import com.apink.poppin.api.popup.entity.Popup;
-import com.apink.poppin.api.popup.service.PopupService;
 import com.apink.poppin.api.reservation.dto.PreReservationResponseDTO;
-import com.apink.poppin.api.reservation.entity.OnsiteReservation;
-import com.apink.poppin.api.reservation.entity.PreReservation;
-import com.apink.poppin.api.reservation.repository.PreReservationRepository;
-import com.apink.poppin.api.reservation.service.OnsiteReservationService;
 import com.apink.poppin.api.review.dto.ReviewDto;
-import com.apink.poppin.api.review.entity.Review;
 import com.apink.poppin.api.user.dto.UserDto;
 import com.apink.poppin.api.user.service.UserService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
@@ -48,9 +39,9 @@ public class UserController {
     // 유저 정보 수정
     @PutMapping("/me")
     public ResponseEntity<?> updateUser(@RequestBody UserDto.Put userDto) {
-        userService.updateUser(userDto);
+        UserDto.Response user = userService.updateUser(userDto);
 
-        return ResponseEntity.ok().build();
+        return ResponseEntity.ok(user);
     }
 
     // 유저 탈퇴

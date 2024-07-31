@@ -18,13 +18,25 @@ public class ManagerServiceImpl implements ManagerService {
     }
 
     @Override
+    public Manager createManager(ManagerDTO managerDTO) {
+        Manager manager = Manager.builder()
+                .nickname(managerDTO.getNickname())
+                .id(managerDTO.getId())
+                .password(managerDTO.getPassword())
+                .img(managerDTO.getImg())
+                .build();
+        return managerRepository.save(manager);
+    }
+
+    @Override
     @Transactional(readOnly = true)
     public void updateManager(Long managerTsid, ManagerDTO managerDTO) {
         Manager manager = managerRepository.findById(managerTsid).orElseThrow(() -> new IllegalArgumentException("존재하지 않는 매니저입니다."));
         Manager newManager = Manager.builder()
                 .managerTsid(managerTsid)
                 .nickname(managerDTO.getNickname() == null ? manager.getNickname() : managerDTO.getNickname())
-                .code(managerDTO.getCode() == null ? manager.getCode() : managerDTO.getCode())
+                .id(managerDTO.getId() == null ? manager.getId() : managerDTO.getId())
+                .password(managerDTO.getPassword() == null ? manager.getPassword() : managerDTO.getPassword())
                 .img(managerDTO.getImg() == null ? manager.getImg() : managerDTO.getImg())
                 .build();
         managerRepository.save(newManager);

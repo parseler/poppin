@@ -61,8 +61,13 @@
   font-style: normal;
   font-weight: 400;
   line-height: normal;
+  overflow:hidden;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
 }
-
+#regist-pop select::-webkit-scrollbar {
+  display: none;
+}
 #regist-pop textarea {
   height: auto;
   margin-bottom: 20px;

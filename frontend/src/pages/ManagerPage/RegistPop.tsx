@@ -218,7 +218,7 @@ function RegistPop() {
               onChange={(e) => setSelectedEndTimeHour(e.target.value)}
               className="time-picker"
             >
-              <option value="">-</option>
+              <option value="">--</option>
               {hourOptions}
             </select>
             <span className="time-colon">:</span>
@@ -227,7 +227,7 @@ function RegistPop() {
               onChange={(e) => setSelectedEndTimeMinute(e.target.value)}
               className="time-picker"
             >
-              <option value="">-</option>
+              <option value="">--</option>
               {minuteOptions}
             </select>
           </div>

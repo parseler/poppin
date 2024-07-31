@@ -10,6 +10,7 @@ import lombok.Getter;
 public class ManagerDTO {
     private Long managerTsid;
     private String nickname;
-    private String code;
+    private String id;
+    private String password;
     private String img;
 }

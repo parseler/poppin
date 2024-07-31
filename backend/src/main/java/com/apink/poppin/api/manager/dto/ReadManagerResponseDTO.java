@@ -1,10 +1,13 @@
 package com.apink.poppin.api.manager.dto;
 
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
+import lombok.Getter;
 
-@Data
+@Getter
 @Builder
+@AllArgsConstructor
 public class ReadManagerResponseDTO {
     private Long managerTsid;
     private String nickname;

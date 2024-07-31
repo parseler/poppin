@@ -7,7 +7,8 @@ import lombok.Getter;
 @Getter
 @Builder
 @AllArgsConstructor
-public class UpdateManagerRequestDTO {
+public class CreateManagerRequestDTO {
+    private String id;
     private String nickname;
     private String password;
     private String img;

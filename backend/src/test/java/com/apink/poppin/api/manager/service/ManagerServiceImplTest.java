@@ -70,7 +70,9 @@ class ManagerServiceImplTest {
         // When
         managerService.deleteManager(managerTsid);
         // Then
-        assertThrows(IllegalArgumentException.class, () -> managerService.getManager(managerTsid));
+        Manager manager = managerService.getManager(managerTsid);
+        System.out.println(manager.getState());
+        assertFalse(manager.getState());
     }
 
     @Test

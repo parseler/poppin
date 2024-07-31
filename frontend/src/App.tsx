@@ -33,6 +33,9 @@ import MyReservationList from "@pages/UserPage/MyReservationList";
 import MyCancelList from "@pages/UserPage/MyCancelList";
 import MyPopList from "@pages/ManagerPage/MyPopList";
 import Search from "@components/Search";
+import MyReservationState from "@pages/ManagerPage/MyReservationState";
+import MyOnsiteReservationState from "@pages/ManagerPage/MyOnsiteReservationState";
+import MyPreReservationState from "@pages/ManagerPage/MyPreReservationState";
 
 function App() {
   const [isLoading, setIsLoading] = useState(true);
@@ -76,6 +79,9 @@ function App() {
         <Route path="/mypage/reservation" element={<Layout04><MyReservationList /></Layout04>} />
         <Route path="/mypage/cancel" element={<Layout04><MyCancelList /></Layout04>} />
         <Route path="/mypage/my-popups" element={<Layout04><MyPopList /></Layout04>} />
+        <Route path="/mypage/reservation-management" element={<Layout04><MyReservationState /></Layout04>} />
+        <Route path="/mypage/onsite-reservation-management" element={<Layout04><MyOnsiteReservationState /></Layout04>} />
+        <Route path="/mypage/pre-reservation-management" element={<Layout04><MyPreReservationState /></Layout04>} />
         <Route path="/search" element={<Search />} />
       </Routes>
     </div>

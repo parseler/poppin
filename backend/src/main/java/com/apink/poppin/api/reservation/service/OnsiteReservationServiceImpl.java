@@ -149,6 +149,7 @@ public class OnsiteReservationServiceImpl implements OnsiteReservationService {
     }
 
     @Override
+    @Transactional
     public OnsiteReservationDto changeOnsiteReservation(OnsiteReservationRequestDto onsiteReservationRequestDto) {
         String keyForPopup = RESERVATION_KEY_POPUP + onsiteReservationRequestDto.getPopupId();
         String keyForPhone = RESERVATION_KEY_PHONE + onsiteReservationRequestDto.getPhoneNumber();

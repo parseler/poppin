@@ -3,7 +3,9 @@ package com.apink.poppin.api.manager.repository;
 import com.apink.poppin.api.manager.entity.Manager;
 import org.springframework.data.jpa.repository.JpaRepository;
 
-public interface ManagerRepository extends JpaRepository<Manager, Long> {
+import java.util.Optional;
 
-    Manager findByNickname(String nickname);
+public interface ManagerRepository extends JpaRepository<Manager, Long> {
+    Optional<Manager> findByNickname(String nickname);
+    Optional<Manager> findById(String id);
 }

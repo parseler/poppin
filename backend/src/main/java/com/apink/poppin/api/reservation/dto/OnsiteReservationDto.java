@@ -41,10 +41,6 @@ public class OnsiteReservationDto {
         this.rank = rank;
     }
 
-    public void changeStatement(long reservationStatementId) {
-        this.reservationStatementId = reservationStatementId;
-    }
-
     public void makeDtoWithRedisDto(OnsiteReservationRedisDto onsiteReservationRedisDto) {
         this.onsiteReservationId = onsiteReservationRedisDto.getOnsiteReservationRedisId();
         this.popupId = onsiteReservationRedisDto.getPopupId();

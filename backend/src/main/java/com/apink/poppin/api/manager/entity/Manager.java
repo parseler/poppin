@@ -35,4 +35,8 @@ public class Manager {
     @Size(max = 255)
     @Column(name = "img")
     private String img;
+
+    @NotNull
+    @Column(name = "state", nullable = false)
+    private Boolean state;
 }

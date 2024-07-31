@@ -11,9 +11,11 @@ import com.apink.poppin.common.auth.service.AuthService;
 import com.apink.poppin.common.oauth.CustomOAuth2SuccessHandler;
 import com.apink.poppin.common.oauth.CustomOAuth2UserService;
 import com.apink.poppin.common.util.JwtTokenUtil;
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -22,6 +24,10 @@ import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.security.web.authentication.logout.LogoutFilter;
+import org.springframework.web.cors.CorsConfiguration;
+import org.springframework.web.cors.CorsConfigurationSource;
+
+import java.util.Collections;
 
 @Configuration
 @EnableWebSecurity
@@ -45,6 +51,32 @@ public class SecurityConfig {
     public SecurityFilterChain securityFilterChain(HttpSecurity http, AuthenticationConfiguration authenticationConfiguration) throws Exception {
 
         http
+                .cors(corsCustomizer -> corsCustomizer.configurationSource(new CorsConfigurationSource() {
+                    @Override
+                    public CorsConfiguration getCorsConfiguration(HttpServletRequest request) {
+
+                        CorsConfiguration configuration = new CorsConfiguration();
+
+                        configuration.setAllowedOrigins(Collections.singletonList("http://localhost:3000"));
+                        // 모든 요청 허용
+                        configuration.setAllowedMethods(Collections.singletonList("*"));
+                        // credentials 모두 받기
+                        configuration.setAllowCredentials(true);
+                        // header 전부 허용
+                        configuration.setAllowedHeaders(Collections.singletonList("*"));
+                        configuration.setMaxAge(3600L);
+
+                        // 우리쪽에서 데이터를 줄 경우, 웹 페이지에서 보이게 할 수 있는 방법
+                        // 반환하는 쿠키와 authorization을 설정해야 함
+                        // 그래야 cookie와 jwt 토큰을 얻을 수 있음
+                        configuration.setExposedHeaders(Collections.singletonList("Set-Cookie"));
+                        configuration.setExposedHeaders(Collections.singletonList("Authorization"));
+
+                        return null;
+                    }
+                }));
+
+        http
                 .csrf((csrf) -> csrf.disable());
 
         http
@@ -55,8 +87,27 @@ public class SecurityConfig {
 
         http
                 .authorizeHttpRequests((auth) -> auth
-                        .requestMatchers("/login", "/api/auth/**").permitAll()
-                        .anyRequest().authenticated()
+                        .anyRequest().permitAll()
+//                        .requestMatchers("/login", "/logout").permitAll()
+//                        .requestMatchers("/api/users/**").hasRole("USER")
+//                        .requestMatchers("/api/users/nickname").permitAll()
+//                        .requestMatchers("/api/managers/**").hasRole("ADMIN")
+//                        .requestMatchers("/api/managers/me/**").hasRole("MANAGER")
+//                        .requestMatchers(HttpMethod.GET, "/api/popups/**").permitAll()
+//                        .requestMatchers(HttpMethod.POST, "/api/popups/**").hasRole("USER")
+//                        .requestMatchers(HttpMethod.GET, "/api/popups/*/pre-reservations").hasRole("MANAGER")
+//                        .requestMatchers(HttpMethod.POST, "/api/popups").hasRole("MANAGER")
+//                        .requestMatchers("/api/popups/*/onsite-reservations").hasRole("MANAGER")
+//                        .requestMatchers(HttpMethod.DELETE, "/api/popups").hasRole("ADMIN")
+//                        .requestMatchers(HttpMethod.DELETE, "/api/popups/*/pre-reservations/*").hasRole("USER")
+//                        .requestMatchers(HttpMethod.PUT, "/api/popups/**").hasRole("MANAGER")
+//                        .requestMatchers("/api/reviews/**").hasRole("USER")
+//                        .requestMatchers(HttpMethod.GET, "/api/reviews/*").permitAll()
+//                        .requestMatchers("/api/onsitereseravations/**").permitAll()
+//                        .requestMatchers(HttpMethod.PUT, "/api/onsitereseravations").hasRole("MANAGER")
+//                        .requestMatchers("/api/auth/**").permitAll()
+//                        .requestMatchers("/api/auth/join", "/api/admins/**").hasRole("ADMIN")
+//                        .anyRequest().authenticated()
                 );
 
         http

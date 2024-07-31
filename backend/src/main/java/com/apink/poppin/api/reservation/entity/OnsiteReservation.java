@@ -4,10 +4,7 @@ import com.apink.poppin.api.popup.entity.Popup;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import java.time.LocalDate;
 
@@ -20,7 +17,7 @@ import java.time.LocalDate;
 public class OnsiteReservation {
 
     @Id
-    @NotNull
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long onsiteReservationId;
 
     @NotNull

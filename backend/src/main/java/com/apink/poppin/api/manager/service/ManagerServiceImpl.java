@@ -59,8 +59,12 @@ public class ManagerServiceImpl implements ManagerService {
     }
 
     @Override
-    public Boolean checkNickname(String nickname) {
-        Manager manager = managerRepository.findByNickname(nickname);
-        return manager != null;
+    public void checkNickname(String nickname) {
+        managerRepository.findByNickname(nickname).orElseThrow(() -> new IllegalArgumentException("이미 존재하는 닉네임입니다."));
+    }
+
+    @Override
+    public void checkId(String id) {
+        managerRepository.findById(id).orElseThrow(() -> new IllegalArgumentException("이미 존재하는 아이디입니다."));
     }
 }

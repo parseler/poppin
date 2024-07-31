@@ -11,5 +11,6 @@ public interface ManagerService {
     void deleteManager(Long managerTsid);
     Manager getManager(Long managerTsid);
     List<Manager> getManagerList();
-    Boolean checkNickname(String nickname);
+    void checkNickname(String nickname);
+    void checkId(String id);
 }

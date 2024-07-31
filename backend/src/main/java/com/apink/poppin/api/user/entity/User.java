@@ -1,11 +1,18 @@
 package com.apink.poppin.api.user.entity;
 
+import com.apink.poppin.api.heart.entity.Heart;
+import com.apink.poppin.api.reservation.entity.PreReservation;
+import com.apink.poppin.api.review.entity.Comment;
+import com.apink.poppin.api.review.entity.Review;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.ColumnDefault;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Table(name = "user")
@@ -54,22 +61,22 @@ public class User {
     @ColumnDefault("true")
     private boolean state;
 
-//    @OneToMany(mappedBy = "userCategory")
-//    private List<UserCategory> userCategories = new ArrayList<>();
-//
-//    @OneToMany(mappedBy = "heart")
-//    private List<Heart> hearts = new ArrayList<>();
-//
-//    @OneToMany(mappedBy = "userConsent")
-//    private List<UserConsent> userConsents = new ArrayList<>():
-//
-//    @OneToMany(mappedBy = "preReservation")
-//    private List<PreReservation> preReservations = new ArrayList<>():
-//
-//    @OneToMany(mappedBy = "review")
-//    private List<Review> reviews = new ArrayList<>():
-//
-//    @OneToMany(mappedBy = "comment")
-//    private List<Comment> comments = new ArrayList<>():
+    @OneToMany(mappedBy = "user")
+    private List<UserCategory> userCategories = new ArrayList<>();
+
+    @OneToMany(mappedBy = "user")
+    private List<Heart> hearts = new ArrayList<>();
+
+    @OneToOne(mappedBy = "user")
+    private UserConsent userConsents;
+
+    @OneToMany(mappedBy = "user")
+    private List<PreReservation> preReservations = new ArrayList<>();
+
+    @OneToMany(mappedBy = "user")
+    private List<Review> reviews = new ArrayList<>();
+
+    @OneToMany(mappedBy = "user")
+    private List<Comment> comments = new ArrayList<>();
 
 }

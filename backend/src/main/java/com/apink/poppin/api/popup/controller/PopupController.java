@@ -7,6 +7,8 @@ import com.apink.poppin.api.popup.dto.PopupDTO;
 import com.apink.poppin.api.popup.service.PopupService;
 import com.apink.poppin.api.reservation.dto.PreReservationRequestDTO;
 import com.apink.poppin.api.reservation.dto.PreReservationResponseDTO;
+import com.apink.poppin.api.reservation.dto.PreStatementRequestDTO;
+import com.apink.poppin.api.reservation.dto.PreStatementResponseDTO;
 import com.apink.poppin.api.reservation.entity.PreReservation;
 import com.apink.poppin.api.review.dto.ReviewDto;
 import com.apink.poppin.api.review.dto.ReviewListDto;
@@ -40,7 +42,7 @@ public class PopupController {
 
     // 팝업 상세 조회
     @GetMapping("/{popupId}")
-    public ResponseEntity<PopupDTO> getPopup(@PathVariable("popupId") long popupId) {
+    public ResponseEntity<PopupDTO> getPopup(@PathVariable("popupId") Long popupId) {
         PopupDTO popup = popupService.getPopup(popupId);
         return new ResponseEntity<>(popup, HttpStatus.OK);
     }
@@ -81,6 +83,23 @@ public class PopupController {
         List<PreReservationResponseDTO> list = popupService.getPreReservationsByDate(reservationDate);
         return new ResponseEntity<>(list, HttpStatus.OK);
     }
+
+    // 사전 예약 상태 정보 변경하기 (매니저가)
+    @PutMapping("/{popupId}/pre-reservations/{prereservationId}")
+    public ResponseEntity<?> changePreReservationByManager(@RequestBody PreStatementRequestDTO reqDto,
+                                                  @PathVariable Long popupId, @PathVariable Long preReservationId) {
+        PreStatementResponseDTO resDto = popupService.changePreReservation(reqDto);
+        return new ResponseEntity<>(resDto, HttpStatus.OK);
+    }
+
+    // 사전 예약 상태 정보 변경하기 (사용자가)
+    @DeleteMapping("/{popupId}/pre-reservations/{prereservationId}")
+    public ResponseEntity<?> changePreReservationByUser(@RequestBody PreStatementRequestDTO reqDto,
+                                                  @PathVariable Long popupId, @PathVariable Long preReservationId) {
+        PreStatementResponseDTO resDto = popupService.changePreReservation(reqDto);
+        return new ResponseEntity<>(resDto, HttpStatus.OK);
+    }
+
 
     // 팝업 좋아요
     @PostMapping("/{popupId}/heart")

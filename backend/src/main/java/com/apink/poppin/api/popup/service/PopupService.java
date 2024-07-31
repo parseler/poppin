@@ -3,6 +3,8 @@ package com.apink.poppin.api.popup.service;
 import com.apink.poppin.api.popup.dto.PopupDTO;
 import com.apink.poppin.api.reservation.dto.PreReservationRequestDTO;
 import com.apink.poppin.api.reservation.dto.PreReservationResponseDTO;
+import com.apink.poppin.api.reservation.dto.PreStatementRequestDTO;
+import com.apink.poppin.api.reservation.dto.PreStatementResponseDTO;
 import com.apink.poppin.api.reservation.entity.PreReservation;
 
 import java.util.Date;
@@ -32,4 +34,6 @@ public interface PopupService {
     // 날짜 별 사전예약 정보
     List<PreReservationResponseDTO> getPreReservationsByDate(Date reservationDate);
 
+    // 사전 예약 상태 정보 변경하기
+    PreStatementResponseDTO changePreReservation(PreStatementRequestDTO reqDto);
 }

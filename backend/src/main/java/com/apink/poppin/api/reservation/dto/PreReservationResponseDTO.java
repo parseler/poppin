@@ -19,12 +19,14 @@ public class PreReservationResponseDTO {
     private Long preReservationId;
     private Long userTsid;
     private Long popupId;
+
     @JsonSerialize(using = LocalDateSerializer.class)
     @JsonDeserialize(using = LocalDateDeserializer.class)
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
     private LocalDate reservationDate;
     private LocalTime reservationTime;
     private int reservationCount;
+
     @JsonSerialize(using = LocalDateSerializer.class)
     @JsonDeserialize(using = LocalDateDeserializer.class)
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")

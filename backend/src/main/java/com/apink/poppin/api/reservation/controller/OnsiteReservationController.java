@@ -41,4 +41,11 @@ public class OnsiteReservationController {
 
         return ResponseEntity.ok().body(onsiteReservationDto);
     }
+
+    @DeleteMapping
+    public ResponseEntity<?> cancelOnsiteReservationByUser(@RequestBody OnsiteReservationRequestDto onsiteReservationRequestDto) {
+        OnsiteReservationDto onsiteReservationDto = onsiteReservationService.changeOnsiteReservation(onsiteReservationRequestDto);
+
+        return ResponseEntity.ok().body(onsiteReservationDto);
+    }
 }

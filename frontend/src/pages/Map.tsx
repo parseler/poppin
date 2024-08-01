@@ -75,28 +75,32 @@ const Map = () => {
     script.onload = () => {
       kakao.maps.load(() => {
         const container = document.getElementById("map");
-        const options = {
-          center: new kakao.maps.LatLng(37.54460323028253, 127.0560692732618),
-          level: 3,
-        };
-        const map = new kakao.maps.Map(container, options);
-        setMap(map);
+        if (container) {
+          const options = {
+            center: new kakao.maps.LatLng(37.54460323028253, 127.0560692732618),
+            level: 3,
+          };
+          const map = new kakao.maps.Map(container, options);
+          setMap(map);
 
-        if (navigator.geolocation) {
-          navigator.geolocation.getCurrentPosition((position) => {
-            const lat = position.coords.latitude;
-            const lon = position.coords.longitude;
-            const locPosition = new kakao.maps.LatLng(lat, lon);
+          if (navigator.geolocation) {
+            navigator.geolocation.getCurrentPosition((position) => {
+              const lat = position.coords.latitude;
+              const lon = position.coords.longitude;
+              const locPosition = new kakao.maps.LatLng(lat, lon);
 
-            map.setCenter(locPosition);
+              map.setCenter(locPosition);
 
-            const marker = new kakao.maps.Marker({
-              map: map,
-              position: locPosition,
+              const marker = new kakao.maps.Marker({
+                map: map,
+                position: locPosition,
+              });
+
+              marker.setMap(map);
             });
-
-            marker.setMap(map);
-          });
+          }
+        } else {
+          console.error("Map container not found");
         }
       });
     };
@@ -136,7 +140,7 @@ const Map = () => {
 
       setMarkers(filteredMarkers);
     }
-  }, [map, activeButton]);
+  }, [map, activeButton, markers]);
 
   const handleButtonClick = (buttonType: string) => {
     setActiveButton(buttonType);
@@ -175,12 +179,11 @@ const Map = () => {
 
   const isOpen = (store: PopupStore) => {
     const now = new Date();
-    const currentDate = now.toISOString().split("T")[0];
     const currentTime = now.toTimeString().split(" ")[0];
 
     const [startDate, endDate] = store.schedule
       .split(" - ")
-      .map((dateStr) => new Date(dateStr.replaceAll(".", "-")));
+      .map((dateStr) => new Date(dateStr.replace(/\./g, "-")));
     const [openTime, closeTime] = store.businessHours.split(" - ");
 
     const isWithinDateRange = now >= startDate && now <= endDate;

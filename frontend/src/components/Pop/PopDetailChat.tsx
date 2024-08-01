@@ -1,7 +1,6 @@
 import { useState, useEffect, useRef } from "react";
 import "@css/Pop/PopDetailChat.css";
 
-import profile from "@assets/profile.svg";
 import noticePin from "@assets/noticePin.svg";
 import sendButton from "@assets/sendButton.svg";
 
@@ -30,7 +29,7 @@ const convertNewlinesToBreaks = (text: string) => {
 const Chat = () => {
   const [chats, setChats] = useState<ChatMessage[]>(chatData);
   const [message, setMessage] = useState<string>("");
-  const [notice, setNotice] = useState<string>(noticeContent);
+  const [notice] = useState<string>(noticeContent);
   const [noticeOpen, setNoticeOpen] = useState<boolean>(false);
   const [isAutoScroll, setIsAutoScroll] = useState<boolean>(true);
 

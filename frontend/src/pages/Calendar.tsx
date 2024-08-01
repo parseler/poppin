@@ -5,6 +5,9 @@ import "react-calendar/dist/Calendar.css";
 
 import image1 from "@assets/image1.svg";
 
+type ViewType = "month" | "year" | "decade" | "century";
+type Value = Date | Date[] | null | [Date | null, Date | null];
+
 interface PopupEvent {
   startDate: Date;
   endDate: Date;
@@ -61,15 +64,19 @@ const CalendarPage = () => {
     setCurrentMonth(`${month}월`);
   }, []);
 
-  const handleDateClick = (date: Date) => {
-    setSelectedDate(date);
+  const handleDateClick = (value: Value) => {
+    if (Array.isArray(value)) {
+      setSelectedDate(value[0] || null);
+    } else {
+      setSelectedDate(value);
+    }
   };
 
   const handleBackToCalendar = () => {
     setSelectedDate(null);
   };
 
-  const getTileClassName = ({ date, view }) => {
+  const getTileClassName = ({ date, view }: { date: Date; view: ViewType }) => {
     if (view === "month") {
       const day = date.getDay();
       const today = new Date();
@@ -102,7 +109,13 @@ const CalendarPage = () => {
     return date.toLocaleDateString("ko-KR", options);
   };
 
-  const renderTileContent = ({ date, view }) => {
+  const renderTileContent = ({
+    date,
+    view,
+  }: {
+    date: Date;
+    view: ViewType;
+  }) => {
     if (view === "month" && !selectedDate) {
       const startEvents = popupEvents.filter(
         (event) => date.toDateString() === event.startDate.toDateString()
@@ -179,10 +192,10 @@ const CalendarPage = () => {
       </div>
       <div className="calendarpage-content">
         <Calendar
-          onChange={handleDateClick}
+          onChange={(value) => handleDateClick(value)}
           value={selectedDate || new Date()}
           calendarType="gregory"
-          formatDay={(locale, date) => date.getDate().toString()}
+          formatDay={(_, date) => date.getDate().toString()}
           tileClassName={({ date, view }) =>
             view === "month" &&
             date.toDateString() ===

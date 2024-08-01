@@ -1,14 +1,21 @@
 import React, { useState } from "react";
 import "@css/ManagerPage/MyOnsiteReservationState.css";
 
-const dummyData = [
+interface Reservation {
+  id: number;
+  name: string;
+  personnel: number;
+  time: string;
+  isEnter: boolean | null;
+}
+
+const dummyData: Reservation[] = [
   { id: 1, name: "김김김", personnel: 2, time: "9:00", isEnter: null },
   { id: 2, name: "박박박", personnel: 3, time: "10:00", isEnter: null },
   { id: 3, name: "이이이", personnel: 1, time: "11:00", isEnter: null },
   { id: 4, name: "최최최", personnel: 1, time: "9:00", isEnter: null },
   { id: 5, name: "이이이", personnel: 5, time: "9:00", isEnter: null },
   { id: 6, name: "이이이", personnel: 5, time: "9:00", isEnter: null },
-  // 추가 데이터...
 ];
 
 const times = ["9:00", "10:00", "11:00", "12:00", "13:00", "14:00"];

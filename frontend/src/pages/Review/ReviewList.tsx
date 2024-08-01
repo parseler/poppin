@@ -20,7 +20,7 @@ const ReviewList = () => {
         ))}
       </div>
       <Link to={`/review/write`}>
-        <CreateButton />
+        <CreateButton onClick={()=>{}} />
       </Link>
     </div>
   );

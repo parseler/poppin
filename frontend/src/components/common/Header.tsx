@@ -103,7 +103,7 @@ const Header = ({ leftIcon, rightIcon }: IconProps) => {
   };
 
   const isImage = (icon: string) => {
-    const urlWithoutQuery = icon.split('?')[0];
+    const urlWithoutQuery = icon.split("?")[0];
     return /\.(jpg|jpeg|png|svg|gif)$/.test(urlWithoutQuery);
   };
 

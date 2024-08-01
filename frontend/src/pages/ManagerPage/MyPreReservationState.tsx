@@ -125,10 +125,10 @@ function MyPreReservationState() {
       <div className="title">뉴진스 How Sweet 팝업스토어</div>
       <div className="reservation-calendar">
         <Calendar
-          onChange={handleDateClick}
+          onChange={() =>handleDateClick}
           value={selectedDate}
           calendarType="gregory"
-          formatDay={(locale, date) => date.getDate().toString()}
+          formatDay={(_, date) => date.getDate().toString()}
           tileClassName={({ date, view }) =>
             view === "month" &&
             date.toDateString() ===

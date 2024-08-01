@@ -1,10 +1,12 @@
 import { useState } from "react";
 import Calendar from "react-calendar";
-import { useNavigate, useLocation } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import "@css/Pop/PopDetailReservation.css";
 import "react-calendar/dist/Calendar.css";
 
-const Reservation = ({ title }) => {
+type ViewType = "month" | "year" | "decade" | "century";
+
+const Reservation = ({ title }: { title: string }) => {
   const [selectedDate, setSelectedDate] = useState(new Date());
   const [selectedTime, setSelectedTime] = useState<string | null>(null);
   const [peopleCount, setPeopleCount] = useState(0);
@@ -27,7 +29,7 @@ const Reservation = ({ title }) => {
     setPeopleCount((prev) => (prev > 0 ? prev - 1 : 0));
   };
 
-  const getTileClassName = ({ date, view }) => {
+  const getTileClassName = ({ date, view }: { date: Date; view: ViewType }) => {
     if (view === "month") {
       const day = date.getDay();
       const today = new Date();
@@ -67,18 +69,18 @@ const Reservation = ({ title }) => {
       <div className="pop-calendar">
         <div className="content-title">예약 날짜</div>
         <Calendar
-          onChange={setSelectedDate}
+          onChange={()=>setSelectedDate}
           value={selectedDate}
           calendarType="gregory"
-          formatDay={(locale, date) => date.getDate().toString()}
+          formatDay={(_, date) => date.getDate().toString()}
           tileClassName={({ date, view }) =>
             view === "month" &&
             date.toDateString() === selectedDate.toDateString()
               ? "selected-date"
               : getTileClassName({ date, view })
           }
-          prevLabel={<button>{"<"}</button>} // 이전 버튼 커스터마이징
-          nextLabel={<button>{">"}</button>} // 다음 버튼 커스터마이징
+          prevLabel={<button>{"<"}</button>}
+          nextLabel={<button>{">"}</button>}
           prev2Label={<button>{"<<"}</button>}
           next2Label={<button>{">>"}</button>}
           navigationLabel={({ label }) => (

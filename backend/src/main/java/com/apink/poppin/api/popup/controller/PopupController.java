@@ -137,4 +137,9 @@ public class PopupController {
     }
 
     // 팝업 수정
+    @PutMapping("{popupId}")
+    public ResponseEntity<Popup> updatePopup(@RequestBody PopupRequestDTO popupDto, @PathVariable long popupId) {
+        Popup popup = popupService.updatePopup(popupDto, popupId);
+        return new ResponseEntity<>(popup, HttpStatus.OK);
+    }
 }

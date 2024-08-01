@@ -46,4 +46,8 @@ public class OnsiteReservation {
     @NotNull
     @Column(name = "wait_number", nullable = false)
     private Integer waitNumber;
+
+    public void update(ReservationStatement statement) {
+        this.reservationStatement = statement;
+    }
 }

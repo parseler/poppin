@@ -38,6 +38,7 @@ public class ManagerController {
     @PostMapping("")
     ResponseEntity<?> createManager(@RequestBody CreateManagerRequestDTO request) {
         Manager manager = managerService.createManager(ManagerDTO.builder()
+                .id(request.getId())
                 .nickname(request.getNickname())
                 .password(request.getPassword())
                 .img(request.getImg())

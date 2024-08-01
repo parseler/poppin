@@ -3,6 +3,9 @@ package com.apink.poppin.api.manager.service;
 import com.apink.poppin.api.manager.dto.ManagerDTO;
 import com.apink.poppin.api.manager.entity.Manager;
 import com.apink.poppin.api.manager.repository.ManagerRepository;
+import com.apink.poppin.common.util.SnowflakeTsidUtil;
+import org.springframework.context.annotation.Bean;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -12,20 +15,38 @@ import java.util.List;
 public class ManagerServiceImpl implements ManagerService {
 
     private final ManagerRepository managerRepository;
+    private final SnowflakeTsidUtil snowflakeTsidUtil;
 
-    public ManagerServiceImpl(ManagerRepository managerRepository) {
+    @Bean
+    public BCryptPasswordEncoder bCryptPasswordEncoder() {
+        return new BCryptPasswordEncoder();
+    }
+
+    BCryptPasswordEncoder bCryptPasswordEncoder = bCryptPasswordEncoder();
+
+    public ManagerServiceImpl(ManagerRepository managerRepository, SnowflakeTsidUtil snowflakeTsidUtil) {
         this.managerRepository = managerRepository;
+        this.snowflakeTsidUtil = snowflakeTsidUtil;
     }
 
     @Override
     @Transactional
     public Manager createManager(ManagerDTO managerDTO) {
+        String id = managerDTO.getId();
+        String nickname = managerDTO.getNickname();
+
+        checkId(id);
+        checkNickname(nickname);
+
         Manager manager = Manager.builder()
+                .managerTsid(snowflakeTsidUtil.nextId())
                 .nickname(managerDTO.getNickname())
                 .id(managerDTO.getId())
-                .password(managerDTO.getPassword())
+                .password(bCryptPasswordEncoder.encode(managerDTO.getPassword()))
                 .img(managerDTO.getImg())
+                .state(true)
                 .build();
+
         return managerRepository.save(manager);
     }
 
@@ -73,12 +94,19 @@ public class ManagerServiceImpl implements ManagerService {
     @Override
     @Transactional(readOnly = true)
     public void checkNickname(String nickname) {
-        managerRepository.findByNickname(nickname).orElseThrow(() -> new IllegalArgumentException("이미 존재하는 닉네임입니다."));
+        boolean isExist = managerRepository.existsByNickname(nickname);
+        if(isExist) {
+            throw new IllegalArgumentException("이미 존재하는 닉네임입니다.");
+        }
     }
 
     @Override
     @Transactional(readOnly = true)
     public void checkId(String id) {
-        managerRepository.findById(id).orElseThrow(() -> new IllegalArgumentException("이미 존재하는 아이디입니다."));
+        boolean isExist = managerRepository.existsById(id);
+
+    if(isExist) {
+            throw new IllegalArgumentException("이미 존재하는 닉네임입니다.");
+        }
     }
 }

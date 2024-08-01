@@ -7,8 +7,6 @@ import org.springframework.http.ResponseEntity;
 
 public interface AuthService {
 
-//    void joinManager(ManagerDto.Join joinDto);
-
     ResponseEntity<?> reissueToken(HttpServletRequest request, HttpServletResponse response);
 
     void deleteRefreshToken(String refreshToken, String role);

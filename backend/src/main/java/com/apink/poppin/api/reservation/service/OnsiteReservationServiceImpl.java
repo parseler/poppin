@@ -17,6 +17,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Set;
 
 @Service
@@ -178,6 +180,31 @@ public class OnsiteReservationServiceImpl implements OnsiteReservationService {
         }
 
         throw new BusinessLogicException(ExceptionCode.ONSITE_NOT_FOUND);
+    }
+
+    @Override
+    public List<OnsiteReservationDto> getOnsiteReservations(long popupId) {
+        String keyForPopup = RESERVATION_KEY_POPUP + popupId;
+
+        Set<Object> reservations = zSetOperations.rangeByScore(keyForPopup, 0, Double.MAX_VALUE);
+        assert reservations != null;
+        List<OnsiteReservationDto> list = new ArrayList<>();
+        for (Object obj : reservations) {
+            if (obj instanceof OnsiteReservationRedisDto redisDto) {
+                if (redisDto.getReservationStatementId() != 1) continue;
+
+                OnsiteReservationDto onsiteReservationDto = OnsiteReservationDto.builder().build();
+                onsiteReservationDto.makeDtoWithRedisDto(redisDto);
+                Integer rank = getRank(keyForPopup, redisDto);
+                if (rank == null) {
+                    throw new BusinessLogicException(ExceptionCode.ONSITE_NOT_FOUND);
+                }
+
+                onsiteReservationDto.setRank(rank);
+                list.add(onsiteReservationDto);
+            }
+        }
+        return list;
     }
 
     private Integer getWaitNumber(String key) {

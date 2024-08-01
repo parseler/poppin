@@ -106,7 +106,7 @@ public class ManagerServiceImpl implements ManagerService {
         boolean isExist = managerRepository.existsById(id);
 
     if(isExist) {
-            throw new IllegalArgumentException("이미 존재하는 닉네임입니다.");
+            throw new IllegalArgumentException("이미 존재하는 아이디입니다.");
         }
     }
 }

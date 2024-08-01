@@ -24,7 +24,8 @@ public class Popup {
     @Column(name="popup_id")
     private Long popupId;
 
-    @OneToOne(mappedBy = "")
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @JoinColumn(name = "manager_tsid", nullable = false)
     private Manager manager;
 
     @NotNull

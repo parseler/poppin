@@ -1,6 +1,8 @@
 package com.apink.poppin.api.popup.service;
 
 import com.apink.poppin.api.popup.dto.PopupDTO;
+import com.apink.poppin.api.popup.dto.PopupRequestDTO;
+import com.apink.poppin.api.popup.entity.Popup;
 import com.apink.poppin.api.reservation.dto.PreReservationRequestDTO;
 import com.apink.poppin.api.reservation.dto.PreReservationResponseDTO;
 import com.apink.poppin.api.reservation.dto.PreStatementRequestDTO;
@@ -36,4 +38,7 @@ public interface PopupService {
 
     // 사전 예약 상태 정보 변경하기
     PreStatementResponseDTO changePreReservation(PreStatementRequestDTO reqDto);
+
+    // 팝업 등록
+    Popup createPopup(PopupRequestDTO popupDto);
 }

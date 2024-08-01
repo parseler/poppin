@@ -1,6 +1,9 @@
 package com.apink.poppin.api.popup.service;
 
+import com.apink.poppin.api.manager.entity.Manager;
+import com.apink.poppin.api.manager.repository.ManagerRepository;
 import com.apink.poppin.api.popup.dto.PopupDTO;
+import com.apink.poppin.api.popup.dto.PopupRequestDTO;
 import com.apink.poppin.api.reservation.dto.PreReservationRequestDTO;
 import com.apink.poppin.api.reservation.dto.PreReservationResponseDTO;
 import com.apink.poppin.api.popup.entity.Popup;
@@ -31,6 +34,7 @@ public class PopupServiceImpl implements PopupService {
     private final PreReservationRepository preReservationRepository;
     private final UserRepository userRepository;
     private final ReservationStatementRepository reservationStatementRepository;
+    private final ManagerRepository managerRepository;
 
 
     // 팝업 전체 목록 조회 및 검색
@@ -134,6 +138,33 @@ public class PopupServiceImpl implements PopupService {
                 .userTsid(preReservation.getUser().getUserTsid())
                 .popupId(preReservation.getPopup().getPopupId())
                 .build();
+    }
+
+    // 팝업 등록
+    @Transactional
+    @Override
+    public Popup createPopup(PopupRequestDTO reqDto) {
+        // 매니저 확인
+        Manager manager = managerRepository.findByManagerTsid(reqDto.getManagerTsid())
+                .orElseThrow(() -> new IllegalArgumentException("Invalid manager Tsid"));
+
+        Popup popup = Popup.builder()
+                .manager(manager)
+                .name(reqDto.getName())
+                .startDate(reqDto.getStartDate())
+                .endDate(reqDto.getEndDate())
+                .hours(reqDto.getHours())
+                .description(reqDto.getDescription())
+                .snsUrl(reqDto.getSnsUrl())
+                .pageUrl(reqDto.getPageUrl())
+                .content(reqDto.getContent())
+                .lat(reqDto.getLat())
+                .lon(reqDto.getLon())
+                .build();
+
+        popupRepository.save(popup);
+
+        return popup;
     }
 
 

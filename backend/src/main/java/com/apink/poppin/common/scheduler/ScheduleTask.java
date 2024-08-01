@@ -13,6 +13,6 @@ public class ScheduleTask {
 
     @Scheduled(cron = "0 0 3 * * ?")
     public void saveOnsiteReservations() {
-        onsiteReservationService.saveOnsiteReservations();
+        onsiteReservationService.saveScheduling();
     }
 }

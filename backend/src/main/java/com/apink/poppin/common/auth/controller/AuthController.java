@@ -20,10 +20,4 @@ public class AuthController {
         return authService.reissueToken(request, response);
     }
 
-//    @PostMapping("/join")
-//    public ResponseEntity<?> joinManager(@RequestBody ManagerDto.Join joinDto) {
-//        authService.joinManager(joinDto);
-//
-//        return ResponseEntity.ok().build();
-//    }
 }

@@ -1,9 +1,7 @@
 package com.apink.poppin.api.popup.entity;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.Id;
+import com.apink.poppin.api.manager.entity.Manager;
+import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -26,8 +24,9 @@ public class Popup {
     @Column(name="popup_id")
     private Long popupId;
 
-//    @OneToOne(mappedBy = "")
-//    private Manager manager;
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @JoinColumn(name = "manager_tsid", nullable = false)
+    private Manager manager;
 
     @NotNull
     private String name;

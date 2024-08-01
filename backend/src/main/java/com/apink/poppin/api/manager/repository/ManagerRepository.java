@@ -8,4 +8,7 @@ import java.util.Optional;
 public interface ManagerRepository extends JpaRepository<Manager, Long> {
     Optional<Manager> findByNickname(String nickname);
     Optional<Manager> findById(String id);
+    Optional<Manager> findByManagerTsid(long managerTsid);
+    boolean existsById(String id);
+    boolean existsByNickname(String nickname);
 }

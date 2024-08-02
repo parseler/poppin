@@ -2,7 +2,7 @@ import "@css/Mypage.css";
 import { Link } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { Box, Modal } from "@mui/material";
-import { fetchUserData } from "api/users";
+import { getUserData } from "api/users";
 import axiosInstance from "api/axiosInstance";
 
 import loginBefore from "@assets/mypage/loginBefore.svg";
@@ -25,17 +25,21 @@ const Mypage: React.FC = () => {
 
   // 사용자 정보 유무 확인
   useEffect(() => {
-    fetchUserData()
+    getUserData()
       .then((userData) => {
-        setUser({
-          nickname: userData.nickname,
-          email: userData.email,
-          phoneNumber: userData.phoneNumber,
-          categoryList: userData.categoryList,
-          agreementDto: userData.agreementDto,
-          img: userData.img,
-          role: userData.role,
-        });
+        if (userData) {
+          setUser({
+            nickname: userData.nickname,
+            email: userData.email,
+            phoneNumber: userData.phoneNumber,
+            categoryList: userData.categoryList,
+            agreementDto: userData.agreementDto,
+            img: userData.img,
+            role: userData.role,
+          });
+        } else {
+          setUser(null);
+        }
       })
       .catch((error) => {
         console.error(error);

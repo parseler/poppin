@@ -4,7 +4,6 @@ import logo from "@assets/poppin_gradiant.svg";
 import naver from "@assets/login/icon_naver.png";
 
 const Login = () => {
-
   const handleKakaoLogin = () => {
     const KAKAO_KEY = import.meta.env.VITE_KAKAO_API_KEY;
     const KAKAO_URI = import.meta.env.VITE_KAKAO_REDIRECT_URI;

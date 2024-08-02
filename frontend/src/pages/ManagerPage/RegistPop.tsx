@@ -49,18 +49,14 @@ function RegistPop() {
     setLon,
     setHours,
     setCategories,
+    timeSlots,
+    setTimeSlots,
   } = usePopupStore();
-  const [selectedDays, setSelectedDays] = useState<string[]>([]);
-  const [timeSlots, setTimeSlots] = useState<
-    { day: string; startTime: string; endTime: string }[]
-  >([]);
-  const [selectedStartTimeHour, setSelectedStartTimeHour] =
-    useState<string>("");
-  const [selectedStartTimeMinute, setSelectedStartTimeMinute] =
-    useState<string>("");
+  const [selectedDays, setSelectedDays] = useState<string>("");
+  const [selectedStartTimeHour, setSelectedStartTimeHour] = useState<string>("");
+  const [selectedStartTimeMinute, setSelectedStartTimeMinute] = useState<string>("");
   const [selectedEndTimeHour, setSelectedEndTimeHour] = useState<string>("");
-  const [selectedEndTimeMinute, setSelectedEndTimeMinute] =
-    useState<string>("");
+  const [selectedEndTimeMinute, setSelectedEndTimeMinute] = useState<string>("");
   const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
   const [showAddressModal, setShowAddressModal] = useState(false);
   const navigate = useNavigate();
@@ -72,9 +68,7 @@ function RegistPop() {
       return;
     }
 
-    const hours = timeSlots
-      .map((slot) => `${slot.day}, ${slot.startTime}, ${slot.endTime}`)
-      .join("\n");
+    const hours = JSON.stringify(timeSlots);
 
     setHours(hours);
     setCategories(selectedCategories);
@@ -132,7 +126,7 @@ function RegistPop() {
   };
 
   const handleDayChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
-    setSelectedDays([...selectedDays, event.target.value]);
+    setSelectedDays(event.target.value);
   };
 
   const handleAddressComplete = async (data: Address): Promise<KakaoLatLng> => {
@@ -174,16 +168,16 @@ function RegistPop() {
     const endTime = `${selectedEndTimeHour}:${selectedEndTimeMinute}`;
 
     if (
-      selectedDays.length > 0 &&
+      selectedDays &&
       selectedStartTimeHour &&
       selectedStartTimeMinute &&
       selectedEndTimeHour &&
       selectedEndTimeMinute
     ) {
-      setTimeSlots([
+      setTimeSlots({
         ...timeSlots,
-        { day: selectedDays[selectedDays.length - 1], startTime, endTime },
-      ]);
+        [selectedDays]: `${startTime} ~ ${endTime}`,
+      });
       // setSelectedStartTimeHour("");
       // setSelectedStartTimeMinute("");
       // setSelectedEndTimeHour("");
@@ -262,8 +256,8 @@ function RegistPop() {
           <div className="date-term">
             <DatePicker
               className="date-term-input"
-              selected={startDate}
-              onChange={(date) => setStartDate(date)}
+              selected={startDate ? new Date(startDate) : null}
+              onChange={(date) => setStartDate(date ? date.toISOString().split("T")[0] : null)}
               placeholderText="운영 시작일"
               dateFormat="Y. M. d."
               locale="ko"
@@ -272,8 +266,8 @@ function RegistPop() {
             <div className="wave"> ~ </div>
             <DatePicker
               className="date-term-input"
-              selected={endDate}
-              onChange={(date) => setEndDate(date)}
+              selected={endDate ? new Date(endDate) : null}
+              onChange={(date) => setEndDate(date ? date.toISOString().split("T")[0] : null)}
               placeholderText="운영 종료일"
               dateFormat="Y. M. d."
               locale="ko"
@@ -338,9 +332,9 @@ function RegistPop() {
             </button>
           </div>
           <div className="added-time">
-            {timeSlots.map((slot, index) => (
+            {Object.entries(timeSlots).map(([day, time], index) => (
               <div key={index} className="added-time-detail">
-                {slot.day} - {slot.startTime} ~ {slot.endTime}
+                {day}: {time}
               </div>
             ))}
           </div>

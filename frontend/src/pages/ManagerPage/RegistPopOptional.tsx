@@ -2,16 +2,22 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import usePopupStore from "store/usePopupStore";
 import "@css/ManagerPage/RegistPopOptional.css";
-
 import secondStep from "@assets/registPop/secondStep.svg";
 
 type serviceCategory = "parking" | "fee" | "pet" | "food" | "photo" | "age";
 
 function RegistPopOptional() {
-  const { snsUrl, pageUrl, serviceCategories, setPopupData, setServiceCategory } = usePopupStore();
+  const {
+    snsUrl,
+    pageUrl,
+    serviceCategories,
+    setPopupData,
+    setServiceCategory,
+  } = usePopupStore();
   const [localSnsUrl, setLocalSnsUrl] = useState(snsUrl || "");
   const [localPageUrl, setLocalPageUrl] = useState(pageUrl || "");
   const [activeButtons, setActiveButtons] = useState(serviceCategories);
+  const [showModal, setShowModal] = useState(false);
   const navigate = useNavigate();
 
   const handleButtonClick = (category: serviceCategory, value: string) => {
@@ -38,6 +44,14 @@ function RegistPopOptional() {
 
   const goRegistFinish = () => {
     navigate("/regist-pop-fin");
+  };
+
+  const handleOmitClick = () => {
+    setShowModal(true);
+  };
+
+  const handleCloseModal = () => {
+    setShowModal(false);
   };
 
   return (
@@ -168,13 +182,31 @@ function RegistPopOptional() {
         </div>
       </div>
       <div className="omit-or-regist">
-        <button className="omit" onClick={goRegistFinish}>
+        <button className="omit" onClick={handleOmitClick}>
           예약 정보 없음
         </button>
         <button className="regist" onClick={handleSubmit}>
           예약 정보 등록
         </button>
       </div>
+
+      {showModal && (
+        <div className="modal">
+          <div className="modal-content">
+            <div className="modal-header">
+              예약 정보 없이 최종 등록 하시겠습니까?
+            </div>
+            <div className="modal-footer">
+              <button className="cancel" onClick={handleCloseModal}>
+                취소
+              </button>
+              <button className="confirm" onClick={goRegistFinish}>
+                등록
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

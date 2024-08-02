@@ -4,10 +4,10 @@ interface PopupState {
   storeName: string;
   storeDescription: string;
   selectedImages: string[];
-  startDate: Date | null;
-  endDate: Date | null;
+  startDate: string | null;
+  endDate: string | null;
   selectedDays: string[];
-  timeSlots: { day: string; startTime: string; endTime: string }[];
+  timeSlots: { [key: string]: string };
   hours: string;
   address: string;
   detailedAddress: string;
@@ -16,17 +16,12 @@ interface PopupState {
   snsUrl?: string;
   pageUrl?: string;
   serviceCategories: { [key: string]: string };
-  preReservationOpenAt: Date | null; // 추가된 필드
-  term: number; // 추가된 필드
-  maxPeoplePerSession: number; // 추가된 필드
-  maxReservationsPerPerson: number; // 추가된 필드
-  warning: string; // 추가된 필드
-  categories: string[]; // 추가된 필드
+  categories: string[];
   setStoreName: (name: string) => void;
   setStoreDescription: (description: string) => void;
   setSelectedImages: (images: string[]) => void;
-  setStartDate: (date: Date | null) => void;
-  setEndDate: (date: Date | null) => void;
+  setStartDate: (date: string | null) => void;
+  setEndDate: (date: string | null) => void;
   setAddress: (address: string) => void;
   setDetailedAddress: (address: string) => void;
   setLat: (lat: number) => void;
@@ -34,16 +29,9 @@ interface PopupState {
   setPopupData: (data: Partial<PopupState>) => void;
   setServiceCategory: (category: string, value: string) => void;
   setSelectedDays: (days: string[]) => void;
-  setTimeSlots: (
-    slots: { day: string; startTime: string; endTime: string }[]
-  ) => void;
+  setTimeSlots: (slots: { [key: string]: string }) => void;
   setHours: (hours: string) => void;
-  setPreReservationOpenAt: (date: Date | null) => void; // 추가된 메서드
-  setTerm: (term: number) => void; // 추가된 메서드
-  setMaxPeoplePerSession: (maxPeople: number) => void; // 추가된 메서드
-  setMaxReservationsPerPerson: (maxReservations: number) => void; // 추가된 메서드
-  setWarning: (warning: string) => void; // 추가된 메서드
-  setCategories: (categories: string[]) => void; // 추가된 메서드
+  setCategories: (categories: string[]) => void;
 }
 
 const usePopupStore = create<PopupState>((set) => ({
@@ -53,8 +41,8 @@ const usePopupStore = create<PopupState>((set) => ({
   startDate: null,
   endDate: null,
   selectedDays: [],
-  timeSlots: [],
-  hours: "",
+  timeSlots: {},
+  hours: '',
   address: "",
   detailedAddress: "",
   lat: null,
@@ -69,12 +57,7 @@ const usePopupStore = create<PopupState>((set) => ({
     photo: "",
     age: "",
   },
-  preReservationOpenAt: null, // 초기값 설정
-  term: 0, // 초기값 설정
-  maxPeoplePerSession: 0, // 초기값 설정
-  maxReservationsPerPerson: 0, // 초기값 설정
-  warning: "", // 초기값 설정
-  categories: [], // 초기값 설정
+  categories: [],
   setStoreName: (name) => set(() => ({ storeName: name })),
   setStoreDescription: (description) =>
     set(() => ({ storeDescription: description })),
@@ -96,12 +79,7 @@ const usePopupStore = create<PopupState>((set) => ({
   setTimeSlots: (slots) => set(() => ({ timeSlots: slots })),
   setSelectedImages: (images) => set(() => ({ selectedImages: images })),
   setHours: (hours) => set(() => ({ hours })),
-  setPreReservationOpenAt: (date) => set(() => ({ preReservationOpenAt: date })), // 수정된 메서드
-  setTerm: (term) => set(() => ({ term })), // 수정된 메서드
-  setMaxPeoplePerSession: (maxPeople) => set(() => ({ maxPeoplePerSession: maxPeople })), // 수정된 메서드
-  setMaxReservationsPerPerson: (maxReservations) => set(() => ({ maxReservationsPerPerson: maxReservations })), // 수정된 메서드
-  setWarning: (warning) => set(() => ({ warning })), // 수정된 메서드
-  setCategories: (categories) => set(() => ({ categories })), // 추가된 메서드
+  setCategories: (categories) => set(() => ({ categories })),
 }));
 
 export default usePopupStore;

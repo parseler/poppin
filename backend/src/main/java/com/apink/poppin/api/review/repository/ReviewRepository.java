@@ -16,9 +16,13 @@ public interface ReviewRepository extends JpaRepository<Review, Long> {
     @NonNull
     Optional<Review> findById(@NonNull Long reviewId);
 
-    @EntityGraph(value = "Review.user", type = EntityGraph.EntityGraphType.FETCH)
+    @EntityGraph(attributePaths = "user", type = EntityGraph.EntityGraphType.FETCH)
     List<Review> findReviewsByPopup_PopupId(@NonNull Long popupId);
 
-    @EntityGraph(value = "Review.user", type = EntityGraph.EntityGraphType.FETCH)
+    @EntityGraph(attributePaths = "user", type = EntityGraph.EntityGraphType.FETCH)
     List<Review> findByUser(User user);
+
+    @EntityGraph(attributePaths = "user", type = EntityGraph.EntityGraphType.FETCH)
+    @NonNull
+    List<Review> findAll();
 }

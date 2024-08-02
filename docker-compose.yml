@@ -9,6 +9,8 @@ services:
     volumes:
       - ./db/mysql/data:/var/lib/mysql
       - ./db/mysql/initdb:/docker-entrypoint-initdb.d
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
   nginx:
     image: nginx
     restart: always
@@ -18,6 +20,13 @@ services:
       - "80:80"
     volumes:
       - ./nginx/templates:/etc/nginx/templates
+  redis:
+    image: redis
+    restart: always
+    ports:
+      - "6379:6379"
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
   backend-builder:
     image: eclipse-temurin:17
     env_file:
@@ -35,6 +44,10 @@ services:
       - gradle_home:/opt/app/build
     command: "java -jar /opt/app/build/libs/poppin-0.0.1-SNAPSHOT.jar"
     depends_on:
+      mysql:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
       backend-builder:
         condition: service_completed_successfully
     develop:

@@ -24,12 +24,12 @@ public class UserConsent {
     @NotNull
     @ColumnDefault("0")
     @Column(name = "marketing_consent", nullable = false)
-    private Byte marketingConsent;
+    private Boolean marketingConsent;
 
     @NotNull
     @ColumnDefault("0")
-    @Column(name = "event_push_consent", nullable = false)
-    private Byte eventPushConsent;
+    @Column(name = "service_push_consent", nullable = false)
+    private Boolean servicePushConsent;
 
     @ColumnDefault("CURRENT_TIMESTAMP")
     @Column(name = "updated_at")

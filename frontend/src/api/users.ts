@@ -1,19 +1,28 @@
 import axiosInstance from "./axiosInstance";
-import { AxiosError } from "axios";
+import { UserData } from "@interface/users";
 
-// 닉네임 중복 확인
 
-// 유저 개인 프로필 조회
+// 사용자 정보 조회
 export const getUserData = async () => {
   try {
     const response = await axiosInstance.get("/api/users/me");
     console.log(response.data);
     return response.data;
   } catch (error) {
-    const axiosError = error as AxiosError;
-    if (axiosError.response && axiosError.response.status === 404) {
-      return null; // 404 에러일 때 null 반환
-    }
+    console.error(error);
     throw error;
   }
 };
+
+// 사용자 정보 수정
+export const updateUserData = async (userData: UserData) => {
+  try {
+    const response = await axiosInstance.put("/api/user/me", userData);
+    return response.data;
+  } catch (error) {
+    console.error(error);
+    throw error;
+  }
+}
+
+// 닉네임 중복 확인

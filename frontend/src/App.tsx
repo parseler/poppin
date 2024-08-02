@@ -3,7 +3,6 @@ import { useEffect, useState } from "react";
 import { QueryClient, QueryClientProvider } from 'react-query';
 import Layout01 from "@components/common/Layout01";
 import Layout02 from "@components/common/Layout02";
-import Layout03 from "@components/common/Layout03";
 import Layout04 from "@components/common/Layout04";
 
 import Splash from "@pages/Splash";
@@ -38,14 +37,12 @@ import Search from "@components/Search";
 import MyReservationState from "@pages/ManagerPage/MyReservationState";
 import MyOnsiteReservationState from "@pages/ManagerPage/MyOnsiteReservationState";
 import MyPreReservationState from "@pages/ManagerPage/MyPreReservationState";
-import axiosInstance from "api/axiosInstance";
 
 const queryClient = new QueryClient();
 
 function App() {
   const [isLoading, setIsLoading] = useState(true);
-  const [data, setData] = useState<string | null>(null);
-  
+
   useEffect(() => {
     const timer = setTimeout(() => {
       setIsLoading(false);
@@ -57,7 +54,7 @@ function App() {
   return (
     <QueryClientProvider client={queryClient}>
       <div className="App">
-        {isLoading ? <Splash/> : ''}
+        {isLoading ? <Splash /> : ''}
 
         <Routes>
           <Route path="/login" element={<Login />} />
@@ -65,7 +62,7 @@ function App() {
           <Route path="/calendar" element={<Layout01><CalendarPage /></Layout01>} />
           <Route path="/map" element={<Layout01><Map /></Layout01>} />
           <Route path="/review" element={<Layout01><ReviewList /></Layout01>} />
-          <Route path="/review/write" element={<Layout03><ReviewWrite /></Layout03>} />
+          <Route path="/review/write" element={<ReviewWrite />} />
           <Route path="/review/:reviewId" element={<Layout02><ReviewDetail /></Layout02>} />
           <Route path="/mypage" element={<Layout01><Mypage /></Layout01>} />
           <Route path="/:categoryId" element={<Layout02><Category /></Layout02>} />
@@ -79,7 +76,7 @@ function App() {
           <Route path="/regist-pop-optional" element={<Layout04><RegistPopOptional /></Layout04>} />
           <Route path="/regist-pop-fin" element={<Layout04><RegistFin /></Layout04>} />
           <Route path="/regist-pop-reservation" element={<Layout04><RegistPopReservationInfo /></Layout04>} />
-          <Route path="/mypage/update" element={<Layout03><UserUpdate /></Layout03>} />
+          <Route path="/mypage/update" element={<UserUpdate />} />
           <Route path="/mypage/review" element={<Layout04><MyReviewList /></Layout04>} />
           <Route path="/mypage/like" element={<Layout04><MyLikeList /></Layout04>} />
           <Route path="/admin/manage-code" element={<Layout04><MyCodeManagement /></Layout04>} />

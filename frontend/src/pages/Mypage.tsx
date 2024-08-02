@@ -2,53 +2,45 @@ import "@css/Mypage.css";
 import { Link } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { Box, Modal } from "@mui/material";
-import { getUserData } from "api/users";
-import axiosInstance from "api/axiosInstance";
+import { getUserData } from "@api/users";
+import axiosInstance from "@api/axiosInstance";
+import { UserData } from "@interface/users";
 
+import profile from "@assets/user/profile.png";
 import loginBefore from "@assets/mypage/loginBefore.svg";
 import nextButton from "@assets/mypage/nextButton.svg";
 import profileUpdate from "@assets/mypage/profileUpdateButton.svg";
 
-interface User {
-  nickname: string;
-  email: string;
-  phoneNumber: string;
-  categoryList: string[];
-  agreementDto: boolean;
-  role: string;
-  img: string;
-}
-
 const Mypage: React.FC = () => {
-  const [user, setUser] = useState<User | null>(null);
+  const [user, setUser] = useState<UserData | null>(null);
   const [isModal, setIsModal] = useState<boolean>(false);
 
   // 사용자 정보 유무 확인
   useEffect(() => {
-    getUserData()
-      .then((userData) => {
-        if (userData) {
-          setUser({
-            nickname: userData.nickname,
-            email: userData.email,
-            phoneNumber: userData.phoneNumber,
-            categoryList: userData.categoryList,
-            agreementDto: userData.agreementDto,
-            img: userData.img,
-            role: userData.role,
-          });
-        } else {
-          setUser(null);
-        }
-      })
-      .catch((error) => {
+    const token = axiosInstance.defaults.headers.common["Authorization"];
+
+    if (token) {
+      getUserData().then((userData) => {
+        setUser({
+          nickname: userData.nickname,
+          email: userData.email,
+          phoneNumber: userData.phoneNumber,
+          categoryList: userData.categoryList,
+          agreementDto: userData.agreementDto,
+          img: userData.img,
+          role: userData.role,
+        });
+      }).catch((error) => {
         console.error(error);
       });
+    } else {
+      setUser(null);
+    }
   }, []);
 
   // 로그아웃
   const handleLogout = () => {
-    axiosInstance.defaults.headers.common['Authorization'] = '';
+    axiosInstance.defaults.headers.common["Authorization"] = "";
     setUser(null);
   };
 
@@ -84,7 +76,11 @@ const Mypage: React.FC = () => {
           <div className="login-wrap">
             <div className="mypage-profile">
               <div className="mypage-profile-image">
-                <img src={user.img} alt="프로필 사진" />
+                {user.img === null ? (
+                  <img src={profile} alt="프로필 사진" />
+                ) : (
+                  <img src={user.img} alt="프로필 사진" />
+                )}
               </div>
               <span className="mypage-nickname">{user.nickname}</span>님
               <Link to="/mypage/update" className="profile-update">

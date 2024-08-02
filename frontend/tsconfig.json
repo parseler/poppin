@@ -8,7 +8,11 @@
       "@components/*": ["components/*"],
       "@css/*": ["css/*"],
       "@assets/*": ["assets/*"],
-      "@utils/*": ["utils/*"]
+      "@utils/*": ["utils/*"],
+      "@api/*": ["api/*"],
+      "@interface/*": ["interface/*"],
+      "@hooks/*": ["hooks/*"],
+      "@store/*": ["store/*"]
     },
     "target": "ESNext",
     "module": "ESNext",

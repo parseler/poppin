@@ -2,15 +2,20 @@ package com.apink.poppin.api.user.controller;
 
 import com.apink.poppin.api.popup.dto.PopupDTO;
 import com.apink.poppin.api.reservation.dto.PreReservationResponseDTO;
+import com.apink.poppin.api.reservation.dto.ReservationResponseDto;
 import com.apink.poppin.api.review.dto.ReviewDto;
 import com.apink.poppin.api.user.dto.UserDto;
 import com.apink.poppin.api.user.service.UserService;
+import com.apink.poppin.common.exception.dto.BusinessLogicException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
+
+import static com.apink.poppin.common.exception.dto.ExceptionCode.*;
 
 @RestController
 @RequestMapping("/api/users")
@@ -30,8 +35,13 @@ public class UserController {
     // 유저 본인 정보 조회
     @GetMapping("/me")
     public ResponseEntity<?> findUser() {
-        long userTsid = Long.parseLong(SecurityContextHolder.getContext().getAuthentication().getName());
-        UserDto.Response user = userService.findUser(userTsid);
+        UserDto.Response user;
+        try {
+            long userTsid = Long.parseLong(SecurityContextHolder.getContext().getAuthentication().getName());
+            user = userService.findUser(userTsid);
+        } catch (Exception e) {
+            throw new BusinessLogicException(USER_NOT_FOUND);
+        }
 
         return ResponseEntity.ok(user);
     }
@@ -79,19 +89,12 @@ public class UserController {
         return ResponseEntity.ok(reviews);
     }
 
-//    // 내 현장 예약 조회
-//    @GetMapping("/me/popups/onsite-reservations")
-//    public ResponseEntity<?> findOnsiteReservation() {
-//
-//        return ResponseEntity.ok().build();
-//    }
+    // 내 예약 조회 (현장, 사전, 완료)
+    @GetMapping("/me/popups/reservations")
+    public ResponseEntity<?> findReservations() {
+        List<ReservationResponseDto> reservations = userService.findReservations();
 
-    // 내 사전 예약 조회
-    @GetMapping("/me/popups/pre-reservations")
-    public ResponseEntity<?> findPreReservations() {
-        List<PreReservationResponseDTO> preReservations = userService.findPreReservations();
-
-        return ResponseEntity.ok(preReservations);
+        return ResponseEntity.ok(reservations);
     }
 
     // 내 사전 예약 상세 조회

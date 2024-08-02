@@ -1,8 +1,13 @@
 package com.apink.poppin.api.user.dto;
 
+import com.apink.poppin.api.user.entity.UserCategory;
+import com.apink.poppin.api.user.entity.UserConsent;
+import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.*;
+
+import java.util.List;
 
 public class UserDto {
 
@@ -15,7 +20,8 @@ public class UserDto {
         private String nickname;
         @NotBlank
         private String img;
-//        private List<@Valid UserConsent> userConsents;
+        private List<@Valid UserCategory> userCategories;
+        private UserConsent userConsents;
     }
 
     @Getter
@@ -25,7 +31,8 @@ public class UserDto {
         private String nickname;
         private String email;
         private String phoneNumber;
-//        private List<@Valid UserCategory> userCategories;
+        private List<@Valid UserCategory> userCategories;
+        private UserConsent userConsent;
     }
 
     @Getter

@@ -1,6 +1,7 @@
 package com.apink.poppin.api.user.entity;
 
 import com.apink.poppin.api.heart.entity.Heart;
+import com.apink.poppin.api.reservation.entity.OnsiteReservation;
 import com.apink.poppin.api.reservation.entity.PreReservation;
 import com.apink.poppin.api.review.entity.Comment;
 import com.apink.poppin.api.review.entity.Review;

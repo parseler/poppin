@@ -138,9 +138,9 @@ function RegistPopReservationInfo() {
                     setPreReservationOpenAt(date);
                   }}
                   placeholderText="연. 월. 일"
-                  dateFormat="Y. M. d." // 날짜 형식 설정
-                  locale="ko" // 로케일 설정
-                  renderCustomHeader={renderCustomHeader} // 커스텀 헤더 설정
+                  dateFormat="Y. M. d."
+                  locale="ko"
+                  renderCustomHeader={renderCustomHeader}
                 />
               </div>
               <div className="reservation-open-time-input">

@@ -18,12 +18,12 @@ export interface PopupRequestDTO {
   content: string;
   lat: number;
   lon: number;
-  images: string[]; // 수정된 필드
-  preReservationOpenAt: string; // 추가된 필드
-  term: number; // 추가된 필드
-  maxPeoplePerSession: number; // 추가된 필드
-  maxReservationsPerPerson: number; // 추가된 필드
-  warning: string; // 추가된 필드
+  images: string[];
+  preReservationOpenAt: string;
+  term: number;
+  maxPeoplePerSession: number;
+  maxReservationsPerPerson: number;
+  warning: string;
 }
 
 export const createPopup = async (popupDto: PopupRequestDTO) => {

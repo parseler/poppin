@@ -53,12 +53,9 @@
   align-items: center;
   margin-bottom: 10px;
 }
-/* 기본 체크박스 스타일 숨기기 */
 #regist-pop-reservation .select-type input[type="checkbox"] {
   display: none;
 }
-
-/* 커스텀 체크박스 스타일 */
 #regist-pop-reservation .select-type label {
   display: flex;
   align-items: center;
@@ -66,10 +63,9 @@
   cursor: pointer;
   transition: background-color 0.3s;
   position: relative;
-  padding-left: 36px; /* 체크박스 아이콘을 위한 공간 확보 */
+  padding-left: 36px;
 }
 
-/* 체크박스 커스텀 아이콘 */
 #regist-pop-reservation .select-type label::before {
   content: "";
   display: inline-block;
@@ -86,7 +82,6 @@
   text-align: center;
 }
 
-/* 체크박스가 체크되었을 때의 스타일 */
 #regist-pop-reservation
   .select-type
   input[type="checkbox"]:checked
@@ -187,16 +182,15 @@
   width: 45px;
   text-align: center;
   border: none;
-  -webkit-appearance: none; /* 크롬, 사파리, 엣지 */
-  -moz-appearance: none; /* 파이어폭스 */
-  appearance: none; /* 기본 appearance 제거 */
-  background: none; /* 배경 제거 */
-  background: none; /* 배경 제거 */
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+  background: none;
   scrollbar-width: none;
   -ms-overflow-style: none;
 }
 #regist-pop-reservation .time-input-group select::-webkit-scrollbar {
-  display: none; /* 크롬, 사파리, 엣지 */
+  display: none;
 }
 #regist-pop-reservation .onsite-reservation-schedule button {
   background-color: #d4145a;
@@ -343,18 +337,23 @@
 #regist-pop-reservation
   .setting-advance-reservation
   .advance-reservation-content
-  .max-reservation-per-person
-  div {
-}
-#regist-pop-reservation
-  .setting-advance-reservation
-  .advance-reservation-content
   .time-term
   .interval-input
   input {
   width: 80px;
   height: 36px;
   margin: 0 5px 0px 10px;
+  text-align: right;
+}
+#regist-pop-reservation
+  .setting-advance-reservation
+  .advance-reservation-content
+  .max-count
+  input {
+  width: 80px;
+  height: 36px;
+  margin: 0 5px 0px 10px;
+  text-align: right;
 }
 #regist-pop-reservation
   .setting-advance-reservation
@@ -364,6 +363,7 @@
   width: 80px;
   height: 36px;
   margin: 0 5px 0px 10px;
+  text-align: right;
 }
 #regist-pop-reservation
   .setting-advance-reservation

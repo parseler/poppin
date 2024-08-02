@@ -182,6 +182,7 @@ public class UserServiceImpl implements UserService {
                     .title(popup.getName())
                     .reservationCount(dto.getReservationCount())
                     .reservationStatement(dto.getReservationStatementId())
+                    .kind(0)
                     .build();
             reservations.add(resDto);
         }
@@ -275,6 +276,7 @@ public class UserServiceImpl implements UserService {
                 .reservationTime(preReservation.getReservationTime())
                 .reservationCount(preReservation.getReservationCount())
                 .reservationStatement(preReservation.getReservationStatement().getReservationStatementId())
+                .kind(1)
                 .build();
     }
 
@@ -285,6 +287,7 @@ public class UserServiceImpl implements UserService {
                 .title(onsiteReservation.getPopup().getName())
                 .reservationCount(onsiteReservation.getReservationCount())
                 .reservationStatement(onsiteReservation.getReservationStatement().getReservationStatementId())
+                .kind(2)
                 .build();
     }
 

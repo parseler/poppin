@@ -17,12 +17,12 @@ public interface ReviewRepository extends JpaRepository<Review, Long> {
     Optional<Review> findById(@NonNull Long reviewId);
 
     @EntityGraph(attributePaths = "user", type = EntityGraph.EntityGraphType.FETCH)
-    List<Review> findReviewsByPopup_PopupId(@NonNull Long popupId);
+    List<Review> findReviewsByPopup_PopupIdAndDeletedFalse(@NonNull Long popupId);
 
     @EntityGraph(attributePaths = "user", type = EntityGraph.EntityGraphType.FETCH)
     List<Review> findByUser(User user);
 
     @EntityGraph(attributePaths = "user", type = EntityGraph.EntityGraphType.FETCH)
     @NonNull
-    List<Review> findAll();
+    List<Review> findByDeletedFalse();
 }

@@ -11,14 +11,22 @@ import com.apink.poppin.api.reservation.repository.OnsiteReservationRepository;
 import com.apink.poppin.common.exception.dto.BusinessLogicException;
 import com.apink.poppin.common.exception.dto.ExceptionCode;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.core.ValueOperations;
 import org.springframework.data.redis.core.ZSetOperations;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.Instant;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Set;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class OnsiteReservationServiceImpl implements OnsiteReservationService {
@@ -31,13 +39,14 @@ public class OnsiteReservationServiceImpl implements OnsiteReservationService {
 
     // 사용자가 다른 팝업에 대기하고자 하는 경우 전화번호만으로 대기 중인 정보 조회
     private final ValueOperations<String, Object> valueOperations;
+    private final RedisTemplate<String, Object> redisTemplate;
 
     private final OnsiteReservationRepository onsiteReservationRepository;
     private final PopupRepository popupRepository;
 
     @Override
     @Transactional
-    public OnsiteReservationDto createOnsiteReservation(OnsiteReservationDto onsiteReservationDto) {
+    public OnsiteReservationRedisDto createOnsiteReservation(OnsiteReservationDto onsiteReservationDto) {
 
         String keyByPopup = RESERVATION_KEY_POPUP + onsiteReservationDto.getPopupId();
         String keyByPhone = RESERVATION_KEY_PHONE + onsiteReservationDto.getPhoneNumber();
@@ -73,14 +82,11 @@ public class OnsiteReservationServiceImpl implements OnsiteReservationService {
 
         zSetOperations.add(keyByPopup, redisDto, score);
         valueOperations.set(keyByPhone, redisDto);
+        Instant ttl = getTimeToLive();
+        redisTemplate.expireAt(keyByPopup, ttl);
+        redisTemplate.expireAt(keyByPhone, ttl);
 
-        Integer rank = getRank(keyByPopup, redisDto);
-        if (rank == null) {
-            throw new BusinessLogicException(ExceptionCode.ONSITE_NOT_FOUND);
-        }
-        onsiteReservationDto.setRank(rank);
-
-        return onsiteReservationDto;
+        return redisDto;
     }
 
     @Override
@@ -95,9 +101,6 @@ public class OnsiteReservationServiceImpl implements OnsiteReservationService {
                 if (redisDto.getOnsiteReservationRedisId() == onsiteReservationId) {
 
                     Integer rank = getRank(keyByPopup, redisDto);
-                    if (rank == null) {
-                        throw new BusinessLogicException(ExceptionCode.ONSITE_NOT_FOUND);
-                    }
 
                     OnsiteReservationDto dto = OnsiteReservationDto.builder().build();
                     dto.makeDtoWithRedisDto(redisDto);
@@ -132,12 +135,8 @@ public class OnsiteReservationServiceImpl implements OnsiteReservationService {
         }
 
         if (obj instanceof OnsiteReservationRedisDto redisDto) {
-            Integer rank;
             String keyByPopup = RESERVATION_KEY_POPUP + redisDto.getPopupId();
-            rank = getRank(keyByPopup, redisDto);
-            if (rank == null) {
-                throw new BusinessLogicException(ExceptionCode.ONSITE_NOT_FOUND);
-            }
+            Integer rank = getRank(keyByPopup, redisDto);
 
             OnsiteReservationDto onsiteReservationDto = OnsiteReservationDto.builder().build();
             onsiteReservationDto.makeDtoWithRedisDto(redisDto);
@@ -180,6 +179,70 @@ public class OnsiteReservationServiceImpl implements OnsiteReservationService {
         throw new BusinessLogicException(ExceptionCode.ONSITE_NOT_FOUND);
     }
 
+    @Override
+    public List<OnsiteReservationDto> getOnsiteReservations(long popupId) {
+        String keyForPopup = RESERVATION_KEY_POPUP + popupId;
+
+        Set<Object> reservations = zSetOperations.rangeByScore(keyForPopup, 0, Double.MAX_VALUE);
+        assert reservations != null;
+        List<OnsiteReservationDto> list = new ArrayList<>();
+        for (Object obj : reservations) {
+            if (obj instanceof OnsiteReservationRedisDto redisDto) {
+                if (redisDto.getReservationStatementId() != 1) continue;
+
+                OnsiteReservationDto onsiteReservationDto = OnsiteReservationDto.builder().build();
+                onsiteReservationDto.makeDtoWithRedisDto(redisDto);
+                Integer rank = getRank(keyForPopup, redisDto);
+
+                onsiteReservationDto.setRank(rank);
+                list.add(onsiteReservationDto);
+            }
+        }
+        return list;
+    }
+
+    @Override
+    @Transactional
+    public void saveScheduling() {
+        Set<String> keys = redisTemplate.keys(RESERVATION_KEY_POPUP + "*");
+
+        assert keys != null;
+        for (String key : keys) {
+            Set<Object> reservations = zSetOperations.rangeByScore(key, 0, Double.MAX_VALUE);
+
+            assert reservations != null;
+            for (Object obj : reservations) {
+                try {
+                    if (obj instanceof OnsiteReservationRedisDto redisDto) {
+                        OnsiteReservation onsiteReservation = onsiteReservationRepository.findById(redisDto.getOnsiteReservationRedisId())
+                                .orElseThrow(() -> new BusinessLogicException(ExceptionCode.ONSITE_NOT_FOUND));
+
+                        if (redisDto.getReservationStatementId() == 1) {
+                            redisDto.changeStatement(2L);
+                        }
+                        ReservationStatement statement = ReservationStatement.builder()
+                                .reservationStatementId(redisDto.getReservationStatementId()).build();
+                        onsiteReservation.update(statement);
+                    }
+                } catch (Exception e) {
+                    log.error(e.getMessage());
+                }
+            }
+        }
+    }
+
+    @Override
+    public OnsiteReservationDto calculateRank(OnsiteReservationRedisDto redisDto) {
+        String key = RESERVATION_KEY_POPUP + redisDto.getPopupId();
+        Integer rank = getRank(key, redisDto);
+
+        OnsiteReservationDto onsiteReservationDto = OnsiteReservationDto.builder().build();
+        onsiteReservationDto.makeDtoWithRedisDto(redisDto);
+        onsiteReservationDto.setRank(rank);
+
+        return onsiteReservationDto;
+    }
+
     private Integer getWaitNumber(String key) {
         Long size = zSetOperations.size(key);
         if (size == null) return 1;
@@ -192,11 +255,24 @@ public class OnsiteReservationServiceImpl implements OnsiteReservationService {
     }
 
     private Integer getRank(String key, OnsiteReservationRedisDto dto) {
-
         Long rank = zSetOperations.rank(key, dto);
-
-        if (rank == null) return null;
-
+        if (rank == null) {
+            throw new BusinessLogicException(ExceptionCode.ONSITE_NOT_FOUND);
+        }
         return rank.intValue();
+    }
+
+    private Instant getTimeToLive() {
+        LocalDateTime now = LocalDateTime.now();
+
+        // 다음날 4시
+        LocalDateTime ttl;
+        if (now.getHour() < 4) {
+            ttl = now.plusDays(0).withHour(4).withMinute(0).withSecond(0).withNano(0);
+        } else {
+            ttl = now.plusDays(1).withHour(4).withMinute(0).withSecond(0).withNano(0);
+        }
+
+        return ttl.atZone(ZoneId.systemDefault()).toInstant();
     }
 }

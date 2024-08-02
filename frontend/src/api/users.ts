@@ -26,3 +26,12 @@ export const updateUserData = async (userData: UserData) => {
 }
 
 // 닉네임 중복 확인
+export const checkNickname = async (nickname: string) => {
+  try {
+    const response = await axiosInstance.get(`/api/${nickname}/check`);
+    return response.data;
+  } catch (error) {
+    console.error(error);
+    throw error;
+  }
+}

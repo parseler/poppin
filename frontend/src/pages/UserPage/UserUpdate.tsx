@@ -1,13 +1,15 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { UserData } from "@interface/users";
-import { getUserData, updateUserData } from "@api/users";
+import { checkNickname, getUserData, updateUserData } from "@api/users";
 import profile from "@assets/user/profile.png";
 import Header from "@components/common/Header";
 import Menu from "@components/common/Menu";
 
 const UserUpdate = () => {
   const [user, setUser] = useState<UserData>();
+  const [nicknameMsg, setNicknameMsg] = useState<string>("");
+  const [nicknameCheck, setNicknameCheck] = useState<boolean>(false);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -28,7 +30,31 @@ const UserUpdate = () => {
       ...user,
       [name]: type === "checkbox" ? checked : value,
     } as UserData);
+
+    if (name === "nickname") {
+      setNicknameCheck(false);
+      setNicknameMsg("");
+    }
   };
+
+  // 닉네임 중복 확ㄱ인
+  const handleNicknameCheck = async () => {
+    if (user?.nickname) {
+      try {
+        const result = await checkNickname(user.nickname);
+        if (result) {
+          setNicknameMsg("사용 가능한 닉네임입니다.");
+          setNicknameCheck(true);
+        } else {
+          setNicknameMsg("");
+          setNicknameCheck(false);
+        }
+      } catch (error) {
+        setNicknameMsg("중복된 닉네임입니다.");
+        setNicknameCheck(false);
+      }
+    }
+  }
 
   // 프로필 이미지 변경
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -71,6 +97,11 @@ const UserUpdate = () => {
 
   // 사용자 정보 수정
   const submit = async () => {
+    if (!nicknameCheck) {
+      setNicknameMsg("닉네임 중복 확인을 해주세요.");
+      return;
+    }
+
     if (user) {
       try {
         await updateUserData(user);
@@ -123,8 +154,9 @@ const UserUpdate = () => {
               value={user.nickname}
               onChange={userChange}
             />
-            <button>중복확인</button>
+            <button onClick={handleNicknameCheck}>중복확인</button>
           </div>
+          {nicknameMsg && <p className="nickname-check">{nicknameMsg}</p>}
           <div className="update-email">
             <label htmlFor="email">게정 정보</label>
             <input

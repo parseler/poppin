@@ -7,11 +7,9 @@ import com.apink.poppin.api.popup.dto.PopupDTO;
 import com.apink.poppin.api.popup.dto.PopupRequestDTO;
 import com.apink.poppin.api.popup.entity.Popup;
 import com.apink.poppin.api.popup.service.PopupService;
-import com.apink.poppin.api.reservation.dto.PreReservationRequestDTO;
-import com.apink.poppin.api.reservation.dto.PreReservationResponseDTO;
-import com.apink.poppin.api.reservation.dto.PreStatementRequestDTO;
-import com.apink.poppin.api.reservation.dto.PreStatementResponseDTO;
+import com.apink.poppin.api.reservation.dto.*;
 import com.apink.poppin.api.reservation.entity.PreReservation;
+import com.apink.poppin.api.reservation.service.OnsiteReservationService;
 import com.apink.poppin.api.review.dto.ReviewDto;
 import com.apink.poppin.api.review.dto.ReviewListDto;
 import com.apink.poppin.api.review.service.ReviewService;
@@ -33,6 +31,7 @@ public class PopupController {
     private final PopupService popupService;
     private final HeartService heartService;
     private final ReviewService reviewService;
+    private final OnsiteReservationService onsiteReservationService;
 
 
     // 팝업 전체 목록 조회 및 검색
@@ -137,4 +136,12 @@ public class PopupController {
     }
 
     // 팝업 수정
+
+    // 매니저가 확인하는 대기 중인 현장 예약 정보
+    @GetMapping("/{popupId}/onsite-reservations")
+    public ResponseEntity<?> getOnsiteReservations(@PathVariable long popupId) {
+        List<OnsiteReservationDto> list = onsiteReservationService.getOnsiteReservations(popupId);
+
+        return ResponseEntity.ok().body(list);
+    }
 }

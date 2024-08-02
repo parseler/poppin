@@ -18,3 +18,15 @@ services:
       - "80:80"
     volumes:
       - ./nginx/templates:/etc/nginx/templates
+  backend-builder:
+    image: eclipse-temurin:17
+    env_file:
+      - .env
+    volumes:
+      - ./backend:/opt/poppin
+      - gradle_home:/opt/app/build
+    working_dir: /opt/poppin
+    command: "./gradlew build -x test"
+volumes:
+  gradle_home:
+  app_home:

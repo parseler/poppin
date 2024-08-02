@@ -136,6 +136,11 @@ public class PopupController {
     }
 
     // 팝업 수정
+    @PutMapping("{popupId}")
+    public ResponseEntity<Popup> updatePopup(@RequestBody PopupRequestDTO popupDto, @PathVariable long popupId) {
+        Popup popup = popupService.updatePopup(popupDto, popupId);
+        return new ResponseEntity<>(popup, HttpStatus.OK);
+        
 
     // 매니저가 확인하는 대기 중인 현장 예약 정보
     @GetMapping("/{popupId}/onsite-reservations")

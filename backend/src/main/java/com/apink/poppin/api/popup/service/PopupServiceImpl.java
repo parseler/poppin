@@ -167,6 +167,25 @@ public class PopupServiceImpl implements PopupService {
         return popup;
     }
 
+    // 팝업 수정
+    @Transactional
+    @Override
+    public Popup updatePopup(PopupRequestDTO reqDto, long popupId) {
+        // 매니저 확인
+        Manager manager = managerRepository.findByManagerTsid(reqDto.getManagerTsid())
+                .orElseThrow(() -> new IllegalArgumentException("Invalid manager Tsid"));
+
+        // 팝업 확인
+        Popup popup = popupRepository.findById(popupId)
+                .orElseThrow(() -> new IllegalArgumentException("Invalid popup ID"));
+
+        popup.updatePopup(reqDto);
+
+//        popupRepository.save(popup);
+
+        return popup;
+    }
+
 
     // DTO 변환
     private PreReservationResponseDTO convertToResponseDTO(PreReservation preReservation) {

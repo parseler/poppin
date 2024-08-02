@@ -1,6 +1,7 @@
 package com.apink.poppin.api.popup.entity;
 
 import com.apink.poppin.api.manager.entity.Manager;
+import com.apink.poppin.api.popup.dto.PopupRequestDTO;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
@@ -20,7 +21,7 @@ import java.util.Date;
 public class Popup {
 
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name="popup_id")
     private Long popupId;
 
@@ -58,4 +59,17 @@ public class Popup {
     @ColumnDefault("0.0")
     private Double rating;
 
+
+    public void updatePopup(PopupRequestDTO reqDto) {
+        this.name = reqDto.getName();
+        this.startDate = reqDto.getStartDate();
+        this.endDate = reqDto.getEndDate();
+        this.hours = reqDto.getHours();
+        this.description = reqDto.getDescription();
+        this.snsUrl = reqDto.getSnsUrl();
+        this.pageUrl = reqDto.getPageUrl();
+        this.content = reqDto.getContent();
+        this.lat = reqDto.getLat();
+        this.lon = reqDto.getLon();
+    }
 }

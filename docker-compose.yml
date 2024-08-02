@@ -23,10 +23,25 @@ services:
     env_file:
       - .env
     volumes:
-      - ./backend:/opt/poppin
+      - ./backend:/opt/app
       - gradle_home:/opt/app/build
-    working_dir: /opt/poppin
+    working_dir: /opt/app
     command: "./gradlew build -x test"
+  backend:
+    image: eclipse-temurin:17
+    env_file:
+      - .env
+    volumes:
+      - gradle_home:/opt/app/build
+    command: "java -jar /opt/app/build/libs/poppin-0.0.1-SNAPSHOT.jar"
+    depends_on:
+      backend-builder:
+        condition: service_completed_successfully
+    develop:
+      watch:
+        - path: gradle_home
+          action: sync+restart
+          target: /opt/app/build
 volumes:
   gradle_home:
   app_home:

@@ -124,7 +124,7 @@ public class PopupController {
 
     @GetMapping("/{popupId}/reviews")
     public ResponseEntity<?> getReviews(@PathVariable long popupId) {
-        List<ReviewListDto> list = reviewService.getReviews(popupId);
+        List<ReviewListDto> list = reviewService.getReviewsByPopupId(popupId);
         return ResponseEntity.ok(list);
     }
 

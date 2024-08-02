@@ -19,6 +19,7 @@ import com.apink.poppin.api.review.entity.Review;
 import com.apink.poppin.api.review.repository.ReviewRepository;
 import com.apink.poppin.api.user.dto.UserDto;
 import com.apink.poppin.api.user.entity.User;
+import com.apink.poppin.api.user.entity.UserConsent;
 import com.apink.poppin.api.user.repository.UserRepository;
 import com.apink.poppin.common.exception.dto.BusinessLogicException;
 import lombok.RequiredArgsConstructor;
@@ -76,26 +77,12 @@ public class UserServiceImpl implements UserService {
 
         User findUser = userRepository.findUserByUserTsid(userTsid)
                 .orElseThrow(() -> new RuntimeException("user not exists"));
+        UserConsent findUserConsent = findUser.getUserConsents();
 
-        User user = User.builder()
-                .userTsid(findUser.getUserTsid())
-                .providerId(findUser.getProviderId())
-                .providerName(findUser.getProviderName())
-                .name(findUser.getName())
-                .userConsents(userDto.getUserConsents())
-                .userCategories(userDto.getUserCategories())
-                .nickname(userDto.getNickname())
-                .email(findUser.getEmail())
-                .age(findUser.getAge())
-                .gender(findUser.getGender())
-                .phoneNumber(findUser.getPhoneNumber())
-                .role(findUser.getRole())
-                .img(userDto.getImg())
-                .build();
+        findUserConsent.updateUserConsent(userDto.getUserConsents());
+        findUser.updateUser(userDto, findUserConsent);
 
-        userRepository.save(user);
-
-        return convertToResponseDTO(user);
+        return convertToResponseDTO(findUser);
     }
 
     @Override
@@ -194,11 +181,9 @@ public class UserServiceImpl implements UserService {
                     .reservationId(dto.getOnsiteReservationRedisId())
                     .title(popup.getName())
                     .reservationCount(dto.getReservationCount())
-                    .state(0)
+                    .reservationStatement(dto.getReservationStatementId())
                     .build();
             reservations.add(resDto);
-        } else {
-            throw new BusinessLogicException(ONSITE_NOT_FOUND);
         }
 
         // 사전 예약 dto
@@ -289,7 +274,7 @@ public class UserServiceImpl implements UserService {
                 .reservationDate(preReservation.getReservationDate())
                 .reservationTime(preReservation.getReservationTime())
                 .reservationCount(preReservation.getReservationCount())
-                .state(1)
+                .reservationStatement(preReservation.getReservationStatement().getReservationStatementId())
                 .build();
     }
 
@@ -299,7 +284,7 @@ public class UserServiceImpl implements UserService {
                 .reservationId(onsiteReservation.getOnsiteReservationId())
                 .title(onsiteReservation.getPopup().getName())
                 .reservationCount(onsiteReservation.getReservationCount())
-                .state(2)
+                .reservationStatement(onsiteReservation.getReservationStatement().getReservationStatementId())
                 .build();
     }
 

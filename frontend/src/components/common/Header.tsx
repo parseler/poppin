@@ -14,6 +14,7 @@ import advertisementIcon from "@assets/header/notificationAd.svg";
 interface IconProps {
   leftIcon: string;
   rightIcon: string;
+  onRightClick?: () => void;
 }
 
 const notifications = [
@@ -75,7 +76,7 @@ const notifications = [
   },
 ];
 
-const Header = ({ leftIcon, rightIcon }: IconProps) => {
+const Header = ({ leftIcon, rightIcon, onRightClick }: IconProps) => {
   const navigate = useNavigate();
   const [modalOpen, setModalOpen] = useState(false);
 
@@ -85,15 +86,12 @@ const Header = ({ leftIcon, rightIcon }: IconProps) => {
 
   const handleIconClick = (icon: string) => {
     if (icon === getIcon("notification") || icon === "notification") {
-      setModalOpen(true);
+      setModalOpen(true); 
+    } else if (icon === "완료") {
+      if (onRightClick) onRightClick;
     } else if (icon === getIcon("search") || icon === "search") {
       navigate("/search");
-    } else if (
-      icon === getIcon("back") ||
-      icon === "취소" ||
-      icon === "back" ||
-      icon === "취소"
-    ) {
+    } else if (icon === getIcon("back") || icon === "취소" || icon === "back") {
       handleBackIcon();
     }
   };

@@ -81,7 +81,7 @@
 
 /* ReviewWrite */
 #review-write {
-  margin: 16px 16px 0;
+  margin: 72px 16px 0;
   display: flex;
   flex-direction: column;
   height: calc(100vh - 169.5px);

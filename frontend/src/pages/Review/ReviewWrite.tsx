@@ -1,6 +1,8 @@
 import "react-quill/dist/quill.snow.css";
 import ReactQuill from "react-quill";
 import { useRef, useState } from "react";
+import Header from "@components/common/Header";
+import Menu from "@components/common/Menu";
 
 const ReviewWrite = () => {
   const [editorContent, setEditorContent] = useState("");
@@ -11,26 +13,32 @@ const ReviewWrite = () => {
   };
 
   return (
-    <div id="review-write">
-      <div className="review-input-title">
-        <input type="text" placeholder="제목을 입력하세요 (최대 40자)" />
+    <>
+      <Header leftIcon="취소" rightIcon="등록" />
+
+      <div id="review-write">
+        <div className="review-input-title">
+          <input type="text" placeholder="제목을 입력하세요 (최대 40자)" />
+        </div>
+        <div className="review-input-search">
+          <input type="text" placeholder="다녀온 팝업 스토어" />
+        </div>
+        <div className="review-input-thumbnail">
+          <input type="text" placeholder="썸네일 이미지" />
+          <label htmlFor="file">썸네일 찾기</label>
+          <input id="file" type="file" accept="image/*" />
+        </div>
+        <ReactQuill
+          ref={quillRef}
+          value={editorContent}
+          onChange={handleWriteContent}
+          modules={modules}
+          formats={formats}
+        />
       </div>
-      <div className="review-input-search">
-        <input type="text" placeholder="다녀온 팝업 스토어" />
-      </div>
-      <div className="review-input-thumbnail">
-        <input type="text" placeholder="썸네일 이미지" />
-        <label htmlFor="file">썸네일 찾기</label>
-        <input id="file" type="file" accept="image/*" />
-      </div>
-      <ReactQuill
-        ref={quillRef}
-        value={editorContent}
-        onChange={handleWriteContent}
-        modules={modules}
-        formats={formats}
-      />
-    </div>
+      
+      <Menu />
+    </>
   );
 };
 

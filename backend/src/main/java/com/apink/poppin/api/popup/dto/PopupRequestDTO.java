@@ -53,9 +53,6 @@ public class PopupRequestDTO {
     private Double lon;
 
 
-//    @JsonSerialize(using = LocalDateTimeSerializer.class)
-////    @JsonDeserialize(using = LocalDateTimeDeserializer.class)
-//    @JsonDeserialize(using = CustomLocalDateTimeDeserializer.class)
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm", timezone = "Asia/Seoul")
     private LocalDateTime preReservationOpenAt;
 

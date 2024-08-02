@@ -38,11 +38,13 @@ import Search from "@components/Search";
 import MyReservationState from "@pages/ManagerPage/MyReservationState";
 import MyOnsiteReservationState from "@pages/ManagerPage/MyOnsiteReservationState";
 import MyPreReservationState from "@pages/ManagerPage/MyPreReservationState";
+import axiosInstance from "api/axiosInstance";
 
 const queryClient = new QueryClient();
 
 function App() {
   const [isLoading, setIsLoading] = useState(true);
+  const [data, setData] = useState<string | null>(null);
   
   useEffect(() => {
     const timer = setTimeout(() => {

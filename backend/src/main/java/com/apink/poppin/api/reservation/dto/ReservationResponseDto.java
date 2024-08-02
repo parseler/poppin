@@ -20,5 +20,6 @@ public class ReservationResponseDto {
     private LocalTime reservationTime;
     private Integer reservationCount;
     private long reservationStatement;
+    private long kind;
 
 }

@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import usePopupStore from "store/usePopupStore";
 import "@css/ManagerPage/RegistPopOptional.css";
 
 import secondStep from "@assets/registPop/secondStep.svg";
@@ -7,30 +8,36 @@ import secondStep from "@assets/registPop/secondStep.svg";
 type serviceCategory = "parking" | "fee" | "pet" | "food" | "photo" | "age";
 
 function RegistPopOptional() {
+  const { snsUrl, pageUrl, serviceCategories, setPopupData, setServiceCategory } = usePopupStore();
+  const [localSnsUrl, setLocalSnsUrl] = useState(snsUrl || "");
+  const [localPageUrl, setLocalPageUrl] = useState(pageUrl || "");
+  const [activeButtons, setActiveButtons] = useState(serviceCategories);
   const navigate = useNavigate();
-
-  const [activeButtons, setActiveButtons] = useState({
-    parking: "",
-    fee: "",
-    pet: "",
-    food: "",
-    photo: "",
-    age: "",
-  });
 
   const handleButtonClick = (category: serviceCategory, value: string) => {
     setActiveButtons((prev) => ({
       ...prev,
       [category]: prev[category] === value ? "" : value,
     }));
+    setServiceCategory(category, value);
+  };
+
+  const handleSubmit = () => {
+    setPopupData({
+      snsUrl: localSnsUrl,
+      pageUrl: localPageUrl,
+      serviceCategories: activeButtons,
+    });
+    console.log({
+      snsUrl: localSnsUrl,
+      pageUrl: localPageUrl,
+      serviceCategories: activeButtons,
+    });
+    navigate("/regist-pop-reservation");
   };
 
   const goRegistFinish = () => {
     navigate("/regist-pop-fin");
-  };
-
-  const goReservationRegist = () => {
-    navigate("/regist-pop-reservation");
   };
 
   return (
@@ -41,11 +48,19 @@ function RegistPopOptional() {
       </div>
       <div className="sns">
         <div className="sns-title">SNS 링크</div>
-        <input placeholder="SNS 링크를 입력하세요. (블로그, 인스타그램 등)" />
+        <input
+          placeholder="SNS 링크를 입력하세요. (블로그, 인스타그램 등)"
+          value={localSnsUrl}
+          onChange={(e) => setLocalSnsUrl(e.target.value)}
+        />
       </div>
       <div className="homepage">
         <div className="homepage-title">홈페이지 링크</div>
-        <input placeholder="홈페이지 링크를 입력하세요." />
+        <input
+          placeholder="홈페이지 링크를 입력하세요."
+          value={localPageUrl}
+          onChange={(e) => setLocalPageUrl(e.target.value)}
+        />
       </div>
       <div className="more-details">
         <div className="more-details-title">팝업스토어 추가 사항</div>
@@ -154,9 +169,9 @@ function RegistPopOptional() {
       </div>
       <div className="omit-or-regist">
         <button className="omit" onClick={goRegistFinish}>
-          예약 건너뛰기
+          예약 정보 없음
         </button>
-        <button className="regist" onClick={goReservationRegist}>
+        <button className="regist" onClick={handleSubmit}>
           예약 정보 등록
         </button>
       </div>

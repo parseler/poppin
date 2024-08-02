@@ -1,12 +1,14 @@
 package com.apink.poppin.config;
 
 //import com.apink.poppin.api.manager.repository.ManagerRepository;
+import com.apink.poppin.api.manager.repository.ManagerRepository;
 import com.apink.poppin.common.auth.filter.CustomLogoutFilter;
 import com.apink.poppin.common.auth.filter.JwtAuthenticationFilter;
 //import com.apink.poppin.common.auth.filter.LoginFilter;
 //import com.apink.poppin.common.auth.repository.ManagerRefreshTokenRepository;
 import com.apink.poppin.common.auth.filter.LoginFilter;
 import com.apink.poppin.common.auth.repository.CustomClientRegistrationRepo;
+import com.apink.poppin.common.auth.repository.ManagerRefreshTokenRepository;
 import com.apink.poppin.common.auth.service.AuthService;
 import com.apink.poppin.common.oauth.CustomOAuth2SuccessHandler;
 import com.apink.poppin.common.oauth.CustomOAuth2UserService;
@@ -17,6 +19,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
@@ -27,6 +30,7 @@ import org.springframework.security.web.authentication.logout.LogoutFilter;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 
+import java.util.Arrays;
 import java.util.Collections;
 
 @Configuration
@@ -35,9 +39,9 @@ import java.util.Collections;
 public class SecurityConfig {
 
     private final JwtTokenUtil jwtTokenUtil;
-//    private final ManagerRepository managerRepository;
+    private final ManagerRepository managerRepository;
     private final AuthService authService;
-//    private final ManagerRefreshTokenRepository managerRefreshTokenRepository;
+    private final ManagerRefreshTokenRepository managerRefreshTokenRepository;
     private final CustomOAuth2UserService customOAuth2UserService;
     private final CustomOAuth2SuccessHandler customOAuth2SuccessHandler;
     private final CustomClientRegistrationRepo customClientRegistrationRepo;
@@ -51,30 +55,7 @@ public class SecurityConfig {
     public SecurityFilterChain securityFilterChain(HttpSecurity http, AuthenticationConfiguration authenticationConfiguration) throws Exception {
 
         http
-                .cors(corsCustomizer -> corsCustomizer.configurationSource(new CorsConfigurationSource() {
-                    @Override
-                    public CorsConfiguration getCorsConfiguration(HttpServletRequest request) {
-
-                        CorsConfiguration configuration = new CorsConfiguration();
-
-                        configuration.setAllowedOrigins(Collections.singletonList("http://localhost:3000"));
-                        // 모든 요청 허용
-                        configuration.setAllowedMethods(Collections.singletonList("*"));
-                        // credentials 모두 받기
-                        configuration.setAllowCredentials(true);
-                        // header 전부 허용
-                        configuration.setAllowedHeaders(Collections.singletonList("*"));
-                        configuration.setMaxAge(3600L);
-
-                        // 우리쪽에서 데이터를 줄 경우, 웹 페이지에서 보이게 할 수 있는 방법
-                        // 반환하는 쿠키와 authorization을 설정해야 함
-                        // 그래야 cookie와 jwt 토큰을 얻을 수 있음
-                        configuration.setExposedHeaders(Collections.singletonList("Set-Cookie"));
-                        configuration.setExposedHeaders(Collections.singletonList("Authorization"));
-
-                        return null;
-                    }
-                }));
+                .cors(Customizer.withDefaults());
 
         http
                 .csrf((csrf) -> csrf.disable());
@@ -87,6 +68,7 @@ public class SecurityConfig {
 
         http
                 .authorizeHttpRequests((auth) -> auth
+                        .requestMatchers("/login").permitAll()
                         .anyRequest().permitAll()
 //                        .requestMatchers("/login", "/logout").permitAll()
 //                        .requestMatchers("/api/users/**").hasRole("USER")
@@ -111,9 +93,9 @@ public class SecurityConfig {
                 );
 
         http
-                .addFilterBefore(new JwtAuthenticationFilter(jwtTokenUtil), LoginFilter.class)
+                .addFilterBefore(new JwtAuthenticationFilter(jwtTokenUtil, managerRepository), LoginFilter.class)
                 .addFilterBefore(new CustomLogoutFilter(jwtTokenUtil, authService), LogoutFilter.class)
-                .addFilterAt(new LoginFilter(authenticationManager(authenticationConfiguration), jwtTokenUtil), UsernamePasswordAuthenticationFilter.class);
+                .addFilterAt(new LoginFilter(authenticationManager(authenticationConfiguration), jwtTokenUtil, managerRepository, managerRefreshTokenRepository), UsernamePasswordAuthenticationFilter.class);
 
         http
                 .oauth2Login((oauth2) -> oauth2

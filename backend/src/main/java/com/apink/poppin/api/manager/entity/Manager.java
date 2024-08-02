@@ -13,7 +13,6 @@ import lombok.*;
 @AllArgsConstructor
 public class Manager {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "manager_tsid", nullable = false)
     private Long managerTsid;
 

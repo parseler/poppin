@@ -4,6 +4,8 @@ package com.apink.poppin.api.popup.controller;
 import com.apink.poppin.api.heart.dto.HeartRequestDTO;
 import com.apink.poppin.api.heart.service.HeartService;
 import com.apink.poppin.api.popup.dto.PopupDTO;
+import com.apink.poppin.api.popup.dto.PopupRequestDTO;
+import com.apink.poppin.api.popup.entity.Popup;
 import com.apink.poppin.api.popup.service.PopupService;
 import com.apink.poppin.api.reservation.dto.PreReservationRequestDTO;
 import com.apink.poppin.api.reservation.dto.PreReservationResponseDTO;
@@ -126,4 +128,13 @@ public class PopupController {
         List<ReviewListDto> list = reviewService.getReviews(popupId);
         return ResponseEntity.ok(list);
     }
+
+    // 팝업 등록
+    @PostMapping("")
+    public ResponseEntity<Popup> createPopup(@RequestBody PopupRequestDTO popupDto) {
+        Popup popup = popupService.createPopup(popupDto);
+        return new ResponseEntity<>(popup, HttpStatus.CREATED);
+    }
+
+    // 팝업 수정
 }

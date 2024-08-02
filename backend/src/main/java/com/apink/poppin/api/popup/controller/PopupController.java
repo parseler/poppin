@@ -128,19 +128,28 @@ public class PopupController {
         return ResponseEntity.ok(list);
     }
 
-    // 팝업 등록
+    // 팝업 등록 (사전 예약 없이)
     @PostMapping("")
-    public ResponseEntity<Popup> createPopup(@RequestBody PopupRequestDTO popupDto) {
-        Popup popup = popupService.createPopup(popupDto);
+    public ResponseEntity<Popup> createPopupOnly(@RequestBody PopupRequestDTO popupDto) {
+        Popup popup = popupService.createPopupOnly(popupDto);
         return new ResponseEntity<>(popup, HttpStatus.CREATED);
     }
+
+
+    // 팝업 등록 (사전 예약까지)
+    @PostMapping("/preReservation")
+    public ResponseEntity<?> createPopupWithPreReservation(@RequestBody PopupRequestDTO popupDto) {
+        popupService.createPopupWithPreReservation(popupDto);
+        return new ResponseEntity<>(HttpStatus.CREATED);
+    }
+
 
     // 팝업 수정
     @PutMapping("{popupId}")
     public ResponseEntity<Popup> updatePopup(@RequestBody PopupRequestDTO popupDto, @PathVariable long popupId) {
         Popup popup = popupService.updatePopup(popupDto, popupId);
         return new ResponseEntity<>(popup, HttpStatus.OK);
-        
+    }
 
     // 매니저가 확인하는 대기 중인 현장 예약 정보
     @GetMapping("/{popupId}/onsite-reservations")

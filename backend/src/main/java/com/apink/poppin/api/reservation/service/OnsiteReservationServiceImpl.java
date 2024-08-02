@@ -8,6 +8,7 @@ import com.apink.poppin.api.reservation.dto.OnsiteReservationRequestDto;
 import com.apink.poppin.api.reservation.entity.OnsiteReservation;
 import com.apink.poppin.api.reservation.entity.ReservationStatement;
 import com.apink.poppin.api.reservation.repository.OnsiteReservationRepository;
+import com.apink.poppin.api.reservation.repository.ReservationStatementRepository;
 import com.apink.poppin.common.exception.dto.BusinessLogicException;
 import com.apink.poppin.common.exception.dto.ExceptionCode;
 import lombok.RequiredArgsConstructor;
@@ -43,22 +44,32 @@ public class OnsiteReservationServiceImpl implements OnsiteReservationService {
 
     private final OnsiteReservationRepository onsiteReservationRepository;
     private final PopupRepository popupRepository;
+    private final ReservationStatementRepository reservationStatementRepository;
 
     @Override
     @Transactional
     public OnsiteReservationRedisDto createOnsiteReservation(OnsiteReservationDto onsiteReservationDto) {
 
         String keyByPopup = RESERVATION_KEY_POPUP + onsiteReservationDto.getPopupId();
-        String keyByPhone = RESERVATION_KEY_PHONE + onsiteReservationDto.getPhoneNumber();
+        String keyByPhonePattern = RESERVATION_KEY_PHONE + onsiteReservationDto.getPhoneNumber();
 
-        if (valueOperations.get(keyByPhone) != null) {
-            throw new IllegalStateException("Onsite reservation already exists");
+        Set<String> keys = redisTemplate.keys(keyByPhonePattern + "*");
+
+        assert keys != null;
+        for (String key : keys) {
+            Object obj = valueOperations.get(key);
+            assert obj != null;
+            if (obj instanceof OnsiteReservationRedisDto dto) {
+                if (dto.getReservationStatementId() == 1) {
+                    throw new BusinessLogicException(ExceptionCode.ONSITE_ALREADY_EXIST);
+                }
+            }
         }
 
         Popup popup = popupRepository.findById(onsiteReservationDto.getPopupId())
                 .orElseThrow(() -> new BusinessLogicException(ExceptionCode.POPUP_NOT_FOUND));
-        ReservationStatement reservationStatement = ReservationStatement.builder()
-                .reservationStatementId(1L).build();
+        ReservationStatement reservationStatement = reservationStatementRepository.findById(1L)
+                .orElseThrow(() -> new IllegalStateException("reservationStatement not found"));
 
         Integer waitNumber = getWaitNumber(keyByPopup);
 
@@ -79,6 +90,9 @@ public class OnsiteReservationServiceImpl implements OnsiteReservationService {
 
         OnsiteReservationRedisDto redisDto = OnsiteReservationRedisDto.builder().build();
         redisDto.makeRedisDto(onsiteReservationDto);
+
+        String keyByPhone = RESERVATION_KEY_PHONE + onsiteReservationDto.getPhoneNumber()
+                + "_" + onsiteReservation.getOnsiteReservationId();
 
         zSetOperations.add(keyByPopup, redisDto, score);
         valueOperations.set(keyByPhone, redisDto);
@@ -127,21 +141,23 @@ public class OnsiteReservationServiceImpl implements OnsiteReservationService {
     @Override
     public OnsiteReservationDto getOnsiteReservationByPhoneNumber(String phoneNumber) {
 
-        String keyByPhone = RESERVATION_KEY_PHONE + phoneNumber;
-        Object obj = valueOperations.get(keyByPhone);
+        String keyByPhonePattern = RESERVATION_KEY_PHONE + phoneNumber;
+        Set<String> keys = redisTemplate.keys(keyByPhonePattern + "*");
+        assert keys != null;
+        for (String key : keys) {
+            Object obj = valueOperations.get(key);
+            assert obj != null;
+            if (obj instanceof OnsiteReservationRedisDto redisDto) {
+                if (redisDto.getReservationStatementId() == 1) {
+                    String keyByPopup = RESERVATION_KEY_POPUP + redisDto.getPopupId();
+                    Integer rank = getRank(keyByPopup, redisDto);
 
-        if (obj == null) {
-            throw new BusinessLogicException(ExceptionCode.ONSITE_NOT_FOUND);
-        }
-
-        if (obj instanceof OnsiteReservationRedisDto redisDto) {
-            String keyByPopup = RESERVATION_KEY_POPUP + redisDto.getPopupId();
-            Integer rank = getRank(keyByPopup, redisDto);
-
-            OnsiteReservationDto onsiteReservationDto = OnsiteReservationDto.builder().build();
-            onsiteReservationDto.makeDtoWithRedisDto(redisDto);
-            onsiteReservationDto.setRank(rank);
-            return onsiteReservationDto;
+                    OnsiteReservationDto onsiteReservationDto = OnsiteReservationDto.builder().build();
+                    onsiteReservationDto.makeDtoWithRedisDto(redisDto);
+                    onsiteReservationDto.setRank(rank);
+                    return onsiteReservationDto;
+                }
+            }
         }
 
         throw new BusinessLogicException(ExceptionCode.ONSITE_NOT_FOUND);
@@ -151,7 +167,8 @@ public class OnsiteReservationServiceImpl implements OnsiteReservationService {
     @Transactional
     public OnsiteReservationDto changeOnsiteReservation(OnsiteReservationRequestDto onsiteReservationRequestDto) {
         String keyForPopup = RESERVATION_KEY_POPUP + onsiteReservationRequestDto.getPopupId();
-        String keyForPhone = RESERVATION_KEY_PHONE + onsiteReservationRequestDto.getPhoneNumber();
+        String keyForPhone = RESERVATION_KEY_PHONE + onsiteReservationRequestDto.getPhoneNumber()
+                + "_" + onsiteReservationRequestDto.getOnsiteReservationId();
 
         Set<Object> reservations = zSetOperations.rangeByScore(keyForPopup, 0, Double.MAX_VALUE);
 
@@ -159,14 +176,13 @@ public class OnsiteReservationServiceImpl implements OnsiteReservationService {
         for (Object obj : reservations) {
             if (obj instanceof OnsiteReservationRedisDto redisDto) {
                 if (redisDto.getOnsiteReservationRedisId().equals(onsiteReservationRequestDto.getOnsiteReservationId())
-                && redisDto.getPhoneNumber().equals(onsiteReservationRequestDto.getPhoneNumber())
-                && valueOperations.get(keyForPhone) != null) {
-                    valueOperations.getAndDelete(keyForPhone);
+                && redisDto.getPhoneNumber().equals(onsiteReservationRequestDto.getPhoneNumber())) {
                     zSetOperations.remove(keyForPopup, redisDto);
                     redisDto.changeStatement(onsiteReservationRequestDto.getReservationStatementId());
 
                     double score = makeScore(onsiteReservationRequestDto.getReservationStatementId(), redisDto.getWaitNumber());
                     zSetOperations.add(keyForPopup, redisDto, score);
+                    valueOperations.set(keyForPhone, redisDto);
 
                     OnsiteReservationDto onsiteReservationDto = OnsiteReservationDto.builder().build();
                     onsiteReservationDto.makeDtoWithRedisDto(redisDto);

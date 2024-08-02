@@ -1,5 +1,3 @@
-version: '3.9'
-
 services:
   mysql:
     image: mysql
@@ -11,4 +9,12 @@ services:
     volumes:
       - ./db/mysql/data:/var/lib/mysql
       - ./db/mysql/initdb:/docker-entrypoint-initdb.d
-    
+  nginx:
+    image: nginx
+    restart: always
+    env_file:
+      - .env
+    ports:
+      - "80:80"
+    volumes:
+      - ./nginx/templates:/etc/nginx/templates

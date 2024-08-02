@@ -20,6 +20,7 @@ const MyLikeList = () => {
                 image={banner.image}
                 text={banner.text}
                 date={banner.date}
+                children=""
               />
             </div>
           ))

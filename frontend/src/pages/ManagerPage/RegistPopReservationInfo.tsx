@@ -6,6 +6,15 @@ import "@css/ManagerPage/RegistPopReservationInfo.css";
 
 import thirdStep from "@assets/registPop/thirdStep.svg";
 
+interface HeaderProps {
+  date: Date;
+  changeMonth: (month: number) => void;
+  decreaseMonth: () => void;
+  increaseMonth: () => void;
+  prevMonthButtonDisabled: boolean;
+  nextMonthButtonDisabled: boolean;
+}
+
 function RegistPopReservationInfo() {
   const [date, setDate] = useState<Date | null>(null);
   const [selectedDays, setSelectedDays] = useState<string[]>([]);
@@ -16,9 +25,6 @@ function RegistPopReservationInfo() {
     useState<string>("");
   const [timeSlots, setTimeSlots] = useState<{ day: string; time: string }[]>(
     []
-  );
-  const [reservationOpenDate, setReservationOpenDate] = useState<Date | null>(
-    null
   );
   const [intervalTime, setIntervalTime] = useState<string>("");
   const [isOnsiteChecked, setIsOnsiteChecked] = useState<boolean>(false);
@@ -40,12 +46,11 @@ function RegistPopReservationInfo() {
 
   const renderCustomHeader = ({
     date,
-    changeMonth,
     decreaseMonth,
     increaseMonth,
     prevMonthButtonDisabled,
     nextMonthButtonDisabled,
-  }) => (
+  }:HeaderProps) => (
     <div className="custom-header">
       <button onClick={decreaseMonth} disabled={prevMonthButtonDisabled}>
         {"<"}

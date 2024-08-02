@@ -9,6 +9,14 @@ import "react-datepicker/dist/react-datepicker.css";
 import registPhoto from "@assets/registPop/registPhoto.svg";
 import firstStep from "@assets/registPop/firstStep.svg";
 
+interface HeaderProps {
+  date: Date;
+  decreaseMonth: () => void;
+  increaseMonth: () => void;
+  prevMonthButtonDisabled: boolean;
+  nextMonthButtonDisabled: boolean;
+}
+
 registerLocale("ko", ko);
 
 function RegistPop() {
@@ -48,7 +56,7 @@ function RegistPop() {
     setSelectedDays([...selectedDays, event.target.value]);
   };
 
-  const handleAddressComplete = (data: any) => {
+  const handleAddressComplete = (data:{address: string}) => {
     setAddress(data.address);
     setShowAddressModal(false);
   };
@@ -87,12 +95,11 @@ function RegistPop() {
 
   const renderCustomHeader = ({
     date,
-    changeMonth,
     decreaseMonth,
     increaseMonth,
     prevMonthButtonDisabled,
     nextMonthButtonDisabled,
-  }) => (
+  }:HeaderProps) => (
     <div className="custom-header">
       <button onClick={decreaseMonth} disabled={prevMonthButtonDisabled}>
         {"<"}

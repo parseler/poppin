@@ -1,19 +1,19 @@
-import { defineConfig } from 'vite'
-import react from '@vitejs/plugin-react-swc'
-import {VitePWA} from 'vite-plugin-pwa'
-import tsconfigPaths from 'vite-tsconfig-paths'
+import { defineConfig } from "vite";
+import react from "@vitejs/plugin-react-swc";
+import { VitePWA } from "vite-plugin-pwa";
+import tsconfigPaths from "vite-tsconfig-paths";
 
 export default defineConfig({
   plugins: [
     react(),
     tsconfigPaths(),
-    VitePWA({ 
-      registerType: 'autoUpdate',
-      includeAssets: ['favicon.ico', 'apple-touch-icon.png', 'mask-icon.svg'],
+    VitePWA({
+      registerType: "autoUpdate",
+      includeAssets: ["favicon.ico", "apple-touch-icon.png", "mask-icon.svg"],
       manifest: {
-        name: '팝핀',
-        short_name: '팝핀',
-        theme_color: '#ffffff',
+        name: "팝핀",
+        short_name: "팝핀",
+        theme_color: "#ffffff",
         icons: [
           {
             src: 'pwa-64x64.png',
@@ -38,7 +38,10 @@ export default defineConfig({
             purpose: 'maskable'
           }
         ],
-      }, 
-    })
+      },
+    }),
   ],
-})
+  build: {
+    assetsInlineLimit: 0, // 이미지 파일을 인라인하지 않도록 설정
+  },
+});

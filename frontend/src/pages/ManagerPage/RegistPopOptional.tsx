@@ -1,8 +1,10 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import "@css/ManagerPage/RegistPopOptional.css";
 
 import secondStep from "@assets/registPop/secondStep.svg";
+
+type serviceCategory = "parking" | "fee" | "pet" | "food" | "photo" | "age";
 
 function RegistPopOptional() {
   const navigate = useNavigate();
@@ -16,7 +18,7 @@ function RegistPopOptional() {
     age: "",
   });
 
-  const handleButtonClick = (category: string, value: string) => {
+  const handleButtonClick = (category: serviceCategory, value: string) => {
     setActiveButtons((prev) => ({
       ...prev,
       [category]: prev[category] === value ? "" : value,

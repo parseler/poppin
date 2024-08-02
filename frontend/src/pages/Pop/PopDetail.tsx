@@ -17,7 +17,7 @@ import scoreIcon from "@assets/scoreIcon.svg";
 import likeIcon from "@assets/likeIcon.svg";
 import noneLike from "@assets/noneLike.svg";
 import fillLike from "@assets/fillLike.svg";
-import editIcon from "@assets/editIcon.svg";  // 수정 아이콘 이미지 추가
+import editIcon from "@assets/editIcon.svg";
 
 const initialIntroduceContent = `
 베베와 멜롱이가 라인프렌즈 스퀘어에 두둥등장💫🔥!!
@@ -43,14 +43,20 @@ const initialIntroduceContent = `
 function PopDetail() {
   const [activeTab, setActiveTab] = useState<string | null>("info");
   const [liked, setLiked] = useState(false);
-  const [isManager, setIsManager] = useState(true);  // 매니저 여부 상태를 true로 설정
-  const [isEditing, setIsEditing] = useState(false);  // 수정 모드 상태 추가
+  const [isManager] = useState(true);
+  const [isEditing, setIsEditing] = useState(false);
   const [title, setTitle] = useState("베베 더 월드 팝업스토어");
   const [date, setDate] = useState("24.07.05. ~ 24.07.18.");
-  const [location, setLocation] = useState("서울특별시 성동구 성수이로 77 라인프렌즈 스퀘어 성수");
+  const [location, setLocation] = useState(
+    "서울특별시 성동구 성수이로 77 라인프렌즈 스퀘어 성수"
+  );
   const [hours, setHours] = useState("10:00~18:00");
-  const [website, setWebsite] = useState("https://www.ssafy.com/ksp/jsp/swp/swpMain.jsp");
-  const [instagram, setInstagram] = useState("https://www.instagram.com/bebe_the_ori/");
+  const [website, setWebsite] = useState(
+    "https://www.ssafy.com/ksp/jsp/swp/swpMain.jsp"
+  );
+  const [instagram, setInstagram] = useState(
+    "https://www.instagram.com/bebe_the_ori/"
+  );
   const [services, setServices] = useState({
     parking: true,
     fee: true,
@@ -63,15 +69,18 @@ function PopDetail() {
 
   const navigate = useNavigate();
 
-  const settings = useMemo(() => ({
-    dots: true,
-    infinite: true,
-    speed: 500,
-    slidesToShow: 1,
-    slidesToScroll: 1,
-    autoplay: true,
-    autoplaySpeed: 5000,
-  }), []);
+  const settings = useMemo(
+    () => ({
+      dots: true,
+      infinite: true,
+      speed: 500,
+      slidesToShow: 1,
+      slidesToScroll: 1,
+      autoplay: true,
+      autoplaySpeed: 5000,
+    }),
+    []
+  );
 
   const toggleLike = useCallback(() => {
     setLiked((prev) => !prev);
@@ -90,8 +99,16 @@ function PopDetail() {
   };
 
   const handleSave = () => {
-    // 수정 내용을 저장하는 로직을 추가합니다.
     setIsEditing(false);
+  };
+
+  const handleServicesChange = (services: {
+    [key: string]: boolean | undefined;
+  }) => {
+    setServices((prevServices) => ({
+      ...prevServices,
+      ...services,
+    }));
   };
 
   return (
@@ -108,19 +125,35 @@ function PopDetail() {
             <img src={image3} alt="팝업스토어 이미지 3" />
           </div>
         </Slider>
-        <button className="back-button" onClick={onClickBack} aria-label="뒤로가기">
+        <button
+          className="back-button"
+          onClick={onClickBack}
+          aria-label="뒤로가기"
+        >
           <img src={backButton} alt="뒤로가기" />
         </button>
-        <button onClick={toggleLike} className="like-button" aria-label="좋아요">
+        <button
+          onClick={toggleLike}
+          className="like-button"
+          aria-label="좋아요"
+        >
           <img src={liked ? fillLike : noneLike} alt="좋아요" />
         </button>
         {isManager && (
           <>
-            <button className="edit-button" onClick={handleEditToggle} aria-label="수정">
+            <button
+              className="edit-button"
+              onClick={handleEditToggle}
+              aria-label="수정"
+            >
               <img src={editIcon} alt="수정" />
             </button>
             {isEditing && (
-              <button className="save-button" onClick={handleSave} aria-label="저장">
+              <button
+                className="save-button"
+                onClick={handleSave}
+                aria-label="저장"
+              >
                 저장
               </button>
             )}
@@ -130,8 +163,18 @@ function PopDetail() {
       <div className="main-info">
         {isEditing ? (
           <div className="edit-form">
-            <input type="text" value={title} onChange={(e) => setTitle(e.target.value)} className="edit-input" />
-            <input type="text" value={date} onChange={(e) => setDate(e.target.value)} className="edit-input" />
+            <input
+              type="text"
+              value={title}
+              onChange={(e) => setTitle(e.target.value)}
+              className="edit-input"
+            />
+            <input
+              type="text"
+              value={date}
+              onChange={(e) => setDate(e.target.value)}
+              className="edit-input"
+            />
           </div>
         ) : (
           <>
@@ -192,7 +235,7 @@ function PopDetail() {
             onHoursChange={setHours}
             onWebsiteChange={setWebsite}
             onInstagramChange={setInstagram}
-            onServicesChange={setServices}
+            onServicesChange={handleServicesChange}
             onDescriptionChange={setDescription}
           />
         )}

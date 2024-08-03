@@ -2,6 +2,7 @@ services:
   mysql:
     image: mysql
     restart: always
+    #TODO: Replace env_file with detailed environment variables using the environment section
     env_file:
       - .env
     ports:
@@ -12,12 +13,17 @@ services:
     healthcheck:
       test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
   nginx:
-    image: nginx
+    image: nginx:poppin
+    build:
+      context: .
+      dockerfile: ./nginx/Dockerfile
     restart: always
+    #TODO: Replace env_file with detailed environment variables using the environment section
     env_file:
       - .env
     ports:
       - "80:80"
+      - "443:443"
     volumes:
       - ./nginx/templates:/etc/nginx/templates
   redis:
@@ -29,6 +35,7 @@ services:
       test: ["CMD", "redis-cli", "ping"]
   backend-builder:
     image: eclipse-temurin:17
+    #TODO: Replace env_file with detailed environment variables using the environment section
     env_file:
       - .env
     volumes:
@@ -38,6 +45,7 @@ services:
     command: "./gradlew build -x test"
   backend:
     image: eclipse-temurin:17
+    #TODO: Replace env_file with detailed environment variables using the environment section
     env_file:
       - .env
     volumes:

@@ -2,12 +2,15 @@ package com.apink.poppin.api.review.controller;
 
 import com.apink.poppin.api.review.dto.CommentDto;
 import com.apink.poppin.api.review.dto.ReviewDto;
+import com.apink.poppin.api.review.dto.ReviewListDto;
 import com.apink.poppin.api.review.dto.ReviewUpdateRequestDto;
 import com.apink.poppin.api.review.service.CommentService;
 import com.apink.poppin.api.review.service.ReviewService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("/api/reviews")
@@ -52,5 +55,12 @@ public class ReviewController {
     public ResponseEntity<?> deleteComment(@PathVariable long reviewId, @PathVariable long commentId) {
         commentService.deleteComment(reviewId, commentId);
         return ResponseEntity.ok().build();
+    }
+
+    @GetMapping
+    public ResponseEntity<?> getReviews() {
+        List<ReviewListDto> list = reviewService.getReviews();
+
+        return ResponseEntity.ok(list);
     }
 }

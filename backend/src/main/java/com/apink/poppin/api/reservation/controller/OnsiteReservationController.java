@@ -1,6 +1,7 @@
 package com.apink.poppin.api.reservation.controller;
 
 import com.apink.poppin.api.reservation.dto.OnsiteReservationDto;
+import com.apink.poppin.api.reservation.dto.OnsiteReservationRedisDto;
 import com.apink.poppin.api.reservation.dto.OnsiteReservationRequestDto;
 import com.apink.poppin.api.reservation.service.OnsiteReservationService;
 import lombok.RequiredArgsConstructor;
@@ -16,9 +17,10 @@ public class OnsiteReservationController {
 
     @PostMapping
     public ResponseEntity<?> createOnsiteReservation(@RequestBody OnsiteReservationDto onsiteReservationDto) {
-        OnsiteReservationDto completed = onsiteReservationService.createOnsiteReservation(onsiteReservationDto);
+        OnsiteReservationRedisDto completed = onsiteReservationService.createOnsiteReservation(onsiteReservationDto);
+        OnsiteReservationDto response = onsiteReservationService.calculateRank(completed);
 
-        return ResponseEntity.ok().body(completed);
+        return ResponseEntity.ok().body(response);
     }
 
     @GetMapping("/{onsiteReservationId}/popups/{popupId}")

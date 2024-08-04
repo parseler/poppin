@@ -1,9 +1,11 @@
 package com.apink.poppin.api.user.entity;
 
 import com.apink.poppin.api.heart.entity.Heart;
+import com.apink.poppin.api.reservation.entity.OnsiteReservation;
 import com.apink.poppin.api.reservation.entity.PreReservation;
 import com.apink.poppin.api.review.entity.Comment;
 import com.apink.poppin.api.review.entity.Review;
+import com.apink.poppin.api.user.dto.UserDto;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -78,5 +80,12 @@ public class User {
 
     @OneToMany(mappedBy = "user")
     private List<Comment> comments = new ArrayList<>();
+
+    public void updateUser(UserDto.Put userDto, UserConsent userConsent) {
+        this.userConsents = userConsent;
+        this.userCategories = userDto.getUserCategories();
+        this.nickname = userDto.getNickname();
+        this.img = userDto.getImg();
+    }
 
 }

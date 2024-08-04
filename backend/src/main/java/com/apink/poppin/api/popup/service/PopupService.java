@@ -41,4 +41,7 @@ public interface PopupService {
 
     // 팝업 등록
     Popup createPopup(PopupRequestDTO popupDto);
+
+    // 팝업 수정
+    Popup updatePopup(PopupRequestDTO popupDto, long popupId);
 }

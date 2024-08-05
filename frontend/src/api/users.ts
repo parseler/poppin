@@ -1,5 +1,5 @@
 import axiosInstance from "./axiosInstance";
-import { UserData } from "@interface/users";
+import { UserProps } from "@interface/users";
 
 
 // 사용자 정보 조회
@@ -9,7 +9,7 @@ export const getUserData = async () => {
 };
 
 // 사용자 정보 수정
-export const updateUserData = async (userData: UserData) => {
+export const updateUserData = async (userData: UserProps) => {
   const response = await axiosInstance.put("/api/users/me", userData);
   return response.data;
 }

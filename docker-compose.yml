@@ -42,13 +42,16 @@ services:
   mongodb:
     image: mongo
     restart: always
+    #TODO: Replace env_file with detailed environment variables using the environment section
+    env_file:
+      - .env
     #FIXME: ports should be removed before deploying application on EC2
     ports:
       - "27017:27017"
     volumes:
       - ./db/mongodb/data:/data/db
     healthcheck:
-      test: ["CMD", "mongo", "admin", "--eval", "db.runCommand({ ping: 1 })"]
+      test: ["CMD", "mongosh", "--eval", "'db.runCommand({ ping: 1 })'", "--quiet"]
   backend-builder:
     image: eclipse-temurin:17
     #TODO: Replace env_file with detailed environment variables using the environment section

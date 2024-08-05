@@ -4,6 +4,8 @@ import com.apink.poppin.api.manager.entity.Manager;
 import com.apink.poppin.api.manager.repository.ManagerRepository;
 import com.apink.poppin.api.popup.dto.PopupDTO;
 import com.apink.poppin.api.popup.dto.PopupRequestDTO;
+import com.apink.poppin.api.reservation.entity.PreReservationInfo;
+import com.apink.poppin.api.reservation.repository.PreReservationInfoRepository;
 import com.apink.poppin.api.reservation.dto.PreReservationRequestDTO;
 import com.apink.poppin.api.reservation.dto.PreReservationResponseDTO;
 import com.apink.poppin.api.popup.entity.Popup;
@@ -23,7 +25,6 @@ import org.springframework.stereotype.Service;
 import java.time.LocalDateTime;
 import java.util.Date;
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -35,6 +36,7 @@ public class PopupServiceImpl implements PopupService {
     private final UserRepository userRepository;
     private final ReservationStatementRepository reservationStatementRepository;
     private final ManagerRepository managerRepository;
+    private final PreReservationInfoRepository preReservationInfoRepository;
 
 
     // 팝업 전체 목록 조회 및 검색
@@ -140,10 +142,10 @@ public class PopupServiceImpl implements PopupService {
                 .build();
     }
 
-    // 팝업 등록
+    // 팝업 등록 (사전 예약 없이)
     @Transactional
     @Override
-    public Popup createPopup(PopupRequestDTO reqDto) {
+    public Popup createPopupOnly(PopupRequestDTO reqDto) {
         // 매니저 확인
         Manager manager = managerRepository.findByManagerTsid(reqDto.getManagerTsid())
                 .orElseThrow(() -> new IllegalArgumentException("Invalid manager Tsid"));
@@ -165,6 +167,45 @@ public class PopupServiceImpl implements PopupService {
         popupRepository.save(popup);
 
         return popup;
+    }
+
+
+    // 팝업 등록 (사전예약까지)
+    @Transactional
+    @Override
+    public void createPopupWithPreReservation(PopupRequestDTO reqDto) {
+        // 매니저 확인
+        Manager manager = managerRepository.findByManagerTsid(reqDto.getManagerTsid())
+                .orElseThrow(() -> new IllegalArgumentException("Invalid manager Tsid"));
+
+        Popup popup = Popup.builder()
+                .manager(manager)
+                .name(reqDto.getName())
+                .startDate(reqDto.getStartDate())
+                .endDate(reqDto.getEndDate())
+                .hours(reqDto.getHours())
+                .description(reqDto.getDescription())
+                .snsUrl(reqDto.getSnsUrl())
+                .pageUrl(reqDto.getPageUrl())
+                .content(reqDto.getContent())
+                .lat(reqDto.getLat())
+                .lon(reqDto.getLon())
+                .build();
+
+        popupRepository.save(popup);
+
+        // PreReservationInfo 엔티티 생성
+        PreReservationInfo preReservationInfo = PreReservationInfo.builder()
+                .popup(popup)
+                .preReservationOpenAt(reqDto.getPreReservationOpenAt())
+                .term(reqDto.getTerm())
+                .maxPeoplePerSession(reqDto.getMaxPeoplePerSession())
+                .maxReservationsPerPerson(reqDto.getMaxReservationsPerPersson())
+                .warning(reqDto.getWarning())
+                .build();
+
+        preReservationInfoRepository.save(preReservationInfo);
+
     }
 
     // 팝업 수정

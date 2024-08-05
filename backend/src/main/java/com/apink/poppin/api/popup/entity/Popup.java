@@ -62,6 +62,9 @@ public class Popup {
     @ColumnDefault("0.0")
     private Double rating;
 
+    @ColumnDefault("false")
+    private boolean deleted;
+
 
     public void updatePopup(PopupRequestDTO reqDto) {
         this.name = reqDto.getName();
@@ -75,5 +78,9 @@ public class Popup {
         this.address = reqDto.getAddress();
         this.lat = reqDto.getLat();
         this.lon = reqDto.getLon();
+    }
+
+    public void deletePopup() {
+        this.deleted = true;
     }
 }

@@ -35,4 +35,6 @@ public class PopupDTO {
     private int hit;
     private Double rating;
 
+    private boolean deleted;
+
 }

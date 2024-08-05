@@ -1,14 +1,10 @@
 package com.apink.poppin.api.user.service;
 
 import com.apink.poppin.api.popup.dto.PopupDTO;
-import com.apink.poppin.api.popup.entity.Popup;
 import com.apink.poppin.api.reservation.dto.PreReservationResponseDTO;
 import com.apink.poppin.api.reservation.dto.ReservationResponseDto;
-import com.apink.poppin.api.reservation.entity.PreReservation;
-import com.apink.poppin.api.review.dto.ReviewDto;
-import com.apink.poppin.api.review.entity.Review;
+import com.apink.poppin.api.review.dto.ReviewListDto;
 import com.apink.poppin.api.user.dto.UserDto;
-import com.apink.poppin.api.user.entity.User;
 
 import java.util.List;
 
@@ -24,7 +20,7 @@ public interface UserService {
 
     List<PopupDTO> findHeartPopup();
 
-    List<ReviewDto> findReviews();
+    List<ReviewListDto> findReviews();
 
     PreReservationResponseDTO findPreReservation(long prereservationId);
 

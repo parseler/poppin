@@ -15,6 +15,7 @@ public class ReservationResponseDto {
     private long reservationId;
     private String title;
     private String userName;
+    private String img;
     private LocalDate created_at;
     private LocalDate reservationDate;
     private LocalTime reservationTime;
@@ -22,4 +23,39 @@ public class ReservationResponseDto {
     private long reservationStatement;
     private long kind;
 
+    public ReservationResponseDto() {}
+
+    // pre reservation
+    public ReservationResponseDto(long reservationId, String title, String userName, String img, LocalDate created_at, LocalDate reservationDate, LocalTime reservationTime, Integer reservationCount, long reservationStatement) {
+        this.reservationId = reservationId;
+        this.title = title;
+        this.userName = userName;
+        this.img = img;
+        this.created_at = created_at;
+        this.reservationDate = reservationDate;
+        this.reservationTime = reservationTime;
+        this.reservationCount = reservationCount;
+        this.reservationStatement = reservationStatement;
+        this.kind = 1;
+    }
+
+    // onsite reservation
+    public ReservationResponseDto(long reservationId, String title, String img, LocalDate reservationDate, Integer reservationCount, long reservationStatement) {
+        this.reservationId = reservationId;
+        this.title = title;
+        this.img = img;
+        this.reservationDate = reservationDate;
+        this.reservationCount = reservationCount;
+        this.reservationStatement = reservationStatement;
+        this.kind = 2;
+    }
+
+    public ReservationResponseDto(String title, String img) {
+        this.title = title;
+        this.img = img;
+    }
+
+
+
 }
+

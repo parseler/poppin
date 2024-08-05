@@ -46,6 +46,9 @@ public class Popup {
     @NotNull
     private String content;
 
+    @NotNull
+    private String address;
+
 //     위도 경도
     @NotNull
     private Double lat;
@@ -69,6 +72,7 @@ public class Popup {
         this.snsUrl = reqDto.getSnsUrl();
         this.pageUrl = reqDto.getPageUrl();
         this.content = reqDto.getContent();
+        this.address = reqDto.getAddress();
         this.lat = reqDto.getLat();
         this.lon = reqDto.getLon();
     }

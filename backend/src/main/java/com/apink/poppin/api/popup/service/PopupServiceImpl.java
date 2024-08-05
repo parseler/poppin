@@ -42,8 +42,27 @@ public class PopupServiceImpl implements PopupService {
     // 팝업 전체 목록 조회 및 검색
     public List<PopupDTO> getPopupList(String keyword) {
         List<Popup> popups = popupRepository.findAllByNameContaining(keyword);
+//        return popups.stream()
+//                .map(popup -> new PopupDTO(popup.getPopupId(), popup.getName(), popup.getStartDate(), popup.getEndDate(), popup.getHeart()))
+//                .collect(Collectors.toList());
         return popups.stream()
-                .map(popup -> new PopupDTO(popup.getPopupId(), popup.getName(), popup.getStartDate(), popup.getEndDate(), popup.getHeart()))
+                .map(popup -> PopupDTO.builder()
+                        .popupId(popup.getPopupId())
+                        .name(popup.getName())
+                        .startDate(popup.getStartDate())
+                        .endDate(popup.getEndDate())
+                        .hours(popup.getHours())
+                        .snsUrl(popup.getSnsUrl())
+                        .pageUrl(popup.getPageUrl())
+                        .content(popup.getContent())
+                        .description(popup.getDescription())
+                        .address(popup.getAddress())
+                        .lat(popup.getLat())
+                        .lon(popup.getLon())
+                        .heart(popup.getHeart())
+                        .hit(popup.getHit())
+                        .rating(popup.getRating())
+                        .build())
                 .collect(Collectors.toList());
     }
 
@@ -51,7 +70,24 @@ public class PopupServiceImpl implements PopupService {
     public PopupDTO getPopup(Long popupId) {
         Popup popup = popupRepository.findById(popupId)
                 .orElseThrow(() -> new IllegalArgumentException("Invalid popup ID"));
-        return new PopupDTO(popup.getPopupId(), popup.getName(), popup.getStartDate(), popup.getEndDate(), popup.getHeart());
+//        return new PopupDTO(popup.getPopupId(), popup.getName(), popup.getStartDate(), popup.getEndDate(), popup.getHeart());
+        return PopupDTO.builder()
+                .popupId(popup.getPopupId())
+                .name(popup.getName())
+                .startDate(popup.getStartDate())
+                .endDate(popup.getEndDate())
+                .hours(popup.getHours())
+                .snsUrl(popup.getSnsUrl())
+                .pageUrl(popup.getPageUrl())
+                .content(popup.getContent())
+                .description(popup.getDescription())
+                .address(popup.getAddress())
+                .lat(popup.getLat())
+                .lon(popup.getLon())
+                .heart(popup.getHeart())
+                .hit(popup.getHit())
+                .rating(popup.getRating())
+                .build();
     }
 
     // 인기 팝업 조회
@@ -59,7 +95,23 @@ public class PopupServiceImpl implements PopupService {
         List<Popup> list = popupRepository.findAllByOrderByHeartDesc();
 
         return list.stream()
-                .map(popup -> new PopupDTO(popup.getPopupId(), popup.getName(), popup.getStartDate(), popup.getEndDate(), popup.getHeart()))
+                .map(popup -> PopupDTO.builder()
+                        .popupId(popup.getPopupId())
+                        .name(popup.getName())
+                        .startDate(popup.getStartDate())
+                        .endDate(popup.getEndDate())
+                        .hours(popup.getHours())
+                        .snsUrl(popup.getSnsUrl())
+                        .pageUrl(popup.getPageUrl())
+                        .content(popup.getContent())
+                        .description(popup.getDescription())
+                        .address(popup.getAddress())
+                        .lat(popup.getLat())
+                        .lon(popup.getLon())
+                        .heart(popup.getHeart())
+                        .hit(popup.getHit())
+                        .rating(popup.getRating())
+                        .build())
                 .collect(Collectors.toList());
     }
 
@@ -73,7 +125,23 @@ public class PopupServiceImpl implements PopupService {
         LocalDateTime now = LocalDateTime.now();
         List<Popup> popups = popupRepository.findAllByStartDateAfter(now);
         return popups.stream()
-                .map(popup -> new PopupDTO(popup.getPopupId(), popup.getName(), popup.getStartDate(), popup.getEndDate(), popup.getHeart()))
+                .map(popup -> PopupDTO.builder()
+                        .popupId(popup.getPopupId())
+                        .name(popup.getName())
+                        .startDate(popup.getStartDate())
+                        .endDate(popup.getEndDate())
+                        .hours(popup.getHours())
+                        .snsUrl(popup.getSnsUrl())
+                        .pageUrl(popup.getPageUrl())
+                        .content(popup.getContent())
+                        .description(popup.getDescription())
+                        .address(popup.getAddress())
+                        .lat(popup.getLat())
+                        .lon(popup.getLon())
+                        .heart(popup.getHeart())
+                        .hit(popup.getHit())
+                        .rating(popup.getRating())
+                        .build())
                 .collect(Collectors.toList());
     }
 
@@ -160,6 +228,7 @@ public class PopupServiceImpl implements PopupService {
                 .snsUrl(reqDto.getSnsUrl())
                 .pageUrl(reqDto.getPageUrl())
                 .content(reqDto.getContent())
+                .address(reqDto.getAddress())
                 .lat(reqDto.getLat())
                 .lon(reqDto.getLon())
                 .build();
@@ -188,6 +257,7 @@ public class PopupServiceImpl implements PopupService {
                 .snsUrl(reqDto.getSnsUrl())
                 .pageUrl(reqDto.getPageUrl())
                 .content(reqDto.getContent())
+                .address(reqDto.getAddress())
                 .lat(reqDto.getLat())
                 .lon(reqDto.getLon())
                 .build();

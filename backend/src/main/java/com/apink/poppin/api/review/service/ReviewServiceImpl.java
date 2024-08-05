@@ -35,13 +35,19 @@ public class ReviewServiceImpl implements ReviewService {
         Review review = reviewRepository.findById(reviewId)
                 .orElseThrow(() -> new BusinessLogicException(REVIEW_NOT_FOUND));
 
+        User user = review.getUser();
+
         List<CommentDto> comments = new ArrayList<>();
 
         for (Comment comment : review.getComments()) {
+            User commentWriter = comment.getUser();
             CommentDto.CommentDtoBuilder commentDto = CommentDto.builder()
                     .commentId(comment.getCommentId())
                     .reviewId(reviewId)
-                    .userTsid(comment.getUser().getUserTsid())
+                    .userTsid(commentWriter.getUserTsid())
+                    .nickname(commentWriter.getNickname())
+                    .img(commentWriter.getImg())
+                    .createdAt(comment.getCreatedAt())
                     .content(comment.getContent());
 
             if (comment.getParent() != null) {
@@ -56,7 +62,9 @@ public class ReviewServiceImpl implements ReviewService {
                 .popupId(review.getPopup().getPopupId())
                 .content(review.getContent())
                 .rating(review.getRating())
-                .userTsid(review.getUser().getUserTsid())
+                .userTsid(user.getUserTsid())
+                .nickname(user.getNickname())
+                .img(user.getImg())
                 .createdAt(review.getCreatedAt())
                 .commentDtoList(comments)
                 .build();
@@ -122,6 +130,8 @@ public class ReviewServiceImpl implements ReviewService {
             ReviewListDto reviewListDto = ReviewListDto.builder()
                     .reviewId(review.getReviewId())
                     .userTsid(review.getUser().getUserTsid())
+                    .nickname(review.getUser().getNickname())
+                    .img(review.getUser().getImg())
                     .content(review.getContent())
                     .createdAt(review.getCreatedAt())
                     .title(review.getTitle())
@@ -145,6 +155,8 @@ public class ReviewServiceImpl implements ReviewService {
                     .reviewId(review.getReviewId())
                     .title(review.getTitle())
                     .userTsid(review.getUser().getUserTsid())
+                    .nickname(review.getUser().getNickname())
+                    .img(review.getUser().getImg())
                     .content(review.getContent())
                     .createdAt(review.getCreatedAt())
                     .rating(review.getRating())

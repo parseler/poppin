@@ -18,8 +18,11 @@ import com.apink.poppin.api.reservation.repository.PreReservationRepository;
 import com.apink.poppin.api.reservation.repository.ReservationStatementRepository;
 import com.apink.poppin.api.user.entity.User;
 import com.apink.poppin.api.user.repository.UserRepository;
+import com.apink.poppin.common.exception.dto.BusinessLogicException;
+import com.apink.poppin.common.exception.dto.ExceptionCode;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -42,10 +45,8 @@ public class PopupServiceImpl implements PopupService {
     // 팝업 전체 목록 조회 및 검색
     public List<PopupDTO> getPopupList(String keyword) {
         List<Popup> popups = popupRepository.findAllByNameContaining(keyword);
-//        return popups.stream()
-//                .map(popup -> new PopupDTO(popup.getPopupId(), popup.getName(), popup.getStartDate(), popup.getEndDate(), popup.getHeart()))
-//                .collect(Collectors.toList());
         return popups.stream()
+                .filter(popup -> !popup.isDeleted())
                 .map(popup -> PopupDTO.builder()
                         .popupId(popup.getPopupId())
                         .name(popup.getName())
@@ -70,6 +71,10 @@ public class PopupServiceImpl implements PopupService {
     public PopupDTO getPopup(Long popupId) {
         Popup popup = popupRepository.findById(popupId)
                 .orElseThrow(() -> new IllegalArgumentException("Invalid popup ID"));
+
+        if(popup.isDeleted())
+            throw new BusinessLogicException(ExceptionCode.POPUP_NOT_FOUND);
+
 //        return new PopupDTO(popup.getPopupId(), popup.getName(), popup.getStartDate(), popup.getEndDate(), popup.getHeart());
         return PopupDTO.builder()
                 .popupId(popup.getPopupId())
@@ -95,6 +100,7 @@ public class PopupServiceImpl implements PopupService {
         List<Popup> list = popupRepository.findAllByOrderByHeartDesc();
 
         return list.stream()
+                .filter(popup -> !popup.isDeleted())
                 .map(popup -> PopupDTO.builder()
                         .popupId(popup.getPopupId())
                         .name(popup.getName())
@@ -125,6 +131,7 @@ public class PopupServiceImpl implements PopupService {
         LocalDateTime now = LocalDateTime.now();
         List<Popup> popups = popupRepository.findAllByStartDateAfter(now);
         return popups.stream()
+                .filter(popup -> !popup.isDeleted())
                 .map(popup -> PopupDTO.builder()
                         .popupId(popup.getPopupId())
                         .name(popup.getName())
@@ -270,7 +277,7 @@ public class PopupServiceImpl implements PopupService {
                 .preReservationOpenAt(reqDto.getPreReservationOpenAt())
                 .term(reqDto.getTerm())
                 .maxPeoplePerSession(reqDto.getMaxPeoplePerSession())
-                .maxReservationsPerPerson(reqDto.getMaxReservationsPerPersson())
+                .maxReservationsPerPerson(reqDto.getMaxReservationsPerPerson())
                 .warning(reqDto.getWarning())
                 .build();
 
@@ -295,6 +302,22 @@ public class PopupServiceImpl implements PopupService {
 //        popupRepository.save(popup);
 
         return popup;
+    }
+
+    @Override
+    @Transactional
+    public void deletePopup(long popupId) {
+        long managerTsid = Long.parseLong(SecurityContextHolder.getContext().getAuthentication().getName());
+        Popup findPopup = popupRepository.findById(popupId)
+                .orElseThrow(() -> new BusinessLogicException(ExceptionCode.POPUP_NOT_FOUND));
+
+        if(findPopup.isDeleted())
+            throw new BusinessLogicException(ExceptionCode.POPUP_NOT_FOUND);
+
+        if(findPopup.getManager().getManagerTsid() != managerTsid)
+            throw new IllegalArgumentException("Not Valid Access");
+
+        findPopup.deletePopup();
     }
 
 

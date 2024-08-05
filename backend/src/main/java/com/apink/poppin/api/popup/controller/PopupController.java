@@ -158,4 +158,11 @@ public class PopupController {
 
         return ResponseEntity.ok().body(list);
     }
+
+    @DeleteMapping("/{popupId}")
+    public ResponseEntity<?> deletePopup(@PathVariable long popupId) {
+        popupService.deletePopup(popupId);
+
+        return ResponseEntity.ok().build();
+    }
 }

@@ -1,7 +1,6 @@
 package com.apink.poppin.api.user.entity;
 
 import com.apink.poppin.api.heart.entity.Heart;
-import com.apink.poppin.api.reservation.entity.OnsiteReservation;
 import com.apink.poppin.api.reservation.entity.PreReservation;
 import com.apink.poppin.api.review.entity.Comment;
 import com.apink.poppin.api.review.entity.Review;
@@ -13,7 +12,6 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.ColumnDefault;
 
-import java.util.ArrayList;
 import java.util.List;
 
 @Entity
@@ -64,22 +62,22 @@ public class User {
     private boolean state;
 
     @OneToMany(mappedBy = "user")
-    private List<UserCategory> userCategories = new ArrayList<>();
+    private List<UserCategory> userCategories;
 
     @OneToMany(mappedBy = "user")
-    private List<Heart> hearts = new ArrayList<>();
+    private List<Heart> hearts;
 
     @OneToOne(mappedBy = "user")
     private UserConsent userConsents;
 
     @OneToMany(mappedBy = "user")
-    private List<PreReservation> preReservations = new ArrayList<>();
+    private List<PreReservation> preReservations;
 
     @OneToMany(mappedBy = "user")
-    private List<Review> reviews = new ArrayList<>();
+    private List<Review> reviews;
 
     @OneToMany(mappedBy = "user")
-    private List<Comment> comments = new ArrayList<>();
+    private List<Comment> comments;
 
     public void updateUser(UserDto.Put userDto, UserConsent userConsent) {
         this.userConsents = userConsent;

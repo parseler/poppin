@@ -59,7 +59,7 @@ public class PopupRequestDTO {
 
     private Integer term;
     private Integer maxPeoplePerSession;
-    private Integer maxReservationsPerPersson;
+    private Integer maxReservationsPerPerson;
     private String warning;
 
 }

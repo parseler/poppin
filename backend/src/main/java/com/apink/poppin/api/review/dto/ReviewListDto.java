@@ -10,6 +10,8 @@ import java.time.Instant;
 public class ReviewListDto {
     private long reviewId;
     private long userTsid;
+    private String nickname;
+    private String img;
     private float rating;
     private String title;
     private String content;

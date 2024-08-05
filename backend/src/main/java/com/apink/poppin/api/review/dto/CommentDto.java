@@ -12,8 +12,10 @@ import java.time.Instant;
 public class CommentDto {
     private long commentId;
     private long userTsid;
+    private String nickname;
+    private String img;
     private long reviewId;
     private String content;
     private Instant createdAt;
-    private long parent;
+    private Long parent;
 }

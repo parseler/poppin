@@ -19,7 +19,9 @@ public enum ExceptionCode {
     POPUP_NOT_FOUND(404, "Popup not found"),
 
     ONSITE_NOT_FOUND(404, "Onsite reservation not found"),
-    ONSITE_ALREADY_EXIST(405, "Onsite already exist"),;
+    ONSITE_ALREADY_EXIST(405, "Onsite already exist"),
+
+    NICKNAME_EXIST(409, "Nickname Already Exists");
 
     private final int status;
     private final String message;

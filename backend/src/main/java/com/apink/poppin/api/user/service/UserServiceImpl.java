@@ -3,18 +3,14 @@ package com.apink.poppin.api.user.service;
 import com.apink.poppin.api.heart.entity.Heart;
 import com.apink.poppin.api.heart.repository.HeartRepository;
 import com.apink.poppin.api.popup.dto.PopupDTO;
-import com.apink.poppin.api.popup.entity.Popup;
 import com.apink.poppin.api.popup.repository.PopupRepository;
 import com.apink.poppin.api.reservation.dto.OnsiteReservationRedisDto;
 import com.apink.poppin.api.reservation.dto.PreReservationResponseDTO;
 import com.apink.poppin.api.reservation.dto.ReservationResponseDto;
-import com.apink.poppin.api.reservation.entity.OnsiteReservation;
 import com.apink.poppin.api.reservation.entity.PreReservation;
 import com.apink.poppin.api.reservation.repository.OnsiteReservationRepository;
 import com.apink.poppin.api.reservation.repository.PreReservationRepository;
-import com.apink.poppin.api.review.dto.CommentDto;
-import com.apink.poppin.api.review.dto.ReviewDto;
-import com.apink.poppin.api.review.entity.Comment;
+import com.apink.poppin.api.review.dto.ReviewListDto;
 import com.apink.poppin.api.review.entity.Review;
 import com.apink.poppin.api.review.repository.ReviewRepository;
 import com.apink.poppin.api.user.dto.UserDto;
@@ -23,15 +19,13 @@ import com.apink.poppin.api.user.entity.UserConsent;
 import com.apink.poppin.api.user.repository.UserRepository;
 import com.apink.poppin.common.exception.dto.BusinessLogicException;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.core.ValueOperations;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import static com.apink.poppin.common.exception.dto.ExceptionCode.*;
@@ -47,6 +41,7 @@ public class UserServiceImpl implements UserService {
     private final ReviewRepository reviewRepository;
     private final PreReservationRepository preReservationRepository;
     private final OnsiteReservationRepository onsiteReservationRepository;
+    private final RedisTemplate<String, Object> redisTemplate;
     private final ValueOperations<String, Object> valueOperations;
 
     @Override
@@ -123,33 +118,54 @@ public class UserServiceImpl implements UserService {
                 .orElse(Collections.emptyList())
                 .stream()
                 .map(Heart::getPopup)
-                .map(popup -> new PopupDTO(popup.getPopupId(), popup.getName(), popup.getStartDate(), popup.getEndDate(), popup.getHeart()))
+                .filter(popup -> !popup.isDeleted())
+                .map(popup -> PopupDTO.builder()
+                        .popupId(popup.getPopupId())
+                        .name(popup.getName())
+                        .startDate(popup.getStartDate())
+                        .endDate(popup.getEndDate())
+                        .hours(popup.getHours())
+                        .snsUrl(popup.getSnsUrl())
+                        .pageUrl(popup.getPageUrl())
+                        .content(popup.getContent())
+                        .description(popup.getDescription())
+                        .address(popup.getAddress())
+                        .lat(popup.getLat())
+                        .lon(popup.getLon())
+                        .heart(popup.getHeart())
+                        .hit(popup.getHit())
+                        .rating(popup.getRating())
+                        .build())
                 .collect(Collectors.toList());
     }
 
     @Override
     @Transactional(readOnly = true)
-    public List<ReviewDto> findReviews() {
+    public List<ReviewListDto> findReviews() {
         long userTsid = Long.parseLong(SecurityContextHolder.getContext().getAuthentication().getName());
 
         User user = userRepository.findUserByUserTsid(userTsid)
-                .orElseThrow(() -> new RuntimeException("user not exists"));
+                .orElseThrow(() -> new BusinessLogicException(USER_NOT_FOUND));
 
         List<Review> reviews = reviewRepository.findByUser(user);
 
         return Optional.ofNullable(reviews)
                 .orElse(Collections.emptyList())
                 .stream()
-                .map(review -> new ReviewDto(review.getReviewId(), review.getPopup().getPopupId(), review.getUser().getUserTsid(), review.getRating(), review.getTitle(), review.getContent(), review.getThumbnail(), review.getCreatedAt(),
-                        review.getComments()
-                                .stream()
-                                .map(comment -> new CommentDto(comment.getCommentId(), comment.getUser().getUserTsid(), comment.getReview().getReviewId(), comment.getContent(), comment.getCreatedAt(),
-                                        Optional.ofNullable(comment.getParent())
-                                                .orElse(Comment.builder()
-                                                        .commentId(0L).build())
-                                                .getCommentId()))
-                                .collect(Collectors.toList())))
-                .collect(Collectors.toList());
+                .map(review -> ReviewListDto.builder()
+                        .reviewId(review.getReviewId())
+                        .userTsid(userTsid)
+                        .nickname(user.getNickname())
+                        .img(user.getImg())
+                        .rating(review.getRating())
+                        .title(review.getTitle())
+                        .content(review.getContent())
+                        .createdAt(review.getCreatedAt())
+                        .build())
+                .collect(Collectors.toList()
+                );
+
+
     }
 
     @Override
@@ -172,39 +188,39 @@ public class UserServiceImpl implements UserService {
         List<ReservationResponseDto> reservations = new ArrayList<>();;
 
         // 현장 예약 dto
-        String key = RESERVATION_KEY_PHONE + user.getPhoneNumber();
-        Object obj = valueOperations.get(key);
-        if (obj instanceof OnsiteReservationRedisDto dto) {
-            Popup popup = popupRepository.findById(dto.getPopupId())
-                    .orElseThrow(() -> new BusinessLogicException(POPUP_NOT_FOUND));
-            ReservationResponseDto resDto = ReservationResponseDto.builder()
-                    .reservationId(dto.getOnsiteReservationRedisId())
-                    .title(popup.getName())
-                    .reservationCount(dto.getReservationCount())
-                    .reservationStatement(dto.getReservationStatementId())
-                    .kind(0)
-                    .build();
-            reservations.add(resDto);
+        String keyByPhonePattern = RESERVATION_KEY_PHONE + user.getPhoneNumber();
+        Set<String> keys = redisTemplate.keys(keyByPhonePattern + "*");
+        assert keys != null;
+        for (String key : keys) {
+            Object obj = valueOperations.get(key);
+            assert obj != null;
+            if (obj instanceof OnsiteReservationRedisDto redisDto) {
+                long popupId = redisDto.getPopupId();
+                ReservationResponseDto reservationResponseDto
+                        = popupRepository.findPopupNameAndFirstImageByPopupId(popupId);
+
+                ReservationResponseDto reservation = ReservationResponseDto.builder()
+                        .reservationId(redisDto.getOnsiteReservationRedisId())
+                        .title(reservationResponseDto.getTitle())
+                        .img(reservationResponseDto.getImg())
+                        .reservationDate(redisDto.getVisitedDate())
+                        .reservationCount(redisDto.getReservationCount())
+                        .reservationStatement(redisDto.getReservationStatementId())
+                        .kind(2)
+                        .build();
+
+                reservations.add(reservation);
+            }
         }
 
         // 사전 예약 dto
-        List<PreReservation> pres = preReservationRepository.findByUser(user);
-        List<ReservationResponseDto> preRes = Optional.ofNullable(pres)
-                .orElse(Collections.emptyList())
-                .stream()
-                .map(this::convertToReservationDTO)
-                .collect(Collectors.toList());
+        List<ReservationResponseDto> pres = preReservationRepository.findReservationsByUserTsid(user.getUserTsid());
 
         // 현장 예약 dto
-        List<OnsiteReservation> onsites = onsiteReservationRepository.findByPhoneNumber(user.getPhoneNumber());
-        List<ReservationResponseDto> onsiteRes = Optional.ofNullable(onsites)
-                .orElse(Collections.emptyList())
-                .stream()
-                .map(this::convertToReservationDTO)
-                .collect(Collectors.toList());
+        List<ReservationResponseDto> onsites = onsiteReservationRepository.findReservationsByPhoneNumber(user.getPhoneNumber());
 
-        reservations.addAll(preRes);
-        reservations.addAll(onsiteRes);
+        reservations.addAll(pres);
+        reservations.addAll(onsites);
 
         return reservations;
     }
@@ -228,7 +244,7 @@ public class UserServiceImpl implements UserService {
 
     private void isNicknameAvailable(String nickname) {
         if(userRepository.existsByNickname(nickname)) {
-            throw new RuntimeException("user not exists");
+            throw new BusinessLogicException(NICKNAME_EXIST);
         }
     }
 
@@ -272,6 +288,7 @@ public class UserServiceImpl implements UserService {
                 .title(preReservation.getPopup().getName())
                 .userName(preReservation.getUser().getName())
                 .created_at(preReservation.getCreatedAt())
+
                 .reservationDate(preReservation.getReservationDate())
                 .reservationTime(preReservation.getReservationTime())
                 .reservationCount(preReservation.getReservationCount())
@@ -279,16 +296,4 @@ public class UserServiceImpl implements UserService {
                 .kind(1)
                 .build();
     }
-
-    private ReservationResponseDto convertToReservationDTO(OnsiteReservation onsiteReservation) {
-
-        return ReservationResponseDto.builder()
-                .reservationId(onsiteReservation.getOnsiteReservationId())
-                .title(onsiteReservation.getPopup().getName())
-                .reservationCount(onsiteReservation.getReservationCount())
-                .reservationStatement(onsiteReservation.getReservationStatement().getReservationStatementId())
-                .kind(2)
-                .build();
-    }
-
 }

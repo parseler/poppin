@@ -47,4 +47,8 @@ public interface PopupService {
 
     // 팝업 수정
     Popup updatePopup(PopupRequestDTO popupDto, long popupId);
+
+    // 팝업 삭제
+    void deletePopup(long popupId);
+
 }

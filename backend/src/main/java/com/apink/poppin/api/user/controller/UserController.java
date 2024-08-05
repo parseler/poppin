@@ -3,7 +3,7 @@ package com.apink.poppin.api.user.controller;
 import com.apink.poppin.api.popup.dto.PopupDTO;
 import com.apink.poppin.api.reservation.dto.PreReservationResponseDTO;
 import com.apink.poppin.api.reservation.dto.ReservationResponseDto;
-import com.apink.poppin.api.review.dto.ReviewDto;
+import com.apink.poppin.api.review.dto.ReviewListDto;
 import com.apink.poppin.api.user.dto.UserDto;
 import com.apink.poppin.api.user.service.UserService;
 import com.apink.poppin.common.exception.dto.BusinessLogicException;
@@ -11,7 +11,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
 
@@ -29,7 +28,7 @@ public class UserController {
     public ResponseEntity<?> checkNickname(@PathVariable String nickname) {
         userService.verifyNicknameAvailable(nickname);
 
-        return ResponseEntity.notFound().build();
+        return ResponseEntity.ok().build();
     }
 
     // 유저 본인 정보 조회
@@ -84,7 +83,7 @@ public class UserController {
     // 내가 작성한 리뷰 조회
     @GetMapping("/me/popups/reviews")
     public ResponseEntity<?> findReview() {
-        List<ReviewDto> reviews = userService.findReviews();
+        List<ReviewListDto> reviews = userService.findReviews();
 
         return ResponseEntity.ok(reviews);
     }

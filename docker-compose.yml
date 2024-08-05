@@ -5,6 +5,7 @@ services:
     #TODO: Replace env_file with detailed environment variables using the environment section
     env_file:
       - .env
+    #FIXME: ports should be removed before deploying application on EC2
     ports:
       - "3306:3306"
     volumes:
@@ -33,6 +34,7 @@ services:
   redis:
     image: redis
     restart: always
+    #FIXME: ports should be removed before deploying application on EC2
     ports:
       - "6379:6379"
     healthcheck:
@@ -40,6 +42,7 @@ services:
   mongodb:
     image: mongo
     restart: always
+    #FIXME: ports should be removed before deploying application on EC2
     ports:
       - "27017:27017"
     volumes:

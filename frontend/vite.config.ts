@@ -41,6 +41,15 @@ export default defineConfig({
       },
     }),
   ],
+  server: {
+    proxy: {
+      '/api': {
+        target: 'http://localhost:8080',
+        changeOrigin: true,
+        rewrite: (path) => path.replace(/^\/api/, ''),
+      },
+    },
+  },
   build: {
     assetsInlineLimit: 0, // 이미지 파일을 인라인하지 않도록 설정
   },

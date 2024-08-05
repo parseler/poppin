@@ -26,6 +26,7 @@ export interface PopupRequestDTO {
   warning?: string;
 }
 
+// 팝업 등록
 export const createPopup = async (data: { url: string; popupDto: PopupRequestDTO }) => {
   try {
     const response = await axios.post(data.url, data.popupDto, {
@@ -38,4 +39,10 @@ export const createPopup = async (data: { url: string; popupDto: PopupRequestDTO
     console.error("Error creating popup:", error);
     throw error;
   }
+};
+
+// 팝업 조회
+export const getPopupList = async () => {
+  const response = await axios.get('http://localhost:8080/api/popups');
+  return response.data;
 };

@@ -1,51 +1,52 @@
+import { getReviewData } from "@api/reviews";
 import ReviewComment from "@components/Review/ReviewComment";
 import "@css/Review.css";
+import { ReviewProps } from "@interface/reviews";
+import { useEffect, useState } from "react";
+import { useParams } from "react-router-dom";
 
 const ReviewDetail = () => {
+  const { reviewId } = useParams<{ reviewId: string }>();
+  const [review, setReview] = useState<ReviewProps | null>(null);
+
+  useEffect(() => {
+    (async () => {
+      try {
+        if (reviewId) {
+          const reviewData = await getReviewData(parseInt(reviewId));
+          setReview(reviewData);
+        }
+      } catch (error) {
+        console.error(error);
+      }
+    })();
+  }, [reviewId]);
+
   return (
     <div id="review-detail">
       {/* 리뷰 아이디마다 데이터 연결이 필요함 */}
       <div className="review-detail-title">
         <img
-          src="https://cf-templates-1gyolugg9zn9q-ap-northeast-2.s3.ap-northeast-2.amazonaws.com/store/abbed514%2Cd84c%2C4bb6%2Cb8eb%2Cc762731995d5"
+          src={review?.thumbnail}
           alt="리뷰 게시물 썸네일"
         />
         <div className="thumbnail-black"></div>
-        <h1>짱귀여운 망그러진곰 팝업스토어 다녀온 후기 @.@ (스포 많음 주의!)</h1>
+        <h1>{review?.title}</h1>
         <div className="review-writer">
           <div className="writer-image">
             <img
-              src="https://d2u3dcdbebyaiu.cloudfront.net/uploads/atch_img/965/1b3d7a543d81d5a3087e5e086fa25c9f_res.jpeg"
+              src={review?.img}
               alt="작성자 프로필 사진"
             />
           </div>
           <div className="writer-info">
-            <p className="writer-name">춤추는 팝프리카</p>
-            <p className="writer-date">24.07.24</p>
+            <p className="writer-name">{review?.nickname}</p>
+            <p className="writer-date">{review?.createdAt}</p>
           </div>
         </div>
       </div>
       <div className="review-detail-content">
-        망곰이는 너무 귀엽고 나는 너무 신났다! ٩(๑•̀Ⱉ•́๑)و 망곰아 너는 세계 최강의 곰이야 (ฅ•ω•ฅ)♡
-        망곰이는 너무 귀엽고 나는 너무 신났다! ٩(๑•̀Ⱉ•́๑)و 망곰아 너는 세계 최강의 곰이야 (ฅ•ω•ฅ)♡
-        망곰이는 너무 귀엽고 나는 너무 신났다! ٩(๑•̀Ⱉ•́๑)و 망곰아 너는 세계 최강의 곰이야 (ฅ•ω•ฅ)♡
-        망곰이는 너무 귀엽고 나는 너무 신났다! ٩(๑•̀Ⱉ•́๑)و 망곰아 너는 세계 최강의 곰이야 (ฅ•ω•ฅ)♡
-        망곰이는 너무 귀엽고 나는 너무 신났다! ٩(๑•̀Ⱉ•́๑)و 망곰아 너는 세계 최강의 곰이야 (ฅ•ω•ฅ)♡
-        망곰이는 너무 귀엽고 나는 너무 신났다! ٩(๑•̀Ⱉ•́๑)و 망곰아 너는 세계 최강의 곰이야 (ฅ•ω•ฅ)♡
-        망곰이는 너무 귀엽고 나는 너무 신났다! ٩(๑•̀Ⱉ•́๑)و 망곰아 너는 세계 최강의 곰이야 (ฅ•ω•ฅ)♡
-        망곰이는 너무 귀엽고 나는 너무 신났다! ٩(๑•̀Ⱉ•́๑)و 망곰아 너는 세계 최강의 곰이야 (ฅ•ω•ฅ)♡
-        망곰이는 너무 귀엽고 나는 너무 신났다! ٩(๑•̀Ⱉ•́๑)و 망곰아 너는 세계 최강의 곰이야 (ฅ•ω•ฅ)♡
-        망곰이는 너무 귀엽고 나는 너무 신났다! ٩(๑•̀Ⱉ•́๑)و 망곰아 너는 세계 최강의 곰이야 (ฅ•ω•ฅ)♡
-        망곰이는 너무 귀엽고 나는 너무 신났다! ٩(๑•̀Ⱉ•́๑)و 망곰아 너는 세계 최강의 곰이야 (ฅ•ω•ฅ)♡
-        망곰이는 너무 귀엽고 나는 너무 신났다! ٩(๑•̀Ⱉ•́๑)و 망곰아 너는 세계 최강의 곰이야 (ฅ•ω•ฅ)♡
-        망곰이는 너무 귀엽고 나는 너무 신났다! ٩(๑•̀Ⱉ•́๑)و 망곰아 너는 세계 최강의 곰이야 (ฅ•ω•ฅ)♡
-        망곰이는 너무 귀엽고 나는 너무 신났다! ٩(๑•̀Ⱉ•́๑)و 망곰아 너는 세계 최강의 곰이야 (ฅ•ω•ฅ)♡
-        망곰이는 너무 귀엽고 나는 너무 신났다! ٩(๑•̀Ⱉ•́๑)و 망곰아 너는 세계 최강의 곰이야 (ฅ•ω•ฅ)♡
-        망곰이는 너무 귀엽고 나는 너무 신났다! ٩(๑•̀Ⱉ•́๑)و 망곰아 너는 세계 최강의 곰이야 (ฅ•ω•ฅ)♡
-        망곰이는 너무 귀엽고 나는 너무 신났다! ٩(๑•̀Ⱉ•́๑)و 망곰아 너는 세계 최강의 곰이야 (ฅ•ω•ฅ)♡
-        망곰이는 너무 귀엽고 나는 너무 신났다! ٩(๑•̀Ⱉ•́๑)و 망곰아 너는 세계 최강의 곰이야 (ฅ•ω•ฅ)♡
-        망곰이는 너무 귀엽고 나는 너무 신났다! ٩(๑•̀Ⱉ•́๑)و 망곰아 너는 세계 최강의 곰이야 (ฅ•ω•ฅ)♡
-        망곰이는 너무 귀엽고 나는 너무 신났다! ٩(๑•̀Ⱉ•́๑)و 망곰아 너는 세계 최강의 곰이야 (ฅ•ω•ฅ)♡
+        {review?.content}
       </div>
       <ReviewComment/>
     </div>

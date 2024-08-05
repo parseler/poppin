@@ -45,9 +45,6 @@ public class PopupServiceImpl implements PopupService {
     // 팝업 전체 목록 조회 및 검색
     public List<PopupDTO> getPopupList(String keyword) {
         List<Popup> popups = popupRepository.findAllByNameContaining(keyword);
-//        return popups.stream()
-//                .map(popup -> new PopupDTO(popup.getPopupId(), popup.getName(), popup.getStartDate(), popup.getEndDate(), popup.getHeart()))
-//                .collect(Collectors.toList());
         return popups.stream()
                 .filter(popup -> !popup.isDeleted())
                 .map(popup -> PopupDTO.builder()
@@ -280,7 +277,7 @@ public class PopupServiceImpl implements PopupService {
                 .preReservationOpenAt(reqDto.getPreReservationOpenAt())
                 .term(reqDto.getTerm())
                 .maxPeoplePerSession(reqDto.getMaxPeoplePerSession())
-                .maxReservationsPerPerson(reqDto.getMaxReservationsPerPersson())
+                .maxReservationsPerPerson(reqDto.getMaxReservationsPerPerson())
                 .warning(reqDto.getWarning())
                 .build();
 

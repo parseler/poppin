@@ -17,7 +17,7 @@ export const updateUserData = async (userData: UserData) => {
 // 닉네임 중복 확인
 export const checkNickname = async (nickname: string) => {
   const response = await axiosInstance.get(`/api/users/${nickname}/check`);
-  return response.status !== 404;
+  return response.status !== 409;
 }
 
 // 사용자 정보 탈퇴

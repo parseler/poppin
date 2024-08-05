@@ -1,6 +1,11 @@
 package com.apink.poppin.api.popup.service;
 
+import com.apink.poppin.api.manager.entity.Manager;
+import com.apink.poppin.api.manager.repository.ManagerRepository;
 import com.apink.poppin.api.popup.dto.PopupDTO;
+import com.apink.poppin.api.popup.dto.PopupRequestDTO;
+import com.apink.poppin.api.reservation.entity.PreReservationInfo;
+import com.apink.poppin.api.reservation.repository.PreReservationInfoRepository;
 import com.apink.poppin.api.reservation.dto.PreReservationRequestDTO;
 import com.apink.poppin.api.reservation.dto.PreReservationResponseDTO;
 import com.apink.poppin.api.popup.entity.Popup;
@@ -20,7 +25,6 @@ import org.springframework.stereotype.Service;
 import java.time.LocalDateTime;
 import java.util.Date;
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -31,13 +35,34 @@ public class PopupServiceImpl implements PopupService {
     private final PreReservationRepository preReservationRepository;
     private final UserRepository userRepository;
     private final ReservationStatementRepository reservationStatementRepository;
+    private final ManagerRepository managerRepository;
+    private final PreReservationInfoRepository preReservationInfoRepository;
 
 
     // 팝업 전체 목록 조회 및 검색
     public List<PopupDTO> getPopupList(String keyword) {
         List<Popup> popups = popupRepository.findAllByNameContaining(keyword);
+//        return popups.stream()
+//                .map(popup -> new PopupDTO(popup.getPopupId(), popup.getName(), popup.getStartDate(), popup.getEndDate(), popup.getHeart()))
+//                .collect(Collectors.toList());
         return popups.stream()
-                .map(popup -> new PopupDTO(popup.getPopupId(), popup.getName(), popup.getStartDate(), popup.getEndDate(), popup.getHeart()))
+                .map(popup -> PopupDTO.builder()
+                        .popupId(popup.getPopupId())
+                        .name(popup.getName())
+                        .startDate(popup.getStartDate())
+                        .endDate(popup.getEndDate())
+                        .hours(popup.getHours())
+                        .snsUrl(popup.getSnsUrl())
+                        .pageUrl(popup.getPageUrl())
+                        .content(popup.getContent())
+                        .description(popup.getDescription())
+                        .address(popup.getAddress())
+                        .lat(popup.getLat())
+                        .lon(popup.getLon())
+                        .heart(popup.getHeart())
+                        .hit(popup.getHit())
+                        .rating(popup.getRating())
+                        .build())
                 .collect(Collectors.toList());
     }
 
@@ -45,7 +70,24 @@ public class PopupServiceImpl implements PopupService {
     public PopupDTO getPopup(Long popupId) {
         Popup popup = popupRepository.findById(popupId)
                 .orElseThrow(() -> new IllegalArgumentException("Invalid popup ID"));
-        return new PopupDTO(popup.getPopupId(), popup.getName(), popup.getStartDate(), popup.getEndDate(), popup.getHeart());
+//        return new PopupDTO(popup.getPopupId(), popup.getName(), popup.getStartDate(), popup.getEndDate(), popup.getHeart());
+        return PopupDTO.builder()
+                .popupId(popup.getPopupId())
+                .name(popup.getName())
+                .startDate(popup.getStartDate())
+                .endDate(popup.getEndDate())
+                .hours(popup.getHours())
+                .snsUrl(popup.getSnsUrl())
+                .pageUrl(popup.getPageUrl())
+                .content(popup.getContent())
+                .description(popup.getDescription())
+                .address(popup.getAddress())
+                .lat(popup.getLat())
+                .lon(popup.getLon())
+                .heart(popup.getHeart())
+                .hit(popup.getHit())
+                .rating(popup.getRating())
+                .build();
     }
 
     // 인기 팝업 조회
@@ -53,7 +95,23 @@ public class PopupServiceImpl implements PopupService {
         List<Popup> list = popupRepository.findAllByOrderByHeartDesc();
 
         return list.stream()
-                .map(popup -> new PopupDTO(popup.getPopupId(), popup.getName(), popup.getStartDate(), popup.getEndDate(), popup.getHeart()))
+                .map(popup -> PopupDTO.builder()
+                        .popupId(popup.getPopupId())
+                        .name(popup.getName())
+                        .startDate(popup.getStartDate())
+                        .endDate(popup.getEndDate())
+                        .hours(popup.getHours())
+                        .snsUrl(popup.getSnsUrl())
+                        .pageUrl(popup.getPageUrl())
+                        .content(popup.getContent())
+                        .description(popup.getDescription())
+                        .address(popup.getAddress())
+                        .lat(popup.getLat())
+                        .lon(popup.getLon())
+                        .heart(popup.getHeart())
+                        .hit(popup.getHit())
+                        .rating(popup.getRating())
+                        .build())
                 .collect(Collectors.toList());
     }
 
@@ -67,7 +125,23 @@ public class PopupServiceImpl implements PopupService {
         LocalDateTime now = LocalDateTime.now();
         List<Popup> popups = popupRepository.findAllByStartDateAfter(now);
         return popups.stream()
-                .map(popup -> new PopupDTO(popup.getPopupId(), popup.getName(), popup.getStartDate(), popup.getEndDate(), popup.getHeart()))
+                .map(popup -> PopupDTO.builder()
+                        .popupId(popup.getPopupId())
+                        .name(popup.getName())
+                        .startDate(popup.getStartDate())
+                        .endDate(popup.getEndDate())
+                        .hours(popup.getHours())
+                        .snsUrl(popup.getSnsUrl())
+                        .pageUrl(popup.getPageUrl())
+                        .content(popup.getContent())
+                        .description(popup.getDescription())
+                        .address(popup.getAddress())
+                        .lat(popup.getLat())
+                        .lon(popup.getLon())
+                        .heart(popup.getHeart())
+                        .hit(popup.getHit())
+                        .rating(popup.getRating())
+                        .build())
                 .collect(Collectors.toList());
     }
 
@@ -134,6 +208,93 @@ public class PopupServiceImpl implements PopupService {
                 .userTsid(preReservation.getUser().getUserTsid())
                 .popupId(preReservation.getPopup().getPopupId())
                 .build();
+    }
+
+    // 팝업 등록 (사전 예약 없이)
+    @Transactional
+    @Override
+    public Popup createPopupOnly(PopupRequestDTO reqDto) {
+        // 매니저 확인
+        Manager manager = managerRepository.findByManagerTsid(reqDto.getManagerTsid())
+                .orElseThrow(() -> new IllegalArgumentException("Invalid manager Tsid"));
+
+        Popup popup = Popup.builder()
+                .manager(manager)
+                .name(reqDto.getName())
+                .startDate(reqDto.getStartDate())
+                .endDate(reqDto.getEndDate())
+                .hours(reqDto.getHours())
+                .description(reqDto.getDescription())
+                .snsUrl(reqDto.getSnsUrl())
+                .pageUrl(reqDto.getPageUrl())
+                .content(reqDto.getContent())
+                .address(reqDto.getAddress())
+                .lat(reqDto.getLat())
+                .lon(reqDto.getLon())
+                .build();
+
+        popupRepository.save(popup);
+
+        return popup;
+    }
+
+
+    // 팝업 등록 (사전예약까지)
+    @Transactional
+    @Override
+    public void createPopupWithPreReservation(PopupRequestDTO reqDto) {
+        // 매니저 확인
+        Manager manager = managerRepository.findByManagerTsid(reqDto.getManagerTsid())
+                .orElseThrow(() -> new IllegalArgumentException("Invalid manager Tsid"));
+
+        Popup popup = Popup.builder()
+                .manager(manager)
+                .name(reqDto.getName())
+                .startDate(reqDto.getStartDate())
+                .endDate(reqDto.getEndDate())
+                .hours(reqDto.getHours())
+                .description(reqDto.getDescription())
+                .snsUrl(reqDto.getSnsUrl())
+                .pageUrl(reqDto.getPageUrl())
+                .content(reqDto.getContent())
+                .address(reqDto.getAddress())
+                .lat(reqDto.getLat())
+                .lon(reqDto.getLon())
+                .build();
+
+        popupRepository.save(popup);
+
+        // PreReservationInfo 엔티티 생성
+        PreReservationInfo preReservationInfo = PreReservationInfo.builder()
+                .popup(popup)
+                .preReservationOpenAt(reqDto.getPreReservationOpenAt())
+                .term(reqDto.getTerm())
+                .maxPeoplePerSession(reqDto.getMaxPeoplePerSession())
+                .maxReservationsPerPerson(reqDto.getMaxReservationsPerPersson())
+                .warning(reqDto.getWarning())
+                .build();
+
+        preReservationInfoRepository.save(preReservationInfo);
+
+    }
+
+    // 팝업 수정
+    @Transactional
+    @Override
+    public Popup updatePopup(PopupRequestDTO reqDto, long popupId) {
+        // 매니저 확인
+        Manager manager = managerRepository.findByManagerTsid(reqDto.getManagerTsid())
+                .orElseThrow(() -> new IllegalArgumentException("Invalid manager Tsid"));
+
+        // 팝업 확인
+        Popup popup = popupRepository.findById(popupId)
+                .orElseThrow(() -> new IllegalArgumentException("Invalid popup ID"));
+
+        popup.updatePopup(reqDto);
+
+//        popupRepository.save(popup);
+
+        return popup;
     }
 
 

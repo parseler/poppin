@@ -1,9 +1,15 @@
+import { useNavigate } from "react-router-dom";
 import "@css/ManagerPage/RegistFin.css";
 
 import finalStep from "@assets/registPop/finalStep.svg";
 import finishCheck from "@assets/registPop/finishCheck.svg";
 
 function RegistFin() {
+  const navigate = useNavigate();
+  const handleClickButton = () => {
+    navigate("/mypage/my-popups");
+  };
+
   return (
     <div id="pop-regist-finish">
       <div className="upside">
@@ -18,7 +24,7 @@ function RegistFin() {
         </div>
       </div>
       <div className="regist-fin">
-        <button>등록한 팝업스토어 보기</button>
+        <button onClick={handleClickButton}>등록한 팝업스토어 보기</button>
       </div>
     </div>
   );

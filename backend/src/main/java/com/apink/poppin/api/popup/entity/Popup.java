@@ -1,9 +1,8 @@
 package com.apink.poppin.api.popup.entity;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.Id;
+import com.apink.poppin.api.manager.entity.Manager;
+import com.apink.poppin.api.popup.dto.PopupRequestDTO;
+import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -22,12 +21,13 @@ import java.util.Date;
 public class Popup {
 
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name="popup_id")
     private Long popupId;
 
-//    @OneToOne(mappedBy = "")
-//    private Manager manager;
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @JoinColumn(name = "manager_tsid", nullable = false)
+    private Manager manager;
 
     @NotNull
     private String name;
@@ -46,6 +46,9 @@ public class Popup {
     @NotNull
     private String content;
 
+    @NotNull
+    private String address;
+
 //     위도 경도
     @NotNull
     private Double lat;
@@ -59,4 +62,18 @@ public class Popup {
     @ColumnDefault("0.0")
     private Double rating;
 
+
+    public void updatePopup(PopupRequestDTO reqDto) {
+        this.name = reqDto.getName();
+        this.startDate = reqDto.getStartDate();
+        this.endDate = reqDto.getEndDate();
+        this.hours = reqDto.getHours();
+        this.description = reqDto.getDescription();
+        this.snsUrl = reqDto.getSnsUrl();
+        this.pageUrl = reqDto.getPageUrl();
+        this.content = reqDto.getContent();
+        this.address = reqDto.getAddress();
+        this.lat = reqDto.getLat();
+        this.lon = reqDto.getLon();
+    }
 }

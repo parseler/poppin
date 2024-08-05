@@ -1,24 +1,66 @@
 import "@css/Mypage.css";
 import { Link } from "react-router-dom";
-
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Box, Modal } from "@mui/material";
+import { getUserData } from "@api/users";
+import axiosInstance from "@api/axiosInstance";
+import { UserData } from "@interface/users";
+
+import profile from "@assets/user/profile.png";
 import loginBefore from "@assets/mypage/loginBefore.svg";
 import nextButton from "@assets/mypage/nextButton.svg";
 import profileUpdate from "@assets/mypage/profileUpdateButton.svg";
 
-// 임시 사용자 데이터
-const user = {
-  isLoggedIn: true, // 로그인 여부
-  role: 'manager', // 'user', 'manager', 'admin'
-  nickname: '터지는 커비', // 유저 닉네임
-  profileImage: 'https://i.pinimg.com/564x/ac/53/e9/ac53e9b1cbb1069713a4b8b78986b5cd.jpg', // 유저 프로필 이미지
-};
-
 const Mypage: React.FC = () => {
-  const { isLoggedIn, role, nickname, profileImage } = user;
-  const [isModal, setIsModal] = useState(false);
+  const [user, setUser] = useState<UserData | null>(null);
+  const [isModal, setIsModal] = useState<boolean>(false);
 
+  // 사용자 정보 유무 확인
+  useEffect(() => {
+    const token = axiosInstance.defaults.headers.common["Authorization"];
+
+    if (token) {
+      (async () => {
+        try {
+          const userData = await getUserData();
+          setUser({
+            nickname: userData.nickname,
+            email: userData.email,
+            phoneNumber: userData.phoneNumber,
+            categoryList: userData.categoryList,
+            agreementDto: userData.agreementDto,
+            img: userData.img,
+            role: userData.role,
+          });
+        } catch (error) {
+          console.error(error);
+        }
+      })();
+    } else {
+      setUser(null);
+    }
+  }, []);
+
+  // 로그아웃
+  const handleLogout = () => {
+    try {
+      axiosInstance.defaults.headers.common["Authorization"] = "";
+      setUser(null);
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
+  // 사용자 탈퇴
+  const deleteUserData = async () => {
+    try {
+      await deleteUserData();
+    } catch (error) {
+      console.error(error);
+    }
+  }
+
+  // 모달창 열기 & 닫기
   const openModal = () => {
     setIsModal(true);
     document.body.style.overflow = "hidden";
@@ -31,7 +73,7 @@ const Mypage: React.FC = () => {
 
   return (
     <div id="my-page">
-      {!isLoggedIn ? (
+      {!user ? (
         <div className="login-section">
           {/* 로그인 전 */}
           <Link to="/login">
@@ -50,14 +92,18 @@ const Mypage: React.FC = () => {
           <div className="login-wrap">
             <div className="mypage-profile">
               <div className="mypage-profile-image">
-                <img src={profileImage} alt="프로필 사진" />
+                {user.img === null ? (
+                  <img src={profile} alt="프로필 사진" />
+                ) : (
+                  <img src={user.img} alt="프로필 사진" />
+                )}
               </div>
-              <span className="mypage-nickname">{nickname}</span>님
+              <span className="mypage-nickname">{user.nickname}</span>님
               <Link to="/mypage/update" className="profile-update">
                 <img src={profileUpdate} alt="프로필 수정 아이콘" />
               </Link>
             </div>
-            <Link to="" className="logout">
+            <Link to="" className="logout" onClick={handleLogout}>
               로그아웃
             </Link>
           </div>
@@ -66,7 +112,7 @@ const Mypage: React.FC = () => {
 
       <div className="mypage-menu-section">
         <ul>
-          {role === "manager" ? (
+          {user?.role === "manager" ? (
             <>
               <li>
                 <Link to="/regist-pop">
@@ -87,7 +133,7 @@ const Mypage: React.FC = () => {
                 </Link>
               </li>
             </>
-          ) : role === "admin" ? (
+          ) : user?.role === "admin" ? (
             <>
               <li>
                 <Link to="/admin/manage-code">
@@ -159,7 +205,7 @@ const Mypage: React.FC = () => {
               <img src={nextButton} alt="다음 버튼" />
             </Link>
           </li>
-          {role === "user" && (
+          {user?.role === "user" && (
             <li>
               <Link to="" onClick={openModal}>
                 <p>회원 탈퇴</p>
@@ -179,19 +225,22 @@ const Mypage: React.FC = () => {
 
       {/* 회원탈퇴 모달창 */}
       <Modal open={isModal} onClose={closeModal}>
-          <Box
-            id="user-withdrawal-modal-box"
-            onClick={(e) => e.stopPropagation()}>
-            <div className="modal-overlay">
-              <p className="withdraw-title">회원 탈퇴를 진행하시겠습니까?</p>
-              <p className="withdraw-message">(작성한 후기와 댓글은 삭제되지 않습니다.)</p>
-              <div className="buttons">
-                <button onClick={closeModal}>취소</button>
-                <button>탈퇴</button>
-              </div>
+        <Box
+          id="user-withdrawal-modal-box"
+          onClick={(e) => e.stopPropagation()}
+        >
+          <div className="modal-overlay">
+            <p className="withdraw-title">회원 탈퇴를 진행하시겠습니까?</p>
+            <p className="withdraw-message">
+              (작성한 후기와 댓글은 삭제되지 않습니다.)
+            </p>
+            <div className="buttons">
+              <button onClick={closeModal}>취소</button>
+              <button onClick={deleteUserData}>탈퇴</button>
             </div>
-          </Box>
-        </Modal>
+          </div>
+        </Box>
+      </Modal>
     </div>
   );
 };

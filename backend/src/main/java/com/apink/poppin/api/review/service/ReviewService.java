@@ -15,5 +15,7 @@ public interface ReviewService {
 
     void createReview(long popupId, ReviewDto reviewDto);
 
-    List<ReviewListDto> getReviews(long popupId);
+    List<ReviewListDto> getReviewsByPopupId(long popupId);
+
+    List<ReviewListDto> getReviews();
 }

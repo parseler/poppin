@@ -25,6 +25,8 @@ import image1 from "@assets/image1.svg";
 import image2 from "@assets/sponge2.jpg";
 import image3 from "@assets/sponge.jpg";
 
+type Category = "parking" | "fee" | "pet" | "food" | "photo" | "ageLimit";
+
 const scheduleData: { [key: string]: string } = {
   일: "10:00~18:00",
   월: "11:00~18:00",
@@ -43,7 +45,7 @@ const instaLink: { [key: string]: string } = {
   link: "https://www.instagram.com/bebe_the_ori/",
 };
 
-const service: { [key: string]: any } = {
+const service: { [key: string]: boolean | undefined } = {
   parking: true,
   fee: true,
   pet: true,
@@ -52,7 +54,7 @@ const service: { [key: string]: any } = {
   ageLimit: undefined,
 };
 
-const serviceIcons = {
+const serviceIcons: Record<Category, { true: string; false: string }> = {
   parking: { true: parkingIcon, false: noParkingIcon },
   fee: { true: feeIcon, false: noFeeIcon },
   pet: { true: petIcon, false: noPetIcon },
@@ -106,20 +108,19 @@ interface InfoProps {
   hours: string;
   website: string;
   instagram: string;
-  services: any;
+  services: typeof service;
   description: string;
   onLocationChange: (location: string) => void;
   onHoursChange: (hours: string) => void;
   onWebsiteChange: (website: string) => void;
   onInstagramChange: (instagram: string) => void;
-  onServicesChange: (services: any) => void;
+  onServicesChange: (services: typeof service) => void;
   onDescriptionChange: (description: string) => void;
 }
 
 const Info: React.FC<InfoProps> = ({
   isEditing,
   location,
-  hours,
   website,
   instagram,
   services,
@@ -173,20 +174,34 @@ const Info: React.FC<InfoProps> = ({
     script.onload = () => {
       kakao.maps.load(() => {
         const mapContainer = document.getElementById("map");
-        const mapOption = {
-          center: new kakao.maps.LatLng(37.544579, 127.055831), // 팝업스토어 위치 좌표
-          level: 3, // 확대 수준
-        };
-        const map = new kakao.maps.Map(mapContainer, mapOption);
+        if (mapContainer) {
+          const mapOption = {
+            center: new kakao.maps.LatLng(37.544579, 127.055831), // 팝업스토어 위치 좌표
+            level: 3,
+          };
+          const map = new kakao.maps.Map(mapContainer, mapOption);
 
-        const markerPosition = new kakao.maps.LatLng(37.544579, 127.055831);
-        const marker = new kakao.maps.Marker({
-          position: markerPosition,
-        });
-        marker.setMap(map);
+          const markerPosition = new kakao.maps.LatLng(37.544579, 127.055831);
+          const marker = new kakao.maps.Marker({
+            position: markerPosition,
+          });
+          marker.setMap(map);
+        } else {
+          console.error("Map container element not found");
+        }
       });
     };
   }, []);
+
+  const isChecked = (value: boolean | null | undefined): boolean => {
+    if (value === null || value === undefined) {
+      return false;
+    }
+    if (typeof value === "boolean") {
+      return value;
+    }
+    return false;
+  };
 
   const toggleSchedule = () => {
     setIsToggleOpen(!isToggleOpen);
@@ -292,14 +307,23 @@ const Info: React.FC<InfoProps> = ({
             ([key, value]) =>
               value !== undefined && (
                 <div key={key} className="service-icon">
-                  <img src={serviceIcons[key][value]} />
+                  <img
+                    src={
+                      serviceIcons[key as Category][
+                        value.toString() as "true" | "false"
+                      ]
+                    }
+                  />
                   {value ? "가능" : "불가능"}
                   {isEditing && (
                     <input
                       type="checkbox"
-                      checked={value}
+                      checked={isChecked(value)}
                       onChange={(e) =>
-                        onServicesChange({ ...services, [key]: e.target.checked })
+                        onServicesChange({
+                          ...services,
+                          [key]: e.target.checked,
+                        })
                       }
                       className="edit-checkbox"
                     />

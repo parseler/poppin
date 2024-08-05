@@ -4,11 +4,18 @@ import "@css/AdminPage/MyNotification.css";
 
 import deleteIcon from "@assets/deleteIcon.svg";
 
+interface Notification {
+  time: string;
+  title: string;
+  content: string;
+  status: string;
+}
+
 function MyNotification() {
   const [showModal, setShowModal] = useState(false);
   const [showDetailModal, setShowDetailModal] = useState(false);
   const [showEditModal, setShowEditModal] = useState(false);
-  const [notifications, setNotifications] = useState([]);
+  const [notifications, setNotifications] = useState<Notification[]>([]);
   const [showDeleteActions, setShowDeleteActions] = useState(false);
   const [selectedDate, setSelectedDate] = useState({
     year: "",
@@ -17,7 +24,7 @@ function MyNotification() {
     hour: "",
     minute: "",
   });
-  const [selectedNotification, setSelectedNotification] = useState(null);
+  const [selectedNotification, setSelectedNotification] = useState<Notification|null>(null);
 
   useEffect(() => {
     if (showModal || showEditModal) {
@@ -36,7 +43,9 @@ function MyNotification() {
     if (showEditModal && selectedNotification) {
       const [year, month, day, hour, minute] = selectedNotification.time
         .split(/\. |:|\./)
-        .map((str, idx) => (idx === 0 ? `20${str}` : str.padStart(2, "0")));
+        .map((str: string, idx: number) =>
+          idx === 0 ? `20${str}` : str.padStart(2, "0")
+        );
       setSelectedDate({ year, month, day, hour, minute });
     }
   }, [showEditModal, selectedNotification]);
@@ -44,12 +53,13 @@ function MyNotification() {
   const handleAddNotification = (event: React.FormEvent) => {
     event.preventDefault();
     const { year, month, day, hour, minute } = selectedDate;
+    const form = event.target as HTMLFormElement;
     const newNotification = {
       time: `${year.slice(2)}. ${parseInt(month)}. ${parseInt(
         day
       )}. ${hour}:${minute}`,
-      title: event.target.title.value,
-      content: event.target.content.value,
+      title: (form.elements.namedItem("title") as HTMLInputElement).value,
+      content: (form.elements.namedItem("content") as HTMLTextAreaElement).value,
       status: "대기",
     };
 
@@ -92,13 +102,15 @@ function MyNotification() {
   const handleEditNotification = (event: React.FormEvent) => {
     event.preventDefault();
     const { year, month, day, hour, minute } = selectedDate;
+    const form = event.target as HTMLFormElement;
     const updatedNotification = {
       ...selectedNotification,
       time: `${year.slice(2)}. ${parseInt(month)}. ${parseInt(
         day
       )}. ${hour}:${minute}`,
-      title: event.target.title.value,
-      content: event.target.content.value,
+      title: (form.elements.namedItem("title") as HTMLInputElement).value,
+      content: (form.elements.namedItem("content") as HTMLTextAreaElement).value,
+      status: selectedNotification?.status || "대기",
     };
 
     const selectedDateTime = new Date(
@@ -128,12 +140,12 @@ function MyNotification() {
     setSelectedDate((prevDate) => ({ ...prevDate, [name]: value }));
   };
 
-  const handleTitleClick = (notification) => {
+  const handleTitleClick = (notification:Notification) => {
     setSelectedNotification(notification);
     setShowDetailModal(true);
   };
 
-  const handleRemoveNotification = (notification) => {
+  const handleRemoveNotification = (notification:Notification) => {
     setNotifications(notifications.filter((notif) => notif !== notification));
   };
 

@@ -113,9 +113,9 @@ public class ReviewServiceImpl implements ReviewService {
     }
 
     @Override
-    public List<ReviewListDto> getReviews(long popupId) {
+    public List<ReviewListDto> getReviewsByPopupId(long popupId) {
 
-        List<Review> reviews = reviewRepository.findReviewsByPopup_PopupId(popupId);
+        List<Review> reviews = reviewRepository.findReviewsByPopup_PopupIdAndDeletedFalse(popupId);
 
         List<ReviewListDto> list = new ArrayList<>();
         for (Review review : reviews) {
@@ -131,6 +131,26 @@ public class ReviewServiceImpl implements ReviewService {
             list.add(reviewListDto);
         }
 
+        return list;
+    }
+
+    @Override
+    public List<ReviewListDto> getReviews() {
+
+        List<Review> reviews = reviewRepository.findByDeletedFalse();
+        List<ReviewListDto> list = new ArrayList<>();
+
+        for (Review review : reviews) {
+            ReviewListDto dto = ReviewListDto.builder()
+                    .reviewId(review.getReviewId())
+                    .title(review.getTitle())
+                    .userTsid(review.getUser().getUserTsid())
+                    .content(review.getContent())
+                    .createdAt(review.getCreatedAt())
+                    .rating(review.getRating())
+                    .build();
+            list.add(dto);
+        }
         return list;
     }
 }

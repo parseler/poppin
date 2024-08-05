@@ -26,6 +26,10 @@ services:
       - "443:443"
     volumes:
       - ./nginx/templates:/etc/nginx/templates
+      - app_home:/usr/share/nginx/html
+    depends_on:
+      frontend-builder:
+        condition: service_completed_successfully
   redis:
     image: redis
     restart: always
@@ -63,6 +67,13 @@ services:
         - path: gradle_home
           action: sync+restart
           target: /opt/app/build
+  frontend-builder:
+    image: node
+    volumes:
+      - ./frontend:/opt/app
+      - app_home:/opt/app/dist
+    working_dir: /opt/app
+    command: sh -c "npm i && npm run build"
 volumes:
   gradle_home:
   app_home:

@@ -20,19 +20,22 @@ const Mypage: React.FC = () => {
     const token = axiosInstance.defaults.headers.common["Authorization"];
 
     if (token) {
-      getUserData().then((userData) => {
-        setUser({
-          nickname: userData.nickname,
-          email: userData.email,
-          phoneNumber: userData.phoneNumber,
-          categoryList: userData.categoryList,
-          agreementDto: userData.agreementDto,
-          img: userData.img,
-          role: userData.role,
-        });
-      }).catch((error) => {
-        console.error(error);
-      });
+      (async () => {
+        try {
+          const userData = await getUserData();
+          setUser({
+            nickname: userData.nickname,
+            email: userData.email,
+            phoneNumber: userData.phoneNumber,
+            categoryList: userData.categoryList,
+            agreementDto: userData.agreementDto,
+            img: userData.img,
+            role: userData.role,
+          });
+        } catch (error) {
+          console.error(error);
+        }
+      })();
     } else {
       setUser(null);
     }
@@ -40,9 +43,22 @@ const Mypage: React.FC = () => {
 
   // 로그아웃
   const handleLogout = () => {
-    axiosInstance.defaults.headers.common["Authorization"] = "";
-    setUser(null);
+    try {
+      axiosInstance.defaults.headers.common["Authorization"] = "";
+      setUser(null);
+    } catch (error) {
+      console.error(error);
+    }
   };
+
+  // 사용자 탈퇴
+  const deleteUserData = async () => {
+    try {
+      await deleteUserData();
+    } catch (error) {
+      console.error(error);
+    }
+  }
 
   // 모달창 열기 & 닫기
   const openModal = () => {
@@ -220,7 +236,7 @@ const Mypage: React.FC = () => {
             </p>
             <div className="buttons">
               <button onClick={closeModal}>취소</button>
-              <button>탈퇴</button>
+              <button onClick={deleteUserData}>탈퇴</button>
             </div>
           </div>
         </Box>

@@ -37,7 +37,7 @@ const UserUpdate = () => {
     }
   };
 
-  // 닉네임 중복 확ㄱ인
+  // 닉네임 중복 확인
   const handleNicknameCheck = async () => {
     if (user?.nickname) {
       try {
@@ -46,15 +46,16 @@ const UserUpdate = () => {
           setNicknameMsg("사용 가능한 닉네임입니다.");
           setNicknameCheck(true);
         } else {
-          setNicknameMsg("");
+          setNicknameMsg("중복된 닉네임입니다.");
           setNicknameCheck(false);
         }
       } catch (error) {
-        setNicknameMsg("중복된 닉네임입니다.");
+        console.error(error);
+        setNicknameMsg("오류가 발생했습니다.");
         setNicknameCheck(false);
       }
     }
-  }
+  };
 
   // 프로필 이미지 변경
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -115,7 +116,7 @@ const UserUpdate = () => {
   return (
     <>
       <Header leftIcon="취소" rightIcon="완료" onRightClick={submit} />
-      
+
       <div id="user-update">
         <div className="update-image">
           <div className="profile-black"></div>
@@ -221,7 +222,7 @@ const UserUpdate = () => {
           </div>
         </div>
       </div>
-      
+
       <Menu />
     </>
   );

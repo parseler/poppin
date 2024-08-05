@@ -82,7 +82,8 @@ public class CommentServiceImpl implements CommentService {
                 .orElseThrow(() -> new BusinessLogicException(ExceptionCode.USER_NOT_FOUND));
     }
 
-    private Comment getParent(long id) {
+    private Comment getParent(Long id) {
+        if (id == null) return null;
         return commentRepository.findById(id).orElse(null);
     }
 }

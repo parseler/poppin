@@ -5,7 +5,6 @@ import { Link } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { getReviewListData } from "@api/reviews";
 import { ReviewListProps } from "@interface/reviews";
-import banners from "@utils/get-banner-image";
 
 const ReviewList = () => {
   const [reviews, setReviews] = useState<ReviewListProps[]>([]);

@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import usePopupStore from "store/usePopupStore";
+import { createPopup } from "@api/apiPop";
 import "@css/ManagerPage/RegistPopOptional.css";
 import secondStep from "@assets/registPop/secondStep.svg";
 
@@ -13,6 +14,15 @@ function RegistPopOptional() {
     serviceCategories,
     setPopupData,
     setServiceCategory,
+    storeName,
+    storeDescription,
+    selectedImages,
+    startDate,
+    endDate,
+    address,
+    lat,
+    lon,
+    timeSlots,
   } = usePopupStore();
   const [localSnsUrl, setLocalSnsUrl] = useState(snsUrl || "");
   const [localPageUrl, setLocalPageUrl] = useState(pageUrl || "");
@@ -42,8 +52,34 @@ function RegistPopOptional() {
     navigate("/regist-pop-reservation");
   };
 
-  const goRegistFinish = () => {
-    navigate("/regist-pop-fin");
+  const goRegistFinish = async () => {
+    const popupData = {
+      name: storeName,
+      description: storeDescription,
+      images: selectedImages,
+      startDate: startDate || "",
+      endDate: endDate || "",
+      hours: JSON.stringify(timeSlots),
+      snsUrl: localSnsUrl,
+      pageUrl: localPageUrl,
+      content: storeDescription,
+      address: address,
+      lat: lat || 0,
+      lon: lon || 0,
+      managerTsid: 1,
+    };
+
+    try {
+      await createPopup({
+        url: "http://localhost:8080/api/popups",
+        popupDto: popupData,
+      }); // 백엔드로 데이터 전송
+      alert("팝업이 성공적으로 등록되었습니다.");
+      navigate("/regist-pop-fin");
+    } catch (error) {
+      console.error("Error creating popup:", error);
+      alert("팝업 등록 중 오류가 발생했습니다.");
+    }
   };
 
   const handleOmitClick = () => {

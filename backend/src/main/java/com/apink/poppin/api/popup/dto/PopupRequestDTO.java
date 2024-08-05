@@ -49,6 +49,7 @@ public class PopupRequestDTO {
 
     private String content;
 
+    private String address;
     private Double lat;
     private Double lon;
 

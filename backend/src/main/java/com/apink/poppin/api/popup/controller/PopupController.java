@@ -7,11 +7,9 @@ import com.apink.poppin.api.popup.dto.PopupDTO;
 import com.apink.poppin.api.popup.dto.PopupRequestDTO;
 import com.apink.poppin.api.popup.entity.Popup;
 import com.apink.poppin.api.popup.service.PopupService;
-import com.apink.poppin.api.reservation.dto.PreReservationRequestDTO;
-import com.apink.poppin.api.reservation.dto.PreReservationResponseDTO;
-import com.apink.poppin.api.reservation.dto.PreStatementRequestDTO;
-import com.apink.poppin.api.reservation.dto.PreStatementResponseDTO;
+import com.apink.poppin.api.reservation.dto.*;
 import com.apink.poppin.api.reservation.entity.PreReservation;
+import com.apink.poppin.api.reservation.service.OnsiteReservationService;
 import com.apink.poppin.api.review.dto.ReviewDto;
 import com.apink.poppin.api.review.dto.ReviewListDto;
 import com.apink.poppin.api.review.service.ReviewService;
@@ -33,6 +31,7 @@ public class PopupController {
     private final PopupService popupService;
     private final HeartService heartService;
     private final ReviewService reviewService;
+    private final OnsiteReservationService onsiteReservationService;
 
 
     // 팝업 전체 목록 조회 및 검색
@@ -125,16 +124,38 @@ public class PopupController {
 
     @GetMapping("/{popupId}/reviews")
     public ResponseEntity<?> getReviews(@PathVariable long popupId) {
-        List<ReviewListDto> list = reviewService.getReviews(popupId);
+        List<ReviewListDto> list = reviewService.getReviewsByPopupId(popupId);
         return ResponseEntity.ok(list);
     }
 
-    // 팝업 등록
+    // 팝업 등록 (사전 예약 없이)
     @PostMapping("")
-    public ResponseEntity<Popup> createPopup(@RequestBody PopupRequestDTO popupDto) {
-        Popup popup = popupService.createPopup(popupDto);
+    public ResponseEntity<Popup> createPopupOnly(@RequestBody PopupRequestDTO popupDto) {
+        Popup popup = popupService.createPopupOnly(popupDto);
         return new ResponseEntity<>(popup, HttpStatus.CREATED);
     }
 
+
+    // 팝업 등록 (사전 예약까지)
+    @PostMapping("/preReservation")
+    public ResponseEntity<?> createPopupWithPreReservation(@RequestBody PopupRequestDTO popupDto) {
+        popupService.createPopupWithPreReservation(popupDto);
+        return new ResponseEntity<>(HttpStatus.CREATED);
+    }
+
+
     // 팝업 수정
+    @PutMapping("{popupId}")
+    public ResponseEntity<Popup> updatePopup(@RequestBody PopupRequestDTO popupDto, @PathVariable long popupId) {
+        Popup popup = popupService.updatePopup(popupDto, popupId);
+        return new ResponseEntity<>(popup, HttpStatus.OK);
+    }
+
+    // 매니저가 확인하는 대기 중인 현장 예약 정보
+    @GetMapping("/{popupId}/onsite-reservations")
+    public ResponseEntity<?> getOnsiteReservations(@PathVariable long popupId) {
+        List<OnsiteReservationDto> list = onsiteReservationService.getOnsiteReservations(popupId);
+
+        return ResponseEntity.ok().body(list);
+    }
 }

@@ -19,19 +19,16 @@ interface HeaderProps {
 }
 
 function RegistPopReservationInfo() {
-  const [date, setDate] = useState<Date | null>(null);
   const [selectedOpenTimeHour, setSelectedOpenTimeHour] = useState<string>("");
   const [selectedOpenTimeMinute, setSelectedOpenTimeMinute] =
     useState<string>("");
-  const [intervalTime, setIntervalTime] = useState<string>("");
-  const [maxPeople, setMaxPeople] = useState<number>(0);
-  const [maxReservations, setMaxReservations] = useState<number>(0);
   const {
     storeName,
     storeDescription,
     selectedImages,
     startDate,
     endDate,
+    address,
     lat,
     lon,
     snsUrl,
@@ -66,23 +63,26 @@ function RegistPopReservationInfo() {
       name: storeName,
       description: storeDescription,
       images: selectedImages,
-      startDate: startDate?.toISOString().split("T")[0] || "",
-      endDate: endDate?.toISOString().split("T")[0] || "",
-      hours: timeSlots
-        .map((slot) => `${slot.day} ${slot.startTime}~${slot.endTime}`)
-        .join(", "),
+      startDate: startDate || "",
+      endDate: endDate || "",
+      hours: JSON.stringify(timeSlots),
       snsUrl: snsUrl || "",
       pageUrl: pageUrl || "",
       content: storeDescription,
+      address: address,
       lat: lat || 0,
       lon: lon || 0,
-      preReservationOpenAt: preReservationOpenAt?.toISOString() || "",
-      term: term,
-      maxPeoplePerSession: maxPeoplePerSession,
-      maxReservationsPerPerson: maxReservationsPerPerson,
+      preReservationOpenAt: preReservationOpenAt ? preReservationOpenAt.toISOString() : "",
+      term: term || 1,
+      maxPeoplePerSession: maxPeoplePerSession || 1,
+      maxReservationsPerPerson: maxReservationsPerPerson || 1,
       warning: warning || "",
+      managerTsid: 1
     };
-    mutation.mutate(popupData);
+
+    console.log(popupData);
+
+    mutation.mutate({ url: "http://localhost:8080/api/popups/preReservation", popupDto: popupData });
   };
 
   const renderCustomHeader = ({
@@ -132,10 +132,9 @@ function RegistPopReservationInfo() {
               <div className="date-term">
                 <DatePicker
                   className="open-date-input"
-                  selected={date}
-                  onChange={(date) => {
-                    setDate(date);
-                    setPreReservationOpenAt(date);
+                  selected={preReservationOpenAt}
+                  onChange={(preReservationOpenAt) => {
+                    setPreReservationOpenAt(preReservationOpenAt);
                   }}
                   placeholderText="연. 월. 일"
                   dateFormat="Y. M. d."
@@ -149,8 +148,8 @@ function RegistPopReservationInfo() {
                     value={selectedOpenTimeHour}
                     onChange={(e) => {
                       setSelectedOpenTimeHour(e.target.value);
-                      if (date) {
-                        const newDate = new Date(date);
+                      if (preReservationOpenAt) {
+                        const newDate = new Date(preReservationOpenAt);
                         newDate.setHours(parseInt(e.target.value));
                         setPreReservationOpenAt(newDate);
                       }
@@ -165,8 +164,8 @@ function RegistPopReservationInfo() {
                     value={selectedOpenTimeMinute}
                     onChange={(e) => {
                       setSelectedOpenTimeMinute(e.target.value);
-                      if (date) {
-                        const newDate = new Date(date);
+                      if (preReservationOpenAt) {
+                        const newDate = new Date(preReservationOpenAt);
                         newDate.setMinutes(parseInt(e.target.value));
                         setPreReservationOpenAt(newDate);
                       }
@@ -185,9 +184,8 @@ function RegistPopReservationInfo() {
             <div className="interval-input">
               <input
                 type="number"
-                value={intervalTime}
+                value={term}
                 onChange={(e) => {
-                  setIntervalTime(e.target.value);
                   setTerm(parseInt(e.target.value));
                 }}
               />
@@ -199,9 +197,8 @@ function RegistPopReservationInfo() {
             <div>
               <input
                 type="number"
-                value={maxPeople}
+                value={maxPeoplePerSession}
                 onChange={(e) => {
-                  setMaxPeople(parseInt(e.target.value));
                   setMaxPeoplePerSession(parseInt(e.target.value));
                 }}
               />
@@ -213,9 +210,8 @@ function RegistPopReservationInfo() {
             <div>
               <input
                 type="number"
-                value={maxReservations}
+                value={maxReservationsPerPerson}
                 onChange={(e) => {
-                  setMaxReservations(parseInt(e.target.value));
                   setMaxReservationsPerPerson(parseInt(e.target.value));
                 }}
               />

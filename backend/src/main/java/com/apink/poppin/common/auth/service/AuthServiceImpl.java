@@ -82,7 +82,7 @@ public class AuthServiceImpl implements AuthService {
         String newAccess = jwtTokenUtil.createToken("access", username, role, 600000L);
         System.out.println(newAccess);
         //response
-        response.setHeader("Authrziation", "Bearer " + newAccess);
+        response.setHeader("Authorization", "Bearer " + newAccess);
 
         return new ResponseEntity<>(HttpStatus.OK);
     }

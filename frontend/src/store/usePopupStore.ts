@@ -16,6 +16,11 @@ interface PopupState {
   snsUrl?: string;
   pageUrl?: string;
   serviceCategories: { [key: string]: string };
+  preReservationOpenAt: Date | null;
+  term: number;
+  maxPeoplePerSession: number;
+  maxReservationsPerPerson: number;
+  warning: string;
   categories: string[];
   setStoreName: (name: string) => void;
   setStoreDescription: (description: string) => void;
@@ -31,6 +36,11 @@ interface PopupState {
   setSelectedDays: (days: string[]) => void;
   setTimeSlots: (slots: { [key: string]: string }) => void;
   setHours: (hours: string) => void;
+  setPreReservationOpenAt: (date: Date | null) => void;
+  setTerm: (term: number) => void;
+  setMaxPeoplePerSession: (maxPeople: number) => void;
+  setMaxReservationsPerPerson: (maxReservations: number) => void;
+  setWarning: (warning: string) => void;
   setCategories: (categories: string[]) => void;
 }
 
@@ -42,7 +52,7 @@ const usePopupStore = create<PopupState>((set) => ({
   endDate: null,
   selectedDays: [],
   timeSlots: {},
-  hours: '',
+  hours: "",
   address: "",
   detailedAddress: "",
   lat: null,
@@ -57,6 +67,11 @@ const usePopupStore = create<PopupState>((set) => ({
     photo: "",
     age: "",
   },
+  preReservationOpenAt: null,
+  term: 0,
+  maxPeoplePerSession: 0,
+  maxReservationsPerPerson: 0,
+  warning: "",
   categories: [],
   setStoreName: (name) => set(() => ({ storeName: name })),
   setStoreDescription: (description) =>
@@ -79,6 +94,11 @@ const usePopupStore = create<PopupState>((set) => ({
   setTimeSlots: (slots) => set(() => ({ timeSlots: slots })),
   setSelectedImages: (images) => set(() => ({ selectedImages: images })),
   setHours: (hours) => set(() => ({ hours })),
+  setPreReservationOpenAt: (date) => set(() => ({ preReservationOpenAt: date })),
+  setTerm: (term) => set(() => ({ term })),
+  setMaxPeoplePerSession: (maxPeople) => set(() => ({ maxPeoplePerSession: maxPeople })),
+  setMaxReservationsPerPerson: (maxReservations) => set(() => ({ maxReservationsPerPerson: maxReservations })),
+  setWarning: (warning) => set(() => ({ warning })),
   setCategories: (categories) => set(() => ({ categories })),
 }));
 

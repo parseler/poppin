@@ -39,6 +39,12 @@ public interface PopupService {
     // 사전 예약 상태 정보 변경하기
     PreStatementResponseDTO changePreReservation(PreStatementRequestDTO reqDto);
 
-    // 팝업 등록
-    Popup createPopup(PopupRequestDTO popupDto);
+    // 팝업 등록 (사전 예약 없이)
+    Popup createPopupOnly(PopupRequestDTO popupDto);
+
+    // 팝업 등록 (사전 예약까지)
+    void createPopupWithPreReservation(PopupRequestDTO popupDto);
+
+    // 팝업 수정
+    Popup updatePopup(PopupRequestDTO popupDto, long popupId);
 }

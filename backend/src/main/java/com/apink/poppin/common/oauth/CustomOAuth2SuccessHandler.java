@@ -60,7 +60,7 @@ public class CustomOAuth2SuccessHandler extends SimpleUrlAuthenticationSuccessHa
         userRefreshTokenRepository.save(refreshToken);
 
         response.addCookie(createCookie("refresh", refresh));
-        response.sendRedirect("http://localhost:8080/main");
+        response.sendRedirect("http://localhost:8080/mypage/update");
 
     }
 
@@ -75,7 +75,7 @@ public class CustomOAuth2SuccessHandler extends SimpleUrlAuthenticationSuccessHa
         return cookie;
     }
 
-    public void onAuthenticationFailure(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws IOException, ServletException {
-        response.sendRedirect("http://localhost:8080/login?error=true");
-    }
+//    public void onAuthenticationFailure(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws IOException, ServletException {
+//        response.sendRedirect("http://localhost:8080/login?error=true");
+//    }
 }

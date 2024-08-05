@@ -1,0 +1,58 @@
+# server {
+#   listen 80;
+#   server_name ${HOST};
+#   return 301 https://${HOST}$request_uri;
+
+# }
+
+#default: user nobody nobody
+# worker_processes  auto;
+#default: 1
+
+#FIXME: http server should be removed before deploying application on EC2
+server {
+    listen       80;
+    listen  [::]:80;
+    server_name  ${HOST};
+
+    #access_log  /var/log/nginx/host.access.log  main;
+
+    location / {
+        root /usr/share/nginx/html/;
+        index  index.html;
+        try_files $uri $uri/ /index.html?$args;
+    }
+
+    location /api/ {
+        proxy_pass  ${BACKEND_URL}/api/;
+        proxy_set_header Host $http_host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+    }
+}
+
+server {
+    listen 443 ssl;
+    listen [::]:443 ssl;
+    server_name ${HOST};
+
+    ssl_certificate /${DOMAIN_NAME}.crt;
+    ssl_certificate_key /${DOMAIN_NAME}.key;
+
+    #access_log  /var/log/nginx/host.access.log  main;
+
+    location / {
+        root /usr/share/nginx/html/;
+        index  index.html;
+        try_files $uri $uri/ /index.html?$args;
+    }
+
+    location /api/ {
+        proxy_pass  ${BACKEND_URL}/api/;
+        proxy_set_header Host $http_host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+    }
+}

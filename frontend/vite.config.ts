@@ -16,37 +16,67 @@ export default defineConfig({
         theme_color: "#ffffff",
         icons: [
           {
-            src: 'pwa-64x64.png',
-            sizes: '64x64',
-            type: 'image/png'
+            src: "pwa-64x64.png",
+            sizes: "64x64",
+            type: "image/png",
           },
           {
-            src: 'pwa-192x192.png',
-            sizes: '192x192',
-            type: 'image/png'
+            src: "pwa-192x192.png",
+            sizes: "192x192",
+            type: "image/png",
           },
           {
-            src: 'pwa-512x512.png',
-            sizes: '512x512',
-            type: 'image/png',
-            purpose: 'any'
+            src: "pwa-512x512.png",
+            sizes: "512x512",
+            type: "image/png",
+            purpose: "any",
           },
           {
-            src: 'maskable-icon-512x512.png',
-            sizes: '512x512',
-            type: 'image/png',
-            purpose: 'maskable'
-          }
+            src: "maskable-icon-512x512.png",
+            sizes: "512x512",
+            type: "image/png",
+            purpose: "maskable",
+          },
+        ],
+      },
+      workbox: {
+        navigateFallback: null,
+        runtimeCaching: [
+          {
+            urlPattern: ({ url }) =>
+              !["/oauth2", "/login"].some((path) =>
+                url.pathname.startsWith(path)
+              ),
+            handler: "NetworkFirst",
+            options: {
+              cacheName: "api-cache",
+              networkTimeoutSeconds: 10,
+              expiration: {
+                maxEntries: 100,
+                maxAgeSeconds: 24 * 60 * 60, // 24 hours
+              },
+              cacheableResponse: {
+                statuses: [0, 200],
+              },
+            },
+          },
+          {
+            urlPattern: ({ url }) =>
+              ["/oauth2", "/login"].some((path) =>
+                url.pathname.startsWith(path)
+              ),
+            handler: "NetworkOnly",
+          },
         ],
       },
     }),
   ],
   server: {
     proxy: {
-      '/api': {
-        target: 'http://localhost',
+      "/api": {
+        target: "http://localhost",
         changeOrigin: true,
-        rewrite: (path) => path.replace(/^\/api/, ''),
+        rewrite: (path) => path.replace(/^\/api/, ""),
       },
     },
   },

@@ -98,7 +98,7 @@ const ReviewWrite = (popupId: number) => {
         commentDtoList: "", // 댓글 데이터 추가 필요 시 수정
       };
 
-      createReviewData(popupId, review);
+      await createReviewData(popupId, review);
     } catch (error) {
       console.error(error);
     }

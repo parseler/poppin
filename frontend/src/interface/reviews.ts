@@ -20,3 +20,10 @@ export interface ReviewProps {
   createdAt: string;
   commentDtoList: string; // 댓글 인터페이스 추가되면 수정
 }
+
+export interface ReviewUpdateProps {
+  rating: number;
+  title: string;
+  thumbnail: string;
+  content: string;
+}

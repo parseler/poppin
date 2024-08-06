@@ -1,5 +1,6 @@
 package com.apink.poppin.api.popup.dto;
 
+import com.apink.poppin.api.popup.entity.PopupImage;
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -8,6 +9,7 @@ import lombok.NoArgsConstructor;
 
 import java.time.LocalDate;
 import java.util.Date;
+import java.util.List;
 
 @Builder
 @Data
@@ -36,5 +38,11 @@ public class PopupDTO {
     private Double rating;
 
     private boolean deleted;
+
+    private Long managerTsId;
+
+    private String img;
+
+    private List<String> images;
 
 }

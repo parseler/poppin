@@ -54,6 +54,7 @@ public class PopupServiceImpl implements PopupService {
                 .map(popup -> {
                     List<String> images = popupImageRepository.findAllByPopup_PopupId(popup.getPopupId())
                             .stream()
+                            .sorted((img1, img2) -> Integer.compare(img1.getSeq(), img2.getSeq()))
                             .map(PopupImage::getImg)
                             .toList();
                     return PopupDTO.builder()
@@ -91,6 +92,7 @@ public class PopupServiceImpl implements PopupService {
 
         List<String> images = popupImageRepository.findAllByPopup_PopupId(popup.getPopupId())
                 .stream()
+                .sorted((img1, img2) -> Integer.compare(img1.getSeq(), img2.getSeq()))
                 .map(PopupImage::getImg)
                 .toList();
 
@@ -156,6 +158,7 @@ public class PopupServiceImpl implements PopupService {
                 .map(popup -> {
                     List<String> images = popupImageRepository.findAllByPopup_PopupId(popup.getPopupId())
                             .stream()
+                            .sorted((img1, img2) -> Integer.compare(img1.getSeq(), img2.getSeq()))
                             .map(PopupImage::getImg)
                             .toList();
                     return PopupDTO.builder()

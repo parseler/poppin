@@ -37,4 +37,6 @@ public class PopupDTO {
 
     private boolean deleted;
 
+    private Long managerTsId;
+
 }

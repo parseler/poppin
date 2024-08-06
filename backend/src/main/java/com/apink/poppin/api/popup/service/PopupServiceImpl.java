@@ -63,6 +63,7 @@ public class PopupServiceImpl implements PopupService {
                         .heart(popup.getHeart())
                         .hit(popup.getHit())
                         .rating(popup.getRating())
+                        .managerTsId(popup.getManager().getManagerTsid())
                         .build())
                 .collect(Collectors.toList());
     }
@@ -92,6 +93,7 @@ public class PopupServiceImpl implements PopupService {
                 .heart(popup.getHeart())
                 .hit(popup.getHit())
                 .rating(popup.getRating())
+                .managerTsId(popup.getManager().getManagerTsid())
                 .build();
     }
 
@@ -117,6 +119,7 @@ public class PopupServiceImpl implements PopupService {
                         .heart(popup.getHeart())
                         .hit(popup.getHit())
                         .rating(popup.getRating())
+                        .managerTsId(popup.getManager().getManagerTsid())
                         .build())
                 .collect(Collectors.toList());
     }
@@ -148,6 +151,7 @@ public class PopupServiceImpl implements PopupService {
                         .heart(popup.getHeart())
                         .hit(popup.getHit())
                         .rating(popup.getRating())
+                        .managerTsId(popup.getManager().getManagerTsid())
                         .build())
                 .collect(Collectors.toList());
     }

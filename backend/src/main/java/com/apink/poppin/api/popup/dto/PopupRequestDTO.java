@@ -16,9 +16,11 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import org.hibernate.annotations.ColumnDefault;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Builder
 @Getter
@@ -61,5 +63,7 @@ public class PopupRequestDTO {
     private Integer maxPeoplePerSession;
     private Integer maxReservationsPerPerson;
     private String warning;
+
+    private List<MultipartFile> images;
 
 }

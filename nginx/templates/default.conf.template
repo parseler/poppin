@@ -9,13 +9,16 @@
 # worker_processes  auto;
 #default: 1
 
+log_format  proxy_log  '$remote_addr - $remote_user [$time_local] '
+                         '"$request" Status:$status Body:$body_bytes_sent '
+                         'Referer:"$http_referer" "$http_user_agent" '
+                         'Backend:$proxy_host Status:$upstream_status';
+
 #FIXME: http server should be removed before deploying application on EC2
 server {
     listen       80;
     listen  [::]:80;
     server_name  ${HOST};
-
-    #access_log  /var/log/nginx/host.access.log  main;
 
     location / {
         root /usr/share/nginx/html/;
@@ -24,6 +27,7 @@ server {
     }
 
     location /api/ {
+        access_log /var/log/nginx/access.log proxy_log;
         proxy_pass  ${BACKEND_URL}/api/;
         proxy_set_header Host $http_host;
         proxy_set_header X-Real-IP $remote_addr;

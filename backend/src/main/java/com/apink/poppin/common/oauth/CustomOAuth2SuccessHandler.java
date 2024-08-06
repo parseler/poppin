@@ -43,7 +43,7 @@ public class CustomOAuth2SuccessHandler extends SimpleUrlAuthenticationSuccessHa
             if(!jwtTokenUtil.isExpired(refreshToken)) {
                 refresh = refreshToken;
                 response.addCookie(createCookie("refresh", refresh));
-                response.sendRedirect("http://localhost:8080/main");
+                response.sendRedirect("http://localhost/mypage/update");
                 return;
             }
         }
@@ -60,7 +60,7 @@ public class CustomOAuth2SuccessHandler extends SimpleUrlAuthenticationSuccessHa
         userRefreshTokenRepository.save(refreshToken);
 
         response.addCookie(createCookie("refresh", refresh));
-        response.sendRedirect("http://localhost:8080/mypage/update");
+        response.sendRedirect("http://localhost/mypage/update");
 
     }
 
@@ -75,7 +75,8 @@ public class CustomOAuth2SuccessHandler extends SimpleUrlAuthenticationSuccessHa
         return cookie;
     }
 
-//    public void onAuthenticationFailure(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws IOException, ServletException {
-//        response.sendRedirect("http://localhost:8080/login?error=true");
-//    }
+    public void onAuthenticationFailure(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws IOException, ServletException {
+        logger.info("오류남?");
+        response.sendRedirect("http://localhost");
+    }
 }

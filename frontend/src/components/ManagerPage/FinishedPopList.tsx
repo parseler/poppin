@@ -9,8 +9,8 @@ interface Popup {
   name: string;
   startDate: string;
   endDate: string;
-  managerTsid: number;
-  hours: { [key: string]: string };
+  managerTsId: number;
+  hours: string;
 }
 
 function FinishedPopList() {
@@ -22,24 +22,26 @@ function FinishedPopList() {
       try {
         const response = await getPopupList();
         const currentDateTime = new Date();
-        const currentDay = currentDateTime.toLocaleString("ko-KR", { weekday: "short" });
+        const currentDay = currentDateTime.toLocaleString("ko-KR", {
+          weekday: "short",
+        });
 
         const finishedPopups = response.filter((popup: Popup) => {
           const endDate = new Date(popup.endDate);
 
-          if (popup.managerTsid !== managerTsid || currentDateTime <= endDate) {
+          if (popup.managerTsId !== managerTsid || currentDateTime <= endDate) {
             return false;
           }
+          
+          const hoursObject = parseHoursFromString(popup.hours);
+          if (!hoursObject[currentDay]) return currentDateTime > endDate;
 
-          const hours = popup.hours[currentDay];
-          if (!hours) return false;
-
+          const hours = hoursObject[currentDay];
           const [, end] = hours.split(" ~ ");
           const [endHour, endMinute] = end.split(":").map(Number);
 
           const endDateTime = new Date(endDate);
           endDateTime.setHours(endHour, endMinute, 0, 0);
-
           return currentDateTime > endDateTime;
         });
 
@@ -50,6 +52,14 @@ function FinishedPopList() {
     };
     fetchPopups();
   }, []);
+
+  const parseHoursFromString = (
+    hoursString: string
+  ): { [key: string]: string } => {
+    // JSON 형식의 문자열을 객체로 파싱
+    const hoursObject = JSON.parse(hoursString);
+    return hoursObject;
+  };
 
   return (
     <div id="finished-pop-list">

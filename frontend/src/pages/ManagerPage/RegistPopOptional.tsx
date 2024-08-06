@@ -71,9 +71,9 @@ function RegistPopOptional() {
 
     try {
       await createPopup({
-        url: "http://localhost:8080/api/popups",
+        url: "http://localhost/api/popups",
         popupDto: popupData,
-      }); // 백엔드로 데이터 전송
+      });
       alert("팝업이 성공적으로 등록되었습니다.");
       navigate("/regist-pop-fin");
     } catch (error) {

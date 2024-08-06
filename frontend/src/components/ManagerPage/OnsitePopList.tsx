@@ -11,6 +11,7 @@ interface Popup {
   startDate: string;
   endDate: string;
   managerTsid: number;
+  hours: { [key: string]: string };
 }
 
 function OnsitePopList() {
@@ -22,15 +23,32 @@ function OnsitePopList() {
       try {
         const response = await getPopupList();
         const currentDateTime = new Date();
+        const currentDay = currentDateTime.toLocaleString("ko-KR", { weekday: "short" });
+
         const onsitePopups = response.filter((popup: Popup) => {
           const startDate = new Date(popup.startDate);
           const endDate = new Date(popup.endDate);
-          return (
-            popup.managerTsid === managerTsid &&
-            startDate <= currentDateTime &&
-            currentDateTime <= endDate
-          );
+
+          if (popup.managerTsid !== managerTsid || currentDateTime < startDate || currentDateTime > endDate) {
+            return false;
+          }
+
+          const hours = popup.hours[currentDay];
+          if (!hours) return false;
+
+          const [start, end] = hours.split(" ~ ");
+          const [startHour, startMinute] = start.split(":").map(Number);
+          const [endHour, endMinute] = end.split(":").map(Number);
+
+          const startDateTime = new Date();
+          startDateTime.setHours(startHour, startMinute, 0, 0);
+
+          const endDateTime = new Date();
+          endDateTime.setHours(endHour, endMinute, 0, 0);
+
+          return currentDateTime >= startDateTime && currentDateTime <= endDateTime;
         });
+
         setPopups(onsitePopups);
       } catch (error) {
         console.error("Error fetching popups:", error);

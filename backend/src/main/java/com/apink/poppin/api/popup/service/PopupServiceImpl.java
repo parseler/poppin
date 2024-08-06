@@ -24,6 +24,7 @@ import com.apink.poppin.common.exception.dto.BusinessLogicException;
 import com.apink.poppin.common.exception.dto.ExceptionCode;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
@@ -43,7 +44,10 @@ public class PopupServiceImpl implements PopupService {
     private final ManagerRepository managerRepository;
     private final PreReservationInfoRepository preReservationInfoRepository;
     private final PopupImageRepository popupImageRepository;
+    private final FileStorageService fileStorageService;
 
+    @Value("${file.upload-dir}")
+    private String uploadDir;
 
     // 팝업 전체 목록 조회 및 검색
     public List<PopupDTO> getPopupList(String keyword) {
@@ -252,7 +256,7 @@ public class PopupServiceImpl implements PopupService {
     // 팝업 등록 (사전 예약 없이)
     @Transactional
     @Override
-    public Popup createPopupOnly(PopupRequestDTO reqDto) {
+    public PopupDTO createPopupOnly(PopupRequestDTO reqDto) {
         // 매니저 확인
         Manager manager = managerRepository.findByManagerTsid(reqDto.getManagerTsid())
                 .orElseThrow(() -> new IllegalArgumentException("Invalid manager Tsid"));
@@ -274,7 +278,38 @@ public class PopupServiceImpl implements PopupService {
 
         popupRepository.save(popup);
 
-        return popup;
+        List<String> images = reqDto.getImages().stream()
+                .map(fileStorageService::storeFile)
+                .toList();
+
+        for (int i = 0; i < images.size(); i++) {
+            PopupImage popupImage = PopupImage.builder()
+                    .popup(popup)
+                    .img(images.get(i))
+                    .seq(i)
+                    .build();
+            popupImageRepository.save(popupImage);
+        }
+
+        return PopupDTO.builder()
+                .popupId(popup.getPopupId())
+                .name(popup.getName())
+                .startDate(popup.getStartDate())
+                .endDate(popup.getEndDate())
+                .hours(popup.getHours())
+                .snsUrl(popup.getSnsUrl())
+                .pageUrl(popup.getPageUrl())
+                .content(popup.getContent())
+                .description(popup.getDescription())
+                .address(popup.getAddress())
+                .lat(popup.getLat())
+                .lon(popup.getLon())
+                .heart(popup.getHeart())
+                .hit(popup.getHit())
+                .rating(popup.getRating())
+                .managerTsId(popup.getManager().getManagerTsid())
+                .images(images)
+                .build();
     }
 
 
@@ -303,6 +338,19 @@ public class PopupServiceImpl implements PopupService {
 
         popupRepository.save(popup);
 
+        List<String> images = reqDto.getImages().stream()
+                .map(fileStorageService::storeFile)
+                .toList();
+
+        for (int i = 0; i < images.size(); i++) {
+            PopupImage popupImage = PopupImage.builder()
+                    .popup(popup)
+                    .img(images.get(i))
+                    .seq(i)
+                    .build();
+            popupImageRepository.save(popupImage);
+        }
+
         // PreReservationInfo 엔티티 생성
         PreReservationInfo preReservationInfo = PreReservationInfo.builder()
                 .popup(popup)
@@ -320,7 +368,7 @@ public class PopupServiceImpl implements PopupService {
     // 팝업 수정
     @Transactional
     @Override
-    public Popup updatePopup(PopupRequestDTO reqDto, long popupId) {
+    public PopupDTO updatePopup(PopupRequestDTO reqDto, long popupId) {
         // 매니저 확인
         Manager manager = managerRepository.findByManagerTsid(reqDto.getManagerTsid())
                 .orElseThrow(() -> new IllegalArgumentException("Invalid manager Tsid"));
@@ -331,9 +379,41 @@ public class PopupServiceImpl implements PopupService {
 
         popup.updatePopup(reqDto);
 
-//        popupRepository.save(popup);
+        // 기존 이미지 삭제
+        popupImageRepository.deleteAllByPopup(popup);
 
-        return popup;
+        // 새로운 이미지 저장
+        List<String> images = reqDto.getImages().stream()
+                .map(fileStorageService::storeFile)
+                .toList();
+
+        for (int i = 0; i < images.size(); i++) {
+            PopupImage popupImage = PopupImage.builder()
+                    .popup(popup)
+                    .img(images.get(i))
+                    .seq(i)
+                    .build();
+            popupImageRepository.save(popupImage);
+        }
+
+        return PopupDTO.builder()
+                .popupId(popup.getPopupId())
+                .name(popup.getName())
+                .startDate(popup.getStartDate())
+                .endDate(popup.getEndDate())
+                .hours(popup.getHours())
+                .snsUrl(popup.getSnsUrl())
+                .pageUrl(popup.getPageUrl())
+                .content(popup.getContent())
+                .description(popup.getDescription())
+                .lat(popup.getLat())
+                .lon(popup.getLon())
+                .heart(popup.getHeart())
+                .hit(popup.getHit())
+                .rating(popup.getRating())
+                .managerTsId(popup.getManager().getManagerTsid())
+                .images(images)
+                .build();
     }
 
     @Override
@@ -344,12 +424,17 @@ public class PopupServiceImpl implements PopupService {
                 .orElseThrow(() -> new BusinessLogicException(ExceptionCode.POPUP_NOT_FOUND));
 
         if(findPopup.isDeleted())
+
             throw new BusinessLogicException(ExceptionCode.POPUP_NOT_FOUND);
 
         if(findPopup.getManager().getManagerTsid() != managerTsid)
             throw new IllegalArgumentException("Not Valid Access");
 
-        findPopup.deletePopup();
+        // 기존 이미지 삭제
+        List<PopupImage> existingImages = popupImageRepository.findAllByPopup_PopupId(popupId);
+        existingImages.forEach(image -> fileStorageService.deleteFile(image.getImg()));
+        popupImageRepository.deleteAllByPopup(findPopup);
+
     }
 
 

@@ -130,15 +130,15 @@ public class PopupController {
 
     // 팝업 등록 (사전 예약 없이)
     @PostMapping("")
-    public ResponseEntity<Popup> createPopupOnly(@RequestBody PopupRequestDTO popupDto) {
-        Popup popup = popupService.createPopupOnly(popupDto);
+    public ResponseEntity<PopupDTO> createPopupOnly(PopupRequestDTO popupDto) {
+        PopupDTO popup = popupService.createPopupOnly(popupDto);
         return new ResponseEntity<>(popup, HttpStatus.CREATED);
     }
 
 
     // 팝업 등록 (사전 예약까지)
     @PostMapping("/preReservation")
-    public ResponseEntity<?> createPopupWithPreReservation(@RequestBody PopupRequestDTO popupDto) {
+    public ResponseEntity<?> createPopupWithPreReservation(PopupRequestDTO popupDto) {
         popupService.createPopupWithPreReservation(popupDto);
         return new ResponseEntity<>(HttpStatus.CREATED);
     }
@@ -146,8 +146,8 @@ public class PopupController {
 
     // 팝업 수정
     @PutMapping("{popupId}")
-    public ResponseEntity<Popup> updatePopup(@RequestBody PopupRequestDTO popupDto, @PathVariable long popupId) {
-        Popup popup = popupService.updatePopup(popupDto, popupId);
+    public ResponseEntity<PopupDTO> updatePopup(PopupRequestDTO popupDto, @PathVariable long popupId) {
+        PopupDTO popup = popupService.updatePopup(popupDto, popupId);
         return new ResponseEntity<>(popup, HttpStatus.OK);
     }
 

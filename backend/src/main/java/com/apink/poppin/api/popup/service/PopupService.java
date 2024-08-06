@@ -40,13 +40,13 @@ public interface PopupService {
     PreStatementResponseDTO changePreReservation(PreStatementRequestDTO reqDto);
 
     // 팝업 등록 (사전 예약 없이)
-    Popup createPopupOnly(PopupRequestDTO popupDto);
+    PopupDTO createPopupOnly(PopupRequestDTO popupDto);
 
     // 팝업 등록 (사전 예약까지)
     void createPopupWithPreReservation(PopupRequestDTO popupDto);
 
     // 팝업 수정
-    Popup updatePopup(PopupRequestDTO popupDto, long popupId);
+    PopupDTO updatePopup(PopupRequestDTO popupDto, long popupId);
 
     // 팝업 삭제
     void deletePopup(long popupId);

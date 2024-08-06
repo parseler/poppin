@@ -26,23 +26,24 @@ export interface PopupRequestDTO {
   warning?: string;
 }
 
+const api = axios.create({
+  baseURL: "http://localhost/api",
+  headers: {
+    "Content-Type": "application/json",
+  },
+});
+
 // 팝업 등록
-export const createPopup = async (data: { url: string; popupDto: PopupRequestDTO }) => {
-  try {
-    const response = await axios.post(data.url, data.popupDto, {
-      headers: {
-        "Content-Type": "application/json",
-      },
-    });
-    return response.data;
-  } catch (error) {
-    console.error("Error creating popup:", error);
-    throw error;
-  }
+export const createPopup = async (data: {
+  url: string;
+  popupDto: PopupRequestDTO;
+}) => {
+  const response = await api.post(data.url, data.popupDto);
+  return response.data;
 };
 
 // 팝업 조회
 export const getPopupList = async () => {
-  const response = await axios.get('http://localhost:8080/api/popups');
+  const response = await api.get("/popups");
   return response.data;
 };

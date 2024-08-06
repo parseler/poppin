@@ -5,8 +5,8 @@ import { WebSocketServer, WebSocket } from "ws";
 const app = express();
 const upload = multer();
 
-const httpServer = app.listen(8080, () => {
-  console.log("HTTP server is running on http://localhost:8080");
+const httpServer = app.listen("", () => {
+  console.log("HTTP server is running on http://localhost");
 });
 
 // WebSocket 서버 설정
@@ -42,7 +42,7 @@ wsServer.on("connection", (ws) => {
   });
 });
 
-console.log("WebSocket server is running on ws://localhost:8080");
+console.log("WebSocket server is running on ws://localhost");
 
 // POST 요청 처리
 app.post("/api/popups", upload.array("images"), (req, res) => {

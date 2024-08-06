@@ -4,6 +4,8 @@ import com.apink.poppin.api.manager.entity.Manager;
 import com.apink.poppin.api.manager.repository.ManagerRepository;
 import com.apink.poppin.api.popup.dto.PopupDTO;
 import com.apink.poppin.api.popup.dto.PopupRequestDTO;
+import com.apink.poppin.api.popup.entity.PopupImage;
+import com.apink.poppin.api.popup.repository.PopupImageRepository;
 import com.apink.poppin.api.reservation.entity.PreReservationInfo;
 import com.apink.poppin.api.reservation.repository.PreReservationInfoRepository;
 import com.apink.poppin.api.reservation.dto.PreReservationRequestDTO;
@@ -40,30 +42,41 @@ public class PopupServiceImpl implements PopupService {
     private final ReservationStatementRepository reservationStatementRepository;
     private final ManagerRepository managerRepository;
     private final PreReservationInfoRepository preReservationInfoRepository;
+    private final PopupImageRepository popupImageRepository;
 
 
     // 팝업 전체 목록 조회 및 검색
     public List<PopupDTO> getPopupList(String keyword) {
         List<Popup> popups = popupRepository.findAllByNameContaining(keyword);
+//        List<PopupImage> images = popupImageRepository.findAll();
         return popups.stream()
                 .filter(popup -> !popup.isDeleted())
-                .map(popup -> PopupDTO.builder()
-                        .popupId(popup.getPopupId())
-                        .name(popup.getName())
-                        .startDate(popup.getStartDate())
-                        .endDate(popup.getEndDate())
-                        .hours(popup.getHours())
-                        .snsUrl(popup.getSnsUrl())
-                        .pageUrl(popup.getPageUrl())
-                        .content(popup.getContent())
-                        .description(popup.getDescription())
-                        .address(popup.getAddress())
-                        .lat(popup.getLat())
-                        .lon(popup.getLon())
-                        .heart(popup.getHeart())
-                        .hit(popup.getHit())
-                        .rating(popup.getRating())
-                        .build())
+                .map(popup -> {
+                    List<String> images = popupImageRepository.findAllByPopup_PopupId(popup.getPopupId())
+                            .stream()
+                            .sorted((img1, img2) -> Integer.compare(img1.getSeq(), img2.getSeq()))
+                            .map(PopupImage::getImg)
+                            .toList();
+                    return PopupDTO.builder()
+                            .popupId(popup.getPopupId())
+                            .name(popup.getName())
+                            .startDate(popup.getStartDate())
+                            .endDate(popup.getEndDate())
+                            .hours(popup.getHours())
+                            .snsUrl(popup.getSnsUrl())
+                            .pageUrl(popup.getPageUrl())
+                            .content(popup.getContent())
+                            .description(popup.getDescription())
+                            .address(popup.getAddress())
+                            .lat(popup.getLat())
+                            .lon(popup.getLon())
+                            .heart(popup.getHeart())
+                            .hit(popup.getHit())
+                            .rating(popup.getRating())
+                            .managerTsId(popup.getManager().getManagerTsid())
+                            .images(images)
+                            .build();
+                })
                 .collect(Collectors.toList());
     }
 
@@ -75,7 +88,14 @@ public class PopupServiceImpl implements PopupService {
         if(popup.isDeleted())
             throw new BusinessLogicException(ExceptionCode.POPUP_NOT_FOUND);
 
-//        return new PopupDTO(popup.getPopupId(), popup.getName(), popup.getStartDate(), popup.getEndDate(), popup.getHeart());
+//        List<PopupImage> images = popupImageRepository.findAllById(popupId);
+
+        List<String> images = popupImageRepository.findAllByPopup_PopupId(popup.getPopupId())
+                .stream()
+                .sorted((img1, img2) -> Integer.compare(img1.getSeq(), img2.getSeq()))
+                .map(PopupImage::getImg)
+                .toList();
+
         return PopupDTO.builder()
                 .popupId(popup.getPopupId())
                 .name(popup.getName())
@@ -92,6 +112,8 @@ public class PopupServiceImpl implements PopupService {
                 .heart(popup.getHeart())
                 .hit(popup.getHit())
                 .rating(popup.getRating())
+                .managerTsId(popup.getManager().getManagerTsid())
+                .images(images)
                 .build();
     }
 
@@ -117,6 +139,7 @@ public class PopupServiceImpl implements PopupService {
                         .heart(popup.getHeart())
                         .hit(popup.getHit())
                         .rating(popup.getRating())
+                        .managerTsId(popup.getManager().getManagerTsid())
                         .build())
                 .collect(Collectors.toList());
     }
@@ -132,23 +155,32 @@ public class PopupServiceImpl implements PopupService {
         List<Popup> popups = popupRepository.findAllByStartDateAfter(now);
         return popups.stream()
                 .filter(popup -> !popup.isDeleted())
-                .map(popup -> PopupDTO.builder()
-                        .popupId(popup.getPopupId())
-                        .name(popup.getName())
-                        .startDate(popup.getStartDate())
-                        .endDate(popup.getEndDate())
-                        .hours(popup.getHours())
-                        .snsUrl(popup.getSnsUrl())
-                        .pageUrl(popup.getPageUrl())
-                        .content(popup.getContent())
-                        .description(popup.getDescription())
-                        .address(popup.getAddress())
-                        .lat(popup.getLat())
-                        .lon(popup.getLon())
-                        .heart(popup.getHeart())
-                        .hit(popup.getHit())
-                        .rating(popup.getRating())
-                        .build())
+                .map(popup -> {
+                    List<String> images = popupImageRepository.findAllByPopup_PopupId(popup.getPopupId())
+                            .stream()
+                            .sorted((img1, img2) -> Integer.compare(img1.getSeq(), img2.getSeq()))
+                            .map(PopupImage::getImg)
+                            .toList();
+                    return PopupDTO.builder()
+                            .popupId(popup.getPopupId())
+                            .name(popup.getName())
+                            .startDate(popup.getStartDate())
+                            .endDate(popup.getEndDate())
+                            .hours(popup.getHours())
+                            .snsUrl(popup.getSnsUrl())
+                            .pageUrl(popup.getPageUrl())
+                            .content(popup.getContent())
+                            .description(popup.getDescription())
+                            .address(popup.getAddress())
+                            .lat(popup.getLat())
+                            .lon(popup.getLon())
+                            .heart(popup.getHeart())
+                            .hit(popup.getHit())
+                            .rating(popup.getRating())
+                            .managerTsId(popup.getManager().getManagerTsid())
+                            .images(images)
+                            .build();
+                })
                 .collect(Collectors.toList());
     }
 

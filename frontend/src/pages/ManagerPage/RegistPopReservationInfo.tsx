@@ -82,7 +82,7 @@ function RegistPopReservationInfo() {
 
     console.log(popupData);
 
-    mutation.mutate({ url: "http://localhost:8080/api/popups/preReservation", popupDto: popupData });
+    mutation.mutate({ url: "http://localhost/api/popups/preReservation", popupDto: popupData });
   };
 
   const renderCustomHeader = ({

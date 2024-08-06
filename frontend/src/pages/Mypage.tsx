@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import { Box, Modal } from "@mui/material";
 import { getUserData } from "@api/users";
 import axiosInstance from "@api/axiosInstance";
-import { UserData } from "@interface/users";
+import { UserProps } from "@interface/users";
 
 import profile from "@assets/user/profile.png";
 import loginBefore from "@assets/mypage/loginBefore.svg";
@@ -12,7 +12,7 @@ import nextButton from "@assets/mypage/nextButton.svg";
 import profileUpdate from "@assets/mypage/profileUpdateButton.svg";
 
 const Mypage: React.FC = () => {
-  const [user, setUser] = useState<UserData | null>(null);
+  const [user, setUser] = useState<UserProps | null>(null);
   const [isModal, setIsModal] = useState<boolean>(false);
 
   // 사용자 정보 유무 확인

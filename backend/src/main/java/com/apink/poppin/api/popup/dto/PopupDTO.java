@@ -41,6 +41,6 @@ public class PopupDTO {
 
     private Long managerTsId;
 
-    private List<byte[]> images;
+    private List<String> images;
 
 }

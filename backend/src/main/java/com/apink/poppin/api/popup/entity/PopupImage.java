@@ -25,10 +25,10 @@ public class PopupImage {
     @JoinColumn(name = "popup_id", nullable = false)
     private Popup popup;
 
-    @Size(max = 255)
+    @Lob
     @NotNull
     @Column(name = "img", nullable = false)
-    private String img;
+    private byte[] img;
 
     @NotNull
     @Column(name = "seq", nullable = false)

@@ -11,5 +11,5 @@ public interface ManagerRefreshTokenRepository extends JpaRepository<ManagerRefr
 
     ManagerRefreshToken findUserRefreshTokenByManager_ManagerTsid(long managerTsid);
 
-    void deleteManagerRefreshTokenByManagerTsid(long managerTsid);
+    void deleteManagerRefreshTokenByManager_ManagerTsid(long managerTsid);
 }

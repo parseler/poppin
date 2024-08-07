@@ -31,7 +31,7 @@ public class UserDto {
         private String nickname;
         private String email;
         private String phoneNumber;
-        private List<@Valid UserCategory> userCategories;
+        private List<UserCategory> userCategories;
         private UserConsent userConsent;
     }
 

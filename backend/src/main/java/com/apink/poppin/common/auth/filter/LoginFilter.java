@@ -66,7 +66,7 @@ public class LoginFilter extends UsernamePasswordAuthenticationFilter {
                 response.addCookie(createCookie("refresh", refresh));
                 return;
             } else {
-                managerRefreshTokenRepository.deleteManagerRefreshTokenByManagerTsid(managerTsid);
+                managerRefreshTokenRepository.deleteManagerRefreshTokenByManager_ManagerTsid(managerTsid);
             }
         }
 

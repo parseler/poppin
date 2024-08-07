@@ -61,6 +61,7 @@ public class UserServiceImpl implements UserService {
                 .email(user.getEmail())
                 .phoneNumber(user.getPhoneNumber())
                 .userCategories(user.getUserCategories())
+                .userConsent(user.getUserConsents())
                 .build();
 
     }

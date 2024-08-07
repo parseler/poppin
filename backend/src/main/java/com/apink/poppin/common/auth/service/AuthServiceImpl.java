@@ -98,9 +98,9 @@ public class AuthServiceImpl implements AuthService {
     @Transactional
     public void deleteRefreshToken(long tsid, String role) {
         if ("ROLE_MANAGER".equals(role)) {
-            managerRefreshTokenRepository.deleteManagerRefreshTokenByManagerTsid(tsid);
+            managerRefreshTokenRepository.deleteManagerRefreshTokenByManager_ManagerTsid(tsid);
         } else {
-            userRefreshTokenRepository.deleteUserRefreshTokenByUserTsid(tsid);
+            userRefreshTokenRepository.deleteUserRefreshTokenByUser_UserTsid(tsid);
         }
     }
 

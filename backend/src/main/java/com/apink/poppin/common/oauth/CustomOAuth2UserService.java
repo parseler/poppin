@@ -63,6 +63,7 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
                     .phoneNumber(oAuth2UserResponse.getPhoneNumber())
                     .img("IMG_URL")
                     .role("ROLE_USER")
+                    .state(true)
                     .build();
 
             userRepository.save(user);

@@ -53,7 +53,7 @@ public class CustomOAuth2SuccessHandler extends SimpleUrlAuthenticationSuccessHa
                 response.sendRedirect("http://localhost");
                 return;
             } else {
-                userRefreshTokenRepository.deleteUserRefreshTokenByUserTsid(userTsid);
+                userRefreshTokenRepository.deleteUserRefreshTokenByUser_UserTsid(userTsid);
             }
         }
 

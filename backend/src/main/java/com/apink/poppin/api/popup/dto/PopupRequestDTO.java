@@ -64,6 +64,6 @@ public class PopupRequestDTO {
     private Integer maxReservationsPerPerson;
     private String warning;
 
-    private List<MultipartFile> images;
+    private List<String> images;
 
 }

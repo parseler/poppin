@@ -278,9 +278,7 @@ public class PopupServiceImpl implements PopupService {
 
         popupRepository.save(popup);
 
-        List<String> images = reqDto.getImages().stream()
-                .map(fileStorageService::storeFile)
-                .toList();
+        List<String> images = reqDto.getImages();
 
         for (int i = 0; i < images.size(); i++) {
             PopupImage popupImage = PopupImage.builder()
@@ -338,9 +336,7 @@ public class PopupServiceImpl implements PopupService {
 
         popupRepository.save(popup);
 
-        List<String> images = reqDto.getImages().stream()
-                .map(fileStorageService::storeFile)
-                .toList();
+        List<String> images = reqDto.getImages();
 
         for (int i = 0; i < images.size(); i++) {
             PopupImage popupImage = PopupImage.builder()
@@ -383,9 +379,7 @@ public class PopupServiceImpl implements PopupService {
         popupImageRepository.deleteAllByPopup(popup);
 
         // 새로운 이미지 저장
-        List<String> images = reqDto.getImages().stream()
-                .map(fileStorageService::storeFile)
-                .toList();
+        List<String> images = reqDto.getImages();
 
         for (int i = 0; i < images.size(); i++) {
             PopupImage popupImage = PopupImage.builder()
@@ -431,10 +425,9 @@ public class PopupServiceImpl implements PopupService {
             throw new IllegalArgumentException("Not Valid Access");
 
         // 기존 이미지 삭제
-        List<PopupImage> existingImages = popupImageRepository.findAllByPopup_PopupId(popupId);
-        existingImages.forEach(image -> fileStorageService.deleteFile(image.getImg()));
         popupImageRepository.deleteAllByPopup(findPopup);
 
+        findPopup.deletePopup();
     }
 
 

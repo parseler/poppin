@@ -70,6 +70,7 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
             UserDto.Login login = UserDto.Login.builder()
                     .userTsid(user.getUserTsid())
                     .role(user.getRole())
+                    .signed(false)
                     .build();
 
             return new CustomOAuth2User(login);
@@ -80,6 +81,7 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
             UserDto.Login login = UserDto.Login.builder()
                     .userTsid(existData.getUserTsid())
                     .role(existData.getRole())
+                    .signed(true)
                     .build();
 
             return new CustomOAuth2User(login);

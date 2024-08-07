@@ -40,6 +40,7 @@ public class UserDto {
     public static class Login {
         private long userTsid;
         private String role;
+        private boolean signed;
     }
 
 

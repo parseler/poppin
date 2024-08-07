@@ -121,7 +121,7 @@ ENGINE = InnoDB;
 CREATE TABLE IF NOT EXISTS `poppin`.`popup_image` (
   `popup_image_id` INT NOT NULL AUTO_INCREMENT,
   `popup_id` INT NOT NULL,
-  `img` LONGBLOB NOT NULL,
+  `img` VARCHAR(255) NOT NULL,
   `seq` INT NOT NULL,
   PRIMARY KEY (`popup_image_id`),
   INDEX `fk_popup_image_popup1_idx` (`popup_id` ASC) VISIBLE,

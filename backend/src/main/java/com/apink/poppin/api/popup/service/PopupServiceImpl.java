@@ -57,7 +57,7 @@ public class PopupServiceImpl implements PopupService {
         return popups.stream()
                 .filter(popup -> !popup.isDeleted())
                 .map(popup -> {
-                    List<byte[]> images = popupImageRepository.findAllByPopup_PopupId(popup.getPopupId())
+                    List<String> images = popupImageRepository.findAllByPopup_PopupId(popup.getPopupId())
                             .stream()
                             .sorted((img1, img2) -> Integer.compare(img1.getSeq(), img2.getSeq()))
                             .map(PopupImage::getImg)
@@ -95,7 +95,7 @@ public class PopupServiceImpl implements PopupService {
 
 //        List<PopupImage> images = popupImageRepository.findAllById(popupId);
 
-        List<byte[]> images = popupImageRepository.findAllByPopup_PopupId(popup.getPopupId())
+        List<String> images = popupImageRepository.findAllByPopup_PopupId(popup.getPopupId())
                 .stream()
                 .sorted((img1, img2) -> Integer.compare(img1.getSeq(), img2.getSeq()))
                 .map(PopupImage::getImg)
@@ -161,7 +161,7 @@ public class PopupServiceImpl implements PopupService {
         return popups.stream()
                 .filter(popup -> !popup.isDeleted())
                 .map(popup -> {
-                    List<byte[]> images = popupImageRepository.findAllByPopup_PopupId(popup.getPopupId())
+                    List<String> images = popupImageRepository.findAllByPopup_PopupId(popup.getPopupId())
                             .stream()
                             .sorted((img1, img2) -> Integer.compare(img1.getSeq(), img2.getSeq()))
                             .map(PopupImage::getImg)
@@ -279,21 +279,18 @@ public class PopupServiceImpl implements PopupService {
 
         popupRepository.save(popup);
 
-        List<PopupImage> popupImages = reqDto.getImages().stream()
-            .map(file -> {
-                try {
-                    return PopupImage.builder()
-                            .popup(popup)
-                            .img(file.getBytes())
-                            .seq(reqDto.getImages().indexOf(file))
-                            .build();
-                } catch (IOException e) {
-                    throw new RuntimeException("Could not store file " + file.getOriginalFilename() + ". Please try again!", e);
-                }
-            })
-            .collect(Collectors.toList());
+        List<String> images = reqDto.getImages().stream()
+                .map(fileStorageService::storeFile)
+                .toList();
 
-        popupImageRepository.saveAll(popupImages);
+        for (int i = 0; i < images.size(); i++) {
+            PopupImage popupImage = PopupImage.builder()
+                    .popup(popup)
+                    .img(images.get(i))
+                    .seq(i)
+                    .build();
+            popupImageRepository.save(popupImage);
+        }
 
         return PopupDTO.builder()
                 .popupId(popup.getPopupId())
@@ -312,7 +309,7 @@ public class PopupServiceImpl implements PopupService {
                 .hit(popup.getHit())
                 .rating(popup.getRating())
                 .managerTsId(popup.getManager().getManagerTsid())
-                .images(popupImages.stream().map(PopupImage::getImg).collect(Collectors.toList()))
+                .images(images)
                 .build();
     }
 
@@ -342,21 +339,18 @@ public class PopupServiceImpl implements PopupService {
 
         popupRepository.save(popup);
 
-        List<PopupImage> popupImages = reqDto.getImages().stream()
-            .map(file -> {
-                try {
-                    return PopupImage.builder()
-                            .popup(popup)
-                            .img(file.getBytes())
-                            .seq(reqDto.getImages().indexOf(file))
-                            .build();
-                } catch (IOException e) {
-                    throw new RuntimeException("Could not store file " + file.getOriginalFilename() + ". Please try again!", e);
-                }
-            })
-            .collect(Collectors.toList());
+        List<String> images = reqDto.getImages().stream()
+                .map(fileStorageService::storeFile)
+                .toList();
 
-        popupImageRepository.saveAll(popupImages);
+        for (int i = 0; i < images.size(); i++) {
+            PopupImage popupImage = PopupImage.builder()
+                    .popup(popup)
+                    .img(images.get(i))
+                    .seq(i)
+                    .build();
+            popupImageRepository.save(popupImage);
+        }
 
         // PreReservationInfo 엔티티 생성
         PreReservationInfo preReservationInfo = PreReservationInfo.builder()
@@ -387,24 +381,23 @@ public class PopupServiceImpl implements PopupService {
         popup.updatePopup(reqDto);
 
         // 기존 이미지 삭제
+        List<PopupImage> existingImages = popupImageRepository.findAllByPopup_PopupId(popupId);
+        existingImages.forEach(image -> fileStorageService.deleteFile(image.getImg()));
         popupImageRepository.deleteAllByPopup(popup);
 
         // 새로운 이미지 저장
-        List<PopupImage> popupImages = reqDto.getImages().stream()
-                .map(file -> {
-                    try {
-                        return PopupImage.builder()
-                                .popup(popup)
-                                .img(file.getBytes())
-                                .seq(reqDto.getImages().indexOf(file))
-                                .build();
-                    } catch (IOException e) {
-                        throw new RuntimeException("Could not store file " + file.getOriginalFilename() + ". Please try again!", e);
-                    }
-                })
-                .collect(Collectors.toList());
+        List<String> images = reqDto.getImages().stream()
+                .map(fileStorageService::storeFile)
+                .toList();
 
-        popupImageRepository.saveAll(popupImages);
+        for (int i = 0; i < images.size(); i++) {
+            PopupImage popupImage = PopupImage.builder()
+                    .popup(popup)
+                    .img(images.get(i))
+                    .seq(i)
+                    .build();
+            popupImageRepository.save(popupImage);
+        }
 
         return PopupDTO.builder()
                 .popupId(popup.getPopupId())
@@ -423,7 +416,7 @@ public class PopupServiceImpl implements PopupService {
                 .hit(popup.getHit())
                 .rating(popup.getRating())
                 .managerTsId(popup.getManager().getManagerTsid())
-                .images(popupImages.stream().map(PopupImage::getImg).collect(Collectors.toList()))
+                .images(images)
                 .build();
     }
 
@@ -442,6 +435,8 @@ public class PopupServiceImpl implements PopupService {
             throw new IllegalArgumentException("Not Valid Access");
 
         // 기존 이미지 삭제
+        List<PopupImage> existingImages = popupImageRepository.findAllByPopup_PopupId(popupId);
+        existingImages.forEach(image -> fileStorageService.deleteFile(image.getImg()));
         popupImageRepository.deleteAllByPopup(findPopup);
 
         findPopup.deletePopup();

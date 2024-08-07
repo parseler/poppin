@@ -6,7 +6,7 @@ import naver from "@assets/login/icon_naver.png";
 const Login = () => {
   const handleKakaoLogin = () => {
     window.location.href = `http://localhost/oauth2/authorization/kakao`;
-  }
+  };
 
   const handleNaverLogin = () => {
     window.location.href = `http://localhost/oauth2/authorization/naver`;

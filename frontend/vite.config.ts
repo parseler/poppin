@@ -60,21 +60,7 @@ export default defineConfig({
               },
             },
           },
-          {
-            urlPattern: /\.(?:png|jpg|jpeg|svg|gif)$/, // 이미지 파일 패턴
-            handler: "NetworkFirst", // 캐시 우선 전략
-            options: {
-              cacheName: "images", // 캐시 이름
-              expiration: {
-                maxEntries: 50, // 최대 저장 항목 수
-                maxAgeSeconds: 30 * 24 * 60 * 60, // 항목 만료 기간 (30일)
-              },
-              cacheableResponse: {
-                statuses: [0, 200], // 캐시 가능한 응답 상태
-              },
-            },
-          },
-          {
+          { 
             urlPattern: ({ url }) =>
               ["/oauth2", "/login"].some((path) =>
                 url.pathname.startsWith(path)

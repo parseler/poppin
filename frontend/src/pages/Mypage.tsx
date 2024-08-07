@@ -91,13 +91,13 @@ const Mypage: React.FC = () => {
           {/* 로그인 후 */}
           <div className="login-wrap">
             <div className="mypage-profile">
-              <div className="mypage-profile-image">
-                {user.img === null ? (
+              {/* <div className="mypage-profile-image">
+                {user.img === null || user.img === undefined ? (
                   <img src={profile} alt="프로필 사진" />
                 ) : (
                   <img src={user.img} alt="프로필 사진" />
                 )}
-              </div>
+              </div> */}
               <span className="mypage-nickname">{user.nickname}</span>님
               <Link to="/mypage/update" className="profile-update">
                 <img src={profileUpdate} alt="프로필 수정 아이콘" />

@@ -1,13 +1,26 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { UserData } from "@interface/users";
+import { UserProps } from "@interface/users";
 import { checkNickname, getUserData, updateUserData } from "@api/users";
 import profile from "@assets/user/profile.png";
 import Header from "@components/common/Header";
 import Menu from "@components/common/Menu";
 
 const UserUpdate = () => {
-  const [user, setUser] = useState<UserData>();
+  const [user, setUser] = useState<UserProps>({
+    nickname: "",
+    email: "",
+    phoneNumber: "",
+    categoryList: [],
+    agreementDto: {
+      marketing_consent: false,
+      marketing_updated_at: "",
+      service_push_consent: false,
+      service_updated_at: "",
+    },
+    role: "",
+    img: null,
+  });
   const [nicknameMsg, setNicknameMsg] = useState<string>("");
   const [nicknameCheck, setNicknameCheck] = useState<boolean>(false);
   const navigate = useNavigate();
@@ -29,7 +42,7 @@ const UserUpdate = () => {
     setUser({
       ...user,
       [name]: type === "checkbox" ? checked : value,
-    } as UserData);
+    } as UserProps);
 
     if (name === "nickname") {
       setNicknameCheck(false);
@@ -66,7 +79,7 @@ const UserUpdate = () => {
         setUser({
           ...user,
           img: reader.result as string,
-        } as UserData);
+        } as UserProps);
       };
       reader.readAsDataURL(file);
     }
@@ -93,7 +106,7 @@ const UserUpdate = () => {
     setUser({
       ...user,
       categoryList: newCategories,
-    } as UserData);
+    } as UserProps);
   };
 
   // 사용자 정보 수정
@@ -118,7 +131,7 @@ const UserUpdate = () => {
       <Header leftIcon="취소" rightIcon="완료" onRightClick={submit} />
 
       <div id="user-update">
-        <div className="update-image">
+        {/* <div className="update-image">
           <div className="profile-black"></div>
           {user.img ? (
             <img src={user.img} alt="profile" onClick={handleImageClick} />
@@ -144,7 +157,7 @@ const UserUpdate = () => {
               fill="#D4145A"
             />
           </svg>
-        </div>
+        </div> */}
         <div className="update-profile">
           <div className="update-nickname">
             <label htmlFor="nickname">닉네임</label>

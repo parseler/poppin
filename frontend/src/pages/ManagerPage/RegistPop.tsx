@@ -41,8 +41,6 @@ function RegistPop() {
     setEndDate,
     address,
     setAddress,
-    detailedAddress,
-    setDetailedAddress,
     lat,
     setLat,
     lon,
@@ -57,8 +55,9 @@ function RegistPop() {
   const [selectedStartTimeMinute, setSelectedStartTimeMinute] = useState<string>("");
   const [selectedEndTimeHour, setSelectedEndTimeHour] = useState<string>("");
   const [selectedEndTimeMinute, setSelectedEndTimeMinute] = useState<string>("");
-  const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
+  const [selectedCategories, setSelectedCategories] = useState<number[]>([]);
   const [showAddressModal, setShowAddressModal] = useState(false);
+  const [detailedAddress, setDetailedAddress] = useState<string>("");
   const navigate = useNavigate();
 
   const goNextStep = () => {
@@ -71,7 +70,7 @@ function RegistPop() {
     const hours = JSON.stringify(timeSlots);
 
     setHours(hours);
-    setCategories(selectedCategories);
+    setCategories(selectedCategories.map(String));
 
     setPopupData({
       storeName,
@@ -80,11 +79,10 @@ function RegistPop() {
       startDate,
       endDate,
       hours,
-      address,
-      detailedAddress,
+      address: `${address} ${detailedAddress}`,
       lat,
       lon,
-      categories: selectedCategories,
+      categories: selectedCategories.map(String),
     });
     console.log(
       storeName,
@@ -93,8 +91,7 @@ function RegistPop() {
       startDate,
       endDate,
       hours,
-      address,
-      detailedAddress,
+      `${address} ${detailedAddress}`,
       lat,
       lon,
       selectedCategories
@@ -106,22 +103,7 @@ function RegistPop() {
   const handleImageChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     if (event.target.files) {
       const files = Array.from(event.target.files);
-      const promises = files.map((file) => {
-        return new Promise<string>((resolve, reject) => {
-          const reader = new FileReader();
-          reader.readAsDataURL(file);
-          reader.onload = () => resolve(reader.result as string);
-          reader.onerror = (error) => reject(error);
-        });
-      });
-
-      Promise.all(promises)
-        .then((base64Files) => {
-          setSelectedImages([...selectedImages, ...base64Files]);
-        })
-        .catch((error) => {
-          console.error("Error reading files: ", error);
-        });
+      setSelectedImages(files);
     }
   };
 
@@ -150,14 +132,14 @@ function RegistPop() {
     });
   };
 
-  const handleCategoryClick = (category: string) => {
+  const handleCategoryClick = (categoryIndex: number) => {
     return (event: React.MouseEvent<HTMLButtonElement>) => {
       event.preventDefault();
       let newCategories = [...selectedCategories];
-      if (newCategories.includes(category)) {
-        newCategories = newCategories.filter((cat) => cat !== category);
+      if (newCategories.includes(categoryIndex)) {
+        newCategories = newCategories.filter((cat) => cat !== categoryIndex);
       } else if (newCategories.length < 3) {
-        newCategories.push(category);
+        newCategories.push(categoryIndex);
       }
       setSelectedCategories(newCategories);
     };
@@ -239,7 +221,7 @@ function RegistPop() {
           />
           <div className="image-preview">
             {selectedImages.map((image, index) => (
-              <img key={index} src={image} alt={`popup-store-${index}`} />
+              <img key={index} src={URL.createObjectURL(image)} alt={`popup-store-${index}`} />
             ))}
           </div>
         </div>
@@ -384,17 +366,17 @@ function RegistPop() {
               "가전/디지털",
               "콘텐츠",
               "취미/여가",
-            ].map((category) => (
+            ].map((category, index) => (
               <button
                 key={category}
                 type="button"
-                onClick={handleCategoryClick(category)}
+                onClick={handleCategoryClick(index+1)}
                 className={
-                  selectedCategories.includes(category) ? "selected" : ""
+                  selectedCategories.includes(index+1) ? "selected" : ""
                 }
                 disabled={
                   selectedCategories.length >= 3 &&
-                  !selectedCategories.includes(category)
+                  !selectedCategories.includes(index+1)
                 }
               >
                 {category}

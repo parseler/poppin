@@ -44,7 +44,7 @@ public class PopupRequestDTO {
 
     private String description;
 
-    private Long categoryId;
+//    private Long categoryId;
 
     private String snsUrl;
     private String pageUrl;
@@ -65,5 +65,6 @@ public class PopupRequestDTO {
     private String warning;
 
     private List<MultipartFile> images;
+    private List<Integer> categories;
 
 }

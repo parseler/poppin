@@ -4,7 +4,11 @@ import com.apink.poppin.api.manager.entity.Manager;
 import com.apink.poppin.api.manager.repository.ManagerRepository;
 import com.apink.poppin.api.popup.dto.PopupDTO;
 import com.apink.poppin.api.popup.dto.PopupRequestDTO;
+import com.apink.poppin.api.popup.entity.Category;
+import com.apink.poppin.api.popup.entity.PopupCategory;
 import com.apink.poppin.api.popup.entity.PopupImage;
+import com.apink.poppin.api.popup.repository.CategoryRepository;
+import com.apink.poppin.api.popup.repository.PopupCategoryRepository;
 import com.apink.poppin.api.popup.repository.PopupImageRepository;
 import com.apink.poppin.api.reservation.entity.PreReservationInfo;
 import com.apink.poppin.api.reservation.repository.PreReservationInfoRepository;
@@ -46,6 +50,9 @@ public class PopupServiceImpl implements PopupService {
     private final PreReservationInfoRepository preReservationInfoRepository;
     private final PopupImageRepository popupImageRepository;
     private final FileStorageService fileStorageService;
+    private final PopupCategoryRepository popupCategoryRepository;
+    private final CategoryRepository categoryRepository;
+
 
     @Value("${file.upload-dir}")
     private String uploadDir;
@@ -62,6 +69,12 @@ public class PopupServiceImpl implements PopupService {
                             .sorted((img1, img2) -> Integer.compare(img1.getSeq(), img2.getSeq()))
                             .map(PopupImage::getImg)
                             .toList();
+
+                    List<String> categories = popupCategoryRepository.findByPopup(popup)
+                            .stream()
+                            .map(popupCategory -> popupCategory.getCategory().getName())
+                            .toList();
+
                     return PopupDTO.builder()
                             .popupId(popup.getPopupId())
                             .name(popup.getName())
@@ -80,6 +93,7 @@ public class PopupServiceImpl implements PopupService {
                             .rating(popup.getRating())
                             .managerTsId(popup.getManager().getManagerTsid())
                             .images(images)
+                            .categories(categories)
                             .build();
                 })
                 .collect(Collectors.toList());
@@ -93,12 +107,15 @@ public class PopupServiceImpl implements PopupService {
         if(popup.isDeleted())
             throw new BusinessLogicException(ExceptionCode.POPUP_NOT_FOUND);
 
-//        List<PopupImage> images = popupImageRepository.findAllById(popupId);
-
         List<String> images = popupImageRepository.findAllByPopup_PopupId(popup.getPopupId())
                 .stream()
                 .sorted((img1, img2) -> Integer.compare(img1.getSeq(), img2.getSeq()))
                 .map(PopupImage::getImg)
+                .toList();
+
+        List<String> categories = popupCategoryRepository.findByPopup(popup)
+                .stream()
+                .map(popupCategory -> popupCategory.getCategory().getName())
                 .toList();
 
         return PopupDTO.builder()
@@ -119,6 +136,7 @@ public class PopupServiceImpl implements PopupService {
                 .rating(popup.getRating())
                 .managerTsId(popup.getManager().getManagerTsid())
                 .images(images)
+                .categories(categories)
                 .build();
     }
 
@@ -292,6 +310,19 @@ public class PopupServiceImpl implements PopupService {
             popupImageRepository.save(popupImage);
         }
 
+        List<PopupCategory> popupCategories = reqDto.getCategories().stream()
+                .map(categoryId -> {
+                    Category category = categoryRepository.findById(categoryId)
+                            .orElseThrow(() -> new IllegalArgumentException("Invalid category ID"));
+                    return PopupCategory.builder()
+                            .popup(popup)
+                            .category(category)
+                            .build();
+                })
+                .collect(Collectors.toList());
+
+        popupCategoryRepository.saveAll(popupCategories);
+
         return PopupDTO.builder()
                 .popupId(popup.getPopupId())
                 .name(popup.getName())
@@ -310,6 +341,7 @@ public class PopupServiceImpl implements PopupService {
                 .rating(popup.getRating())
                 .managerTsId(popup.getManager().getManagerTsid())
                 .images(images)
+                .categories(popupCategories.stream().map(pc -> pc.getCategory().getName()).collect(Collectors.toList()))
                 .build();
     }
 
@@ -351,6 +383,19 @@ public class PopupServiceImpl implements PopupService {
                     .build();
             popupImageRepository.save(popupImage);
         }
+
+        List<PopupCategory> popupCategories = reqDto.getCategories().stream()
+                .map(categoryId -> {
+                    Category category = categoryRepository.findById(categoryId)
+                            .orElseThrow(() -> new IllegalArgumentException("Invalid category ID"));
+                    return PopupCategory.builder()
+                            .popup(popup)
+                            .category(category)
+                            .build();
+                })
+                .collect(Collectors.toList());
+
+        popupCategoryRepository.saveAll(popupCategories);
 
         // PreReservationInfo 엔티티 생성
         PreReservationInfo preReservationInfo = PreReservationInfo.builder()
@@ -399,6 +444,23 @@ public class PopupServiceImpl implements PopupService {
             popupImageRepository.save(popupImage);
         }
 
+        // 기존 카테고리 삭제
+        popupCategoryRepository.deleteAllByPopup(popup);
+
+        // 카테고리 다시 저장
+        List<PopupCategory> popupCategories = reqDto.getCategories().stream()
+                .map(categoryId -> {
+                    Category category = categoryRepository.findById(categoryId)
+                            .orElseThrow(() -> new IllegalArgumentException("Invalid category ID"));
+                    return PopupCategory.builder()
+                            .popup(popup)
+                            .category(category)
+                            .build();
+                })
+                .collect(Collectors.toList());
+
+        popupCategoryRepository.saveAll(popupCategories);
+
         return PopupDTO.builder()
                 .popupId(popup.getPopupId())
                 .name(popup.getName())
@@ -417,6 +479,7 @@ public class PopupServiceImpl implements PopupService {
                 .rating(popup.getRating())
                 .managerTsId(popup.getManager().getManagerTsid())
                 .images(images)
+                .categories(popupCategories.stream().map(pc -> pc.getCategory().getName()).collect(Collectors.toList()))
                 .build();
     }
 

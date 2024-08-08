@@ -118,6 +118,15 @@ public class PopupServiceImpl implements PopupService {
                 .map(popupCategory -> popupCategory.getCategory().getName())
                 .toList();
 
+        // 사전 예약이 있는 지 확인
+        boolean checkPreReservation;
+        if (preReservationInfoRepository.existsByPopup(popup)) {
+            checkPreReservation = true;
+        }
+        else {
+            checkPreReservation = false;
+        }
+
         return PopupDTO.builder()
                 .popupId(popup.getPopupId())
                 .name(popup.getName())
@@ -137,6 +146,7 @@ public class PopupServiceImpl implements PopupService {
                 .managerTsId(popup.getManager().getManagerTsid())
                 .images(images)
                 .categories(categories)
+                .checkPreReservation(checkPreReservation)
                 .build();
     }
 

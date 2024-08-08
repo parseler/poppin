@@ -64,7 +64,7 @@ public class ManagerController {
     @GetMapping("/me/popups")
     ResponseEntity<?> getMyPopups(@PathVariable Long managerTsid) {
         //TODO: popupService findByID 구현
-//        popupService.getById(managerTsid);
+//        popupService.getAllPopupByManager(managerTsid);
         return ResponseEntity.ok().build();
     }
 

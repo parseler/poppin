@@ -61,6 +61,8 @@ public class PopupServiceImpl implements PopupService {
     public List<PopupDTO> getPopupList(String keyword) {
         List<Popup> popups = popupRepository.findAllByNameContaining(keyword);
 //        List<PopupImage> images = popupImageRepository.findAll();
+
+
         return popups.stream()
                 .filter(popup -> !popup.isDeleted())
                 .map(popup -> {
@@ -94,6 +96,9 @@ public class PopupServiceImpl implements PopupService {
                             .managerTsId(popup.getManager().getManagerTsid())
                             .images(images)
                             .categories(categories)
+                            .checkPreReservation(
+                                    preReservationInfoRepository.existsByPopup(popup)
+                            )
                             .build();
                 })
                 .collect(Collectors.toList());
@@ -118,14 +123,6 @@ public class PopupServiceImpl implements PopupService {
                 .map(popupCategory -> popupCategory.getCategory().getName())
                 .toList();
 
-        // 사전 예약이 있는 지 확인
-        boolean checkPreReservation;
-        if (preReservationInfoRepository.existsByPopup(popup)) {
-            checkPreReservation = true;
-        }
-        else {
-            checkPreReservation = false;
-        }
 
         return PopupDTO.builder()
                 .popupId(popup.getPopupId())
@@ -146,7 +143,7 @@ public class PopupServiceImpl implements PopupService {
                 .managerTsId(popup.getManager().getManagerTsid())
                 .images(images)
                 .categories(categories)
-                .checkPreReservation(checkPreReservation)
+                .checkPreReservation(preReservationInfoRepository.existsByPopup(popup))
                 .build();
     }
 
@@ -212,6 +209,7 @@ public class PopupServiceImpl implements PopupService {
                             .rating(popup.getRating())
                             .managerTsId(popup.getManager().getManagerTsid())
                             .images(images)
+                            .checkPreReservation(preReservationInfoRepository.existsByPopup(popup))
                             .build();
                 })
                 .collect(Collectors.toList());
@@ -514,6 +512,56 @@ public class PopupServiceImpl implements PopupService {
 
         findPopup.deletePopup();
     }
+
+    // 본인이 등록한 팝업 목록 조회 (매니저)
+    @Override
+    public List<PopupDTO> getAllPopupByManager(Long managerTsId) {
+        // 매니저 확인
+        Manager manager = managerRepository.findByManagerTsid(managerTsId)
+                .orElseThrow(() -> new IllegalArgumentException("Invalid manager Tsid"));
+
+        List<Popup> popups = popupRepository.findAllByManager(manager);
+
+        return popups.stream()
+                .filter(popup -> !popup.isDeleted())
+                .map(popup -> {
+                    List<String> images = popupImageRepository.findAllByPopup_PopupId(popup.getPopupId())
+                            .stream()
+                            .sorted((img1, img2) -> Integer.compare(img1.getSeq(), img2.getSeq()))
+                            .map(PopupImage::getImg)
+                            .toList();
+
+                    List<String> categories = popupCategoryRepository.findByPopup(popup)
+                            .stream()
+                            .map(popupCategory -> popupCategory.getCategory().getName())
+                            .toList();
+
+                    return PopupDTO.builder()
+                            .popupId(popup.getPopupId())
+                            .name(popup.getName())
+                            .startDate(popup.getStartDate())
+                            .endDate(popup.getEndDate())
+                            .hours(popup.getHours())
+                            .snsUrl(popup.getSnsUrl())
+                            .pageUrl(popup.getPageUrl())
+                            .content(popup.getContent())
+                            .description(popup.getDescription())
+                            .address(popup.getAddress())
+                            .lat(popup.getLat())
+                            .lon(popup.getLon())
+                            .heart(popup.getHeart())
+                            .hit(popup.getHit())
+                            .rating(popup.getRating())
+                            .managerTsId(popup.getManager().getManagerTsid())
+                            .images(images)
+                            .categories(categories)
+                            .checkPreReservation(preReservationInfoRepository.existsByPopup(popup))
+                            .build();
+                })
+                .collect(Collectors.toList());
+    }
+
+    //
 
 
     // DTO 변환

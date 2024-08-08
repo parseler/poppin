@@ -51,4 +51,7 @@ public interface PopupService {
     // 팝업 삭제
     void deletePopup(long popupId);
 
+    // 본인이 등록한 팝업 전체 조회 (매니저)
+    List<PopupDTO> getAllPopupByManager(Long managerTsId);
+
 }

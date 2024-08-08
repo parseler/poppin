@@ -1,5 +1,6 @@
 package com.apink.poppin.api.popup.repository;
 
+import com.apink.poppin.api.manager.entity.Manager;
 import com.apink.poppin.api.popup.entity.Popup;
 import com.apink.poppin.api.reservation.dto.ReservationResponseDto;
 import io.lettuce.core.dynamic.annotation.Param;
@@ -30,4 +31,8 @@ public interface PopupRepository extends JpaRepository<Popup, Long> {
             "LEFT JOIN PopupImage pi ON pi.popup.popupId = p.popupId AND pi.seq = 1 " +
             "WHERE p.popupId = :popupId")
     ReservationResponseDto findPopupNameAndFirstImageByPopupId(@Param("popupId") Long popupId);
+
+    // 본인이 등록한 팝업 목록 조회 (매니저)
+    List<Popup> findAllByManager(Manager manager);
+
 }

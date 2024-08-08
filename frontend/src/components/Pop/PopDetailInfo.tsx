@@ -10,49 +10,37 @@ import scheduleClose from "@assets/scheduleClose.svg";
 import homepageIcon from "@assets/homepageIcon.svg";
 import insta from "@assets/insta.svg";
 import parkingIcon from "@assets/popService/parkingIcon.svg";
-import feeIcon from "@assets/popService/feeIcon.svg";
-import petIcon from "@assets/popService/petIcon.svg";
+import feeIcon from "@assets/popService/parkingIcon.svg";
+import petIcon from "@assets/popService/parkingIcon.svg";
 import foodIcon from "@assets/popService/parkingIcon.svg";
-import photoIcon from "@assets/popService/feeIcon.svg";
-import ageLimitIcon from "@assets/popService/petIcon.svg";
+import photoIcon from "@assets/popService/parkingIcon.svg";
+import ageLimitIcon from "@assets/popService/parkingIcon.svg";
 import noParkingIcon from "@assets/popService/parkingIcon.svg";
-import noFeeIcon from "@assets/popService/feeIcon.svg";
-import noPetIcon from "@assets/popService/petIcon.svg";
+import noFeeIcon from "@assets/popService/parkingIcon.svg";
+import noPetIcon from "@assets/popService/parkingIcon.svg";
 import noFoodIcon from "@assets/popService/parkingIcon.svg";
-import noPhotoIcon from "@assets/popService/noPhotoIcon.svg";
-import noAgeLimitIcon from "@assets/popService/petIcon.svg";
-import image1 from "@assets/image1.svg";
-import image2 from "@assets/sponge2.jpg";
-import image3 from "@assets/sponge.jpg";
+import noPhotoIcon from "@assets/popService/parkingIcon.svg";
+import noAgeLimitIcon from "@assets/popService/parkingIcon.svg";
 
 type Category = "parking" | "fee" | "pet" | "food" | "photo" | "ageLimit";
 
-const scheduleData: { [key: string]: string } = {
-  일: "10:00~18:00",
-  월: "11:00~18:00",
-  화: "10:00~18:00",
-  수: "10:00~18:00",
-  목: "10:00~18:00",
-  금: "10:00~18:00",
-  토: "10:00~18:00",
-};
-
-const homepageLink: { [key: string]: string } = {
-  link: "https://www.ssafy.com/ksp/jsp/swp/swpMain.jsp",
-};
-
-const instaLink: { [key: string]: string } = {
-  link: "https://www.instagram.com/bebe_the_ori/",
-};
-
-const service: { [key: string]: boolean | undefined } = {
-  parking: true,
-  fee: true,
-  pet: true,
-  food: undefined,
-  photo: false,
-  ageLimit: undefined,
-};
+interface InfoProps {
+  isEditing: boolean;
+  location: string;
+  hours: string;
+  website: string;
+  instagram: string;
+  content: string;
+  description: string;
+  lat: number;
+  lon: number;
+  onLocationChange: (location: string) => void;
+  onHoursChange: (hours: string) => void;
+  onWebsiteChange: (website: string) => void;
+  onInstagramChange: (instagram: string) => void;
+  onContentChange: (content: string) => void;
+  onDescriptionChange: (description: string) => void;
+}
 
 const serviceIcons: Record<Category, { true: string; false: string }> = {
   parking: { true: parkingIcon, false: noParkingIcon },
@@ -63,106 +51,66 @@ const serviceIcons: Record<Category, { true: string; false: string }> = {
   ageLimit: { true: ageLimitIcon, false: noAgeLimitIcon },
 };
 
-const introduceContent = `
-베베와 멜롱이가 라인프렌즈 스퀘어에 두둥등장💫🔥!!
-
-🌏Bebe the World 팝업
-🗓️2024.7.5 - 2024.7.18 KST
-📍라인프렌즈 스퀘어 성수
-
-🎁베베 더 월드 팝업 Special Gifts
-
--베베 더 오리 스티커 1개 증정
-*베베 더 월드 팝업 스토어 방문 고객 전원
-
--베레모 베베 부채 1개 증정
-*베베 더 오리 상품 1만원 이상 구매 시
-
--베베 더 오리 리유저블백 1개 증정
-*베베 더 오리 상품 7만원 이상 구매 시
-
-*한정 수량 선착순 증정, 소진 시 별도 고지없이 종료
-`;
-
-const relatedPopups = [
-  {
-    image: image1,
-    text: "팝업 스토어 1",
-    date: "2024.7.5 - 2024.7.18",
-  },
-  {
-    image: image2,
-    text: "팝업 스토어 2",
-    date: "2024.7.19 - 2024.8.1",
-  },
-  {
-    image: image3,
-    text: "팝업 스토어 3",
-    date: "2024.8.2 - 2024.8.15",
-  },
-];
-
-interface InfoProps {
-  isEditing: boolean;
-  location: string;
-  hours: string;
-  website: string;
-  instagram: string;
-  services: typeof service;
-  description: string;
-  onLocationChange: (location: string) => void;
-  onHoursChange: (hours: string) => void;
-  onWebsiteChange: (website: string) => void;
-  onInstagramChange: (instagram: string) => void;
-  onServicesChange: (services: typeof service) => void;
-  onDescriptionChange: (description: string) => void;
-}
-
 const Info: React.FC<InfoProps> = ({
   isEditing,
   location,
+  hours,
   website,
   instagram,
-  services,
+  content,
   description,
+  lat,
+  lon,
   onLocationChange,
-  onHoursChange,
   onWebsiteChange,
   onInstagramChange,
-  onServicesChange,
+  onContentChange,
   onDescriptionChange,
 }) => {
   const [isToggleOpen, setIsToggleOpen] = useState(false);
   const [isBusinessOpen, setIsBusinessOpen] = useState(false);
   const [currentDay, setCurrentDay] = useState("");
-  const [introduce, setIntroduce] = useState<string[]>([]);
+  const [parsedHours, setParsedHours] = useState<Record<string, string>>({});
+  const [parsedContent, setParsedContent] = useState<Record<string, string>>(
+    {}
+  );
 
   useEffect(() => {
-    const now = new Date();
-    const dayNames = ["일", "월", "화", "수", "목", "금", "토"];
-    const currentDayName = dayNames[now.getDay()];
-    setCurrentDay(currentDayName);
+    try {
+      const now = new Date();
+      const dayNames = ["일", "월", "화", "수", "목", "금", "토"];
+      const currentDayName = dayNames[now.getDay()];
+      setCurrentDay(currentDayName);
 
-    const businessHours = scheduleData[currentDayName].split("~");
-    const openTime = new Date();
-    const closeTime = new Date();
+      if (hours) {
+        const hoursObj = JSON.parse(hours);
+        setParsedHours(hoursObj);
 
-    openTime.setHours(
-      parseInt(businessHours[0].split(":")[0]),
-      parseInt(businessHours[0].split(":")[1])
-    );
-    closeTime.setHours(
-      parseInt(businessHours[1].split(":")[0]),
-      parseInt(businessHours[1].split(":")[1])
-    );
+        const businessHours = hoursObj[currentDayName]?.split("~");
+        if (businessHours && businessHours.length === 2) {
+          const openTime = new Date();
+          const closeTime = new Date();
 
-    if (now >= openTime && now <= closeTime) {
-      setIsBusinessOpen(true);
-    } else {
-      setIsBusinessOpen(false);
+          openTime.setHours(
+            parseInt(businessHours[0].split(":")[0]),
+            parseInt(businessHours[0].split(":")[1])
+          );
+          closeTime.setHours(
+            parseInt(businessHours[1].split(":")[0]),
+            parseInt(businessHours[1].split(":")[1])
+          );
+
+          if (now >= openTime && now <= closeTime) {
+            setIsBusinessOpen(true);
+          } else {
+            setIsBusinessOpen(false);
+          }
+        }
+      }
+    } catch (error) {
+      console.error("Error parsing hours:", error);
     }
-    setIntroduce(introduceContent.split("\n"));
-  }, []);
+  }, [hours]);
 
   useEffect(() => {
     const script = document.createElement("script");
@@ -176,12 +124,12 @@ const Info: React.FC<InfoProps> = ({
         const mapContainer = document.getElementById("map");
         if (mapContainer) {
           const mapOption = {
-            center: new kakao.maps.LatLng(37.544579, 127.055831), // 팝업스토어 위치 좌표
+            center: new kakao.maps.LatLng(lat, lon),
             level: 3,
           };
           const map = new kakao.maps.Map(mapContainer, mapOption);
 
-          const markerPosition = new kakao.maps.LatLng(37.544579, 127.055831);
+          const markerPosition = new kakao.maps.LatLng(lat, lon);
           const marker = new kakao.maps.Marker({
             position: markerPosition,
           });
@@ -191,16 +139,34 @@ const Info: React.FC<InfoProps> = ({
         }
       });
     };
-  }, []);
+  }, [lat, lon]);
 
-  const isChecked = (value: boolean | null | undefined): boolean => {
-    if (value === null || value === undefined) {
-      return false;
+  useEffect(() => {
+    try {
+      if (content) {
+        const parseContent = (content: string) => {
+          const pairs = content.slice(1, -1).split(",");
+          const result: Record<string, string> = {};
+          pairs.forEach((pair) => {
+            const [key, value] = pair.split(":");
+            if (key && value) {
+              result[key.trim().replace(/"/g, "")] = value
+                .trim()
+                .replace(/"/g, "");
+            }
+          });
+          return result;
+        };
+
+        setParsedContent(parseContent(content));
+      }
+    } catch (error) {
+      console.error("Error parsing content:", error);
     }
-    if (typeof value === "boolean") {
-      return value;
-    }
-    return false;
+  }, [content]);
+
+  const isChecked = (value: string, checkValue: string[]): boolean => {
+    return checkValue.includes(value);
   };
 
   const toggleSchedule = () => {
@@ -234,32 +200,20 @@ const Info: React.FC<InfoProps> = ({
             )}
           </button>
         </div>
-        {isToggleOpen && (
+        {isToggleOpen ? (
           <div className="schedule-detail">
-            {Object.entries(scheduleData).map(([day, time]) => (
+            {Object.entries(parsedHours).map(([day, time]) => (
               <div
                 key={day}
-                style={{
-                  fontWeight: currentDay === day ? "bold" : "normal",
-                }}
+                className={day === currentDay ? "current-day" : ""}
               >
-                {isEditing ? (
-                  <input
-                    type="text"
-                    value={time}
-                    onChange={(e) => onHoursChange(e.target.value)}
-                    className="edit-input"
-                  />
-                ) : (
-                  `${day}: ${time}`
-                )}
+                {day}: {time}
               </div>
             ))}
           </div>
-        )}
-        {!isToggleOpen && (
+        ) : (
           <div className="schedule-detail">
-            {currentDay}: {scheduleData[currentDay]}
+            {currentDay}: {parsedHours[currentDay]}
           </div>
         )}
       </div>
@@ -273,12 +227,8 @@ const Info: React.FC<InfoProps> = ({
             className="edit-input"
           />
         ) : (
-          <a
-            href={homepageLink ? homepageLink.link : "#"}
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            {homepageLink ? homepageLink.link : "-"}
+          <a href={website} target="_blank" rel="noopener noreferrer">
+            {website}
           </a>
         )}
       </div>
@@ -292,38 +242,36 @@ const Info: React.FC<InfoProps> = ({
             className="edit-input"
           />
         ) : (
-          <a
-            href={instaLink ? instaLink.link : "#"}
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            {instaLink ? instaLink.link : "-"}
+          <a href={instagram} target="_blank" rel="noopener noreferrer">
+            {instagram}
           </a>
         )}
       </div>
       <div className="service">
         <div className="service-icons">
-          {Object.entries(services).map(
+          {Object.entries(parsedContent).map(
             ([key, value]) =>
-              value !== undefined && (
+              value && ( // 값이 존재하는 항목만 표시
                 <div key={key} className="service-icon">
                   <img
                     src={
                       serviceIcons[key as Category][
-                        value.toString() as "true" | "false"
+                        isChecked(value, ["가능", "무료", "없음"]) ? "true" : "false"
                       ]
                     }
                   />
-                  {value ? "가능" : "불가능"}
+                  {value}
                   {isEditing && (
                     <input
                       type="checkbox"
-                      checked={isChecked(value)}
+                      checked={isChecked(value, ["가능", "무료", "없음"])}
                       onChange={(e) =>
-                        onServicesChange({
-                          ...services,
-                          [key]: e.target.checked,
-                        })
+                        onContentChange(
+                          JSON.stringify({
+                            ...parsedContent,
+                            [key]: e.target.checked ? "가능" : "불가능",
+                          })
+                        )
                       }
                       className="edit-checkbox"
                     />
@@ -342,7 +290,7 @@ const Info: React.FC<InfoProps> = ({
             className="edit-textarea"
           />
         ) : (
-          introduce.map((line, index) => (
+          description.split("\n").map((line, index) => (
             <p key={index} className="introduce-content">
               {line.trim() === "" ? <br /> : line}
             </p>
@@ -355,22 +303,6 @@ const Info: React.FC<InfoProps> = ({
           id="map"
           style={{ width: "100%", height: "250px", marginBottom: "30px" }}
         ></div>
-      </div>
-      <div className="rel-pop-title">유사한 팝업 스토어</div>
-      <div className="related-popups">
-        {relatedPopups.map((popup, index) => (
-          <div key={index} className="popup-item">
-            <img
-              src={popup.image}
-              alt={`팝업 스토어 ${index + 1}`}
-              style={{ width: "200px", height: "200px" }}
-            />
-            <div className="rel-pop-info">
-              <p>{popup.text}</p>
-              <p>{popup.date}</p>
-            </div>
-          </div>
-        ))}
       </div>
     </div>
   );

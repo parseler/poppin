@@ -3,10 +3,11 @@ import multer from "multer";
 import { WebSocketServer, WebSocket } from "ws";
 
 const app = express();
-const upload = multer();
+const upload = multer({ dest: 'uploads/' }); // 파일 업로드 경로 설정
 
-const httpServer = app.listen("", () => {
-  console.log("HTTP server is running on http://localhost");
+// HTTP 서버 시작
+const httpServer = app.listen(3000, () => { // 포트 번호 설정
+  console.log("HTTP server is running on http://localhost:3000");
 });
 
 // WebSocket 서버 설정
@@ -42,17 +43,19 @@ wsServer.on("connection", (ws) => {
   });
 });
 
-console.log("WebSocket server is running on ws://localhost");
+console.log("WebSocket server is running on ws://localhost:3000");
 
 // POST 요청 처리
-app.post("/api/popups", upload.array("images"), (req, res) => {
-  // 요청 처리 코드
-  console.log(req.body);
-  console.log(req.files);
+app.post("/api/popups", upload.array("images", 10), (req, res) => { // 파일 개수 제한
+  const images = req.files;
+  const popupData = JSON.parse(req.body.popupData);
 
-  // 필수 필드 확인
+  // 요청 처리 코드
+  console.log(popupData);
+  console.log(images);
+
   const { name, description, startDate, endDate, hours, content, lat, lon } =
-    req.body;
+    popupData;
   if (
     !name ||
     !description ||
@@ -66,6 +69,5 @@ app.post("/api/popups", upload.array("images"), (req, res) => {
     return res.status(400).send("Missing required fields");
   }
 
-  // 성공적으로 처리되었음을 클라이언트에 응답
   res.send("Popup created");
 });

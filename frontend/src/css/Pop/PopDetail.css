@@ -50,7 +50,7 @@
   font-family: "NanumSquare Neo OTF";
   font-size: 14px;
 }
-/* 기존 스타일 유지 */
+
 #pop-detail .slider-container {
   position: relative;
   width: 100%;
@@ -61,6 +61,14 @@
   width: 100%;
   height: auto;
   object-fit: contain;
+}
+
+@media (max-aspect-ratio: 1/1) {
+  .slider-slide img {
+    height: 100vw;
+    width: 100vw;
+    max-height: 100vw;
+  }
 }
 
 #pop-detail .back-button {

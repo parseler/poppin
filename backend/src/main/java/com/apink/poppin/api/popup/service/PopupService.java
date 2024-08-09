@@ -54,4 +54,12 @@ public interface PopupService {
     // 본인이 등록한 팝업 전체 조회 (매니저)
     List<PopupDTO> getAllPopupByManager(Long managerTsId);
 
+    // 내 주변 팝업 조회 (전체)
+    List<PopupDTO> getAllPopupByLocation();
+
+    // 내 주변 팝업 조회 (좋아요)
+    List<PopupDTO> getHeartPopupByLocation();
+
+    // 내 주변 팝업 조회 (내 예약)
+    List<PopupDTO> getMyReservationPopup();
 }

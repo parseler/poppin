@@ -8,6 +8,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -23,7 +24,7 @@ public interface PopupRepository extends JpaRepository<Popup, Long> {
     // 유사 팝업 조회
 
     // 오픈 예정 팝업 조회
-    List<Popup> findAllByStartDateAfter(LocalDateTime now);
+    List<Popup> findAllByStartDateAfter(LocalDate now);
 
     @Query("SELECT new com.apink.poppin.api.reservation.dto.ReservationResponseDto(" +
             "p.name, pi.img) " +
@@ -35,4 +36,9 @@ public interface PopupRepository extends JpaRepository<Popup, Long> {
     // 본인이 등록한 팝업 목록 조회 (매니저)
     List<Popup> findAllByManager(Manager manager);
 
+    // 끝난 팝업 제외한 전체 팝업 가져오기
+    List<Popup> findAllByEndDateAfter(LocalDate now);
+
+    //
+    Popup findAllByPopupIn(List<Popup> list);
 }

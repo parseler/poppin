@@ -165,4 +165,32 @@ public class PopupController {
 
         return ResponseEntity.ok().build();
     }
+
+
+    // 내 주변 팝업 조회 (전체) - 끝난 팝업 제외
+    @GetMapping("/map")
+    public ResponseEntity<List<PopupDTO>> getAllPopupByLocation() {
+        List<PopupDTO> listByLoc = popupService.getAllPopupByLocation();
+
+        return new ResponseEntity<>(listByLoc, HttpStatus.OK);
+    }
+
+
+    // 내 주변 팝업 조회 (좋아요) - 끝난 팝업 제외
+    @GetMapping("/map/like")
+    public ResponseEntity<List<PopupDTO>> getHeartPopupByLocation() {
+        List<PopupDTO> listByHeart = popupService.getHeartPopupByLocation();
+
+        return new ResponseEntity<>(listByHeart, HttpStatus.OK);
+    }
+
+
+    // 내 주변 팝업 조회 (내 예약) - 끝난 팝업 제외
+    @GetMapping("/map/reservation")
+    public ResponseEntity<List<PopupDTO>> getMyReservationPopup() {
+        List<PopupDTO> listByReservation = popupService.getMyReservationPopup();
+
+        return new ResponseEntity<>(listByReservation, HttpStatus.OK);
+    }
+
 }

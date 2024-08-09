@@ -1,5 +1,7 @@
 package com.apink.poppin.api.popup.service;
 
+import com.apink.poppin.api.heart.entity.Heart;
+import com.apink.poppin.api.heart.repository.HeartRepository;
 import com.apink.poppin.api.manager.entity.Manager;
 import com.apink.poppin.api.manager.repository.ManagerRepository;
 import com.apink.poppin.api.popup.dto.PopupDTO;
@@ -10,7 +12,9 @@ import com.apink.poppin.api.popup.entity.PopupImage;
 import com.apink.poppin.api.popup.repository.CategoryRepository;
 import com.apink.poppin.api.popup.repository.PopupCategoryRepository;
 import com.apink.poppin.api.popup.repository.PopupImageRepository;
+import com.apink.poppin.api.reservation.entity.OnsiteReservation;
 import com.apink.poppin.api.reservation.entity.PreReservationInfo;
+import com.apink.poppin.api.reservation.repository.OnsiteReservationRepository;
 import com.apink.poppin.api.reservation.repository.PreReservationInfoRepository;
 import com.apink.poppin.api.reservation.dto.PreReservationRequestDTO;
 import com.apink.poppin.api.reservation.dto.PreReservationResponseDTO;
@@ -33,10 +37,13 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 @Service
 @RequiredArgsConstructor
@@ -52,6 +59,8 @@ public class PopupServiceImpl implements PopupService {
     private final FileStorageService fileStorageService;
     private final PopupCategoryRepository popupCategoryRepository;
     private final CategoryRepository categoryRepository;
+    private final HeartRepository heartRepository;
+    private final OnsiteReservationRepository onsiteReservationRepository;
 
 
     @Value("${file.upload-dir}")
@@ -181,8 +190,9 @@ public class PopupServiceImpl implements PopupService {
 
     // 오픈 예정 팝업 조회
     public List<PopupDTO> getOpenPopup() {
-        LocalDateTime now = LocalDateTime.now();
-        List<Popup> popups = popupRepository.findAllByStartDateAfter(now);
+        LocalDate now = LocalDate.now();
+        List<Popup> popups = popupRepository.findAllByEndDateAfter(now);
+
         return popups.stream()
                 .filter(popup -> !popup.isDeleted())
                 .map(popup -> {
@@ -561,7 +571,165 @@ public class PopupServiceImpl implements PopupService {
                 .collect(Collectors.toList());
     }
 
-    //
+
+    // 내 주변 팝업 조회 (전체)
+    public List<PopupDTO> getAllPopupByLocation() {
+        LocalDate now = LocalDate.now();
+        List<Popup> popups = popupRepository.findAllByEndDateAfter(now);
+
+        return popups.stream()
+                .filter(popup -> !popup.isDeleted())
+                .map(popup -> {
+                    List<String> images = popupImageRepository.findAllByPopup_PopupId(popup.getPopupId())
+                            .stream()
+                            .sorted((img1, img2) -> Integer.compare(img1.getSeq(), img2.getSeq()))
+                            .map(PopupImage::getImg)
+                            .toList();
+                    return PopupDTO.builder()
+                            .popupId(popup.getPopupId())
+                            .name(popup.getName())
+                            .startDate(popup.getStartDate())
+                            .endDate(popup.getEndDate())
+                            .hours(popup.getHours())
+                            .snsUrl(popup.getSnsUrl())
+                            .pageUrl(popup.getPageUrl())
+                            .content(popup.getContent())
+                            .description(popup.getDescription())
+                            .address(popup.getAddress())
+                            .lat(popup.getLat())
+                            .lon(popup.getLon())
+                            .heart(popup.getHeart())
+                            .hit(popup.getHit())
+                            .rating(popup.getRating())
+                            .managerTsId(popup.getManager().getManagerTsid())
+                            .images(images)
+                            .checkPreReservation(preReservationInfoRepository.existsByPopup(popup))
+                            .build();
+                })
+                .collect(Collectors.toList());
+    }
+
+
+    // 내 주변 팝업 조회 (좋아요)
+    @Override
+    public List<PopupDTO> getHeartPopupByLocation() {
+
+        // 유저 확인
+        long userTsid = Long.parseLong(SecurityContextHolder.getContext().getAuthentication().getName());
+
+        User user = userRepository.findUserByUserTsid(userTsid)
+                .orElseThrow(() -> new RuntimeException("user not exists"));
+
+        LocalDate now = LocalDate.now();
+        List<Popup> popups = popupRepository.findAllByEndDateAfter(now);
+
+        List<Heart> hearts = heartRepository.findByUser(user);
+
+        List<Popup> validHeartPopups = hearts.stream()
+                .map(Heart::getPopup)
+                .filter(popup -> popup.getEndDate().isAfter(now))
+                .toList();
+
+        return validHeartPopups.stream()
+                .filter(popup -> !popup.isDeleted())
+                .map(popup -> {
+                    List<String> images = popupImageRepository.findAllByPopup_PopupId(popup.getPopupId())
+                            .stream()
+                            .sorted((img1, img2) -> Integer.compare(img1.getSeq(), img2.getSeq()))
+                            .map(PopupImage::getImg)
+                            .toList();
+
+                    return PopupDTO.builder()
+                            .popupId(popup.getPopupId())
+                            .name(popup.getName())
+                            .startDate(popup.getStartDate())
+                            .endDate(popup.getEndDate())
+                            .hours(popup.getHours())
+                            .snsUrl(popup.getSnsUrl())
+                            .pageUrl(popup.getPageUrl())
+                            .content(popup.getContent())
+                            .description(popup.getDescription())
+                            .address(popup.getAddress())
+                            .lat(popup.getLat())
+                            .lon(popup.getLon())
+                            .heart(popup.getHeart())
+                            .hit(popup.getHit())
+                            .rating(popup.getRating())
+                            .managerTsId(popup.getManager().getManagerTsid())
+                            .images(images)
+                            .checkPreReservation(preReservationInfoRepository.existsByPopup(popup))
+                            .build();
+                })
+                .collect(Collectors.toList());
+    }
+
+
+    // 내 주변 팝업 조회 (내 예약)
+    @Override
+    public List<PopupDTO> getMyReservationPopup() {
+
+        // 유저 확인
+        long userTsid = Long.parseLong(SecurityContextHolder.getContext().getAuthentication().getName());
+
+        User user = userRepository.findUserByUserTsid(userTsid)
+                .orElseThrow(() -> new RuntimeException("user not exists"));
+
+        LocalDate now = LocalDate.now();
+        List<Popup> popups = popupRepository.findAllByEndDateAfter(now);
+
+        // 사용자가 예약한 OnsiteReservation 팝업 목록
+        String phone = user.getPhoneNumber();
+        List<Popup> onsitePopups = onsiteReservationRepository.findAllByPhoneNumber(phone)
+                .stream()
+                .map(OnsiteReservation::getPopup)
+                .filter(popup -> popup.getEndDate().isAfter(now))
+                .toList();
+
+        // 사용자가 예약한 PreReservation 팝업 목록
+        List<Popup> prePopups = preReservationRepository.findByUser(user)
+                .stream()
+                .map(PreReservation::getPopup)
+                .filter(popup -> popup.getEndDate().isAfter(now))
+                .toList();
+
+        // 두 팝업 목록을 합치고 중복 제거
+        List<Popup> allPopups = Stream.concat(onsitePopups.stream(), prePopups.stream())
+                .distinct()
+                .toList();
+
+        return allPopups.stream()
+                .filter(popup -> !popup.isDeleted())
+                .map(popup -> {
+                    List<String> images = popupImageRepository.findAllByPopup_PopupId(popup.getPopupId())
+                            .stream()
+                            .sorted((img1, img2) -> Integer.compare(img1.getSeq(), img2.getSeq()))
+                            .map(PopupImage::getImg)
+                            .toList();
+
+                    return PopupDTO.builder()
+                            .popupId(popup.getPopupId())
+                            .name(popup.getName())
+                            .startDate(popup.getStartDate())
+                            .endDate(popup.getEndDate())
+                            .hours(popup.getHours())
+                            .snsUrl(popup.getSnsUrl())
+                            .pageUrl(popup.getPageUrl())
+                            .content(popup.getContent())
+                            .description(popup.getDescription())
+                            .address(popup.getAddress())
+                            .lat(popup.getLat())
+                            .lon(popup.getLon())
+                            .heart(popup.getHeart())
+                            .hit(popup.getHit())
+                            .rating(popup.getRating())
+                            .managerTsId(popup.getManager().getManagerTsid())
+                            .images(images)
+                            .checkPreReservation(preReservationInfoRepository.existsByPopup(popup))
+                            .build();
+                })
+                .collect(Collectors.toList());
+
+    }
 
 
     // DTO 변환

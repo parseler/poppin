@@ -112,6 +112,7 @@ public class ReviewServiceImpl implements ReviewService {
                 .user(user)
                 .createdAt(Instant.now())
                 .deleted(false)
+                .rating(reviewDto.getRating())
                 .title(reviewDto.getTitle())
                 .thumbnail(reviewDto.getThumbnail())
                 .content(reviewDto.getContent())

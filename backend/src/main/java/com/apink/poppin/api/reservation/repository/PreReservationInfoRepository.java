@@ -9,4 +9,6 @@ import java.util.List;
 public interface PreReservationInfoRepository extends JpaRepository<PreReservationInfo, Long> {
 
     boolean existsByPopup(Popup popup);
+
+    PreReservationInfo findByPopup(Popup popup);
 }

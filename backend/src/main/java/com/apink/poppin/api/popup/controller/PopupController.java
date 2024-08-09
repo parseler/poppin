@@ -5,6 +5,7 @@ import com.apink.poppin.api.heart.dto.HeartRequestDTO;
 import com.apink.poppin.api.heart.service.HeartService;
 import com.apink.poppin.api.popup.dto.PopupDTO;
 import com.apink.poppin.api.popup.dto.PopupRequestDTO;
+import com.apink.poppin.api.popup.dto.PopupWithPreReservationDTO;
 import com.apink.poppin.api.popup.entity.Popup;
 import com.apink.poppin.api.popup.service.PopupService;
 import com.apink.poppin.api.reservation.dto.*;
@@ -43,9 +44,17 @@ public class PopupController {
 
     // 팝업 상세 조회
     @GetMapping("/{popupId}")
-    public ResponseEntity<PopupDTO> getPopup(@PathVariable("popupId") Long popupId) {
-        PopupDTO popup = popupService.getPopup(popupId);
-        return new ResponseEntity<>(popup, HttpStatus.OK);
+    public ResponseEntity<?> getPopup(@PathVariable("popupId") Long popupId) {
+//        PopupDTO popup = popupService.getPopup(popupId);
+//        return new ResponseEntity<>(popup, HttpStatus.OK);
+        boolean check = popupService.checkPreReservation(popupId);
+        if (check) {
+            PopupDTO popup = popupService.getPopup(popupId);
+            return new ResponseEntity<>(popup, HttpStatus.OK);
+        } else {
+            PopupWithPreReservationDTO popup = popupService.getPopupWithPreReservation(popupId);
+            return new ResponseEntity<>(popup, HttpStatus.OK);
+        }
     }
 
     // 인기 팝업 조회

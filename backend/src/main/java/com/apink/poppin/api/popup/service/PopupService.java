@@ -2,6 +2,7 @@ package com.apink.poppin.api.popup.service;
 
 import com.apink.poppin.api.popup.dto.PopupDTO;
 import com.apink.poppin.api.popup.dto.PopupRequestDTO;
+import com.apink.poppin.api.popup.dto.PopupWithPreReservationDTO;
 import com.apink.poppin.api.popup.entity.Popup;
 import com.apink.poppin.api.reservation.dto.PreReservationRequestDTO;
 import com.apink.poppin.api.reservation.dto.PreReservationResponseDTO;
@@ -20,6 +21,9 @@ public interface PopupService {
 
     // 팝업 상세 조회
     PopupDTO getPopup(Long popupId);
+
+    // 팝업 상세 조회 (+사전예약 정보)
+    PopupWithPreReservationDTO getPopupWithPreReservation(Long popupId);
 
     // 인기 팝업 조회
     List<PopupDTO> getPopupRank();
@@ -62,4 +66,9 @@ public interface PopupService {
 
     // 내 주변 팝업 조회 (내 예약)
     List<PopupDTO> getMyReservationPopup();
+
+    // 사전예약 유무 확인
+    boolean checkPreReservation(long popupId);
+
+
 }

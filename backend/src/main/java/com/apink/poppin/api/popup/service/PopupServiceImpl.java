@@ -6,6 +6,7 @@ import com.apink.poppin.api.manager.entity.Manager;
 import com.apink.poppin.api.manager.repository.ManagerRepository;
 import com.apink.poppin.api.popup.dto.PopupDTO;
 import com.apink.poppin.api.popup.dto.PopupRequestDTO;
+import com.apink.poppin.api.popup.dto.PopupWithPreReservationDTO;
 import com.apink.poppin.api.popup.entity.Category;
 import com.apink.poppin.api.popup.entity.PopupCategory;
 import com.apink.poppin.api.popup.entity.PopupImage;
@@ -155,6 +156,56 @@ public class PopupServiceImpl implements PopupService {
                 .checkPreReservation(preReservationInfoRepository.existsByPopup(popup))
                 .build();
     }
+
+    // 팝업 상세 조회 (+ 사전예약 정보)
+    @Override
+    public PopupWithPreReservationDTO getPopupWithPreReservation(Long popupId) {
+        Popup popup = popupRepository.findById(popupId)
+                .orElseThrow(() -> new IllegalArgumentException("Invalid popup ID"));
+
+        if(popup.isDeleted())
+            throw new BusinessLogicException(ExceptionCode.POPUP_NOT_FOUND);
+
+        List<String> images = popupImageRepository.findAllByPopup_PopupId(popup.getPopupId())
+                .stream()
+                .sorted((img1, img2) -> Integer.compare(img1.getSeq(), img2.getSeq()))
+                .map(PopupImage::getImg)
+                .toList();
+
+        List<String> categories = popupCategoryRepository.findByPopup(popup)
+                .stream()
+                .map(popupCategory -> popupCategory.getCategory().getName())
+                .toList();
+
+        PreReservationInfo preInfo = preReservationInfoRepository.findByPopup(popup);
+
+        return PopupWithPreReservationDTO.builder()
+                .popupId(popup.getPopupId())
+                .name(popup.getName())
+                .startDate(popup.getStartDate())
+                .endDate(popup.getEndDate())
+                .hours(popup.getHours())
+                .snsUrl(popup.getSnsUrl())
+                .pageUrl(popup.getPageUrl())
+                .content(popup.getContent())
+                .description(popup.getDescription())
+                .address(popup.getAddress())
+                .lat(popup.getLat())
+                .lon(popup.getLon())
+                .heart(popup.getHeart())
+                .hit(popup.getHit())
+                .rating(popup.getRating())
+                .managerTsId(popup.getManager().getManagerTsid())
+                .images(images)
+                .categories(categories)
+                .preReservationOpenAt(preInfo.getPreReservationOpenAt())
+                .term(preInfo.getTerm())
+                .maxPeoplePerSession(preInfo.getMaxPeoplePerSession())
+                .maxReservationsPerPerson(preInfo.getMaxReservationsPerPerson())
+                .warning(preInfo.getWarning())
+                .build();
+    }
+
 
     // 인기 팝업 조회
     public List<PopupDTO> getPopupRank() {
@@ -728,6 +779,23 @@ public class PopupServiceImpl implements PopupService {
                             .build();
                 })
                 .collect(Collectors.toList());
+
+    }
+
+    // 사전예약 유무 확인
+    @Override
+    public boolean checkPreReservation(long popupId) {
+        Popup popup = popupRepository.findById(popupId)
+                .orElseThrow(() -> new IllegalArgumentException("Invalid popup ID"));
+
+        if(popup.isDeleted())
+            throw new BusinessLogicException(ExceptionCode.POPUP_NOT_FOUND);
+
+        if(preReservationInfoRepository.existsByPopup(popup)) {
+            return true;
+        } else {
+            return false;
+        }
 
     }
 

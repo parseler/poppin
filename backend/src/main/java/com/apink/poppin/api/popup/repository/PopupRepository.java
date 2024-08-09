@@ -39,6 +39,4 @@ public interface PopupRepository extends JpaRepository<Popup, Long> {
     // 끝난 팝업 제외한 전체 팝업 가져오기
     List<Popup> findAllByEndDateAfter(LocalDate now);
 
-    //
-    Popup findAllByPopupIn(List<Popup> list);
 }

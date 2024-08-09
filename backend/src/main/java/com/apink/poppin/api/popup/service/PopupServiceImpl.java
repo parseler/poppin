@@ -571,22 +571,11 @@ public class PopupServiceImpl implements PopupService {
                 .map(PopupImage::getImg)
                 .toList();
 
-        // 기존 카테고리 삭제
-        popupCategoryRepository.deleteAllByPopup(popup);
-
-        // 카테고리 다시 저장
-        List<PopupCategory> popupCategories = reqDto.getCategories().stream()
-                .map(categoryId -> {
-                    Category category = categoryRepository.findById(categoryId)
-                            .orElseThrow(() -> new IllegalArgumentException("Invalid category ID"));
-                    return PopupCategory.builder()
-                            .popup(popup)
-                            .category(category)
-                            .build();
-                })
-                .collect(Collectors.toList());
-
-        popupCategoryRepository.saveAll(popupCategories);
+        // 기존 카테고리 가져오기
+        List<String> categories = popupCategoryRepository.findByPopup(popup)
+                .stream()
+                .map(popupCategory -> popupCategory.getCategory().getName())
+                .toList();
 
         return PopupDTO.builder()
                 .popupId(popup.getPopupId())
@@ -606,7 +595,7 @@ public class PopupServiceImpl implements PopupService {
                 .rating(popup.getRating())
                 .managerTsId(popup.getManager().getManagerTsid())
                 .images(images)
-                .categories(popupCategories.stream().map(pc -> pc.getCategory().getName()).collect(Collectors.toList()))
+                .categories(categories)
                 .build();
     }
 

@@ -45,10 +45,8 @@ public class PopupController {
     // 팝업 상세 조회
     @GetMapping("/{popupId}")
     public ResponseEntity<?> getPopup(@PathVariable("popupId") Long popupId) {
-//        PopupDTO popup = popupService.getPopup(popupId);
-//        return new ResponseEntity<>(popup, HttpStatus.OK);
         boolean check = popupService.checkPreReservation(popupId);
-        if (check) {
+        if (!check) {
             PopupDTO popup = popupService.getPopup(popupId);
             return new ResponseEntity<>(popup, HttpStatus.OK);
         } else {

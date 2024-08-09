@@ -42,6 +42,9 @@ public class PopupWithPreReservationDTO {
     private List<String> images;
     private List<String> categories;
 
+    // 사전 예약이 있는지 확인
+    private boolean checkPreReservation;
+
     // 사전 예약 정보
     private LocalDateTime preReservationOpenAt;
 

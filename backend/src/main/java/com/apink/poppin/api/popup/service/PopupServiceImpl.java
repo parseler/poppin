@@ -870,6 +870,37 @@ public class PopupServiceImpl implements PopupService {
 
     }
 
+    @Override
+    public List<PopupDTO> getPopupByCategory(String category) {
+        List<Popup> list = popupRepository.findPopupsByCategoryName(category);
+
+        List<PopupDTO> result = new ArrayList<>();
+        for(Popup popup : list) {
+
+            List<PopupImage> images = popupImageRepository.findAllByPopup_PopupId(popup.getPopupId());
+            List<String> imageUrls = new ArrayList<>();
+            for (PopupImage image : images) {
+                imageUrls.add(image.getImg());
+            }
+
+            PopupDTO dto = PopupDTO.builder()
+                    .popupId(popup.getPopupId())
+                    .name(popup.getName())
+                    .startDate(popup.getStartDate())
+                    .endDate(popup.getEndDate())
+                    .content(popup.getContent())
+                    .heart(popup.getHeart())
+                    .hit(popup.getHit())
+                    .rating(popup.getRating())
+                    .deleted(popup.isDeleted())
+                    .images(imageUrls)
+                    .build();
+
+            result.add(dto);
+        }
+        return result;
+    }
+
 
     // DTO 변환
     private PreReservationResponseDTO convertToResponseDTO(PreReservation preReservation) {

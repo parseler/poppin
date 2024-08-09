@@ -200,4 +200,11 @@ public class PopupController {
         return new ResponseEntity<>(listByReservation, HttpStatus.OK);
     }
 
+    @GetMapping("/category/{category}")
+    public ResponseEntity<?> getPopupByCategory(@PathVariable String category) {
+        List<PopupDTO> popupDTOList = popupService.getPopupByCategory(category);
+
+        return ResponseEntity.ok(popupDTOList);
+    }
+
 }

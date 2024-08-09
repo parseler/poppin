@@ -70,7 +70,7 @@ function RegistPop() {
     const hours = JSON.stringify(timeSlots);
 
     setHours(hours);
-    setCategories(selectedCategories.map(String));
+    setCategories(selectedCategories);
 
     setPopupData({
       storeName,
@@ -82,7 +82,7 @@ function RegistPop() {
       address: `${address} ${detailedAddress}`,
       lat,
       lon,
-      categories: selectedCategories.map(String),
+      categories: selectedCategories,
     });
     console.log(
       storeName,
@@ -175,13 +175,13 @@ function RegistPop() {
     nextMonthButtonDisabled,
   }: HeaderProps) => (
     <div className="custom-header">
-      <button onClick={decreaseMonth} disabled={prevMonthButtonDisabled}>
+      <button type="button" onClick={decreaseMonth} disabled={prevMonthButtonDisabled}>
         {"<"}
       </button>
       <span className="custom-header__date">
         {date.toLocaleString("ko", { month: "long" })}
       </span>
-      <button onClick={increaseMonth} disabled={nextMonthButtonDisabled}>
+      <button type="button" onClick={increaseMonth} disabled={nextMonthButtonDisabled}>
         {">"}
       </button>
     </div>

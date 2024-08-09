@@ -31,6 +31,7 @@ function RegistPopReservationInfo() {
     address,
     lat,
     lon,
+    categories,
     snsUrl,
     pageUrl,
     timeSlots,
@@ -50,10 +51,58 @@ function RegistPopReservationInfo() {
   const mutation = useMutation(createPopup, {
     onSuccess: () => {
       alert("팝업이 성공적으로 등록되었습니다.");
+      console.log(
+        storeName,
+        storeDescription,
+        selectedImages,
+        startDate,
+        endDate,
+        address,
+        lat,
+        lon,
+        categories,
+        snsUrl,
+        pageUrl,
+        timeSlots,
+        preReservationOpenAt,
+        term,
+        maxPeoplePerSession,
+        maxReservationsPerPerson,
+        warning,
+        setPreReservationOpenAt,
+        setTerm,
+        setMaxPeoplePerSession,
+        setMaxReservationsPerPerson,
+        setWarning
+      );
       navigate("/regist-pop-fin");
     },
     onError: (error) => {
       console.error("Error creating popup:", error);
+      console.log(
+        storeName,
+        storeDescription,
+        selectedImages,
+        startDate,
+        endDate,
+        address,
+        lat,
+        lon,
+        categories,
+        snsUrl,
+        pageUrl,
+        timeSlots,
+        preReservationOpenAt,
+        term,
+        maxPeoplePerSession,
+        maxReservationsPerPerson,
+        warning,
+        setPreReservationOpenAt,
+        setTerm,
+        setMaxPeoplePerSession,
+        setMaxReservationsPerPerson,
+        setWarning
+      );
       alert("팝업 등록 중 오류가 발생했습니다.");
     },
   });
@@ -97,6 +146,7 @@ function RegistPopReservationInfo() {
         maxPeoplePerSession: maxPeoplePerSession || 1,
         maxReservationsPerPerson: maxReservationsPerPerson || 1,
         warning: warning || "",
+        categories: categories,
       },
     });
   };

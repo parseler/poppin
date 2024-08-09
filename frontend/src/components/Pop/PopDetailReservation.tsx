@@ -1,49 +1,76 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Calendar from "react-calendar";
 import { useNavigate } from "react-router-dom";
 import "@css/Pop/PopDetailReservation.css";
 import "react-calendar/dist/Calendar.css";
 
-type ViewType = "month" | "year" | "decade" | "century";
+interface ReservationProps {
+  title: string;
+  hours: string;
+  preReservationOpenAt?: string | null;
+  term?: number | null;
+  maxPeoplePerSession?: number | null;
+  maxReservationsPerPerson?: number | null;
+  warning?: string | null;
+}
 
-const Reservation = ({ title }: { title: string }) => {
+const Reservation = ({
+  title,
+  hours,
+  preReservationOpenAt,
+  term,
+  maxReservationsPerPerson,
+  warning,
+}: ReservationProps) => {
   const [selectedDate, setSelectedDate] = useState(new Date());
   const [selectedTime, setSelectedTime] = useState<string | null>(null);
-  const [peopleCount, setPeopleCount] = useState(0);
+  const [peopleCount, setPeopleCount] = useState(1);
+  const [times, setTimes] = useState<string[]>([]);
   const navigate = useNavigate();
 
-  const times = ["9시", "10시", "11시", "12시", "14시", "15시"];
-  const caution = `예약시간 10분 경과시, 자동 취소 됩니다.
-  팝업 스토어 이용 시간은 30분입니다.
-  스페셜 기프트는 선착순으로 증정됩니다.`;
+  useEffect(() => {
+    if (preReservationOpenAt && term && hours) {
+      const openAt = new Date(preReservationOpenAt);
+      const currentTime = new Date();
+
+      if (currentTime >= openAt) {
+        const [startHourStr, endHourStr] = hours.split(" ~ ");
+        const [startHour, startMinute] = startHourStr.split(":").map(Number);
+        const [endHour, endMinute] = endHourStr.split(":").map(Number);
+
+        const startTime = startHour * 60 + startMinute;
+        const endTime = endHour * 60 + endMinute;
+        const termInMinutes = term;
+
+        const hoursArray = [];
+
+        for (let i = startTime; i < endTime; i += termInMinutes) {
+          const hourString = Math.floor(i / 60)
+            .toString()
+            .padStart(2, "0");
+          const minuteString = (i % 60).toString().padStart(2, "0");
+          const time = `${hourString}:${minuteString}`;
+          hoursArray.push(time);
+        }
+
+        setTimes(hoursArray);
+      }
+    }
+  }, [preReservationOpenAt, term, hours]);
 
   const onTimeClick = (time: string) => {
     setSelectedTime(time);
   };
 
   const onClickPlus = () => {
-    setPeopleCount((prev) => prev + 1);
+    setPeopleCount((prev) => {
+      const maxPeople = maxReservationsPerPerson || 1;
+      return prev < maxPeople ? prev + 1 : prev;
+    });
   };
 
   const onClickMinus = () => {
-    setPeopleCount((prev) => (prev > 0 ? prev - 1 : 0));
-  };
-
-  const getTileClassName = ({ date, view }: { date: Date; view: ViewType }) => {
-    if (view === "month") {
-      const day = date.getDay();
-      const today = new Date();
-      if (date.toDateString() === today.toDateString()) {
-        return "today";
-      } else if (day === 0) {
-        return "sunday";
-      } else if (day === 6) {
-        return "saturday";
-      } else {
-        return "";
-      }
-    }
-    return "";
+    setPeopleCount((prev) => (prev > 1 ? prev - 1 : 1));
   };
 
   const goNextStep = () => {
@@ -54,13 +81,16 @@ const Reservation = ({ title }: { title: string }) => {
           selectedDate,
           selectedTime,
           peopleCount,
-          name: "홍길동",
-          contact: "010-1234-5678",
-          email: "test@example.com",
         },
       });
     } else {
       alert("예약 인원과 시간을 선택해주세요.");
+    }
+  };
+
+  const handleDateChange = (value: Date | null) => {
+    if (value instanceof Date) {
+      setSelectedDate(value);
     }
   };
 
@@ -69,7 +99,7 @@ const Reservation = ({ title }: { title: string }) => {
       <div className="pop-calendar">
         <div className="content-title">예약 날짜</div>
         <Calendar
-          onChange={()=>setSelectedDate}
+          onChange={(value) => handleDateChange(value as Date)}
           value={selectedDate}
           calendarType="gregory"
           formatDay={(_, date) => date.getDate().toString()}
@@ -77,15 +107,8 @@ const Reservation = ({ title }: { title: string }) => {
             view === "month" &&
             date.toDateString() === selectedDate.toDateString()
               ? "selected-date"
-              : getTileClassName({ date, view })
+              : ""
           }
-          prevLabel={<button>{"<"}</button>}
-          nextLabel={<button>{">"}</button>}
-          prev2Label={<button>{"<<"}</button>}
-          next2Label={<button>{">>"}</button>}
-          navigationLabel={({ label }) => (
-            <div className="nav-label">{label}</div>
-          )} // 네비게이션 라벨 커스터마이징
         />
       </div>
       <div className="res-time">
@@ -115,7 +138,7 @@ const Reservation = ({ title }: { title: string }) => {
       <div>
         <div className="content-title">주의사항</div>
         <div className="caution">
-          {caution.split("\n").map((line, index) => (
+          {(warning || "").split("\n").map((line, index) => (
             <p key={index}>{line}</p>
           ))}
         </div>

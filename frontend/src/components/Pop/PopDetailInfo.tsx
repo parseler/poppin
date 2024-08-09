@@ -10,8 +10,8 @@ import scheduleClose from "@assets/scheduleClose.svg";
 import homepageIcon from "@assets/homepageIcon.svg";
 import insta from "@assets/insta.svg";
 import parkingIcon from "@assets/popService/parkingIcon.svg";
-import feeIcon from "@assets/popService/parkingIcon.svg";
-import petIcon from "@assets/popService/parkingIcon.svg";
+import feeIcon from "@assets/popService/feeIcon.svg";
+import petIcon from "@assets/popService/petIcon.svg";
 import foodIcon from "@assets/popService/parkingIcon.svg";
 import photoIcon from "@assets/popService/parkingIcon.svg";
 import ageLimitIcon from "@assets/popService/parkingIcon.svg";
@@ -19,7 +19,7 @@ import noParkingIcon from "@assets/popService/parkingIcon.svg";
 import noFeeIcon from "@assets/popService/parkingIcon.svg";
 import noPetIcon from "@assets/popService/parkingIcon.svg";
 import noFoodIcon from "@assets/popService/parkingIcon.svg";
-import noPhotoIcon from "@assets/popService/parkingIcon.svg";
+import noPhotoIcon from "@assets/popService/noPhotoIcon.svg";
 import noAgeLimitIcon from "@assets/popService/parkingIcon.svg";
 
 type Category = "parking" | "fee" | "pet" | "food" | "photo" | "ageLimit";
@@ -40,6 +40,7 @@ interface InfoProps {
   onInstagramChange: (instagram: string) => void;
   onContentChange: (content: string) => void;
   onDescriptionChange: (description: string) => void;
+  onSave: () => void;
 }
 
 const serviceIcons: Record<Category, { true: string; false: string }> = {

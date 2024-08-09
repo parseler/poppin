@@ -32,6 +32,7 @@ function RegistPopOptional() {
     lat,
     lon,
     timeSlots,
+    categories
   } = usePopupStore();
   const [localSnsUrl, setLocalSnsUrl] = useState(snsUrl || "");
   const [localPageUrl, setLocalPageUrl] = useState(pageUrl || "");
@@ -80,6 +81,7 @@ function RegistPopOptional() {
           lat: lat || 0,
           lon: lon || 0,
           images: selectedImages,
+          categories: categories,
           managerTsid: 1,
         },
       });

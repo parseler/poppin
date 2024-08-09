@@ -85,6 +85,22 @@
   margin: 5px 0px 14px 0px;
 }
 
+#pop-detail-reviews .no-reviews {
+  height: calc(100vh - 200px);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  box-sizing: border-box;
+  padding-top: 16px;
+}
+#pop-detail-reviews .no-reviews img {
+  margin-bottom: 32px;
+}
+#pop-detail-reivews .no-reviews p {
+  color: #8b8b8b;
+}
+
 #pop-detail-reviews .load-more {
   width: 100px;
   padding: 10px 20px;

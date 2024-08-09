@@ -1,10 +1,12 @@
 import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { getPopupList } from "@api/apiPop";
+
 import nextButton from "@assets/mypage/nextButton.svg";
 import none from "@assets/none.svg";
 
 interface Popup {
+  popupId: number;
   images: string[];
   name: string;
   startDate: string;
@@ -32,7 +34,7 @@ function FinishedPopList() {
           if (popup.managerTsId !== managerTsid || currentDateTime <= endDate) {
             return false;
           }
-          
+
           const hoursObject = parseHoursFromString(popup.hours);
           if (!hoursObject[currentDay]) return currentDateTime > endDate;
 
@@ -56,7 +58,6 @@ function FinishedPopList() {
   const parseHoursFromString = (
     hoursString: string
   ): { [key: string]: string } => {
-    // JSON 형식의 문자열을 객체로 파싱
     const hoursObject = JSON.parse(hoursString);
     return hoursObject;
   };
@@ -65,9 +66,16 @@ function FinishedPopList() {
     <div id="finished-pop-list">
       {popups.length > 0 ? (
         popups.map((popup, index) => (
-          <Link to="/popdetail" key={index} className="popup-card">
+          <Link
+            to={`/popdetail/${popup.popupId}`}
+            key={index}
+            className="popup-card"
+          >
             <div className="popup-image">
-              <img src={popup.images[0]} alt={popup.name} />
+              <img
+                src={`http://localhost/${popup.images[0].replace("./", "")}`}
+                alt={popup.name}
+              />
             </div>
             <div className="popup-details">
               <p className="popup-name">{popup.name}</p>

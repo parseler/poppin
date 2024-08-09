@@ -20,7 +20,7 @@ interface PopupState {
   maxPeoplePerSession: number;
   maxReservationsPerPerson: number;
   warning: string;
-  categories: string[];
+  categories: number[];
   setStoreName: (name: string) => void;
   setStoreDescription: (description: string) => void;
   setSelectedImages: (images: File[]) => void;
@@ -39,7 +39,7 @@ interface PopupState {
   setMaxPeoplePerSession: (maxPeople: number) => void;
   setMaxReservationsPerPerson: (maxReservations: number) => void;
   setWarning: (warning: string) => void;
-  setCategories: (categories: string[]) => void;
+  setCategories: (categories: number[]) => void;
 }
 
 const usePopupStore = create<PopupState>((set) => ({

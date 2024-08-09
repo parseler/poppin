@@ -38,6 +38,8 @@ function OnsitePopList() {
             return false;
           }
 
+          if(startDate<currentDateTime && currentDateTime<endDate) return true;
+
           const hoursObject = parseHoursFromString(popup.hours);
           if (!hoursObject[currentDay]) return currentDateTime >= startDate && currentDateTime <= endDate;
           

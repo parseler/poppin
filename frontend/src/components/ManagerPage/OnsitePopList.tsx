@@ -6,6 +6,7 @@ import nextButton from "@assets/mypage/nextButton.svg";
 import none from "@assets/none.svg";
 
 interface Popup {
+  popupId: number;
   images: string[];
   name: string;
   startDate: string;
@@ -75,9 +76,9 @@ function OnsitePopList() {
     <div id="onsite-registed-list">
       {popups.length > 0 ? (
         popups.map((popup, index) => (
-          <Link to="/popdetail" key={index} className="popup-card">
+          <Link to={`/popdetail/${popup.popupId}`} key={index} className="popup-card">
             <div className="popup-image">
-              <img src={popup.images[0]} alt={popup.name} />
+              <img src={`http://localhost/${popup.images[0].replace('./','')}`} alt={popup.name} />
             </div>
             <div className="popup-details">
               <p className="popup-name">{popup.name}</p>

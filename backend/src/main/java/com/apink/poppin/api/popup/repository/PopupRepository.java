@@ -1,5 +1,6 @@
 package com.apink.poppin.api.popup.repository;
 
+import com.apink.poppin.api.manager.entity.Manager;
 import com.apink.poppin.api.popup.entity.Popup;
 import com.apink.poppin.api.reservation.dto.ReservationResponseDto;
 import io.lettuce.core.dynamic.annotation.Param;
@@ -24,7 +25,7 @@ public interface PopupRepository extends JpaRepository<Popup, Long> {
     // 유사 팝업 조회
 
     // 오픈 예정 팝업 조회
-    List<Popup> findAllByStartDateAfter(LocalDateTime now);
+    List<Popup> findAllByStartDateAfter(LocalDate now);
 
     @Query("SELECT new com.apink.poppin.api.reservation.dto.ReservationResponseDto(" +
             "p.name, pi.img) " +
@@ -32,6 +33,13 @@ public interface PopupRepository extends JpaRepository<Popup, Long> {
             "LEFT JOIN PopupImage pi ON pi.popup.popupId = p.popupId AND pi.seq = 1 " +
             "WHERE p.popupId = :popupId")
     ReservationResponseDto findPopupNameAndFirstImageByPopupId(@Param("popupId") Long popupId);
+
+    // 본인이 등록한 팝업 목록 조회 (매니저)
+    List<Popup> findAllByManager(Manager manager);
+
+    // 끝난 팝업 제외한 전체 팝업 가져오기
+    List<Popup> findAllByEndDateAfter(LocalDate now);
+
 
     // 종료되지 않은 팝업 조회
     List<Popup> findByEndDateGreaterThanEqualAndDeletedFalse(@NotNull LocalDate endDate);

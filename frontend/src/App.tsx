@@ -68,7 +68,7 @@ function App() {
           <Route path="/:categoryId" element={<Layout02><Category /></Layout02>} />
           <Route path="/rank" element={<Layout02><Rank /></Layout02>} />
           <Route path="/open" element={<Layout02><Open /></Layout02>} />
-          <Route path="/popdetail" element={<PopDetail />} />
+          <Route path="/popdetail/:popupId" element={<PopDetail />} />
           <Route path="/reservation-check" element={<Layout04><PopReservationCheck /></Layout04>} />
           <Route path="/reservation-check/finish" element={<Layout04><PopReservationFin /></Layout04>} />
           <Route path="/waiting" element={<Waiting />} />

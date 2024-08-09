@@ -1,21 +1,19 @@
 package com.apink.poppin.api.popup.dto;
 
-import com.apink.poppin.api.popup.entity.PopupImage;
-import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDate;
-import java.util.Date;
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Builder
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class PopupDTO {
+public class PopupWithPreReservationDTO {
 
     private Long popupId;
     private String name;
@@ -44,7 +42,11 @@ public class PopupDTO {
     private List<String> images;
     private List<String> categories;
 
-    // 사전 예약이 있는지 확인
-    private boolean checkPreReservation;
+    // 사전 예약 정보
+    private LocalDateTime preReservationOpenAt;
 
+    private Integer term;
+    private Integer maxPeoplePerSession;
+    private Integer maxReservationsPerPerson;
+    private String warning;
 }

@@ -5,8 +5,11 @@ import com.apink.poppin.api.heart.dto.HeartRequestDTO;
 import com.apink.poppin.api.heart.service.HeartService;
 import com.apink.poppin.api.popup.dto.PopupDTO;
 import com.apink.poppin.api.popup.dto.PopupRequestDTO;
+import com.apink.poppin.api.popup.dto.PopupWithPreReservationDTO;
+import com.apink.poppin.api.popup.entity.Popup;
 import com.apink.poppin.api.popup.service.PopupService;
 import com.apink.poppin.api.reservation.dto.*;
+import com.apink.poppin.api.reservation.entity.PreReservation;
 import com.apink.poppin.api.reservation.service.OnsiteReservationService;
 import com.apink.poppin.api.review.dto.ReviewDto;
 import com.apink.poppin.api.review.dto.ReviewListDto;
@@ -41,9 +44,17 @@ public class PopupController {
 
     // 팝업 상세 조회
     @GetMapping("/{popupId}")
-    public ResponseEntity<PopupDTO> getPopup(@PathVariable("popupId") Long popupId) {
-        PopupDTO popup = popupService.getPopup(popupId);
-        return new ResponseEntity<>(popup, HttpStatus.OK);
+    public ResponseEntity<?> getPopup(@PathVariable("popupId") Long popupId) {
+//        PopupDTO popup = popupService.getPopup(popupId);
+//        return new ResponseEntity<>(popup, HttpStatus.OK);
+        boolean check = popupService.checkPreReservation(popupId);
+        if (check) {
+            PopupDTO popup = popupService.getPopup(popupId);
+            return new ResponseEntity<>(popup, HttpStatus.OK);
+        } else {
+            PopupWithPreReservationDTO popup = popupService.getPopupWithPreReservation(popupId);
+            return new ResponseEntity<>(popup, HttpStatus.OK);
+        }
     }
 
     // 인기 팝업 조회
@@ -163,4 +174,32 @@ public class PopupController {
 
         return ResponseEntity.ok().build();
     }
+
+
+    // 내 주변 팝업 조회 (전체) - 끝난 팝업 제외
+    @GetMapping("/map")
+    public ResponseEntity<List<PopupDTO>> getAllPopupByLocation() {
+        List<PopupDTO> listByLoc = popupService.getAllPopupByLocation();
+
+        return new ResponseEntity<>(listByLoc, HttpStatus.OK);
+    }
+
+
+    // 내 주변 팝업 조회 (좋아요) - 끝난 팝업 제외
+    @GetMapping("/map/like")
+    public ResponseEntity<List<PopupDTO>> getHeartPopupByLocation() {
+        List<PopupDTO> listByHeart = popupService.getHeartPopupByLocation();
+
+        return new ResponseEntity<>(listByHeart, HttpStatus.OK);
+    }
+
+
+    // 내 주변 팝업 조회 (내 예약) - 끝난 팝업 제외
+    @GetMapping("/map/reservation")
+    public ResponseEntity<List<PopupDTO>> getMyReservationPopup() {
+        List<PopupDTO> listByReservation = popupService.getMyReservationPopup();
+
+        return new ResponseEntity<>(listByReservation, HttpStatus.OK);
+    }
+
 }

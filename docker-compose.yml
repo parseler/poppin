@@ -93,6 +93,24 @@ services:
       - app_home:/opt/app/dist
     working_dir: /opt/app
     command: sh -c "npm i && npm run build"
+  zookeeper:
+    image: bitnami/zookeeper
+    ports:
+      - "2181:2181"
+    volumes:
+      - ./zookeeper/data:/bitnami
+    environment:
+      - ALLOW_ANONYMOUS_LOGIN=yes
+  kafka:
+    image: bitnami/kafka
+    ports:
+      - "9092:9092"
+    volumes:
+      - ./kafka/data:/bitnami
+    environment:
+      - KAFKA_CFG_ZOOKEEPER_CONNECT=zookeeper:2181
+    depends_on:
+      - zookeeper
 volumes:
   gradle_home:
   app_home:

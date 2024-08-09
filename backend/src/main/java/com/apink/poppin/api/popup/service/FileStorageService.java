@@ -10,6 +10,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
+import java.util.UUID;
 
 @Service
 public class FileStorageService {
@@ -33,13 +34,23 @@ public class FileStorageService {
 
     public String storeFile(MultipartFile file) {
         try {
-            Path copyLocation = Paths
-                    .get(uploadDir + "/" + file.getOriginalFilename());
+            // 파일의 원래 이름을 가져옴
+            String originalFileName = file.getOriginalFilename();
+
+            // UUID를 사용하여 고유한 파일 이름 생성
+            String uniqueFileName = UUID.randomUUID().toString() + "_" + originalFileName;
+
+            // 고유한 파일 이름을 포함한 경로 생성
+            Path copyLocation = Paths.get(uploadDir + "/" + uniqueFileName);
+
+            // 파일을 지정된 위치에 저장
             Files.copy(file.getInputStream(), copyLocation, StandardCopyOption.REPLACE_EXISTING);
+
             return copyLocation.toString();
         } catch (IOException e) {
             throw new RuntimeException("Could not store file " + file.getOriginalFilename() + ". Please try again!", e);
         }
+
     }
 
 

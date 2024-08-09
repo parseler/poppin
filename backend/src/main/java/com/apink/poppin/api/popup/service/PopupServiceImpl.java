@@ -70,8 +70,6 @@ public class PopupServiceImpl implements PopupService {
     // 팝업 전체 목록 조회 및 검색
     public List<PopupDTO> getPopupList(String keyword) {
         List<Popup> popups = popupRepository.findAllByNameContaining(keyword);
-//        List<PopupImage> images = popupImageRepository.findAll();
-
 
         return popups.stream()
                 .filter(popup -> !popup.isDeleted())
@@ -624,6 +622,7 @@ public class PopupServiceImpl implements PopupService {
 
 
     // 내 주변 팝업 조회 (전체)
+    @Override
     public List<PopupDTO> getAllPopupByLocation() {
         LocalDate now = LocalDate.now();
         List<Popup> popups = popupRepository.findAllByEndDateAfter(now);

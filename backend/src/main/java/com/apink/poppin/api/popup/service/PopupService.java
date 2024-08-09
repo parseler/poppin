@@ -2,12 +2,10 @@ package com.apink.poppin.api.popup.service;
 
 import com.apink.poppin.api.popup.dto.PopupDTO;
 import com.apink.poppin.api.popup.dto.PopupRequestDTO;
-import com.apink.poppin.api.popup.entity.Popup;
 import com.apink.poppin.api.reservation.dto.PreReservationRequestDTO;
 import com.apink.poppin.api.reservation.dto.PreReservationResponseDTO;
 import com.apink.poppin.api.reservation.dto.PreStatementRequestDTO;
 import com.apink.poppin.api.reservation.dto.PreStatementResponseDTO;
-import com.apink.poppin.api.reservation.entity.PreReservation;
 
 import java.util.Date;
 import java.util.List;
@@ -25,13 +23,13 @@ public interface PopupService {
     List<PopupDTO> getPopupRank();
 
     // 유사 팝업 조회
-//    List<PopupDTO> getSimilarPopup(long popupId);
+    List<PopupDTO> getSimilarPopup(long popupId);
 
     // 오픈 예정 팝업 조회
     List<PopupDTO> getOpenPopup();
 
     // 사전 예약
-    PreReservation createPreReservation(PreReservationRequestDTO req);
+    PreReservationResponseDTO createPreReservation(PreReservationRequestDTO req);
 
     // 날짜 별 사전예약 정보
     List<PreReservationResponseDTO> getPreReservationsByDate(Date reservationDate);
@@ -50,5 +48,4 @@ public interface PopupService {
 
     // 팝업 삭제
     void deletePopup(long popupId);
-
 }

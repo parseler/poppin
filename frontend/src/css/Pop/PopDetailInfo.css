@@ -75,7 +75,7 @@
 }
 
 #pop-detail-info .homepage img {
-  margin-right: 3px;
+  margin-right: 6px;
 }
 
 #pop-detail-info .insta {
@@ -91,7 +91,12 @@
 }
 
 #pop-detail-info .insta img {
-  margin-right: 3px;
+  margin-right: 6px;
+}
+#pop-detail-info .insta a {
+  width: calc(100% - 40px);
+  word-break: break-all;
+  text-align: left;
 }
 
 #pop-detail-info .service {

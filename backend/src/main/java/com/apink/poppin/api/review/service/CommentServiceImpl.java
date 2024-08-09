@@ -11,6 +11,7 @@ import com.apink.poppin.common.exception.dto.BusinessLogicException;
 import com.apink.poppin.common.exception.dto.ExceptionCode;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor
@@ -21,6 +22,7 @@ public class CommentServiceImpl implements CommentService {
     private final UserRepository userRepository;
 
     @Override
+    @Transactional
     public Comment createComment(long reviewId, CommentDto commentDto) {
 
         if (reviewId != commentDto.getReviewId()) {
@@ -38,6 +40,7 @@ public class CommentServiceImpl implements CommentService {
     }
 
     @Override
+    @Transactional
     public void updateComment(long reviewId, long commentId, CommentDto commentDto) {
         Comment comment = commentRepository.findById(commentDto.getCommentId())
                 .orElseThrow(() -> new BusinessLogicException(ExceptionCode.COMMENT_NOT_FOUND));
@@ -60,6 +63,7 @@ public class CommentServiceImpl implements CommentService {
     }
 
     @Override
+    @Transactional
     public void deleteComment(long reviewId, long commentId) {
         Comment comment = commentRepository.findById(commentId)
                 .orElseThrow(() -> new BusinessLogicException(ExceptionCode.COMMENT_NOT_FOUND));

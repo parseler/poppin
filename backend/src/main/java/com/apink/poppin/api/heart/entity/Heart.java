@@ -19,7 +19,7 @@ import static jakarta.persistence.FetchType.LAZY;
 public class Heart {
 
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name="heart_id")
     private long heartId;
 

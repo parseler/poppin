@@ -6,10 +6,8 @@ import com.apink.poppin.api.heart.service.HeartService;
 import com.apink.poppin.api.popup.dto.PopupDTO;
 import com.apink.poppin.api.popup.dto.PopupRequestDTO;
 import com.apink.poppin.api.popup.dto.PopupWithPreReservationDTO;
-import com.apink.poppin.api.popup.entity.Popup;
 import com.apink.poppin.api.popup.service.PopupService;
 import com.apink.poppin.api.reservation.dto.*;
-import com.apink.poppin.api.reservation.entity.PreReservation;
 import com.apink.poppin.api.reservation.service.OnsiteReservationService;
 import com.apink.poppin.api.review.dto.ReviewDto;
 import com.apink.poppin.api.review.dto.ReviewListDto;
@@ -64,11 +62,11 @@ public class PopupController {
     }
 
     // 유사 팝업 조회
-//    @GetMapping("/{popupId}/tag")
-//    public ResponseEntity<List<Popup>> getSimilarPopup(@PathVariable("popupId") long popupId) {
-//        List<Popup> similarList = popupService.getSimilarPopup(popupId);
-//        return new ResponseEntity<>(similarList, HttpStatus.OK);
-//    }
+    @GetMapping("/{popupId}/tag")
+    public ResponseEntity<List<PopupDTO>> getSimilarPopup(@PathVariable("popupId") long popupId) {
+        List<PopupDTO> similarPopupList = popupService.getSimilarPopup(popupId);
+        return ResponseEntity.ok(similarPopupList);
+    }
 
     // 오픈 예정 팝업 조회
     @GetMapping("/open")
@@ -79,9 +77,9 @@ public class PopupController {
 
     // 팝업 사전 예약하기
     @PostMapping("/{popupId}/pre-reservations")
-    public ResponseEntity<PreReservation> createPreReservation(@RequestBody PreReservationRequestDTO req, @PathVariable("popupId") Long popupId) {
-        PreReservation preReservation = popupService.createPreReservation(req);
-        return new ResponseEntity<>(preReservation, HttpStatus.CREATED);
+    public ResponseEntity<?> createPreReservation(@RequestBody PreReservationRequestDTO req, @PathVariable("popupId") Long popupId) {
+        PreReservationResponseDTO responseDTO = popupService.createPreReservation(req);
+        return ResponseEntity.ok(responseDTO);
     }
 
     // 날짜 별 사전 예약자 정보 조회
@@ -198,6 +196,13 @@ public class PopupController {
         List<PopupDTO> listByReservation = popupService.getMyReservationPopup();
 
         return new ResponseEntity<>(listByReservation, HttpStatus.OK);
+    }
+
+    @GetMapping("/category/{category}")
+    public ResponseEntity<?> getPopupByCategory(@PathVariable String category) {
+        List<PopupDTO> popupDTOList = popupService.getPopupByCategory(category);
+
+        return ResponseEntity.ok(popupDTOList);
     }
 
 }

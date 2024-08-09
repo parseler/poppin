@@ -12,7 +12,6 @@ import org.hibernate.annotations.CreationTimestamp;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
-import java.util.Date;
 
 import static jakarta.persistence.FetchType.LAZY;
 
@@ -26,7 +25,7 @@ public class PreReservation {
     // 사전 예약
 
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long preReservationId;
 
     @ManyToOne(fetch = LAZY)

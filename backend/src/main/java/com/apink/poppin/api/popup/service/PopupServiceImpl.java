@@ -7,24 +7,25 @@ import com.apink.poppin.api.manager.repository.ManagerRepository;
 import com.apink.poppin.api.popup.dto.PopupDTO;
 import com.apink.poppin.api.popup.dto.PopupRequestDTO;
 import com.apink.poppin.api.popup.dto.PopupWithPreReservationDTO;
+import com.apink.poppin.api.popup.dto.SimilarPopupRequestDto;
 import com.apink.poppin.api.popup.entity.Category;
+import com.apink.poppin.api.popup.entity.Popup;
 import com.apink.poppin.api.popup.entity.PopupCategory;
 import com.apink.poppin.api.popup.entity.PopupImage;
 import com.apink.poppin.api.popup.repository.CategoryRepository;
 import com.apink.poppin.api.popup.repository.PopupCategoryRepository;
 import com.apink.poppin.api.popup.repository.PopupImageRepository;
-import com.apink.poppin.api.reservation.entity.OnsiteReservation;
-import com.apink.poppin.api.reservation.entity.PreReservationInfo;
-import com.apink.poppin.api.reservation.repository.OnsiteReservationRepository;
-import com.apink.poppin.api.reservation.repository.PreReservationInfoRepository;
+import com.apink.poppin.api.popup.repository.PopupRepository;
 import com.apink.poppin.api.reservation.dto.PreReservationRequestDTO;
 import com.apink.poppin.api.reservation.dto.PreReservationResponseDTO;
-import com.apink.poppin.api.popup.entity.Popup;
 import com.apink.poppin.api.reservation.dto.PreStatementRequestDTO;
 import com.apink.poppin.api.reservation.dto.PreStatementResponseDTO;
+import com.apink.poppin.api.reservation.entity.OnsiteReservation;
 import com.apink.poppin.api.reservation.entity.PreReservation;
-import com.apink.poppin.api.popup.repository.PopupRepository;
+import com.apink.poppin.api.reservation.entity.PreReservationInfo;
 import com.apink.poppin.api.reservation.entity.ReservationStatement;
+import com.apink.poppin.api.reservation.repository.OnsiteReservationRepository;
+import com.apink.poppin.api.reservation.repository.PreReservationInfoRepository;
 import com.apink.poppin.api.reservation.repository.PreReservationRepository;
 import com.apink.poppin.api.reservation.repository.ReservationStatementRepository;
 import com.apink.poppin.api.user.entity.User;
@@ -34,12 +35,14 @@ import com.apink.poppin.common.exception.dto.ExceptionCode;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.ParameterizedTypeReference;
+import org.springframework.http.*;
+import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.RestTemplate;
 
-import java.io.IOException;
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -233,10 +236,74 @@ public class PopupServiceImpl implements PopupService {
                 .collect(Collectors.toList());
     }
 
-    // 유사 팝업 조회
-//    public List<PopupDTO> getSimilarPopup(long popupId) {
-//
-//    }
+    @Override
+    public List<PopupDTO> getSimilarPopup(long popupId) {
+
+        List<Popup> popupList = popupRepository.findByEndDateGreaterThanEqualAndDeletedFalse(LocalDate.now());
+
+        Popup currentPopup = popupRepository.findById(popupId)
+                .orElseThrow(() -> new IllegalArgumentException("Invalid popup ID"));
+
+        List<PopupDTO> popupListRequest = new ArrayList<>();
+        PopupDTO currentPopupRequest = PopupDTO.builder()
+                .popupId(currentPopup.getPopupId())
+                .name(currentPopup.getName())
+                .content(currentPopup.getContent()).build();;
+
+        for (Popup popup : popupList) {
+            PopupDTO popupDTO = PopupDTO.builder()
+                    .popupId(popup.getPopupId())
+                    .name(popup.getName())
+                    .content(popup.getContent()).build();
+
+            popupListRequest.add(popupDTO);
+        }
+
+        String url = "http://70.12.130.111:9323/similar";
+        SimilarPopupRequestDto requestDto = SimilarPopupRequestDto.builder()
+                .currentPopupRequest(currentPopupRequest)
+                .popupListRequest(popupListRequest).build();
+
+        RestTemplate restTemplate = new RestTemplate();
+        restTemplate.getMessageConverters().add(new MappingJackson2HttpMessageConverter());
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_JSON);
+
+        HttpEntity<SimilarPopupRequestDto> request = new HttpEntity<>(requestDto, headers);
+        ResponseEntity<List<PopupDTO>> response = restTemplate.exchange(
+                url,
+                HttpMethod.POST,
+                request,
+                new ParameterizedTypeReference<List<PopupDTO>>() {}
+        );
+
+        List<PopupDTO> responseList = response.getBody();
+        List<PopupDTO> popupDtoList = new ArrayList<>();
+
+        assert responseList != null;
+        for (PopupDTO dto : responseList) {
+            Popup popup = popupRepository.findById(dto.getPopupId())
+                    .orElseThrow(() -> new IllegalArgumentException("Invalid popup ID"));
+
+            List<PopupImage> imageList = popupImageRepository.findAllByPopup_PopupId(popup.getPopupId());
+            List<String> imageUrl = new ArrayList<>();
+            for (PopupImage image : imageList) {
+                if (image.getSeq() != 1) continue;
+                imageUrl.add(image.getImg());
+            }
+            PopupDTO popupDTO = PopupDTO.builder()
+                    .popupId(popup.getPopupId())
+                    .name(popup.getName())
+                    .startDate(popup.getStartDate())
+                    .endDate(popup.getEndDate())
+                    .content(popup.getContent())
+                    .images(imageUrl).build();
+
+            popupDtoList.add(popupDTO);
+        }
+
+        return popupDtoList;
+    }
 
     // 오픈 예정 팝업 조회
     public List<PopupDTO> getOpenPopup() {
@@ -278,7 +345,7 @@ public class PopupServiceImpl implements PopupService {
     // 사전 예약
     @Override
     @Transactional
-    public PreReservation createPreReservation(PreReservationRequestDTO req) {
+    public PreReservationResponseDTO createPreReservation(PreReservationRequestDTO req) {
         // 유저 확인
         User user = userRepository.findUserByUserTsid(req.getUserTsid())
                 .orElseThrow(() -> new IllegalArgumentException("Invalid user Tsid"));
@@ -298,7 +365,11 @@ public class PopupServiceImpl implements PopupService {
                 .reservationStatement(reservationStatement)
                 .build();
 
-        return preReservationRepository.save(preReservation);
+        PreReservation saved = preReservationRepository.save(preReservation);
+
+
+
+        return convertToResponseDTO(saved);
     }
 
     // 날짜 별 사전예약자 정보 (매니저)
@@ -797,6 +868,37 @@ public class PopupServiceImpl implements PopupService {
             return false;
         }
 
+    }
+
+    @Override
+    public List<PopupDTO> getPopupByCategory(String category) {
+        List<Popup> list = popupRepository.findPopupsByCategoryName(category);
+
+        List<PopupDTO> result = new ArrayList<>();
+        for(Popup popup : list) {
+
+            List<PopupImage> images = popupImageRepository.findAllByPopup_PopupId(popup.getPopupId());
+            List<String> imageUrls = new ArrayList<>();
+            for (PopupImage image : images) {
+                imageUrls.add(image.getImg());
+            }
+
+            PopupDTO dto = PopupDTO.builder()
+                    .popupId(popup.getPopupId())
+                    .name(popup.getName())
+                    .startDate(popup.getStartDate())
+                    .endDate(popup.getEndDate())
+                    .content(popup.getContent())
+                    .heart(popup.getHeart())
+                    .hit(popup.getHit())
+                    .rating(popup.getRating())
+                    .deleted(popup.isDeleted())
+                    .images(imageUrls)
+                    .build();
+
+            result.add(dto);
+        }
+        return result;
     }
 
 

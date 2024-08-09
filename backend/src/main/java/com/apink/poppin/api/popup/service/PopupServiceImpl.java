@@ -564,24 +564,12 @@ public class PopupServiceImpl implements PopupService {
 
         popup.updatePopup(reqDto);
 
-        // 기존 이미지 삭제
-        List<PopupImage> existingImages = popupImageRepository.findAllByPopup_PopupId(popupId);
-        existingImages.forEach(image -> fileStorageService.deleteFile(image.getImg()));
-        popupImageRepository.deleteAllByPopup(popup);
-
-        // 새로운 이미지 저장
-        List<String> images = reqDto.getImages().stream()
-                .map(fileStorageService::storeFile)
+        // 기존 이미지 불러오기
+        List<String> images = popupImageRepository.findAllByPopup_PopupId(popup.getPopupId())
+                .stream()
+                .sorted((img1, img2) -> Integer.compare(img1.getSeq(), img2.getSeq()))
+                .map(PopupImage::getImg)
                 .toList();
-
-        for (int i = 0; i < images.size(); i++) {
-            PopupImage popupImage = PopupImage.builder()
-                    .popup(popup)
-                    .img(images.get(i))
-                    .seq(i)
-                    .build();
-            popupImageRepository.save(popupImage);
-        }
 
         // 기존 카테고리 삭제
         popupCategoryRepository.deleteAllByPopup(popup);

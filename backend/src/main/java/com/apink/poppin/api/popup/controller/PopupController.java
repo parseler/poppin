@@ -48,7 +48,7 @@ public class PopupController {
 //        PopupDTO popup = popupService.getPopup(popupId);
 //        return new ResponseEntity<>(popup, HttpStatus.OK);
         boolean check = popupService.checkPreReservation(popupId);
-        if (check) {
+        if (!check) {
             PopupDTO popup = popupService.getPopup(popupId);
             return new ResponseEntity<>(popup, HttpStatus.OK);
         } else {

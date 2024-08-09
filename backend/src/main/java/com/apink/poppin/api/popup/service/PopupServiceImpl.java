@@ -196,6 +196,7 @@ public class PopupServiceImpl implements PopupService {
                 .managerTsId(popup.getManager().getManagerTsid())
                 .images(images)
                 .categories(categories)
+                .checkPreReservation(preReservationInfoRepository.existsByPopup(popup))
                 .preReservationOpenAt(preInfo.getPreReservationOpenAt())
                 .term(preInfo.getTerm())
                 .maxPeoplePerSession(preInfo.getMaxPeoplePerSession())

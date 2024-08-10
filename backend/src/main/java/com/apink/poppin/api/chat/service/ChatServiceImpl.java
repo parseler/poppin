@@ -77,6 +77,6 @@ public class ChatServiceImpl implements ChatService {
         Popup popup = popupRepository.findById(popupId)
                 .orElseThrow(() -> new IllegalArgumentException("Invalid popup ID"));
 
-        return chatRepository.findAllByChatRoom(popupId);
+        return chatRepository.findAllByPopupId(popupId);
     }
 }

@@ -84,7 +84,7 @@ public class RedisConfig {
     // 실제 메시지를 처리하는 subscriber 설정 추가
     @Bean
     public MessageListenerAdapter listenerAdapterChatMessage(RedisSubscriber subscriber) {
-        return new MessageListenerAdapter(subscriber, "sendMessage");
+        return new MessageListenerAdapter(subscriber, "insertMessage");
     }
 
 }

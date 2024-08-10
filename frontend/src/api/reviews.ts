@@ -1,5 +1,5 @@
 import { ReviewProps, ReviewUpdateProps } from "@interface/reviews";
-import axiosInstance from "./axiosInstance";
+import { axiosInstance } from "./axiosInstance";
 
 // 후기 목록 조회
 export const getReviewListData = async () => {

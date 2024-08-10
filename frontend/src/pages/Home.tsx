@@ -1,4 +1,5 @@
 import "@css/Home.css";
+import { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import categories from "@utils/get-category-image";
 import banners from "@utils/get-banner-image";
@@ -6,9 +7,32 @@ import Banner from "@components/Home/Banner";
 import CategoryButton from "@components/Home/CategoryButton";
 import PopupBig from "@components/Home/PopupBig";
 import PopupSmall from "@components/Home/PopupSmall";
+import { getUserData } from "@api/users";
+import { getTokenInfo } from "@api/axiosInstance";
+import useAuthStore from "@store/useAuthStore";
 
 const Home = () => {
+  const { accessToken, userTsid, userRole } = useAuthStore();
   const navigate = useNavigate();
+  const [nickname, setNickname] = useState<string>("");
+
+  useEffect(() => {
+    if (accessToken) {
+      const tokenInfo = getTokenInfo(accessToken);
+
+      if (tokenInfo.userTsid && tokenInfo.userRole) {
+        getUserData()
+          .then((data) => {
+            if (data && data.nickname) {
+              setNickname(data.nickname);
+            }
+          })
+          .catch((error) => {
+            console.error('Failed to fetch user data:', error);
+          });
+      }
+    }
+  }, [accessToken, userTsid, userRole]);
 
   const goPopDetail = () => {
     navigate("/popdetail");
@@ -71,7 +95,7 @@ const Home = () => {
       </section>
       <section id="recommend-section">
         {/* 비로그인이면 담당자 픽 & 로그인이면 닉네임 추천 픽 */}
-        <h1>담당자 픽 추천 팝업</h1>
+        <h1>{nickname ? `${nickname}님을 위한 추천 팝업` : "담당자 픽 추천 팝업"}</h1>
         <div className="recommend-content">
           {banners.map((banner, index) => (
             <PopupSmall

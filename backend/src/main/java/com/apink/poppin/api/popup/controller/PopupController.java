@@ -171,7 +171,7 @@ public class PopupController {
 
     // 팝업 채팅방 들어가기 - 채팅내역 불러오기
     @GetMapping("/chat/{popupId}")
-    public List<ChatMessage> getHistory(@PathVariable Long popupId) {
-        return chatService.getChatHistory(popupId);
+    public ResponseEntity<List<ChatMessage>> getHistory(@PathVariable Long popupId) {
+        return new ResponseEntity<>(chatService.getChatHistory(popupId), HttpStatus.OK);
     }
 }

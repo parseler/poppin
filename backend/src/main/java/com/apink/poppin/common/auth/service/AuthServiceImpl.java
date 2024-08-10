@@ -83,11 +83,10 @@ public class AuthServiceImpl implements AuthService {
                 .user(findUserByUserTsid(username))
                 .refresh(newRefresh)
                 .build();
-        deleteRefreshToken(username, role);
-        userRefreshTokenRepository.save(token);
+//        deleteRefreshToken(username, role);
+//        userRefreshTokenRepository.save(token);
 
-        //response
-        response.addCookie(createCookie("refresh", newRefresh));
+//        response.addCookie(createCookie("refresh", newRefresh));
         response.setHeader("Authorization", "Bearer " + newAccess);
 
         return new ResponseEntity<>(HttpStatus.OK);

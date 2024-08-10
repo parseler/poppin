@@ -50,7 +50,7 @@ public class CustomOAuth2SuccessHandler extends SimpleUrlAuthenticationSuccessHa
             if(!jwtTokenUtil.isExpired(refreshToken)) {
                 refresh = refreshToken;
                 response.addCookie(createCookie("refresh", refresh));
-                response.sendRedirect("http://localhost");
+                response.sendRedirect("http://localhost/loading");
                 return;
             } else {
                 userRefreshTokenRepository.deleteUserRefreshTokenByUser_UserTsid(userTsid);
@@ -70,9 +70,9 @@ public class CustomOAuth2SuccessHandler extends SimpleUrlAuthenticationSuccessHa
         response.addCookie(createCookie("refresh", refresh));
 
         if(customUser.isSigned()){
-            response.sendRedirect("http://localhost");
+            response.sendRedirect("http://localhost/mypage/loading");
         } else {
-            response.sendRedirect("http://localhost/mypage/update");
+            response.sendRedirect("http://localhost/loading");
         }
 
     }
@@ -83,7 +83,7 @@ public class CustomOAuth2SuccessHandler extends SimpleUrlAuthenticationSuccessHa
         cookie.setMaxAge(30 * 24 * 60 * 60);
         cookie.setSecure(true);
         cookie.setPath("/");
-        cookie.setHttpOnly(true);
+//        cookie.setHttpOnly(true);
 
         return cookie;
     }

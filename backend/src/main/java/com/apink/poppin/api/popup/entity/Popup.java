@@ -4,14 +4,10 @@ import com.apink.poppin.api.manager.entity.Manager;
 import com.apink.poppin.api.popup.dto.PopupRequestDTO;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import org.hibernate.annotations.ColumnDefault;
 
 import java.time.LocalDate;
-import java.util.Date;
 
 @Builder
 @Entity

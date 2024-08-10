@@ -1,33 +1,32 @@
 package com.apink.poppin.common.auth.service;
 
-import com.apink.poppin.api.manager.dto.CreateManagerRequestDTO;
-import com.apink.poppin.api.manager.entity.Manager;
-import com.apink.poppin.api.manager.repository.ManagerRepository;
+import com.apink.poppin.api.user.entity.User;
+import com.apink.poppin.api.user.repository.UserRepository;
+import com.apink.poppin.common.auth.entity.UserRefreshToken;
 import com.apink.poppin.common.auth.repository.ManagerRefreshTokenRepository;
 import com.apink.poppin.common.auth.repository.UserRefreshTokenRepository;
+import com.apink.poppin.common.exception.dto.BusinessLogicException;
+import com.apink.poppin.common.exception.dto.ExceptionCode;
 import com.apink.poppin.common.util.JwtTokenUtil;
-import com.apink.poppin.common.util.SnowflakeTsidUtil;
-import io.jsonwebtoken.ExpiredJwtException;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
-import org.springframework.context.annotation.Bean;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
 public class AuthServiceImpl implements AuthService {
 
-    private final ManagerRepository managerRepository;
     private final UserRefreshTokenRepository userRefreshTokenRepository;
     private final JwtTokenUtil jwtTokenUtil;
     private final ManagerRefreshTokenRepository managerRefreshTokenRepository;
-    private final SnowflakeTsidUtil snowflakeTsidUtil;
+    private final UserRepository userRepository;
 
     @Override
     @Transactional
@@ -37,31 +36,27 @@ public class AuthServiceImpl implements AuthService {
         Cookie[] cookies = request.getCookies();
         for (Cookie cookie : cookies) {
             if (cookie.getName().equals("refresh")) {
-
                 refresh = cookie.getValue();
             }
         }
 
         // refresh 유무 체크
         if (refresh == null) {
-            return new ResponseEntity<>("refresh token null", HttpStatus.BAD_REQUEST);
+            throw new BusinessLogicException(ExceptionCode.REFRESH_TOKEN_ERROR);
         }
+
+        String role = jwtTokenUtil.getRole(refresh);
+        long username = jwtTokenUtil.getUsername(refresh);
 
         // refresh 만료 체크
-        try {
-            jwtTokenUtil.isExpired(refresh);
-        } catch (ExpiredJwtException e) {
-            return new ResponseEntity<>("refresh token expired", HttpStatus.BAD_REQUEST);
+        if(jwtTokenUtil.isExpired(refresh)) {
+            deleteRefreshToken(username, role);
+            throw new BusinessLogicException(ExceptionCode.RT_EXPIRED_ERROR);
         }
 
-        // 토큰이 refresh인지 확인 (발급시 페이로드에 명시)
-        String category = jwtTokenUtil.getCategory(refresh);
 
         // DB에 저장되어 있는지 확인
         Boolean isExist = false;
-
-        String role = jwtTokenUtil.getRole(refresh);
-
         if(role.equals("manager")) {
             isExist = managerRefreshTokenRepository.existsManagerRefreshTokenByRefresh(refresh);
         } else {
@@ -69,19 +64,30 @@ public class AuthServiceImpl implements AuthService {
         }
 
         if(!isExist) {
-            return new ResponseEntity<>("invalid refresh token", HttpStatus.BAD_REQUEST);
+            throw new BusinessLogicException(ExceptionCode.REFRESH_TOKEN_ERROR);
         }
 
+        // 토큰이 refresh인지 확인 (발급시 페이로드에 명시)
+        String category = jwtTokenUtil.getCategory(refresh);
         if (!category.equals("refresh")) {
-            return new ResponseEntity<>("invalid refresh token", HttpStatus.BAD_REQUEST);
+            throw new BusinessLogicException(ExceptionCode.REFRESH_TOKEN_ERROR);
         }
 
-        long username = jwtTokenUtil.getUsername(refresh);
 
         //make new JWT
-        String newAccess = jwtTokenUtil.createToken("access", username, role, 600000L);
-        System.out.println(newAccess);
+        String newAccess = jwtTokenUtil.createToken("access", username, role, 60 * 60 * 1000L);
+        String newRefresh = jwtTokenUtil.createToken("refresh", username, role, 30 * 60 * 60 * 24 * 1000L);
+
+        // refreshToken 갱신
+        UserRefreshToken token = UserRefreshToken.builder()
+                .user(findUserByUserTsid(username))
+                .refresh(newRefresh)
+                .build();
+        deleteRefreshToken(username, role);
+        userRefreshTokenRepository.save(token);
+
         //response
+        response.addCookie(createCookie("refresh", newRefresh));
         response.setHeader("Authorization", "Bearer " + newAccess);
 
         return new ResponseEntity<>(HttpStatus.OK);
@@ -90,22 +96,29 @@ public class AuthServiceImpl implements AuthService {
 
     @Override
     @Transactional
-    public void deleteRefreshToken(String refreshToken, String role) {
+    public void deleteRefreshToken(long tsid, String role) {
         if ("ROLE_MANAGER".equals(role)) {
-            managerRefreshTokenRepository.deleteManagerRefreshTokenByRefresh(refreshToken);
+            managerRefreshTokenRepository.deleteManagerRefreshTokenByManager_ManagerTsid(tsid);
         } else {
-            userRefreshTokenRepository.deleteUserRefreshTokenByRefresh(refreshToken);
+            userRefreshTokenRepository.deleteUserRefreshTokenByUser_UserTsid(tsid);
         }
     }
 
-    @Override
-    @Transactional
-    public boolean isExist(String refreshToken, String role) {
-        if ("ROLE_MANAGER".equals(role)) {
-            return managerRefreshTokenRepository.existsManagerRefreshTokenByRefresh(refreshToken);
-        } else {
-            return userRefreshTokenRepository.existsUserRefreshTokenByRefresh(refreshToken);
-        }
+    private User findUserByUserTsid(long userTsid) {
+        Optional<User> user = userRepository.findUserByUserTsid(userTsid);
+        return user
+                .orElseThrow(() -> new BusinessLogicException(ExceptionCode.USER_NOT_FOUND));
+    }
+
+    private Cookie createCookie(String key, String value) {
+        Cookie cookie = new Cookie(key, value);
+
+        cookie.setMaxAge(30 * 24 * 60 * 60);
+        cookie.setSecure(true);
+        cookie.setPath("/");
+        cookie.setHttpOnly(true);
+
+        return cookie;
     }
 
 }

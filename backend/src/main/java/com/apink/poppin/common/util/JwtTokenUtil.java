@@ -1,5 +1,6 @@
 package com.apink.poppin.common.util;
 
+import io.jsonwebtoken.JwtException;
 import io.jsonwebtoken.Jwts;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
@@ -32,8 +33,17 @@ public class JwtTokenUtil {
     }
 
     public Boolean isExpired(String token) {
-
-        return Jwts.parser().verifyWith(secretKey).build().parseSignedClaims(token).getPayload().getExpiration().before(new Date());
+        try {
+            return Jwts.parser()
+                    .verifyWith(secretKey)
+                    .build()
+                    .parseSignedClaims(token)
+                    .getPayload()
+                    .getExpiration()
+                    .before(new Date());
+        } catch (JwtException | IllegalArgumentException e) {
+            return true;
+        }
     }
 
     public String extractToken(String token) {

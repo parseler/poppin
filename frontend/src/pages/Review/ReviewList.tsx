@@ -1,6 +1,5 @@
 import "@css/Review.css";
 import ReviewMedium from "@components/Review/ReviewMedium";
-import CreateButton from "@components/CreateButton";
 import { Link } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { getReviewListData } from "@api/reviews";
@@ -44,6 +43,8 @@ const ReviewList = () => {
             <Link key={review.reviewId} to={`/review/${review.reviewId}`}>
               <ReviewMedium
                 reviewId={review.reviewId}
+                nickname={review.nickname}
+                img={review.img}
                 thumbnail={review.thumbnail}
                 title={review.title}
                 rating={review.rating}
@@ -54,9 +55,6 @@ const ReviewList = () => {
           ))
         )}
       </div>
-      <Link to={`/review/write`}>
-        <CreateButton onClick={() => {}} />
-      </Link>
     </div>
   );
 };

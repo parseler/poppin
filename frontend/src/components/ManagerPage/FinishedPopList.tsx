@@ -1,16 +1,18 @@
 import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { getPopupList } from "@api/apiPop";
+
 import nextButton from "@assets/mypage/nextButton.svg";
 import none from "@assets/none.svg";
 
 interface Popup {
+  popupId: number;
   images: string[];
   name: string;
   startDate: string;
   endDate: string;
-  managerTsid: number;
-  hours: { [key: string]: string };
+  managerTsId: number;
+  hours: string;
 }
 
 function FinishedPopList() {
@@ -22,24 +24,26 @@ function FinishedPopList() {
       try {
         const response = await getPopupList();
         const currentDateTime = new Date();
-        const currentDay = currentDateTime.toLocaleString("ko-KR", { weekday: "short" });
+        const currentDay = currentDateTime.toLocaleString("ko-KR", {
+          weekday: "short",
+        });
 
         const finishedPopups = response.filter((popup: Popup) => {
           const endDate = new Date(popup.endDate);
 
-          if (popup.managerTsid !== managerTsid || currentDateTime <= endDate) {
+          if (popup.managerTsId !== managerTsid || currentDateTime <= endDate) {
             return false;
           }
 
-          const hours = popup.hours[currentDay];
-          if (!hours) return false;
+          const hoursObject = parseHoursFromString(popup.hours);
+          if (!hoursObject[currentDay]) return currentDateTime > endDate;
 
+          const hours = hoursObject[currentDay];
           const [, end] = hours.split(" ~ ");
           const [endHour, endMinute] = end.split(":").map(Number);
 
           const endDateTime = new Date(endDate);
           endDateTime.setHours(endHour, endMinute, 0, 0);
-
           return currentDateTime > endDateTime;
         });
 
@@ -51,13 +55,27 @@ function FinishedPopList() {
     fetchPopups();
   }, []);
 
+  const parseHoursFromString = (
+    hoursString: string
+  ): { [key: string]: string } => {
+    const hoursObject = JSON.parse(hoursString);
+    return hoursObject;
+  };
+
   return (
     <div id="finished-pop-list">
       {popups.length > 0 ? (
         popups.map((popup, index) => (
-          <Link to="/popdetail" key={index} className="popup-card">
+          <Link
+            to={`/popdetail/${popup.popupId}`}
+            key={index}
+            className="popup-card"
+          >
             <div className="popup-image">
-              <img src={popup.images[0]} alt={popup.name} />
+              <img
+                src={`http://localhost/${popup.images[0].replace("./", "")}`}
+                alt={popup.name}
+              />
             </div>
             <div className="popup-details">
               <p className="popup-name">{popup.name}</p>

@@ -10,9 +10,9 @@ public interface UserRefreshTokenRepository extends JpaRepository<UserRefreshTok
 
     Boolean existsUserRefreshTokenByRefresh(String refresh);
 
-    void deleteUserRefreshTokenByRefresh(String refresh);
-
     boolean existsUserRefreshTokenByUser_UserTsid(long userTsid);
 
     UserRefreshToken findUserRefreshTokenByUser_UserTsid(long userTsid);
+
+    void deleteUserRefreshTokenByUser_UserTsid(long userTsid);
 }

@@ -5,9 +5,10 @@ import com.apink.poppin.api.manager.entity.Manager;
 import com.apink.poppin.api.manager.repository.ManagerRepository;
 import com.apink.poppin.api.user.dto.UserDto;
 import com.apink.poppin.common.auth.dto.CustomUserDetails;
+import com.apink.poppin.common.exception.dto.BusinessLogicException;
+import com.apink.poppin.common.exception.dto.ExceptionCode;
 import com.apink.poppin.common.oauth.CustomOAuth2User;
 import com.apink.poppin.common.util.JwtTokenUtil;
-import io.jsonwebtoken.ExpiredJwtException;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -39,9 +40,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
         // 토큰이 없다면 다음 필터로 넘김
         if (accessToken == null) {
-
             filterChain.doFilter(request, response);
-
             return;
         }
 
@@ -49,16 +48,8 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         accessToken = jwtTokenUtil.extractToken(accessToken);
 
         // 토큰 만료 여부 확인, 만료시 다음 필터로 넘기지 않음
-        try {
-            jwtTokenUtil.isExpired(accessToken);
-        } catch (ExpiredJwtException e) {
-            //response body
-            PrintWriter writer = response.getWriter();
-            writer.print("access token expired");
-
-            //response status code
-            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-            return;
+        if(jwtTokenUtil.isExpired(accessToken)) {
+            throw new BusinessLogicException(ExceptionCode.AT_EXPIRED_ERROR);
         }
 
         // 토큰이 access인지 확인 (발급시 페이로드에 명시)
@@ -66,14 +57,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
         // 엑세스 토큰이 아니면 다음 필터로 넘기지 않음
         if (!category.equals("access")) {
-
-            //response body
-            PrintWriter writer = response.getWriter();
-            writer.print("invalid access token");
-
-            //response status code
-            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-            return;
+            throw new BusinessLogicException(ExceptionCode.ACCESS_TOKEN_ERROR);
         }
 
         // username, role 값을 획득
@@ -82,7 +66,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
         if(role.equals("manager")) {
             Manager managerData = managerRepository.findById(String.valueOf(username))
-                    .orElseThrow(() -> new IllegalArgumentException(" 매니저 미 존재"));
+                    .orElseThrow(() -> new BusinessLogicException(ExceptionCode.MANAGER_NOT_FOUND));
 
             ManagerDTO manager = ManagerDTO.builder()
                     .managerTsid(managerData.getManagerTsid())

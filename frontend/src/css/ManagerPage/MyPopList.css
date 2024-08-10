@@ -39,8 +39,54 @@
   margin: 0 20px;
 }
 
-#onsite-registed-list a {
+.popup-card {
   color: black;
+  display: flex;
+  flex-direction: row;
+  border-bottom: 1px solid #ccc;
+  text-decoration: none;
+}
+#onsite-registed-list .popup-image,
+#pre-pop-list .popup-image,
+#finished-pop-list .popup-image {
+  width: 80px;
+  height: 80px;
+  margin: 2px;
+  border-radius: 10px;
+}
+#onsite-registed-list .popup-image img,
+#pre-pop-list .popup-image img,
+#finished-pop-list .popup-image img {
+  width: 80px;
+  height: 80px;
+  object-fit: contain;
+  margin: 2px;
+  border-radius: 10px;
+}
+
+.popup-details {
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+.popup-details .popup-name {
+  color: #222;
+  font-family: "NanumSquare Neo OTF";
+  font-size: 16px;
+  font-style: normal;
+  font-weight: 700;
+  line-height: 20px;
+  margin-bottom: 5px;
+}
+
+.popup-details .popup-date {
+  color: #222;
+  font-family: "NanumSquare Neo OTF";
+  font-size: 12px;
+  font-style: normal;
+  font-weight: 400;
+  line-height: normal;
 }
 
 .go-detail-page {

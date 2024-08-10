@@ -31,7 +31,7 @@ public class UserDto {
         private String nickname;
         private String email;
         private String phoneNumber;
-        private List<@Valid UserCategory> userCategories;
+        private List<UserCategory> userCategories;
         private UserConsent userConsent;
     }
 
@@ -40,6 +40,7 @@ public class UserDto {
     public static class Login {
         private long userTsid;
         private String role;
+        private boolean signed;
     }
 
 

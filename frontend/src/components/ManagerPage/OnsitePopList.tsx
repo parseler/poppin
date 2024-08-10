@@ -6,12 +6,13 @@ import nextButton from "@assets/mypage/nextButton.svg";
 import none from "@assets/none.svg";
 
 interface Popup {
+  popupId: number;
   images: string[];
   name: string;
   startDate: string;
   endDate: string;
-  managerTsid: number;
-  hours: { [key: string]: string };
+  managerTsId: number;
+  hours: string;
 }
 
 function OnsitePopList() {
@@ -23,19 +24,26 @@ function OnsitePopList() {
       try {
         const response = await getPopupList();
         const currentDateTime = new Date();
-        const currentDay = currentDateTime.toLocaleString("ko-KR", { weekday: "short" });
-
+        const currentDay = currentDateTime.toLocaleString("ko-KR", {
+          weekday: "short",
+        });
         const onsitePopups = response.filter((popup: Popup) => {
           const startDate = new Date(popup.startDate);
           const endDate = new Date(popup.endDate);
-
-          if (popup.managerTsid !== managerTsid || currentDateTime < startDate || currentDateTime > endDate) {
+          if (
+            popup.managerTsId !== managerTsid ||
+            currentDateTime < startDate ||
+            currentDateTime > endDate
+          ) {
             return false;
           }
 
-          const hours = popup.hours[currentDay];
-          if (!hours) return false;
+          if(startDate<currentDateTime && currentDateTime<endDate) return true;
 
+          const hoursObject = parseHoursFromString(popup.hours);
+          if (!hoursObject[currentDay]) return currentDateTime >= startDate && currentDateTime <= endDate;
+          
+          const hours = hoursObject[currentDay];
           const [start, end] = hours.split(" ~ ");
           const [startHour, startMinute] = start.split(":").map(Number);
           const [endHour, endMinute] = end.split(":").map(Number);
@@ -46,9 +54,10 @@ function OnsitePopList() {
           const endDateTime = new Date();
           endDateTime.setHours(endHour, endMinute, 0, 0);
 
-          return currentDateTime >= startDateTime && currentDateTime <= endDateTime;
+          return (
+            currentDateTime >= startDateTime && currentDateTime <= endDateTime
+          );
         });
-
         setPopups(onsitePopups);
       } catch (error) {
         console.error("Error fetching popups:", error);
@@ -57,13 +66,21 @@ function OnsitePopList() {
     fetchPopups();
   }, []);
 
+  const parseHoursFromString = (
+    hoursString: string
+  ): { [key: string]: string } => {
+    // JSON 형식의 문자열을 객체로 파싱
+    const hoursObject = JSON.parse(hoursString);
+    return hoursObject;
+  };
+
   return (
     <div id="onsite-registed-list">
       {popups.length > 0 ? (
         popups.map((popup, index) => (
-          <Link to="/popdetail" key={index} className="popup-card">
+          <Link to={`/popdetail/${popup.popupId}`} key={index} className="popup-card">
             <div className="popup-image">
-              <img src={popup.images[0]} alt={popup.name} />
+              <img src={`http://localhost/${popup.images[0].replace('./','')}`} alt={popup.name} />
             </div>
             <div className="popup-details">
               <p className="popup-name">{popup.name}</p>

@@ -5,6 +5,8 @@ import com.apink.poppin.api.manager.repository.ManagerRepository;
 import com.apink.poppin.common.auth.dto.CustomUserDetails;
 import com.apink.poppin.common.auth.entity.ManagerRefreshToken;
 import com.apink.poppin.common.auth.repository.ManagerRefreshTokenRepository;
+import com.apink.poppin.common.exception.dto.BusinessLogicException;
+import com.apink.poppin.common.exception.dto.ExceptionCode;
 import com.apink.poppin.common.util.JwtTokenUtil;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
@@ -53,24 +55,25 @@ public class LoginFilter extends UsernamePasswordAuthenticationFilter {
         GrantedAuthority auth = iterator.next();
         String role = auth.getAuthority();
 
-        String access = jwtTokenUtil.createToken("Authorization", managerTsid, role, 60 * 60 * 100L);
+        String access = jwtTokenUtil.createToken("Authorization", managerTsid, role, 60 * 60 * 1000L);
         String refresh = null;
 
         if(managerRefreshTokenRepository.existsUserRefreshTokenByManager_ManagerTsid(managerTsid)){
             String refreshToken = managerRefreshTokenRepository.findUserRefreshTokenByManager_ManagerTsid(managerTsid).getRefresh();
-            System.out.println(refreshToken);
             if(!jwtTokenUtil.isExpired(refreshToken)) {
                 refresh = refreshToken;
                 response.addHeader("Authorization", "Bearer " + access);
                 response.addCookie(createCookie("refresh", refresh));
                 return;
+            } else {
+                managerRefreshTokenRepository.deleteManagerRefreshTokenByManager_ManagerTsid(managerTsid);
             }
         }
 
-        refresh = jwtTokenUtil.createToken("refresh", managerTsid, role, 8640000L);
+        refresh = jwtTokenUtil.createToken("refresh", managerTsid, role, 30 * 60 * 60 * 24 * 1000L);
 
         Manager manager = managerRepository.findByManagerTsid(managerTsid)
-                .orElseThrow(() -> new IllegalArgumentException());
+                .orElseThrow(() -> new BusinessLogicException(ExceptionCode.MANAGER_NOT_FOUND));
 
         ManagerRefreshToken saveRefresh = ManagerRefreshToken.builder()
                 .refresh(refresh)
@@ -92,7 +95,7 @@ public class LoginFilter extends UsernamePasswordAuthenticationFilter {
         Cookie cookie = new Cookie(key, value);
 
         // 살아 있는 시간
-        cookie.setMaxAge(24 * 60 * 60);
+        cookie.setMaxAge(30 * 24 * 60 * 60);
         cookie.setSecure(true);
         cookie.setPath("/");
         cookie.setHttpOnly(true);

@@ -16,12 +16,19 @@ public enum ExceptionCode {
     COMMENT_UPDATE_FAILED(401, "Comment update failed"),
 
     USER_NOT_FOUND(404, "User not found"),
+    MANAGER_NOT_FOUND(404, "Manager not found"),
     POPUP_NOT_FOUND(404, "Popup not found"),
 
     ONSITE_NOT_FOUND(404, "Onsite reservation not found"),
     ONSITE_ALREADY_EXIST(405, "Onsite already exist"),
 
-    NICKNAME_EXIST(409, "Nickname Already Exists");
+    NICKNAME_EXIST(409, "Nickname Already Exists"),
+
+    REFRESH_TOKEN_ERROR(401, "Invalid refresh token"),
+    SIGNATURE_ERROR(401, "Tocken Signature Error"),
+    RT_EXPIRED_ERROR(401, "Token Expired Error"),
+    AT_EXPIRED_ERROR(401, "AccessToken Expired Error"),
+    ACCESS_TOKEN_ERROR(401, "AccessToken Error");
 
     private final int status;
     private final String message;

@@ -7,11 +7,9 @@ public interface ManagerRefreshTokenRepository extends JpaRepository<ManagerRefr
 
     Boolean existsManagerRefreshTokenByRefresh(String refresh);
 
-    void deleteManagerRefreshTokenByRefresh(String refresh);
-
-    boolean findManagerRefreshTokenByRefresh(String refresh);
-
     boolean existsUserRefreshTokenByManager_ManagerTsid(long managerTsid);
 
     ManagerRefreshToken findUserRefreshTokenByManager_ManagerTsid(long managerTsid);
+
+    void deleteManagerRefreshTokenByManager_ManagerTsid(long managerTsid);
 }

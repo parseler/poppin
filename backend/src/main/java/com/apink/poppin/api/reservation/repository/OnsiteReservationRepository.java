@@ -29,4 +29,6 @@ public interface OnsiteReservationRepository extends JpaRepository<OnsiteReserva
             "WHERE r.phoneNumber = :phoneNumber")
     List<ReservationResponseDto> findReservationsByPhoneNumber(@Param("phoneNumber") String phoneNumber);
 
+    // 전화번호로 예약목록 찾기
+    List<OnsiteReservation> findAllByPhoneNumber(String phoneNumber);
 }

@@ -2,12 +2,11 @@ package com.apink.poppin.api.popup.service;
 
 import com.apink.poppin.api.popup.dto.PopupDTO;
 import com.apink.poppin.api.popup.dto.PopupRequestDTO;
-import com.apink.poppin.api.popup.entity.Popup;
+import com.apink.poppin.api.popup.dto.PopupWithPreReservationDTO;
 import com.apink.poppin.api.reservation.dto.PreReservationRequestDTO;
 import com.apink.poppin.api.reservation.dto.PreReservationResponseDTO;
 import com.apink.poppin.api.reservation.dto.PreStatementRequestDTO;
 import com.apink.poppin.api.reservation.dto.PreStatementResponseDTO;
-import com.apink.poppin.api.reservation.entity.PreReservation;
 
 import java.util.Date;
 import java.util.List;
@@ -21,17 +20,20 @@ public interface PopupService {
     // 팝업 상세 조회
     PopupDTO getPopup(Long popupId);
 
+    // 팝업 상세 조회 (+사전예약 정보)
+    PopupWithPreReservationDTO getPopupWithPreReservation(Long popupId);
+
     // 인기 팝업 조회
     List<PopupDTO> getPopupRank();
 
     // 유사 팝업 조회
-//    List<PopupDTO> getSimilarPopup(long popupId);
+    List<PopupDTO> getSimilarPopup(long popupId);
 
     // 오픈 예정 팝업 조회
     List<PopupDTO> getOpenPopup();
 
     // 사전 예약
-    PreReservation createPreReservation(PreReservationRequestDTO req);
+    PreReservationResponseDTO createPreReservation(PreReservationRequestDTO req);
 
     // 날짜 별 사전예약 정보
     List<PreReservationResponseDTO> getPreReservationsByDate(Date reservationDate);
@@ -40,15 +42,32 @@ public interface PopupService {
     PreStatementResponseDTO changePreReservation(PreStatementRequestDTO reqDto);
 
     // 팝업 등록 (사전 예약 없이)
-    Popup createPopupOnly(PopupRequestDTO popupDto);
+    PopupDTO createPopupOnly(PopupRequestDTO popupDto);
 
     // 팝업 등록 (사전 예약까지)
     void createPopupWithPreReservation(PopupRequestDTO popupDto);
 
     // 팝업 수정
-    Popup updatePopup(PopupRequestDTO popupDto, long popupId);
+    PopupDTO updatePopup(PopupRequestDTO popupDto, long popupId);
 
     // 팝업 삭제
     void deletePopup(long popupId);
 
+    // 본인이 등록한 팝업 전체 조회 (매니저)
+    List<PopupDTO> getAllPopupByManager(Long managerTsId);
+
+    // 내 주변 팝업 조회 (전체)
+    List<PopupDTO> getAllPopupByLocation();
+
+    // 내 주변 팝업 조회 (좋아요)
+    List<PopupDTO> getHeartPopupByLocation();
+
+    // 내 주변 팝업 조회 (내 예약)
+    List<PopupDTO> getMyReservationPopup();
+
+    // 사전예약 유무 확인
+    boolean checkPreReservation(long popupId);
+
+
+    List<PopupDTO> getPopupByCategory(String category);
 }

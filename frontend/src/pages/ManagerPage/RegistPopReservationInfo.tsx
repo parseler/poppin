@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { useMutation } from "react-query";
 import DatePicker from "react-datepicker";
 import usePopupStore from "store/usePopupStore";
-import { createPopup, PopupRequestDTO } from "api/apiPop";
+import { createPopup } from "api/apiPop";
 import "react-datepicker/dist/react-datepicker.css";
 import "@css/ManagerPage/RegistPopReservationInfo.css";
 
@@ -31,6 +31,7 @@ function RegistPopReservationInfo() {
     address,
     lat,
     lon,
+    categories,
     snsUrl,
     pageUrl,
     timeSlots,
@@ -50,39 +51,104 @@ function RegistPopReservationInfo() {
   const mutation = useMutation(createPopup, {
     onSuccess: () => {
       alert("팝업이 성공적으로 등록되었습니다.");
+      console.log(
+        storeName,
+        storeDescription,
+        selectedImages,
+        startDate,
+        endDate,
+        address,
+        lat,
+        lon,
+        categories,
+        snsUrl,
+        pageUrl,
+        timeSlots,
+        preReservationOpenAt,
+        term,
+        maxPeoplePerSession,
+        maxReservationsPerPerson,
+        warning,
+        setPreReservationOpenAt,
+        setTerm,
+        setMaxPeoplePerSession,
+        setMaxReservationsPerPerson,
+        setWarning
+      );
       navigate("/regist-pop-fin");
     },
     onError: (error) => {
       console.error("Error creating popup:", error);
+      console.log(
+        storeName,
+        storeDescription,
+        selectedImages,
+        startDate,
+        endDate,
+        address,
+        lat,
+        lon,
+        categories,
+        snsUrl,
+        pageUrl,
+        timeSlots,
+        preReservationOpenAt,
+        term,
+        maxPeoplePerSession,
+        maxReservationsPerPerson,
+        warning,
+        setPreReservationOpenAt,
+        setTerm,
+        setMaxPeoplePerSession,
+        setMaxReservationsPerPerson,
+        setWarning
+      );
       alert("팝업 등록 중 오류가 발생했습니다.");
     },
   });
 
   const handleSubmit = async () => {
-    const popupData: PopupRequestDTO = {
-      name: storeName,
-      description: storeDescription,
-      images: selectedImages,
-      startDate: startDate || "",
-      endDate: endDate || "",
-      hours: JSON.stringify(timeSlots),
-      snsUrl: snsUrl || "",
-      pageUrl: pageUrl || "",
-      content: storeDescription,
-      address: address,
-      lat: lat || 0,
-      lon: lon || 0,
-      preReservationOpenAt: preReservationOpenAt ? preReservationOpenAt.toISOString() : "",
-      term: term || 1,
-      maxPeoplePerSession: maxPeoplePerSession || 1,
-      maxReservationsPerPerson: maxReservationsPerPerson || 1,
-      warning: warning || "",
-      managerTsid: 1
-    };
+    const formattedPreReservationOpenAt = preReservationOpenAt
+      ? `${preReservationOpenAt.getFullYear()}-${(
+          preReservationOpenAt.getMonth() + 1
+        )
+          .toString()
+          .padStart(2, "0")}-${preReservationOpenAt
+          .getDate()
+          .toString()
+          .padStart(2, "0")}T${preReservationOpenAt
+          .getHours()
+          .toString()
+          .padStart(2, "0")}:${preReservationOpenAt
+          .getMinutes()
+          .toString()
+          .padStart(2, "0")}`
+      : "";
 
-    console.log(popupData);
-
-    mutation.mutate({ url: "http://localhost/api/popups/preReservation", popupDto: popupData });
+    mutation.mutate({
+      url: "/popups/preReservation",
+      popupDto: {
+        name: storeName,
+        description: storeDescription,
+        startDate: startDate || "",
+        endDate: endDate || "",
+        hours: JSON.stringify(timeSlots),
+        snsUrl: snsUrl || "",
+        pageUrl: pageUrl || "",
+        content: storeDescription,
+        address,
+        lat: lat || 0,
+        lon: lon || 0,
+        images: selectedImages,
+        managerTsid: 1,
+        preReservationOpenAt: formattedPreReservationOpenAt,
+        term: term || 1,
+        maxPeoplePerSession: maxPeoplePerSession || 1,
+        maxReservationsPerPerson: maxReservationsPerPerson || 1,
+        warning: warning || "",
+        categories: categories,
+      },
+    });
   };
 
   const renderCustomHeader = ({

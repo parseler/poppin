@@ -1,5 +1,11 @@
-import { useState, useCallback, useMemo } from "react";
-import { useNavigate } from "react-router-dom";
+import { useState, useEffect, useCallback, useMemo } from "react";
+import { useNavigate, useParams } from "react-router-dom";
+import {
+  getPopupDetail,
+  updatePopup,
+  PopupRequestDTO,
+  getReviews,
+} from "@api/apiPop";
 import Slider from "react-slick";
 import PopDetailInfo from "@components/Pop/PopDetailInfo";
 import PopDetailReservation from "@components/Pop/PopDetailReservation";
@@ -9,9 +15,6 @@ import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
 import "@css/Pop/PopDetail.css";
 
-import image1 from "@assets/image1.svg";
-import image2 from "@assets/sponge2.jpg";
-import image3 from "@assets/sponge.jpg";
 import backButton from "@assets/backButton.svg";
 import scoreIcon from "@assets/scoreIcon.svg";
 import likeIcon from "@assets/likeIcon.svg";
@@ -19,55 +22,111 @@ import noneLike from "@assets/noneLike.svg";
 import fillLike from "@assets/fillLike.svg";
 import editIcon from "@assets/editIcon.svg";
 
-const initialIntroduceContent = `
-베베와 멜롱이가 라인프렌즈 스퀘어에 두둥등장💫🔥!!
+export interface ReviewListDto {
+  reviewId: number;
+  popupId: number;
+  userTsid: number;
+  nickname: string;
+  img: string;
+  rating: number;
+  title: string;
+  content: string;
+  thumbnail?: string;
+  createdAt: string;
+  commentDtoList: CommentDto[];
+}
 
-🌏Bebe the World 팝업
-🗓️2024.7.5 - 2024.7.18 KST
-📍라인프렌즈 스퀘어 성수
+export interface CommentDto {
+  commentId: number;
+  reviewId: number;
+  userTsid: number;
+  nickname: string;
+  content: string;
+  createdAt: string;
+}
 
-🎁베베 더 월드 팝업 Special Gifts
+interface PopupDetail {
+  popupId: number;
+  name: string;
+  startDate: string;
+  endDate: string;
+  hours: string;
+  snsUrl: string;
+  pageUrl: string;
+  content: string;
+  description: string;
+  address: string;
+  lat: number;
+  lon: number;
+  heart: number;
+  hit: number;
+  rating: number;
+  deleted: boolean;
+  managerTsId: number;
+  images: string[];
+  checkPreReservation: boolean;
+  preReservationOpenAt?: string;
+  term?: number;
+  maxPeoplePerSession?: number;
+  maxReservationsPerPerson?: number;
+  warning?: string;
+}
 
--베베 더 오리 스티커 1개 증정
-*베베 더 월드 팝업 스토어 방문 고객 전원
-
--베레모 베베 부채 1개 증정
-*베베 더 오리 상품 1만원 이상 구매 시
-
--베베 더 오리 리유저블백 1개 증정
-*베베 더 오리 상품 7만원 이상 구매 시
-
-*한정 수량 선착순 증정, 소진 시 별도 고지없이 종료
-`;
-
-function PopDetail() {
+const PopDetail = () => {
+  const { popupId } = useParams<{ popupId: string }>();
+  const [popupDetail, setPopupDetail] = useState<PopupDetail | null>(null);
+  const [reviews, setReviews] = useState<ReviewListDto[]>([]);
   const [activeTab, setActiveTab] = useState<string | null>("info");
   const [liked, setLiked] = useState(false);
   const [isManager] = useState(true);
   const [isEditing, setIsEditing] = useState(false);
-  const [title, setTitle] = useState("베베 더 월드 팝업스토어");
-  const [date, setDate] = useState("24.07.05. ~ 24.07.18.");
-  const [location, setLocation] = useState(
-    "서울특별시 성동구 성수이로 77 라인프렌즈 스퀘어 성수"
-  );
-  const [hours, setHours] = useState("10:00~18:00");
-  const [website, setWebsite] = useState(
-    "https://www.ssafy.com/ksp/jsp/swp/swpMain.jsp"
-  );
-  const [instagram, setInstagram] = useState(
-    "https://www.instagram.com/bebe_the_ori/"
-  );
-  const [services, setServices] = useState({
-    parking: true,
-    fee: true,
-    pet: true,
-    food: undefined,
-    photo: false,
-    ageLimit: undefined,
-  });
-  const [description, setDescription] = useState(initialIntroduceContent);
+  const [location, setLocation] = useState<string>("");
+  const [hours, setHours] = useState<string>("");
+  const [website, setWebsite] = useState<string>("");
+  const [instagram, setInstagram] = useState<string>("");
+  const [content, setContent] = useState<string>("");
+  const [description, setDescription] = useState<string>("");
 
   const navigate = useNavigate();
+
+  useEffect(() => {
+    if (popupDetail) {
+      setLocation(popupDetail.address);
+      setHours(popupDetail.hours);
+      setWebsite(popupDetail.pageUrl);
+      setInstagram(popupDetail.snsUrl);
+      setContent(popupDetail.content);
+      setDescription(popupDetail.description);
+    }
+  }, [popupDetail]);
+
+  useEffect(() => {
+    const fetchPopupDetail = async () => {
+      if (!popupId) {
+        console.error("popupId is missing");
+        return;
+      }
+      try {
+        const data = await getPopupDetail(parseInt(popupId, 10));
+        const uniqueImages = Array.from(new Set(data.images));
+        setPopupDetail({ ...data, images: uniqueImages });
+      } catch (error) {
+        console.error("Error fetching popup detail:", error);
+      }
+    };
+    fetchPopupDetail();
+
+    const fetchReviews = async () => {
+      if (!popupId) return;
+      try {
+        const reviewData = await getReviews(parseInt(popupId, 10));
+        setReviews(reviewData);
+      } catch (error) {
+        console.error("Error fetching reviews:", error);
+      }
+    };
+    fetchReviews();
+  }, [popupId]);
 
   const settings = useMemo(
     () => ({
@@ -98,32 +157,51 @@ function PopDetail() {
     setIsEditing((prev) => !prev);
   };
 
-  const handleSave = () => {
+  const handleSave = async () => {
+    if (!popupDetail) return;
+
+    const updatedData: Partial<PopupRequestDTO> = {
+      name: popupDetail?.name,
+      description: description,
+      startDate: popupDetail?.startDate,
+      endDate: popupDetail?.endDate,
+      hours: hours,
+      snsUrl: instagram,
+      pageUrl: website,
+      content: content,
+      address: location,
+      lat: popupDetail?.lat,
+      lon: popupDetail?.lon,
+      managerTsid: popupDetail?.managerTsId,
+    };
+
+    try {
+      await updatePopup(popupDetail.popupId, updatedData);
+      setIsEditing(false);
+    } catch (error) {
+      console.error("Error updating popup:", error);
+    }
+  };
+  const handleCancel = () => {
     setIsEditing(false);
   };
 
-  const handleServicesChange = (services: {
-    [key: string]: boolean | undefined;
-  }) => {
-    setServices((prevServices) => ({
-      ...prevServices,
-      ...services,
-    }));
-  };
+  if (!popupDetail) {
+    return <div>팝업 정보를 불러오지 못했습니다.</div>;
+  }
 
   return (
     <div id="pop-detail">
       <div className="slider-container">
         <Slider {...settings}>
-          <div className="slider-slide">
-            <img src={image1} alt="팝업스토어 이미지 1" />
-          </div>
-          <div className="slider-slide">
-            <img src={image2} alt="팝업스토어 이미지 2" />
-          </div>
-          <div className="slider-slide">
-            <img src={image3} alt="팝업스토어 이미지 3" />
-          </div>
+          {popupDetail.images.map((image: string, index: number) => (
+            <div className="slider-slide" key={index}>
+              <img
+                src={`http://localhost/${image.replace("./", "")}`}
+                alt={`팝업스토어 이미지 ${index + 1}`}
+              />
+            </div>
+          ))}
         </Slider>
         <button
           className="back-button"
@@ -141,21 +219,32 @@ function PopDetail() {
         </button>
         {isManager && (
           <>
-            <button
-              className="edit-button"
-              onClick={handleEditToggle}
-              aria-label="수정"
-            >
-              <img src={editIcon} alt="수정" />
-            </button>
-            {isEditing && (
+            {!isEditing && (
               <button
-                className="save-button"
-                onClick={handleSave}
-                aria-label="저장"
+                className="edit-button"
+                onClick={handleEditToggle}
+                aria-label="수정"
               >
-                저장
+                <img src={editIcon} alt="수정" />
               </button>
+            )}
+            {isEditing && (
+              <div className="edit-buttons">
+                <button
+                  className="cancel-button"
+                  onClick={handleCancel}
+                  aria-label="취소"
+                >
+                  취소
+                </button>
+                <button
+                  className="save-button"
+                  onClick={handleSave}
+                  aria-label="저장"
+                >
+                  저장
+                </button>
+              </div>
             )}
           </>
         )}
@@ -165,33 +254,48 @@ function PopDetail() {
           <div className="edit-form">
             <input
               type="text"
-              value={title}
-              onChange={(e) => setTitle(e.target.value)}
+              value={popupDetail.name}
+              onChange={(e) =>
+                setPopupDetail({ ...popupDetail, name: e.target.value })
+              }
               className="edit-input"
             />
-            <input
-              type="text"
-              value={date}
-              onChange={(e) => setDate(e.target.value)}
-              className="edit-input"
-            />
+            <div className="edit-date">
+              <input
+                type="text"
+                value={popupDetail.startDate}
+                onChange={(e) =>
+                  setPopupDetail({ ...popupDetail, startDate: e.target.value })
+                }
+                className="edit-input"
+              />
+              ~
+              <input
+                type="text"
+                value={popupDetail.endDate}
+                onChange={(e) =>
+                  setPopupDetail({ ...popupDetail, endDate: e.target.value })
+                }
+                className="edit-input"
+              />
+            </div>
           </div>
         ) : (
           <>
-            <div className="title">{title}</div>
+            <div className="title">{popupDetail.name}</div>
             <div className="date">
-              <h5>{date}</h5>
+              <h5>{`${popupDetail.startDate} ~ ${popupDetail.endDate}`}</h5>
             </div>
           </>
         )}
         <div className="score-like">
           <div className="score">
             <img src={scoreIcon} alt="점수 아이콘" />
-            4.8
+            {popupDetail.rating}
           </div>
           <div className="like">
             <img src={likeIcon} alt="좋아요 아이콘" />
-            177
+            {popupDetail.heart}
           </div>
         </div>
       </div>
@@ -202,12 +306,14 @@ function PopDetail() {
         >
           정보
         </div>
-        <div
-          onClick={() => onTabClick("reservation")}
-          className={activeTab === "reservation" ? "active" : ""}
-        >
-          예약
-        </div>
+        {popupDetail.checkPreReservation && (
+          <div
+            onClick={() => onTabClick("reservation")}
+            className={activeTab === "reservation" ? "active" : ""}
+          >
+            예약
+          </div>
+        )}
         <div
           onClick={() => onTabClick("review")}
           className={activeTab === "review" ? "active" : ""}
@@ -229,22 +335,35 @@ function PopDetail() {
             hours={hours}
             website={website}
             instagram={instagram}
-            services={services}
+            content={content}
             description={description}
+            lat={popupDetail.lat}
+            lon={popupDetail.lon}
             onLocationChange={setLocation}
             onHoursChange={setHours}
             onWebsiteChange={setWebsite}
             onInstagramChange={setInstagram}
-            onServicesChange={handleServicesChange}
+            onContentChange={setContent}
             onDescriptionChange={setDescription}
+            onSave={handleSave}
           />
         )}
-        {activeTab === "reservation" && <PopDetailReservation title={title} />}
-        {activeTab === "review" && <PopDetailReview />}
+        {popupDetail.checkPreReservation && activeTab === "reservation" && (
+          <PopDetailReservation
+            title={popupDetail.name}
+            hours={popupDetail.hours}
+            preReservationOpenAt={popupDetail.preReservationOpenAt}
+            term={popupDetail.term}
+            maxPeoplePerSession={popupDetail.maxPeoplePerSession}
+            maxReservationsPerPerson={popupDetail.maxReservationsPerPerson}
+            warning={popupDetail.warning}
+          />
+        )}
+        {activeTab === "review" && <PopDetailReview reviewsData={reviews} />}
         {activeTab === "chat" && <PopDetailChat />}
       </div>
     </div>
   );
-}
+};
 
 export default PopDetail;

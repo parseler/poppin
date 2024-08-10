@@ -5,13 +5,22 @@ import { createPopup } from "@api/apiPop";
 import "@css/ManagerPage/RegistPopOptional.css";
 import secondStep from "@assets/registPop/secondStep.svg";
 
-type serviceCategory = "parking" | "fee" | "pet" | "food" | "photo" | "age";
+type ServiceCategories = {
+  parking: string;
+  fee: string;
+  pet: string;
+  food: string;
+  photo: string;
+  age: string;
+};
+
+type serviceCategory = keyof ServiceCategories;
 
 function RegistPopOptional() {
   const {
     snsUrl,
     pageUrl,
-    serviceCategories,
+    content,
     setPopupData,
     setServiceCategory,
     storeName,
@@ -23,10 +32,13 @@ function RegistPopOptional() {
     lat,
     lon,
     timeSlots,
+    categories
   } = usePopupStore();
   const [localSnsUrl, setLocalSnsUrl] = useState(snsUrl || "");
   const [localPageUrl, setLocalPageUrl] = useState(pageUrl || "");
-  const [activeButtons, setActiveButtons] = useState(serviceCategories);
+  const [activeButtons, setActiveButtons] = useState<ServiceCategories>(
+    JSON.parse(content)
+  );
   const [showModal, setShowModal] = useState(false);
   const navigate = useNavigate();
 
@@ -35,44 +47,43 @@ function RegistPopOptional() {
       ...prev,
       [category]: prev[category] === value ? "" : value,
     }));
-    setServiceCategory(category, value);
+    setServiceCategory(category, activeButtons[category] === value ? "" : value);
   };
 
   const handleSubmit = () => {
     setPopupData({
       snsUrl: localSnsUrl,
       pageUrl: localPageUrl,
-      serviceCategories: activeButtons,
+      content: JSON.stringify(activeButtons),
     });
     console.log({
       snsUrl: localSnsUrl,
       pageUrl: localPageUrl,
-      serviceCategories: activeButtons,
+      content: JSON.stringify(activeButtons),
     });
     navigate("/regist-pop-reservation");
   };
 
   const goRegistFinish = async () => {
-    const popupData = {
-      name: storeName,
-      description: storeDescription,
-      images: selectedImages,
-      startDate: startDate || "",
-      endDate: endDate || "",
-      hours: JSON.stringify(timeSlots),
-      snsUrl: localSnsUrl,
-      pageUrl: localPageUrl,
-      content: storeDescription,
-      address: address,
-      lat: lat || 0,
-      lon: lon || 0,
-      managerTsid: 1,
-    };
-
     try {
       await createPopup({
-        url: "http://localhost/api/popups",
-        popupDto: popupData,
+        url: "/popups",
+        popupDto: {
+          name: storeName,
+          description: storeDescription,
+          startDate: startDate || "",
+          endDate: endDate || "",
+          hours: JSON.stringify(timeSlots),
+          snsUrl: localSnsUrl,
+          pageUrl: localPageUrl,
+          content: JSON.stringify(activeButtons),
+          address,
+          lat: lat || 0,
+          lon: lon || 0,
+          images: selectedImages,
+          categories: categories,
+          managerTsid: 1,
+        },
       });
       alert("팝업이 성공적으로 등록되었습니다.");
       navigate("/regist-pop-fin");

@@ -6,12 +6,13 @@ import nextButton from "@assets/mypage/nextButton.svg";
 import none from "@assets/none.svg";
 
 interface Popup {
+  popupId: number;
   images: string[];
   name: string;
   startDate: string;
   endDate: string;
-  managerTsid: number;
-  hours: { [key: string]: string };
+  managerTsId: number;
+  hours: string;
 }
 
 const PrePopList = () => {
@@ -23,27 +24,30 @@ const PrePopList = () => {
       try {
         const response = await getPopupList();
         const currentDateTime = new Date();
-        const currentDay = currentDateTime.toLocaleString("ko-KR", { weekday: "short" });
+        const currentDay = currentDateTime.toLocaleString("ko-KR", {
+          weekday: "short",
+        });
 
         const prePopups = response.filter((popup: Popup) => {
           const startDate = new Date(popup.startDate);
-
-          if (popup.managerTsid !== managerTsid || currentDateTime >= startDate) {
+          if (
+            popup.managerTsId !== managerTsid ||
+            currentDateTime >= startDate
+          ) {
             return false;
           }
 
-          const hours = popup.hours[currentDay];
-          if (!hours) return false;
+          const hoursObject = parseHoursFromString(popup.hours);
+          if (!hoursObject[currentDay]) return currentDateTime < startDate;
 
+          const hours = hoursObject[currentDay];
           const [start] = hours.split(" ~ ");
           const [startHour, startMinute] = start.split(":").map(Number);
 
           const startDateTime = new Date(startDate);
           startDateTime.setHours(startHour, startMinute, 0, 0);
-
           return currentDateTime < startDateTime;
         });
-
         setPopups(prePopups);
       } catch (error) {
         console.error("Error fetching popups:", error);
@@ -52,13 +56,28 @@ const PrePopList = () => {
     fetchPopups();
   }, []);
 
+  const parseHoursFromString = (
+    hoursString: string
+  ): { [key: string]: string } => {
+    // JSON 형식의 문자열을 객체로 파싱
+    const hoursObject = JSON.parse(hoursString);
+    return hoursObject;
+  };
+
   return (
     <div id="pre-pop-list">
       {popups.length > 0 ? (
         popups.map((popup, index) => (
-          <Link to="/popdetail" key={index} className="popup-card">
+          <Link
+            to={`/popdetail/${popup.popupId}`}
+            key={index}
+            className="popup-card"
+          >
             <div className="popup-image">
-              <img src={popup.images[0]} alt={popup.name} />
+              <img
+                src={`http://localhost/${popup.images[0].replace("./", "")}`}
+                alt={popup.name}
+              />
             </div>
             <div className="popup-details">
               <p className="popup-name">{popup.name}</p>

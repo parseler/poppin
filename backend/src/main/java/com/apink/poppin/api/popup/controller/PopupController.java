@@ -1,6 +1,8 @@
 package com.apink.poppin.api.popup.controller;
 
 
+import com.apink.poppin.api.chat.entity.ChatMessage;
+import com.apink.poppin.api.chat.service.ChatService;
 import com.apink.poppin.api.heart.dto.HeartRequestDTO;
 import com.apink.poppin.api.heart.service.HeartService;
 import com.apink.poppin.api.popup.dto.PopupDTO;
@@ -31,6 +33,7 @@ public class PopupController {
     private final HeartService heartService;
     private final ReviewService reviewService;
     private final OnsiteReservationService onsiteReservationService;
+    private final ChatService chatService;
 
 
     // 팝업 전체 목록 조회 및 검색
@@ -203,6 +206,13 @@ public class PopupController {
         List<PopupDTO> popupDTOList = popupService.getPopupByCategory(category);
 
         return ResponseEntity.ok(popupDTOList);
+    }
+
+
+    // 팝업 채팅방 들어가기 - 채팅내역 불러오기
+    @GetMapping("/chat/{popupId}")
+    public ResponseEntity<List<ChatMessage>> getHistory(@PathVariable Long popupId) {
+        return new ResponseEntity<>(chatService.getChatHistory(popupId), HttpStatus.OK);
     }
 
 }

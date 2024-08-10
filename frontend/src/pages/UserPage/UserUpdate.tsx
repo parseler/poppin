@@ -38,8 +38,8 @@ const UserUpdate: React.FC = () => {
             ...prevUser,
             userTsid: userTsid !== null ? Number(userTsid) : prevUser.userTsid,
             nickname: data.nickname ?? prevUser.nickname,
-            email: prevUser.email,
-            phoneNumber: prevUser.phoneNumber,
+            email: data.email,
+            phoneNumber: data.phoneNumber,
             categoryList: data.userCategories
               ? data.userCategories.map((cate: any) => cate.category.name)
               : prevUser.categoryList,

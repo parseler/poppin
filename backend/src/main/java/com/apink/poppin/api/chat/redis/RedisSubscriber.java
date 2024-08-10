@@ -16,7 +16,7 @@ public class RedisSubscriber {
     private final SimpMessagingTemplate template;
 
     // Redis에서 메시지가 발행(publish) 되면 대기하고있던 RedisSubscriber가 해당 메시지를 받아서 처리
-    public void sendMessage(String publishMessage) {
+    public void insertMessage(String publishMessage) {
         try {
             ChatMessageDTO chatDto =
                     objectMapper.readValue(publishMessage, ChatMessageDTO.class);

@@ -6,7 +6,7 @@ import Header from "@components/common/Header";
 import Menu from "@components/common/Menu";
 import { ReviewProps } from "@interface/reviews";
 import { UserProps } from "@interface/users";
-import axiosInstance from "@api/axiosInstance";
+import { axiosInstance } from "@api/axiosInstance";
 import { getUserData } from "@api/users";
 import { createReviewData } from "@api/reviews";
 

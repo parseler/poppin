@@ -6,6 +6,7 @@ export interface AgreementProps {
 }
 
 export interface UserProps {
+  userTsid: number | null,
   nickname: string;
   email: string;
   phoneNumber: string;

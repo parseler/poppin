@@ -88,7 +88,7 @@ const Header = ({ leftIcon, rightIcon, onRightClick }: IconProps) => {
     if (icon === getIcon("notification") || icon === "notification") {
       setModalOpen(true); 
     } else if (icon === "완료") {
-      if (onRightClick) onRightClick;
+      if (onRightClick) onRightClick();
     } else if (icon === getIcon("search") || icon === "search") {
       navigate("/search");
     } else if (icon === getIcon("back") || icon === "취소" || icon === "back") {

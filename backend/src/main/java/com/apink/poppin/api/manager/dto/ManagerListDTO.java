@@ -8,7 +8,7 @@ import lombok.Getter;
 @Builder
 @AllArgsConstructor
 public class ManagerListDTO {
-    private Long managerTsid;
+    private String managerTsid;
     private String nickname;
     private String img;
 }

@@ -1,15 +1,22 @@
 package com.apink.poppin.api.user.entity;
 
 import com.apink.poppin.api.user.dto.UserDto;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import org.hibernate.annotations.ColumnDefault;
 
 import java.time.Instant;
 
 @Getter
 @Entity
+@Builder
+@AllArgsConstructor
+@NoArgsConstructor
 @Table(name = "user_consent")
 public class UserConsent {
     @Id
@@ -20,6 +27,7 @@ public class UserConsent {
     @NotNull
     @OneToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "user_tsid", nullable = false)
+    @JsonIgnore
     private User user;
 
     @NotNull

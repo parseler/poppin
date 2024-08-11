@@ -1,5 +1,6 @@
 package com.apink.poppin.common.util;
 
+import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.JwtException;
 import io.jsonwebtoken.Jwts;
 import org.springframework.beans.factory.annotation.Value;
@@ -20,11 +21,20 @@ public class JwtTokenUtil {
     }
 
     public Long getUsername(String token) {
-        System.out.println(Jwts.parser().verifyWith(secretKey).build().parseSignedClaims(token).getPayload().get("username", Long.class));
-        return Jwts.parser().verifyWith(secretKey).build().parseSignedClaims(token).getPayload().get("username", Long.class);
+        Claims claims = Jwts.parser().verifyWith(secretKey).build().parseSignedClaims(token).getPayload();
+        Object usernameObj = claims.get("username");
+
+        if (usernameObj instanceof Long) {
+            return (Long) usernameObj;
+        } else if (usernameObj instanceof String) {
+            return Long.parseLong((String) usernameObj);
+        }
+
+        return Long.parseLong(Jwts.parser().verifyWith(secretKey).build().parseSignedClaims(token).getPayload().get("username", String.class));
     }
 
-    public String getRole(String token) {System.out.println(Jwts.parser().verifyWith(secretKey).build().parseSignedClaims(token).getPayload().get("role", String.class));
+    public String getRole(String token) {
+        System.out.println(Jwts.parser().verifyWith(secretKey).build().parseSignedClaims(token).getPayload().get("role", String.class));
         return Jwts.parser().verifyWith(secretKey).build().parseSignedClaims(token).getPayload().get("role", String.class);
     }
 
@@ -56,7 +66,7 @@ public class JwtTokenUtil {
     public String createToken(String category, long userTsid, String role, Long expiredMs) {
         return Jwts.builder()
                 .claim("category", category)
-                .claim("username", userTsid)
+                .claim("username", String.valueOf(userTsid))
                 .claim("role", role)
                 .issuedAt(new Date(System.currentTimeMillis()))
                 .expiration(new Date(System.currentTimeMillis() + expiredMs))

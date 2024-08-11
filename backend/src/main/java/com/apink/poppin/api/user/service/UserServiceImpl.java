@@ -15,6 +15,7 @@ import com.apink.poppin.api.review.entity.Review;
 import com.apink.poppin.api.review.repository.ReviewRepository;
 import com.apink.poppin.api.user.dto.UserDto;
 import com.apink.poppin.api.user.entity.User;
+import com.apink.poppin.api.user.entity.UserCategory;
 import com.apink.poppin.api.user.entity.UserConsent;
 import com.apink.poppin.api.user.repository.UserRepository;
 import com.apink.poppin.common.exception.dto.BusinessLogicException;
@@ -55,15 +56,7 @@ public class UserServiceImpl implements UserService {
     public UserDto.Response findUser(long userTsid) {
         User user = findByUserByUserTsid(userTsid);
 
-        return UserDto.Response.builder()
-                .userTsid(user.getUserTsid())
-                .nickname(user.getNickname())
-                .email(user.getEmail())
-                .phoneNumber(user.getPhoneNumber())
-                .userCategories(user.getUserCategories())
-                .userConsent(user.getUserConsents())
-                .build();
-
+        return convertToResponseDTO(user);
     }
 
     @Override
@@ -72,11 +65,14 @@ public class UserServiceImpl implements UserService {
         long userTsid = userDto.getUserTsid();
 
         User findUser = userRepository.findUserByUserTsid(userTsid)
-                .orElseThrow(() -> new RuntimeException("user not exists"));
-        UserConsent findUserConsent = findUser.getUserConsents();
+                .orElseThrow(() -> new BusinessLogicException(USER_NOT_FOUND));
 
-        findUserConsent.updateUserConsent(userDto.getUserConsents());
-        findUser.updateUser(userDto, findUserConsent);
+        // 유저 정보, 카테고리 변경
+        findUser.updateUser(userDto);
+        // 유저 동의 여부 변경
+        findUser.getUserConsents().updateUserConsent(userDto.getUserConsents());
+
+        userRepository.save(findUser);
 
         return convertToResponseDTO(findUser);
     }
@@ -85,7 +81,7 @@ public class UserServiceImpl implements UserService {
     @Transactional
     public void deleteUser(long userTsid) {
         User findUser = userRepository.findUserByUserTsid(userTsid)
-                .orElseThrow(() -> new RuntimeException("user not exists"));
+                .orElseThrow(() -> new BusinessLogicException(USER_NOT_FOUND));
 
         User user = User.builder()
                 .userTsid(findUser.getUserTsid())
@@ -111,7 +107,7 @@ public class UserServiceImpl implements UserService {
         long userTsid = Long.parseLong(SecurityContextHolder.getContext().getAuthentication().getName());
 
         User user = userRepository.findUserByUserTsid(userTsid)
-                        .orElseThrow(() -> new RuntimeException("user not exists"));
+                        .orElseThrow(() -> new BusinessLogicException(USER_NOT_FOUND));
 
         List<Heart> hearts = heartRepository.findByUser(user);
 
@@ -260,10 +256,12 @@ public class UserServiceImpl implements UserService {
 
     private UserDto.Response convertToResponseDTO(User user) {
         return UserDto.Response.builder()
-                .userTsid(user.getUserTsid())
+                .userTsid(String.valueOf(user.getUserTsid()))
                 .nickname(user.getNickname())
                 .email(user.getEmail())
+                .img(user.getImg())
                 .phoneNumber(user.getPhoneNumber())
+                .userCategories(user.getUserCategories())
                 .userConsent(user.getUserConsents())
                 .build();
     }

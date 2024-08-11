@@ -9,6 +9,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
+import java.time.LocalDate;
 import java.util.Date;
 import java.util.List;
 
@@ -32,4 +33,7 @@ public interface PreReservationRepository extends JpaRepository<PreReservation, 
             "LEFT JOIN PopupImage pi ON pi.popup.popupId = p.popupId AND pi.seq = 1 " +
             "WHERE u.userTsid = :userTsid")
     List<ReservationResponseDto> findReservationsByUserTsid(@Param("userTsid") long userTsid);
+
+    @Query("SELECT pr FROM PreReservation pr WHERE pr.reservationDate = :tomorrow")
+    List<PreReservation> findAllByReservationDateTomorrow(@Param("tomorrow") LocalDate tomorrow);
 }

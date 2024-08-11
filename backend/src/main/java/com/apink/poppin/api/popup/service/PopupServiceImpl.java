@@ -4,6 +4,7 @@ import com.apink.poppin.api.heart.entity.Heart;
 import com.apink.poppin.api.heart.repository.HeartRepository;
 import com.apink.poppin.api.manager.entity.Manager;
 import com.apink.poppin.api.manager.repository.ManagerRepository;
+import com.apink.poppin.api.notice.dto.NoticeDto;
 import com.apink.poppin.api.popup.dto.PopupDTO;
 import com.apink.poppin.api.popup.dto.PopupRequestDTO;
 import com.apink.poppin.api.popup.dto.PopupWithPreReservationDTO;
@@ -32,6 +33,7 @@ import com.apink.poppin.api.user.entity.User;
 import com.apink.poppin.api.user.repository.UserRepository;
 import com.apink.poppin.common.exception.dto.BusinessLogicException;
 import com.apink.poppin.common.exception.dto.ExceptionCode;
+import com.apink.poppin.kafka.KafkaProducer;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
@@ -53,6 +55,7 @@ import java.util.stream.Stream;
 @RequiredArgsConstructor
 public class PopupServiceImpl implements PopupService {
 
+    private final KafkaProducer kafkaProducer;
     private final PopupRepository popupRepository;
     private final PreReservationRepository preReservationRepository;
     private final UserRepository userRepository;
@@ -462,6 +465,8 @@ public class PopupServiceImpl implements PopupService {
 
         popupCategoryRepository.saveAll(popupCategories);
 
+        sendPopupPush(reqDto.getCategories(), popup.getPopupId());
+
         return PopupDTO.builder()
                 .popupId(popup.getPopupId())
                 .name(popup.getName())
@@ -548,6 +553,7 @@ public class PopupServiceImpl implements PopupService {
 
         preReservationInfoRepository.save(preReservationInfo);
 
+        sendPopupPush(reqDto.getCategories(), popup.getPopupId());
     }
 
     // 팝업 수정
@@ -891,6 +897,19 @@ public class PopupServiceImpl implements PopupService {
                 .createdAt(preReservation.getCreatedAt())
                 .reservationStatementId(preReservation.getReservationStatement().getReservationStatementId())
                 .build();
+    }
+
+    private void sendPopupPush(List<Integer> categoryNames, long popupId) {
+        List<Long> userTsids = userRepository.findUserTsidsByAnyCategoryId(categoryNames);
+
+        NoticeDto.RegisteredFavoriteCategory dto = NoticeDto.RegisteredFavoriteCategory.builder()
+                .userTsid(userTsids)
+                .popupId(popupId)
+                .build();
+
+        String topic ="registered-favorite-category";
+
+        kafkaProducer.send(topic, dto);
     }
 
 }

@@ -1,5 +1,6 @@
 package com.apink.poppin.api.review.service;
 
+import com.apink.poppin.api.notice.dto.NoticeDto;
 import com.apink.poppin.api.review.dto.CommentDto;
 import com.apink.poppin.api.review.entity.Comment;
 import com.apink.poppin.api.review.entity.Review;
@@ -9,6 +10,7 @@ import com.apink.poppin.api.user.entity.User;
 import com.apink.poppin.api.user.repository.UserRepository;
 import com.apink.poppin.common.exception.dto.BusinessLogicException;
 import com.apink.poppin.common.exception.dto.ExceptionCode;
+import com.apink.poppin.kafka.KafkaProducer;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -17,6 +19,7 @@ import org.springframework.transaction.annotation.Transactional;
 @RequiredArgsConstructor
 public class CommentServiceImpl implements CommentService {
 
+    private final KafkaProducer kafkaProducer;
     private final CommentRepository commentRepository;
     private final ReviewRepository reviewRepository;
     private final UserRepository userRepository;
@@ -36,7 +39,19 @@ public class CommentServiceImpl implements CommentService {
         Comment comment = new Comment();
         comment.createComment(commentDto, review, user, parent);
 
-       return commentRepository.save(comment);
+        NoticeDto.MadeComment madeComment = NoticeDto.MadeComment.builder()
+                .userTsid(review.getUser().getUserTsid())
+                .reviewId(review.getReviewId())
+                .nickname(user.getNickname())
+                .content(commentDto.getContent())
+                .build();
+
+        Comment saveComment = commentRepository.save(comment);
+
+        String topic = "made-comment";
+        kafkaProducer.send(topic, madeComment);
+
+       return saveComment;
     }
 
     @Override

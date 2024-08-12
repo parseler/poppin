@@ -4,6 +4,7 @@ import com.apink.poppin.api.heart.entity.Heart;
 import com.apink.poppin.api.heart.repository.HeartRepository;
 import com.apink.poppin.api.popup.dto.PopupDTO;
 import com.apink.poppin.api.popup.repository.PopupRepository;
+import com.apink.poppin.api.popup.service.FileStorageService;
 import com.apink.poppin.api.reservation.dto.OnsiteReservationRedisDto;
 import com.apink.poppin.api.reservation.dto.PreReservationResponseDTO;
 import com.apink.poppin.api.reservation.dto.ReservationResponseDto;
@@ -36,6 +37,7 @@ import static com.apink.poppin.common.exception.dto.ExceptionCode.*;
 public class UserServiceImpl implements UserService {
 
     private static final String RESERVATION_KEY_PHONE = "ONSITE_BY_PHONE_";
+    private final FileStorageService fileStorageService;
     private final UserRepository userRepository;
     private final PopupRepository popupRepository;
     private final HeartRepository heartRepository;
@@ -62,19 +64,35 @@ public class UserServiceImpl implements UserService {
     @Override
     @Transactional
     public UserDto.Response updateUser(UserDto.Put userDto) {
-        long userTsid = userDto.getUserTsid();
+        String img = "IMG_URL";
+        try {
+            img = fileStorageService.storeFile(userDto.getImg());
 
-        User findUser = userRepository.findUserByUserTsid(userTsid)
-                .orElseThrow(() -> new BusinessLogicException(USER_NOT_FOUND));
+            long userTsid = userDto.getUserTsid();
 
-        // 유저 정보, 카테고리 변경
-        findUser.updateUser(userDto);
-        // 유저 동의 여부 변경
-        findUser.getUserConsents().updateUserConsent(userDto.getUserConsents());
+            User findUser = userRepository.findUserByUserTsid(userTsid)
+                    .orElseThrow(() -> new BusinessLogicException(USER_NOT_FOUND));
 
-        userRepository.save(findUser);
+            String oldImgPath = findUser.getImg();
 
-        return convertToResponseDTO(findUser);
+            // 유저 정보, 카테고리 변경
+            findUser.updateUser(userDto, img);
+            // 유저 동의 여부 변경
+            findUser.getUserConsents().updateUserConsent(userDto.getUserConsents());
+
+            userRepository.save(findUser);
+
+            if (oldImgPath != null && !oldImgPath.equals("IMG_URL")) {
+                fileStorageService.deleteFile(oldImgPath);
+            }
+
+            return convertToResponseDTO(findUser);
+        } catch (Exception e) {
+            if (img != null && !img.equals("IMG_URL")) {
+                fileStorageService.deleteFile(img);
+            }
+            throw e;
+        }
     }
 
     @Override

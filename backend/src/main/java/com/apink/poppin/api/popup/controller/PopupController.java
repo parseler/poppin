@@ -72,6 +72,12 @@ public class PopupController {
         return ResponseEntity.ok(similarPopupList);
     }
 
+    @GetMapping("/recommendation")
+    public ResponseEntity<List<PopupDTO>> getRecommendedPopup() {
+        List<PopupDTO> recommendedPopupList = popupService.getRecommendedPopup();
+        return ResponseEntity.ok(recommendedPopupList);
+    }
+
     // 오픈 예정 팝업 조회
     @GetMapping("/open")
     public ResponseEntity<List<PopupDTO>> getOpenPopup() {

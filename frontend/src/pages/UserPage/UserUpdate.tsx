@@ -2,31 +2,30 @@ import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { UserProps } from "@interface/users";
 import { checkNickname, getUserData, updateUserData } from "@api/users";
-import profile from "@assets/user/profile.png";
 import Header from "@components/common/Header";
 import Menu from "@components/common/Menu";
 import useAuthStore from "@store/useAuthStore";
 
 const UserUpdate: React.FC = () => {
   const [user, setUser] = useState<UserProps>({
-    userTsid: 0,
+    userTsid: "",
     nickname: "",
     email: "",
     phoneNumber: "",
-    categoryList: [],
-    agreementDto: {
-      marketing_consent: false,
-      marketing_updated_at: "",
-      service_push_consent: false,
-      service_updated_at: "",
+    userCategories: [],
+    userConsents: {
+      marketingConsent: false,
+      marketingUpdatedAt: "",
+      servicePushConsent: false,
+      serviceUpdatedAt: "",
     },
     role: "",
-    img: "",
+    img: null,
   });
 
   const [nicknameMsg, setNicknameMsg] = useState<string>("");
   const [nicknameCheck, setNicknameCheck] = useState<boolean>(false);
-  const { accessToken, userTsid, userRole } = useAuthStore();
+  const { userTsid, userRole } = useAuthStore();
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -36,22 +35,21 @@ const UserUpdate: React.FC = () => {
         if (data) {
           setUser((prevUser) => ({
             ...prevUser,
-            userTsid: userTsid !== null ? Number(userTsid) : prevUser.userTsid,
+            userTsid: userTsid !== null ? userTsid : prevUser.userTsid,
             nickname: data.nickname ?? prevUser.nickname,
             email: data.email,
             phoneNumber: data.phoneNumber,
-            categoryList: data.userCategories
-              ? data.userCategories.map((cate: any) => cate.category.name)
-              : prevUser.categoryList,
-            agreementDto: {
-              marketing_consent:
-                data.userConsents?.marketingConsent ??
-                prevUser.agreementDto.marketing_consent,
-              marketing_updated_at: prevUser.agreementDto.marketing_updated_at,
-              service_push_consent:
-                data.userConsents?.servicePushConsent ??
-                prevUser.agreementDto.service_push_consent,
-              service_updated_at: prevUser.agreementDto.service_updated_at,
+            userCategories: data.userCategories
+              ? data.userCategories.map((cate: any) => ({
+                  name: cate.name, // 카테고리의 이름을 가져옵니다.
+                }))
+              : prevUser.userCategories,
+            userConsents: {
+              marketingConsent: data.userConsents?.marketingConsent ?? false,
+              marketingUpdatedAt: data.userConsents?.marketingUpdatedAt ?? "",
+              servicePushConsent:
+                data.userConsents?.servicePushConsent ?? false,
+              serviceUpdatedAt: data.userConsents?.serviceUpdatedAt ?? "",
             },
             img: data.img ?? prevUser.img,
             role: userRole ?? prevUser.role, // userRole이 null인 경우 기존 role을 유지
@@ -64,21 +62,28 @@ const UserUpdate: React.FC = () => {
   }, [userTsid, userRole]);
 
   const userChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { name, value, type, checked } = e.target;
+    const { name, type, checked, value } = e.target;
 
     setUser((prevUser) => {
-      if (type === "checkbox") {
+      if (name === "nickname") {
         return {
           ...prevUser,
-          agreementDto: {
-            ...prevUser.agreementDto,
-            [name]: checked, // 체크박스의 값을 agreementDto의 해당 속성에 할당
+          nickname: value, // 닉네임 필드를 직접 업데이트
+        };
+      } else if (name === "marketingConsent" || name === "servicePushConsent") {
+        // userConsents 내의 체크박스 필드를 업데이트
+        return {
+          ...prevUser,
+          userConsents: {
+            ...prevUser.userConsents,
+            [name]: type === "checkbox" ? checked : value,
+            [`${name}UpdatedAt`]: new Date().toISOString(),
           },
         };
       } else {
         return {
           ...prevUser,
-          [name]: value, // 일반 input 필드의 경우 값을 직접 설정
+          [name]: value, // 기타 다른 일반 input 필드의 경우 값을 직접 설정
         };
       }
     });
@@ -110,14 +115,10 @@ const UserUpdate: React.FC = () => {
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files[0]) {
       const file = e.target.files[0];
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        setUser((prevUser) => ({
-          ...prevUser,
-          img: reader.result as string,
-        }));
-      };
-      reader.readAsDataURL(file);
+      setUser((prevUser) => ({
+        ...prevUser, // 이전 상태의 모든 필드를 복사
+        img: file, // img 필드만 File 객체로 덮어씀
+      }));
     }
   };
 
@@ -130,17 +131,23 @@ const UserUpdate: React.FC = () => {
     }
   };
 
-  const handleCategoryClick = (category: string) => {
+  const handleCategoryClick = (categoryName: string) => {
     setUser((prevUser) => {
-      let newCategories = [...prevUser.categoryList];
-      if (newCategories.includes(category)) {
-        newCategories = newCategories.filter((cat) => cat !== category);
-      } else if (newCategories.length < 3) {
-        newCategories.push(category);
-      }
+      const categoryExists = prevUser.userCategories.some(
+        (cat) => cat.name === categoryName // 기존 카테고리의 이름과 비교
+      );
+
+      const newCategories = categoryExists
+        ? prevUser.userCategories.filter(
+            (cat) => cat.name !== categoryName // 카테고리에서 삭제
+          )
+        : prevUser.userCategories.length < 3
+        ? [...prevUser.userCategories, { name: categoryName }] // 새로운 카테고리 추가
+        : prevUser.userCategories;
+
       return {
         ...prevUser,
-        categoryList: newCategories,
+        userCategories: newCategories,
       };
     });
   };
@@ -154,26 +161,36 @@ const UserUpdate: React.FC = () => {
     if (user) {
       console.log("User data exists:", user);
       try {
-        console.log("Submitting user data:", user); // 디버깅을 위한 콘솔 출력
-        const updatedUserData: UserProps = {
-          userTsid: Number(user.userTsid),
+        const formData = new FormData();
+
+        // userConsents의 날짜 필드를 Date 객체로 변환
+        const marketingUpdatedAt = user.userConsents.marketingUpdatedAt ? new Date(user.userConsents.marketingUpdatedAt) : null;
+        const serviceUpdatedAt = user.userConsents.serviceUpdatedAt ? new Date(user.userConsents.serviceUpdatedAt) : null;
+        
+        const userData = {
+          userTsid: user.userTsid,
           nickname: user.nickname,
           email: user.email,
           phoneNumber: user.phoneNumber,
-          categoryList: user.categoryList,
-          agreementDto: {
-            marketing_consent: user.agreementDto.marketing_consent,
-            marketing_updated_at: user.agreementDto.marketing_updated_at,
-            service_push_consent: user.agreementDto.service_push_consent,
-            service_updated_at: user.agreementDto.service_updated_at,
+          userCategories: user.userCategories,
+          userConsents: {
+            marketingConsent: user.userConsents.marketingConsent,
+            marketingUpdatedAt: marketingUpdatedAt ? marketingUpdatedAt.toISOString() : '',
+            servicePushConsent: user.userConsents.servicePushConsent,
+            serviceUpdatedAt: serviceUpdatedAt ? serviceUpdatedAt.toISOString() : ''
           },
-          img: user.img,
-          role: user.role,
+          role: user.role
         };
+  
+        formData.append("userData", JSON.stringify(userData));
+        // 이미지 파일이 있으면 FormData에 추가
+        if (user.img) {
+          formData.append("img", user.img);
+        }
+  
+        // FormData를 서버로 전송
+        await updateUserData(formData);
 
-        console.log("아이디", updatedUserData.userTsid)
-
-        await updateUserData(updatedUserData); // API 호출
         navigate("/mypage"); // 업데이트 후 페이지 이동
       } catch (error) {
         console.error("Error updating user data:", error);
@@ -189,7 +206,7 @@ const UserUpdate: React.FC = () => {
         <div className="update-image">
           <div className="profile-black" onClick={handleImageClick}></div>
           <img
-            src={user.img === "IMG_URL" ? profile : user.img || profile}
+            src={user.img instanceof File ? URL.createObjectURL(user.img) : ""}
             alt="profile"
             onClick={handleImageClick}
           />
@@ -262,11 +279,17 @@ const UserUpdate: React.FC = () => {
                 key={category}
                 onClick={() => handleCategoryClick(category)}
                 className={
-                  user.categoryList.includes(category) ? "selected" : ""
+                  user.userCategories.some(
+                    (cat) => cat.name === category // 기존 카테고리와 비교
+                  )
+                    ? "selected"
+                    : ""
                 }
                 disabled={
-                  user.categoryList.length >= 3 &&
-                  !user.categoryList.includes(category)
+                  user.userCategories.length >= 3 &&
+                  !user.userCategories.some(
+                    (cat) => cat.name === category
+                  )
                 }
               >
                 {category}
@@ -279,25 +302,25 @@ const UserUpdate: React.FC = () => {
               <input
                 type="checkbox"
                 id="marketing"
-                name="marketing_consent"
-                checked={user.agreementDto.marketing_consent}
+                name="marketingConsent"
+                checked={user.userConsents.marketingConsent}
                 onChange={userChange}
               />
               <label htmlFor="marketing">마케팅 수신 동의</label>
             </div>
-            <p>(동의: {user.agreementDto.marketing_updated_at})</p>
+            <p>(동의: {user.userConsents.marketingUpdatedAt})</p>
 
             <div className="update-push">
               <input
                 type="checkbox"
                 id="push"
-                name="service_push_consent"
-                checked={user.agreementDto.service_push_consent}
+                name="servicePushConsent"
+                checked={user.userConsents.servicePushConsent}
                 onChange={userChange}
               />
               <label htmlFor="push">이벤트성 푸쉬 알림 수신 동의</label>
             </div>
-            <p>(동의: {user.agreementDto.service_updated_at})</p>
+            <p>(동의: {user.userConsents.serviceUpdatedAt})</p>
           </div>
         </div>
       </div>

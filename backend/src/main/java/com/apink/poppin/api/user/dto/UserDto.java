@@ -1,5 +1,10 @@
 package com.apink.poppin.api.user.dto;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.fasterxml.jackson.datatype.jsr310.deser.LocalDateDeserializer;
+import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateSerializer;
 import com.apink.poppin.api.user.entity.UserCategory;
 import com.apink.poppin.api.user.entity.UserConsent;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
@@ -13,16 +18,19 @@ import jakarta.validation.constraints.Size;
 import lombok.*;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.time.Instant;
+import java.time.LocalDateTime;
 import java.util.List;
 
 public class UserDto {
 
     @Getter
     @Builder
+    @NoArgsConstructor
+    @AllArgsConstructor
+    @ToString
     public static class Put {
         @NotNull
-        private long userTsid;
+        private String userTsid;
         @NotBlank
         private String nickname;
         @NotBlank
@@ -35,28 +43,39 @@ public class UserDto {
         private Consent userConsents;
         @NotBlank
         private String role;
-        @NotBlank
-        private MultipartFile img;
-
     }
 
     @Getter
     @Builder
+    @NoArgsConstructor
+    @AllArgsConstructor
     public static class Category {
         private String name;
     }
 
     @Getter
     @Builder
+    @NoArgsConstructor
+    @AllArgsConstructor
     public static class Consent {
         private Boolean marketingConsent;
         private Boolean servicePushConsent;
-        private Instant marketingUpdatedAt;
-        private Instant serviceUpdatedAt;
+
+        @JsonSerialize(using = LocalDateSerializer.class)
+        @JsonDeserialize(using = LocalDateDeserializer.class)
+        @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
+        private LocalDateTime marketingUpdatedAt;
+
+        @JsonSerialize(using = LocalDateSerializer.class)
+        @JsonDeserialize(using = LocalDateDeserializer.class)
+        @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
+        private LocalDateTime serviceUpdatedAt;
     }
 
     @Getter
     @Builder
+    @NoArgsConstructor
+    @AllArgsConstructor
     public static class Response {
 
         private String userTsid;
@@ -70,6 +89,8 @@ public class UserDto {
 
     @Getter
     @Builder
+    @NoArgsConstructor
+    @AllArgsConstructor
     public static class Login {
         private long userTsid;
         private String role;

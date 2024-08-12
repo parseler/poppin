@@ -7,7 +7,6 @@ import { axiosInstance } from "@api/axiosInstance";
 import { UserProps } from "@interface/users";
 import Cookies from "js-cookie";
 
-import profile from "@assets/user/profile.png";
 import loginBefore from "@assets/mypage/loginBefore.svg";
 import nextButton from "@assets/mypage/nextButton.svg";
 import profileUpdate from "@assets/mypage/profileUpdateButton.svg";
@@ -26,20 +25,21 @@ const Mypage: React.FC = () => {
           console.log(data);
           if (data) {
             setUser({
-              userTsid: userTsid !== null ? Number(userTsid) : 0,
+              userTsid: userTsid !== null ? userTsid : "",
               nickname: data.nickname ?? "",
               email: data.email ?? "",
               phoneNumber: data.phoneNumber ?? "",
-              categoryList: data.userCategories
-                ? data.userCategories.map((cate: any) => cate.category.name)
+              userCategories: data.userCategories
+                ? data.userCategories.map((cate: any) => ({
+                    name: cate.name, // 카테고리의 이름을 가져옵니다.
+                  }))
                 : [],
-              agreementDto: {
-                marketing_consent: data.userConsents?.marketingConsent ?? false,
-                marketing_updated_at:
-                  data.userConsents?.marketing_updated_at ?? "",
-                service_push_consent:
+              userConsents: {
+                marketingConsent: data.userConsents?.marketingConsent ?? false,
+                marketingUpdatedAt: data.userConsents?.marketingUpdatedAt ?? "",
+                servicePushConsent:
                   data.userConsents?.servicePushConsent ?? false,
-                service_updated_at: data.userConsents?.service_updated_at ?? "",
+                serviceUpdatedAt: data.userConsents?.serviceUpdatedAt ?? "",
               },
               img: data.img ?? "",
               role: userRole ?? "", // userRole이 null인 경우 빈 문자열로 설정
@@ -111,13 +111,14 @@ const Mypage: React.FC = () => {
           <div className="login-wrap">
             <div className="mypage-profile">
               <div className="mypage-profile-image">
-                {user.img === null ||
-                user.img === undefined ||
-                user.img === "IMG_URL" ? (
-                  <img src={profile} alt="프로필 사진" />
-                ) : (
-                  <img src={user.img} alt="프로필 사진" />
-                )}
+                <img
+                  src={
+                    user.img instanceof File
+                      ? URL.createObjectURL(user.img)
+                      : ""
+                  }
+                  alt="profile"
+                />
               </div>
               <span className="mypage-nickname">{user.nickname}</span>님
               <Link to="/mypage/update" className="profile-update">

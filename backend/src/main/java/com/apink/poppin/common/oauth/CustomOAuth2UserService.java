@@ -16,7 +16,7 @@ import org.springframework.security.oauth2.core.OAuth2AuthenticationException;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.stereotype.Service;
 
-import java.time.Instant;
+import java.time.LocalDateTime;
 
 @Service
 @RequiredArgsConstructor
@@ -66,7 +66,7 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
                     .age(oAuth2UserResponse.getAge())
                     .gender(oAuth2UserResponse.getGender())
                     .phoneNumber(oAuth2UserResponse.getPhoneNumber())
-                    .img("IMG_URL")
+                    .img("/uploads/profile.png")
                     .role("ROLE_USER")
                     .state(true)
                     .build();
@@ -75,8 +75,8 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
                     .user(user)
                     .servicePushConsent(false)
                     .marketingConsent(false)
-                    .marketingUpdatedAt(Instant.now())
-                    .serviceUpdatedAt(Instant.now())
+                    .marketingUpdatedAt(LocalDateTime.now())
+                    .serviceUpdatedAt(LocalDateTime.now())
                     .build();
 
             user.setUserConsents(userConsent);

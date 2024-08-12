@@ -1,6 +1,7 @@
 package com.apink.poppin.api.user.entity;
 
 import com.apink.poppin.api.popup.entity.Category;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
@@ -23,6 +24,7 @@ public class UserCategory {
     @NotNull
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "user_tsid", nullable = false)
+    @JsonIgnore
     private User user;
 
     @NotNull

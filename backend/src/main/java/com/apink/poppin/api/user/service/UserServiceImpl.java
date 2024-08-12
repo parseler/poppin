@@ -3,6 +3,8 @@ package com.apink.poppin.api.user.service;
 import com.apink.poppin.api.heart.entity.Heart;
 import com.apink.poppin.api.heart.repository.HeartRepository;
 import com.apink.poppin.api.popup.dto.PopupDTO;
+import com.apink.poppin.api.popup.entity.Category;
+import com.apink.poppin.api.popup.repository.CategoryRepository;
 import com.apink.poppin.api.popup.repository.PopupRepository;
 import com.apink.poppin.api.popup.service.FileStorageService;
 import com.apink.poppin.api.reservation.dto.OnsiteReservationRedisDto;
@@ -47,6 +49,7 @@ public class UserServiceImpl implements UserService {
     private final OnsiteReservationRepository onsiteReservationRepository;
     private final RedisTemplate<String, Object> redisTemplate;
     private final ValueOperations<String, Object> valueOperations;
+    private final CategoryRepository categoryRepository;
 
     @Override
     @Transactional(readOnly = true)
@@ -74,10 +77,16 @@ public class UserServiceImpl implements UserService {
             User findUser = userRepository.findUserByUserTsid(userTsid)
                     .orElseThrow(() -> new BusinessLogicException(USER_NOT_FOUND));
 
+            // Category 조회
+            List<Category> categories = userDto.getUserCategories().stream()
+                    .map(userCategoryDto -> categoryRepository.findByName(userCategoryDto.getName())
+                            .orElseThrow(() -> new IllegalArgumentException("Invalid category name: " + userCategoryDto.getName())))
+                    .toList();
+
             String oldImgPath = findUser.getImg();
 
             // 유저 정보, 카테고리 변경
-            findUser.updateUser(userDto, img);
+            findUser.updateUser(userDto, img, categories);
             // 유저 동의 여부 변경
             findUser.getUserConsents().updateUserConsent(userDto.getUserConsents());
 
@@ -280,8 +289,10 @@ public class UserServiceImpl implements UserService {
                 .email(user.getEmail())
                 .img(user.getImg())
                 .phoneNumber(user.getPhoneNumber())
-                .userCategories(user.getUserCategories())
-                .userConsent(user.getUserConsents())
+                .userCategories(user.getUserCategories().stream()
+                        .map(this::convertToCategoryDTO)
+                        .collect(Collectors.toList()))
+                .userConsent(convertToConsentDTO(user.getUserConsents()))
                 .build();
     }
 
@@ -299,19 +310,22 @@ public class UserServiceImpl implements UserService {
                 .build();
     }
 
-    private ReservationResponseDto convertToReservationDTO(PreReservation preReservation) {
 
-        return ReservationResponseDto.builder()
-                .reservationId(preReservation.getPreReservationId())
-                .title(preReservation.getPopup().getName())
-                .userName(preReservation.getUser().getName())
-                .created_at(preReservation.getCreatedAt())
 
-                .reservationDate(preReservation.getReservationDate())
-                .reservationTime(preReservation.getReservationTime())
-                .reservationCount(preReservation.getReservationCount())
-                .reservationStatement(preReservation.getReservationStatement().getReservationStatementId())
-                .kind(1)
+    private UserDto.Category convertToCategoryDTO(UserCategory userCategory) {
+        return UserDto.Category.builder()
+                .name(userCategory.getCategory().getName())
                 .build();
     }
+
+    private UserDto.Consent convertToConsentDTO(UserConsent userConsent) {
+        return UserDto.Consent.builder()
+                .marketingConsent(userConsent.getMarketingConsent())
+                .servicePushConsent(userConsent.getServicePushConsent())
+                .marketingUpdatedAt(userConsent.getMarketingUpdatedAt())
+                .serviceUpdatedAt(userConsent.getServiceUpdatedAt())
+                .build();
+    }
+
+
 }

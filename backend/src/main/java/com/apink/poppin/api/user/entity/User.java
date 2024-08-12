@@ -2,6 +2,7 @@ package com.apink.poppin.api.user.entity;
 
 import com.apink.poppin.api.heart.entity.Heart;
 import com.apink.poppin.api.notice.entity.Token;
+import com.apink.poppin.api.popup.entity.Category;
 import com.apink.poppin.api.reservation.entity.PreReservation;
 import com.apink.poppin.api.review.entity.Comment;
 import com.apink.poppin.api.review.entity.Review;
@@ -81,13 +82,22 @@ public class User {
     @OneToMany(mappedBy = "user", fetch = FetchType.LAZY)
     private List<Token> token;
 
-    public void updateUser(UserDto.Put userDto) {
+    public void updateUser(UserDto.Put userDto, String img) {
         this.nickname = userDto.getNickname();
-        this.img = userDto.getImg();
+        this.img = img;
 
         // 유저 카테고리 바꾸기
+        List<UserCategory> categories = userDto.getUserCategories().stream()
+                .map(userCategory -> UserCategory.builder()
+                        .user(this)
+                        .category(Category.builder()
+                                .name(userCategory.getName())
+                                .build())
+                        .build())
+                .toList();
+
         this.userCategories.clear();
-        this.userCategories.addAll(userDto.getUserCategories());
+        this.userCategories.addAll(categories);
     }
 
 }

@@ -82,22 +82,20 @@ public class User {
     @OneToMany(mappedBy = "user", fetch = FetchType.LAZY)
     private List<Token> token;
 
-    public void updateUser(UserDto.Put userDto, String img) {
+    public void updateUser(UserDto.Put userDto, String img, List<Category> categories) {
         this.nickname = userDto.getNickname();
         this.img = img;
 
         // 유저 카테고리 바꾸기
-        List<UserCategory> categories = userDto.getUserCategories().stream()
-                .map(userCategory -> UserCategory.builder()
+        List<UserCategory> userCategories = categories.stream()
+                .map(category -> UserCategory.builder()
                         .user(this)
-                        .category(Category.builder()
-                                .name(userCategory.getName())
-                                .build())
+                        .category(category)
                         .build())
                 .toList();
 
         this.userCategories.clear();
-        this.userCategories.addAll(categories);
+        this.userCategories.addAll(userCategories);
     }
 
 }

@@ -7,7 +7,6 @@ import { axiosInstance } from "@api/axiosInstance";
 import { UserProps } from "@interface/users";
 import Cookies from "js-cookie";
 
-import profile from "@assets/user/profile.png";
 import loginBefore from "@assets/mypage/loginBefore.svg";
 import nextButton from "@assets/mypage/nextButton.svg";
 import profileUpdate from "@assets/mypage/profileUpdateButton.svg";
@@ -31,12 +30,13 @@ const Mypage: React.FC = () => {
               email: data.email ?? "",
               phoneNumber: data.phoneNumber ?? "",
               userCategories: data.userCategories
-                ? data.userCategories.map((cate: any) => cate.category.name)
+                ? data.userCategories.map((cate: any) => ({
+                    name: cate.name, // 카테고리의 이름을 가져옵니다.
+                  }))
                 : [],
-                userConsents: {
+              userConsents: {
                 marketingConsent: data.userConsents?.marketingConsent ?? false,
-                marketingUpdatedAt:
-                  data.userConsents?.marketingUpdatedAt ?? "",
+                marketingUpdatedAt: data.userConsents?.marketingUpdatedAt ?? "",
                 servicePushConsent:
                   data.userConsents?.servicePushConsent ?? false,
                 serviceUpdatedAt: data.userConsents?.serviceUpdatedAt ?? "",
@@ -111,13 +111,14 @@ const Mypage: React.FC = () => {
           <div className="login-wrap">
             <div className="mypage-profile">
               <div className="mypage-profile-image">
-                {user.img === null ||
-                user.img === undefined ||
-                user.img === "IMG_URL" ? (
-                  <img src={profile} alt="프로필 사진" />
-                ) : (
-                  <img src={user.img} alt="프로필 사진" />
-                )}
+                <img
+                  src={
+                    user.img instanceof File
+                      ? URL.createObjectURL(user.img)
+                      : ""
+                  }
+                  alt="profile"
+                />
               </div>
               <span className="mypage-nickname">{user.nickname}</span>님
               <Link to="/mypage/update" className="profile-update">

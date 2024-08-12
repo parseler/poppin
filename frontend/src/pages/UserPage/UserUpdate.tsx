@@ -2,7 +2,6 @@ import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { UserProps } from "@interface/users";
 import { checkNickname, getUserData, updateUserData } from "@api/users";
-import profile from "@assets/user/profile.png";
 import Header from "@components/common/Header";
 import Menu from "@components/common/Menu";
 import useAuthStore from "@store/useAuthStore";
@@ -21,7 +20,7 @@ const UserUpdate: React.FC = () => {
       serviceUpdatedAt: "",
     },
     role: "",
-    img: "",
+    img: null,
   });
 
   const [nicknameMsg, setNicknameMsg] = useState<string>("");
@@ -42,19 +41,16 @@ const UserUpdate: React.FC = () => {
             phoneNumber: data.phoneNumber,
             userCategories: data.userCategories
               ? data.userCategories.map((cate: any) => ({
-                  category: { name: cate.category.name },
+                  name: cate.name, // 카테고리의 이름을 가져옵니다.
                 }))
               : prevUser.userCategories,
-              userConsents: {
-                marketingConsent:
-                  data.userConsents?.marketingConsent ?? false,
-                marketingUpdatedAt:
-                  data.userConsents?.marketingUpdatedAt ?? "",
-                servicePushConsent:
-                  data.userConsents?.servicePushConsent ?? false,
-                serviceUpdatedAt:
-                  data.userConsents?.serviceUpdatedAt ?? "",
-              },
+            userConsents: {
+              marketingConsent: data.userConsents?.marketingConsent ?? false,
+              marketingUpdatedAt: data.userConsents?.marketingUpdatedAt ?? "",
+              servicePushConsent:
+                data.userConsents?.servicePushConsent ?? false,
+              serviceUpdatedAt: data.userConsents?.serviceUpdatedAt ?? "",
+            },
             img: data.img ?? prevUser.img,
             role: userRole ?? prevUser.role, // userRole이 null인 경우 기존 role을 유지
           }));
@@ -67,7 +63,7 @@ const UserUpdate: React.FC = () => {
 
   const userChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, type, checked, value } = e.target;
-  
+
     setUser((prevUser) => {
       if (name === "nickname") {
         return {
@@ -91,7 +87,7 @@ const UserUpdate: React.FC = () => {
         };
       }
     });
-  
+
     if (name === "nickname") {
       setNicknameCheck(false);
       setNicknameMsg("");
@@ -119,14 +115,10 @@ const UserUpdate: React.FC = () => {
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files[0]) {
       const file = e.target.files[0];
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        setUser((prevUser) => ({
-          ...prevUser,
-          img: reader.result as string,
-        }));
-      };
-      reader.readAsDataURL(file);
+      setUser((prevUser) => ({
+        ...prevUser, // 이전 상태의 모든 필드를 복사
+        img: file, // img 필드만 File 객체로 덮어씀
+      }));
     }
   };
 
@@ -142,15 +134,15 @@ const UserUpdate: React.FC = () => {
   const handleCategoryClick = (categoryName: string) => {
     setUser((prevUser) => {
       const categoryExists = prevUser.userCategories.some(
-        (cat) => cat.category.name === categoryName
+        (cat) => cat.name === categoryName // 기존 카테고리의 이름과 비교
       );
 
       const newCategories = categoryExists
         ? prevUser.userCategories.filter(
-            (cat) => cat.category.name !== categoryName
+            (cat) => cat.name !== categoryName // 카테고리에서 삭제
           )
         : prevUser.userCategories.length < 3
-        ? [...prevUser.userCategories, { category: { name: categoryName } }]
+        ? [...prevUser.userCategories, { name: categoryName }] // 새로운 카테고리 추가
         : prevUser.userCategories;
 
       return {
@@ -169,8 +161,13 @@ const UserUpdate: React.FC = () => {
     if (user) {
       console.log("User data exists:", user);
       try {
-        console.log("Submitting user data:", user); // 디버깅을 위한 콘솔 출력
-        const updatedUserData: UserProps = {
+        const formData = new FormData();
+
+        // userConsents의 날짜 필드를 Date 객체로 변환
+        const marketingUpdatedAt = user.userConsents.marketingUpdatedAt ? new Date(user.userConsents.marketingUpdatedAt) : null;
+        const serviceUpdatedAt = user.userConsents.serviceUpdatedAt ? new Date(user.userConsents.serviceUpdatedAt) : null;
+        
+        const userData = {
           userTsid: user.userTsid,
           nickname: user.nickname,
           email: user.email,
@@ -178,17 +175,22 @@ const UserUpdate: React.FC = () => {
           userCategories: user.userCategories,
           userConsents: {
             marketingConsent: user.userConsents.marketingConsent,
-            marketingUpdatedAt: user.userConsents.marketingUpdatedAt,
+            marketingUpdatedAt: marketingUpdatedAt ? marketingUpdatedAt.toISOString() : '',
             servicePushConsent: user.userConsents.servicePushConsent,
-            serviceUpdatedAt: user.userConsents.serviceUpdatedAt,
+            serviceUpdatedAt: serviceUpdatedAt ? serviceUpdatedAt.toISOString() : ''
           },
-          img: user.img,
-          role: user.role,
+          role: user.role
         };
+  
+        formData.append("userData", JSON.stringify(userData));
+        // 이미지 파일이 있으면 FormData에 추가
+        if (user.img) {
+          formData.append("img", user.img);
+        }
+  
+        // FormData를 서버로 전송
+        await updateUserData(formData);
 
-        console.log("아이디", updatedUserData.userTsid);
-
-        await updateUserData(updatedUserData); // API 호출
         navigate("/mypage"); // 업데이트 후 페이지 이동
       } catch (error) {
         console.error("Error updating user data:", error);
@@ -204,7 +206,7 @@ const UserUpdate: React.FC = () => {
         <div className="update-image">
           <div className="profile-black" onClick={handleImageClick}></div>
           <img
-            src={user.img === "IMG_URL" ? profile : user.img || profile}
+            src={user.img instanceof File ? URL.createObjectURL(user.img) : ""}
             alt="profile"
             onClick={handleImageClick}
           />
@@ -278,7 +280,7 @@ const UserUpdate: React.FC = () => {
                 onClick={() => handleCategoryClick(category)}
                 className={
                   user.userCategories.some(
-                    (cat) => cat.category.name === category
+                    (cat) => cat.name === category // 기존 카테고리와 비교
                   )
                     ? "selected"
                     : ""
@@ -286,7 +288,7 @@ const UserUpdate: React.FC = () => {
                 disabled={
                   user.userCategories.length >= 3 &&
                   !user.userCategories.some(
-                    (cat) => cat.category.name === category
+                    (cat) => cat.name === category
                   )
                 }
               >

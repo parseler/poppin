@@ -11,7 +11,7 @@ import lombok.NoArgsConstructor;
 import org.hibernate.annotations.ColumnDefault;
 import org.hibernate.annotations.UpdateTimestamp;
 
-import java.time.Instant;
+import java.time.LocalDateTime;
 
 @Getter
 @Entity
@@ -44,12 +44,12 @@ public class UserConsent {
     @UpdateTimestamp
     @ColumnDefault("CURRENT_TIMESTAMP")
     @Column(name = "marketing_updated_at")
-    private Instant marketingUpdatedAt;
+    private LocalDateTime marketingUpdatedAt;
 
     @UpdateTimestamp
     @ColumnDefault("CURRENT_TIMESTAMP")
     @Column(name = "service_updated_at")
-    private Instant serviceUpdatedAt;
+    private LocalDateTime serviceUpdatedAt;
 
     public void updateUserConsent(UserDto.Consent userConsent) {
         if(this.marketingConsent != userConsent.getMarketingConsent()) {

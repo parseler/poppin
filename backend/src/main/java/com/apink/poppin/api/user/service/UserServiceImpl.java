@@ -26,6 +26,7 @@ import org.springframework.data.redis.core.ValueOperations;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -63,12 +64,12 @@ public class UserServiceImpl implements UserService {
 
     @Override
     @Transactional
-    public UserDto.Response updateUser(UserDto.Put userDto) {
-        String img = "IMG_URL";
+    public UserDto.Response updateUser(UserDto.Put userDto, MultipartFile image) {
+        String img = "/uploads/profile.png";
         try {
-            img = fileStorageService.storeFile(userDto.getImg());
+            img = fileStorageService.storeFile(image);
 
-            long userTsid = userDto.getUserTsid();
+            long userTsid = Long.parseLong(userDto.getUserTsid());
 
             User findUser = userRepository.findUserByUserTsid(userTsid)
                     .orElseThrow(() -> new BusinessLogicException(USER_NOT_FOUND));
@@ -82,13 +83,13 @@ public class UserServiceImpl implements UserService {
 
             userRepository.save(findUser);
 
-            if (oldImgPath != null && !oldImgPath.equals("IMG_URL")) {
+            if (oldImgPath != null && !oldImgPath.equals("/uploads/profile.png")) {
                 fileStorageService.deleteFile(oldImgPath);
             }
 
             return convertToResponseDTO(findUser);
         } catch (Exception e) {
-            if (img != null && !img.equals("IMG_URL")) {
+            if (img != null && !img.equals("/uploads/profile.png")) {
                 fileStorageService.deleteFile(img);
             }
             throw e;

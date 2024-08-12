@@ -11,6 +11,12 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.List;
 
@@ -22,6 +28,7 @@ import static com.apink.poppin.common.exception.dto.ExceptionCode.*;
 public class UserController {
 
     private final UserService userService;
+    private static final Logger logger = LoggerFactory.getLogger(UserController.class);
 
     // 닉네임 중복 확인
     @GetMapping("/{nickname}/check")
@@ -47,8 +54,22 @@ public class UserController {
 
     // 유저 정보 수정
     @PutMapping("/me")
-    public ResponseEntity<?> updateUser(@RequestBody UserDto.Put userDto) {
-        UserDto.Response user = userService.updateUser(userDto);
+    public ResponseEntity<?> updateUser(@RequestPart("userData") String userDataJson, 
+                                    @RequestPart(value = "img", required = false) MultipartFile img) {
+        
+        // JSON 데이터를 객체로 변환
+        ObjectMapper objectMapper = new ObjectMapper();
+        UserDto.Put userDto;
+        try {
+            userDto = objectMapper.readValue(userDataJson, UserDto.Put.class);
+        } catch (JsonProcessingException e) {
+            logger.error("Failed to parse userData JSON", e);
+            return ResponseEntity.badRequest().body("Invalid userData JSON format");
+        }
+
+        logger.debug("userDto : " + userDto.toString());
+
+        UserDto.Response user = userService.updateUser(userDto, img);
 
         return ResponseEntity.ok(user);
     }

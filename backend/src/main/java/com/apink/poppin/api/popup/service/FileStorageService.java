@@ -36,9 +36,9 @@ public class FileStorageService {
         try {
             // 파일의 원래 이름을 가져옴
             String originalFileName = file.getOriginalFilename();
-            if(originalFileName.equals("IMG_URL")) {
-                return "IMG_URL";
-            }
+            // if(originalFileName.equals("/uploads/profile.png)) {
+            //     return "IMG_URL";
+            // }
 
             // UUID를 사용하여 고유한 파일 이름 생성
             String uniqueFileName = UUID.randomUUID().toString() + "_" + originalFileName;

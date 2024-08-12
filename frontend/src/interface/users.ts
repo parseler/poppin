@@ -6,9 +6,7 @@ export interface ConsentsProps {
 }
 
 export interface CategoryProps {
-  category: {
     name: string;
-  }
 }
 
 export interface UserProps {
@@ -19,5 +17,5 @@ export interface UserProps {
   userCategories: CategoryProps[];
   userConsents: ConsentsProps;
   role: string;
-  img: string | null;
+  img: File | null;
 }

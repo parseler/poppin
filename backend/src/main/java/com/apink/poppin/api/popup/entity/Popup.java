@@ -76,6 +76,10 @@ public class Popup {
         this.lon = reqDto.getLon();
     }
 
+    public void updateHit() {
+        this.hit++;
+    }
+
     public void deletePopup() {
         this.deleted = true;
     }

@@ -292,7 +292,7 @@ public class UserServiceImpl implements UserService {
                 .userCategories(user.getUserCategories().stream()
                         .map(this::convertToCategoryDTO)
                         .collect(Collectors.toList()))
-                .userConsent(convertToConsentDTO(user.getUserConsents()))
+                .userConsents(convertToConsentDTO(user.getUserConsents()))
                 .build();
     }
 

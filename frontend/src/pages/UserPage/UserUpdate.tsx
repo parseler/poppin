@@ -29,36 +29,36 @@ const UserUpdate: React.FC = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
-    getUserData()
-      .then((data) => {
-        console.log(data);
+    const fetchUserData = async () => {
+      try {
+        const data = await getUserData();
+        console.log("Fetched user data:", data);
         if (data) {
-          setUser((prevUser) => ({
-            ...prevUser,
-            userTsid: userTsid !== null ? userTsid : prevUser.userTsid,
-            nickname: data.nickname ?? prevUser.nickname,
-            email: data.email,
-            phoneNumber: data.phoneNumber,
-            userCategories: data.userCategories
-              ? data.userCategories.map((cate: any) => ({
-                  name: cate.name, // 카테고리의 이름을 가져옵니다.
-                }))
-              : prevUser.userCategories,
-            userConsents: {
-              marketingConsent: data.userConsents?.marketingConsent ?? false,
-              marketingUpdatedAt: data.userConsents?.marketingUpdatedAt ?? "",
-              servicePushConsent:
-                data.userConsents?.servicePushConsent ?? false,
-              serviceUpdatedAt: data.userConsents?.serviceUpdatedAt ?? "",
-            },
-            img: data.img ?? prevUser.img,
-            role: userRole ?? prevUser.role, // userRole이 null인 경우 기존 role을 유지
-          }));
+          setUser((prevUser) => {
+            const updatedUser = {
+              ...prevUser,
+              ...data,
+              userConsents: {
+                ...prevUser.userConsents,
+                ...data.userConsents,
+              },
+              userCategories: data.userCategories
+                  ? data.userCategories.map((cate: any) => ({
+                    name: cate.name,
+                  }))
+                  : prevUser.userCategories,
+              role: userRole ?? prevUser.role,
+            };
+            console.log("Updated user state:", updatedUser);
+            return updatedUser;
+          });
         }
-      })
-      .catch((error) => {
-        console.error(error);
-      });
+      } catch (error) {
+        console.error("Error fetching user data:", error);
+      }
+    };
+
+    fetchUserData();
   }, [userTsid, userRole]);
 
   const userChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -164,9 +164,9 @@ const UserUpdate: React.FC = () => {
         const formData = new FormData();
 
         // userConsents의 날짜 필드를 Date 객체로 변환
-        const marketingUpdatedAt = user.userConsents.marketingUpdatedAt ? new Date(user.userConsents.marketingUpdatedAt) : null;
-        const serviceUpdatedAt = user.userConsents.serviceUpdatedAt ? new Date(user.userConsents.serviceUpdatedAt) : null;
-        
+        const marketingUpdatedAt = user.userConsents.marketingUpdatedAt ? new Date(user.userConsents.marketingUpdatedAt).toISOString().slice(0, 19) : null;
+        const serviceUpdatedAt = user.userConsents.serviceUpdatedAt ? new Date(user.userConsents.serviceUpdatedAt).toISOString().slice(0, 19) : null;
+
         const userData = {
           userTsid: user.userTsid,
           nickname: user.nickname,
@@ -175,9 +175,9 @@ const UserUpdate: React.FC = () => {
           userCategories: user.userCategories,
           userConsents: {
             marketingConsent: user.userConsents.marketingConsent,
-            marketingUpdatedAt: marketingUpdatedAt ? marketingUpdatedAt.toISOString() : '',
+            marketingUpdatedAt: marketingUpdatedAt ? marketingUpdatedAt : '',
             servicePushConsent: user.userConsents.servicePushConsent,
-            serviceUpdatedAt: serviceUpdatedAt ? serviceUpdatedAt.toISOString() : ''
+            serviceUpdatedAt: serviceUpdatedAt ? serviceUpdatedAt : ''
           },
           role: user.role
         };
@@ -189,7 +189,16 @@ const UserUpdate: React.FC = () => {
         }
   
         // FormData를 서버로 전송
-        await updateUserData(formData);
+        const updatedData = await updateUserData(formData);
+
+        setUser((prevUser) => ({
+          ...prevUser,
+          ...updatedData,
+          userConsents: {
+            ...prevUser.userConsents,
+            ...updatedData.userConsents,
+          },
+        }));
 
         navigate("/mypage"); // 업데이트 후 페이지 이동
       } catch (error) {
@@ -300,11 +309,11 @@ const UserUpdate: React.FC = () => {
             <h3>마케팅 수신 동의</h3>
             <div className="update-marketing">
               <input
-                type="checkbox"
-                id="marketing"
-                name="marketingConsent"
-                checked={user.userConsents.marketingConsent}
-                onChange={userChange}
+                  type="checkbox"
+                  id="marketing"
+                  name="marketingConsent"
+                  checked={user.userConsents.marketingConsent}
+                  onChange={userChange}
               />
               <label htmlFor="marketing">마케팅 수신 동의</label>
             </div>
@@ -312,11 +321,11 @@ const UserUpdate: React.FC = () => {
 
             <div className="update-push">
               <input
-                type="checkbox"
-                id="push"
-                name="servicePushConsent"
-                checked={user.userConsents.servicePushConsent}
-                onChange={userChange}
+                  type="checkbox"
+                  id="push"
+                  name="servicePushConsent"
+                  checked={user.userConsents.servicePushConsent}
+                  onChange={userChange}
               />
               <label htmlFor="push">이벤트성 푸쉬 알림 수신 동의</label>
             </div>
@@ -325,7 +334,7 @@ const UserUpdate: React.FC = () => {
         </div>
       </div>
 
-      <Menu />
+      <Menu/>
     </>
   );
 };

@@ -40,6 +40,7 @@ import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.ParameterizedTypeReference;
+import org.springframework.data.redis.core.ValueOperations;
 import org.springframework.http.*;
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
 import org.springframework.security.core.Authentication;
@@ -48,9 +49,12 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -73,6 +77,7 @@ public class PopupServiceImpl implements PopupService {
     private final OnsiteReservationRepository onsiteReservationRepository;
     private final ReviewRepository reviewRepository;
     private final UserCategoryRepository userCategoryRepository;
+    private final ValueOperations<String, Object> valueOperations;
 
 
     @Value("${file.upload-dir}")
@@ -124,12 +129,15 @@ public class PopupServiceImpl implements PopupService {
     }
 
     // 팝업 상세 조회
+    @Transactional
     public PopupDTO getPopup(Long popupId) {
         Popup popup = popupRepository.findById(popupId)
                 .orElseThrow(() -> new IllegalArgumentException("Invalid popup ID"));
 
         if(popup.isDeleted())
             throw new BusinessLogicException(ExceptionCode.POPUP_NOT_FOUND);
+
+        updateHit(popupId, popup);
 
         List<String> images = popupImageRepository.findAllByPopup_PopupId(popup.getPopupId())
                 .stream()
@@ -166,6 +174,19 @@ public class PopupServiceImpl implements PopupService {
                 .build();
     }
 
+    private void updateHit(Long popupId, Popup popup) {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        if (!"anonymousUser".equals(authentication.getName()) && authentication.getName() != null) {
+            Long userTsid = Long.parseLong(authentication.getName());
+            String key = popupId + " " + userTsid;
+            if (valueOperations.get(key) == null) {
+                popup.updateHit();
+                popupRepository.save(popup);
+                valueOperations.set(key, true, 30, TimeUnit.MINUTES);
+            }
+        }
+    }
+
     // 팝업 상세 조회 (+ 사전예약 정보)
     @Override
     public PopupWithPreReservationDTO getPopupWithPreReservation(Long popupId) {
@@ -174,6 +195,8 @@ public class PopupServiceImpl implements PopupService {
 
         if(popup.isDeleted())
             throw new BusinessLogicException(ExceptionCode.POPUP_NOT_FOUND);
+
+        updateHit(popupId, popup);
 
         List<String> images = popupImageRepository.findAllByPopup_PopupId(popup.getPopupId())
                 .stream()

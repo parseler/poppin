@@ -248,7 +248,7 @@ public class UserServiceImpl implements UserService {
         User user = userRepository.findUserByUserTsid(userTsid)
                 .orElseThrow(() -> new RuntimeException("user not exists"));
 
-        List<PreReservation> pres = preReservationRepository.findByUserAndReservationStatement_ReservationStatementId(user, 4);
+        List<PreReservation> pres = preReservationRepository.findByUserAndReservationStatement_ReservationStatementId(user, 4L);
 
         return Optional.ofNullable(pres)
                 .orElse(Collections.emptyList())

@@ -70,4 +70,6 @@ public interface PopupService {
 
 
     List<PopupDTO> getPopupByCategory(String category);
+
+    List<PopupDTO> getRecommendedPopup();
 }

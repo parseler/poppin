@@ -1,9 +1,25 @@
 import "@css/Login.css";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import { useState } from "react";
 import logo from "@assets/poppin_gradiant.svg";
 import naver from "@assets/login/icon_naver.png";
 
 const Login = () => {
+  const [clickCount, setClickCount] = useState(0);
+  const navigate = useNavigate();
+
+  const handleLogoClick = () => {
+    setClickCount((prevCount) => prevCount + 1);
+
+    setTimeout(() => {
+      setClickCount(0);
+    }, 500);
+
+    if (clickCount === 2) {
+      navigate("/manager/login"); // 이동하고자 하는 경로로 변경
+    }
+  };
+
   const handleKakaoLogin = () => {
     window.location.href = `http://localhost/oauth2/authorization/kakao`;
   };
@@ -14,7 +30,7 @@ const Login = () => {
 
   return (
     <div id="login">
-      <img className="logo" src={logo} alt="logo" />
+      <img className="logo" src={logo} alt="logo" onClick={handleLogoClick} />
       <button className="kakao-login" onClick={handleKakaoLogin}>
         <svg
           xmlns="http://www.w3.org/2000/svg"

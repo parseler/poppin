@@ -26,20 +26,20 @@ const Mypage: React.FC = () => {
           console.log(data);
           if (data) {
             setUser({
-              userTsid: userTsid !== null ? Number(userTsid) : 0,
+              userTsid: userTsid !== null ? userTsid : "",
               nickname: data.nickname ?? "",
               email: data.email ?? "",
               phoneNumber: data.phoneNumber ?? "",
-              categoryList: data.userCategories
+              userCategories: data.userCategories
                 ? data.userCategories.map((cate: any) => cate.category.name)
                 : [],
-              agreementDto: {
-                marketing_consent: data.userConsents?.marketingConsent ?? false,
-                marketing_updated_at:
-                  data.userConsents?.marketing_updated_at ?? "",
-                service_push_consent:
+                userConsents: {
+                marketingConsent: data.userConsents?.marketingConsent ?? false,
+                marketingUpdatedAt:
+                  data.userConsents?.marketingUpdatedAt ?? "",
+                servicePushConsent:
                   data.userConsents?.servicePushConsent ?? false,
-                service_updated_at: data.userConsents?.service_updated_at ?? "",
+                serviceUpdatedAt: data.userConsents?.serviceUpdatedAt ?? "",
               },
               img: data.img ?? "",
               role: userRole ?? "", // userRole이 null인 경우 빈 문자열로 설정

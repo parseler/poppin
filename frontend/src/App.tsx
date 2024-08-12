@@ -39,6 +39,7 @@ import Search from "@components/Search";
 import MyReservationState from "@pages/ManagerPage/MyReservationState";
 import MyOnsiteReservationState from "@pages/ManagerPage/MyOnsiteReservationState";
 import MyPreReservationState from "@pages/ManagerPage/MyPreReservationState";
+import ManagerLogin from "@pages/ManagerPage/ManagerLogin";
 
 const queryClient = new QueryClient();
 
@@ -60,6 +61,7 @@ function App() {
 
         <Routes>
           <Route path="/login" element={<Login />} />
+          <Route path="/manager/login" element={<ManagerLogin />} />
           <Route path="/loading" element={<Loading />} />
           <Route path="/mypage/loading" element={<MyLoading />} />
           <Route path="/" element={<Layout01><Home /></Layout01>} />

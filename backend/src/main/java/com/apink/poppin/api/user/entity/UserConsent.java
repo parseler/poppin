@@ -9,6 +9,7 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.ColumnDefault;
+import org.hibernate.annotations.UpdateTimestamp;
 
 import java.time.Instant;
 
@@ -40,23 +41,23 @@ public class UserConsent {
     @Column(name = "service_push_consent", nullable = false)
     private Boolean servicePushConsent;
 
+    @UpdateTimestamp
     @ColumnDefault("CURRENT_TIMESTAMP")
     @Column(name = "marketing_updated_at")
     private Instant marketingUpdatedAt;
 
+    @UpdateTimestamp
     @ColumnDefault("CURRENT_TIMESTAMP")
     @Column(name = "service_updated_at")
     private Instant serviceUpdatedAt;
 
-    public void updateUserConsent(UserConsent userConsent) {
-        if(this.marketingConsent != userConsent.marketingConsent) {
-            this.marketingConsent = userConsent.marketingConsent;
-            this.marketingUpdatedAt = Instant.now();
+    public void updateUserConsent(UserDto.Consent userConsent) {
+        if(this.marketingConsent != userConsent.getMarketingConsent()) {
+            this.marketingConsent = userConsent.getMarketingConsent();
         }
 
-        if(this.servicePushConsent != userConsent.servicePushConsent) {
-            this.servicePushConsent = userConsent.servicePushConsent;
-            this.serviceUpdatedAt = Instant.now();
+        if(this.servicePushConsent != userConsent.getServicePushConsent()) {
+            this.servicePushConsent = userConsent.getServicePushConsent();
         }
     }
 

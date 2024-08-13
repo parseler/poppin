@@ -1,6 +1,5 @@
 import { axiosInstance } from "./axiosInstance";
 
-
 // 사용자 정보 조회
 export const getUserData = async () => {
   const response = await axiosInstance.get(`/users/me`);

@@ -11,6 +11,7 @@ import loginBefore from "@assets/mypage/loginBefore.svg";
 import nextButton from "@assets/mypage/nextButton.svg";
 import profileUpdate from "@assets/mypage/profileUpdateButton.svg";
 import useAuthStore from "@store/useAuthStore";
+import { logout } from "@api/auth";
 
 const Mypage: React.FC = () => {
   const [user, setUser] = useState<UserProps | null>(null);
@@ -57,6 +58,7 @@ const Mypage: React.FC = () => {
   // 로그아웃
   const handleLogout = () => {
     try {
+      logout();
       useAuthStore.getState().clearTokens(); // 상태에서 토큰 및 사용자 정보 초기화
       Cookies.remove("refresh"); // 만약 refreshToken이 쿠키에 저장되어 있는 경우 삭제
       // axiosInstance의 Authorization 헤더 초기화
@@ -115,6 +117,8 @@ const Mypage: React.FC = () => {
                   src={
                     user.img instanceof File
                       ? URL.createObjectURL(user.img)
+                      : user.img
+                      ? `http://localhost/${user.img}`
                       : ""
                   }
                   alt="profile"

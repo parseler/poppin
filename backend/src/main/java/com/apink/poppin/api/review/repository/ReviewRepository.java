@@ -25,4 +25,6 @@ public interface ReviewRepository extends JpaRepository<Review, Long> {
     @EntityGraph(attributePaths = "user", type = EntityGraph.EntityGraphType.FETCH)
     @NonNull
     List<Review> findByDeletedFalse();
+
+    long countByPopup_PopupId(@NonNull Long popupId);
 }

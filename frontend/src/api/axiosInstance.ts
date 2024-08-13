@@ -1,4 +1,5 @@
 import axios from "axios";
+import Cookies from "js-cookie";
 import { getTokenInfo } from "@utils/get-decoding";
 import useAuthStore from "@store/useAuthStore";
 

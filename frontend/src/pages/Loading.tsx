@@ -39,7 +39,7 @@ const Loading = () => {
           axiosInstance.defaults.headers.common["_retry"] = true;
 
           // 원하는 페이지로 리디렉션
-          navigate("/mypage/update");
+          navigate("/");
         } catch (error) {
           console.error("Error during reissuing token:", error);
           // 오류가 발생하면 로그인 페이지로 리디렉션

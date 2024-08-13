@@ -45,8 +45,8 @@ public interface PopupRepository extends JpaRepository<Popup, Long> {
     @Query("SELECT p FROM Popup p " +
             "JOIN PopupCategory pc ON p.popupId = pc.popup.popupId " +
             "JOIN Category c ON pc.category.id = c.id " +
-            "WHERE c.name = :categoryName")
-    List<Popup> findPopupsByCategoryName(@Param("categoryName") String categoryName);
+            "WHERE c.id = :categoryId")
+    List<Popup> findPopupsByCategoryName(@Param("categoryId") int categoryId);
 
     @Query("SELECT p FROM Popup p WHERE p.popupId IN (SELECT pr.popup.popupId FROM PreReservation pr WHERE pr.user.userTsid = :userTsid AND pr.reservationStatement.reservationStatementId = 2)")
     List<Popup> findReservedPopupByUserTsid(@Param("userTsid") long userTsid);

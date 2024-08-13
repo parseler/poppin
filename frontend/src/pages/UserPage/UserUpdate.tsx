@@ -43,10 +43,10 @@ const UserUpdate: React.FC = () => {
                 ...data.userConsents,
               },
               userCategories: data.userCategories
-                  ? data.userCategories.map((cate: any) => ({
+                ? data.userCategories.map((cate: any) => ({
                     name: cate.name,
                   }))
-                  : prevUser.userCategories,
+                : prevUser.userCategories,
               role: userRole ?? prevUser.role,
             };
             console.log("Updated user state:", updatedUser);
@@ -164,8 +164,16 @@ const UserUpdate: React.FC = () => {
         const formData = new FormData();
 
         // userConsents의 날짜 필드를 Date 객체로 변환
-        const marketingUpdatedAt = user.userConsents.marketingUpdatedAt ? new Date(user.userConsents.marketingUpdatedAt).toISOString().slice(0, 19) : null;
-        const serviceUpdatedAt = user.userConsents.serviceUpdatedAt ? new Date(user.userConsents.serviceUpdatedAt).toISOString().slice(0, 19) : null;
+        const marketingUpdatedAt = user.userConsents.marketingUpdatedAt
+          ? new Date(user.userConsents.marketingUpdatedAt)
+              .toISOString()
+              .slice(0, 19)
+          : null;
+        const serviceUpdatedAt = user.userConsents.serviceUpdatedAt
+          ? new Date(user.userConsents.serviceUpdatedAt)
+              .toISOString()
+              .slice(0, 19)
+          : null;
 
         const userData = {
           userTsid: user.userTsid,
@@ -175,19 +183,19 @@ const UserUpdate: React.FC = () => {
           userCategories: user.userCategories,
           userConsents: {
             marketingConsent: user.userConsents.marketingConsent,
-            marketingUpdatedAt: marketingUpdatedAt ? marketingUpdatedAt : '',
+            marketingUpdatedAt: marketingUpdatedAt ? marketingUpdatedAt : "",
             servicePushConsent: user.userConsents.servicePushConsent,
-            serviceUpdatedAt: serviceUpdatedAt ? serviceUpdatedAt : ''
+            serviceUpdatedAt: serviceUpdatedAt ? serviceUpdatedAt : "",
           },
-          role: user.role
+          role: user.role,
         };
-  
+
         formData.append("userData", JSON.stringify(userData));
         // 이미지 파일이 있으면 FormData에 추가
         if (user.img) {
           formData.append("img", user.img);
         }
-  
+
         // FormData를 서버로 전송
         const updatedData = await updateUserData(formData);
 
@@ -215,7 +223,12 @@ const UserUpdate: React.FC = () => {
         <div className="update-image">
           <div className="profile-black" onClick={handleImageClick}></div>
           <img
-            src={user.img instanceof File ? URL.createObjectURL(user.img) : ""}
+            src={user.img instanceof File
+                ? URL.createObjectURL(user.img)
+                : user.img
+                ? `http://localhost/${user.img}`
+                : ""
+            }
             alt="profile"
             onClick={handleImageClick}
           />
@@ -296,9 +309,7 @@ const UserUpdate: React.FC = () => {
                 }
                 disabled={
                   user.userCategories.length >= 3 &&
-                  !user.userCategories.some(
-                    (cat) => cat.name === category
-                  )
+                  !user.userCategories.some((cat) => cat.name === category)
                 }
               >
                 {category}
@@ -309,32 +320,51 @@ const UserUpdate: React.FC = () => {
             <h3>마케팅 수신 동의</h3>
             <div className="update-marketing">
               <input
-                  type="checkbox"
-                  id="marketing"
-                  name="marketingConsent"
-                  checked={user.userConsents.marketingConsent}
-                  onChange={userChange}
+                type="checkbox"
+                id="marketing"
+                name="marketingConsent"
+                checked={user.userConsents.marketingConsent}
+                onChange={userChange}
               />
               <label htmlFor="marketing">마케팅 수신 동의</label>
             </div>
-            <p>(동의: {user.userConsents.marketingUpdatedAt})</p>
+            <p>
+              {user.userConsents.marketingConsent ? "(동의:" : "(비동의:"}{" "}
+              {user.userConsents.marketingUpdatedAt
+                ? new Date(
+                    new Date(user.userConsents.marketingUpdatedAt).getTime() +
+                      9 * 60 * 60 * 1000
+                  ).toLocaleString()
+                : ""}
+              {")"}
+            </p>
 
+            <h3>이벤트성 푸쉬 알림 수신 동의</h3>
             <div className="update-push">
               <input
-                  type="checkbox"
-                  id="push"
-                  name="servicePushConsent"
-                  checked={user.userConsents.servicePushConsent}
-                  onChange={userChange}
+                type="checkbox"
+                id="push"
+                name="servicePushConsent"
+                checked={user.userConsents.servicePushConsent}
+                onChange={userChange}
               />
               <label htmlFor="push">이벤트성 푸쉬 알림 수신 동의</label>
             </div>
-            <p>(동의: {user.userConsents.serviceUpdatedAt})</p>
+            <p>
+              {user.userConsents.servicePushConsent ? "(동의:" : "(비동의:"}{" "}
+              {user.userConsents.serviceUpdatedAt
+                ? new Date(
+                    new Date(user.userConsents.serviceUpdatedAt).getTime() +
+                      9 * 60 * 60 * 1000
+                  ).toLocaleString()
+                : ""}
+              {")"}
+            </p>
           </div>
         </div>
       </div>
 
-      <Menu/>
+      <Menu />
     </>
   );
 };

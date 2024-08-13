@@ -1,4 +1,5 @@
 import create from 'zustand';
+import { persist } from 'zustand/middleware';
 
 // 상태 타입 정의
 interface AuthState {
@@ -10,12 +11,20 @@ interface AuthState {
 }
 
 // zustand 스토어 생성
-const useAuthStore = create<AuthState>((set) => ({
-  accessToken: null,
-  userTsid: null,
-  userRole: null,
-  setTokens: (accessToken: string, userTsid: string | null, userRole: string | null) => set({ accessToken, userTsid, userRole }),
-  clearTokens: () => set({ accessToken: null, userTsid: null, userRole: null }),
-}));
+const useAuthStore = create<AuthState>()(
+  persist(
+    (set) => ({
+      accessToken: null,
+      userTsid: null,
+      userRole: null,
+      setTokens: (accessToken: string, userTsid: string, userRole: string) => set({ accessToken, userTsid, userRole }),
+      clearTokens: () => set({ accessToken: null, userTsid: null, userRole: null }),
+    }),
+    {
+      name: 'auth-storage', // 로컬 스토리지에 저장될 키 이름
+      getStorage: () => localStorage, // 로컬 스토리지를 사용
+    }
+  )
+);
 
 export default useAuthStore;

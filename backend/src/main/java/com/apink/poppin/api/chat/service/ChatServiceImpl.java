@@ -44,17 +44,11 @@ public class ChatServiceImpl implements ChatService {
                 .sendTime(chatDto.getSendTime())
                 .build();
 
-        System.out.println("mongodb before");
-
         // 몽고디비에 저장
         ChatMessage chat = chatRepository.save(chatMessage);
 
-        System.out.println("mongodb after");
-
         // redis publish 호출
         redisPublisher.publish(chatDto);
-
-        System.out.println("redis after");
 
         return chat;
     }

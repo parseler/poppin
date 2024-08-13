@@ -1,6 +1,7 @@
 package com.apink.poppin.api.chat.controller;
 
 import com.apink.poppin.api.chat.dto.ChatMessageDTO;
+import com.apink.poppin.api.chat.dto.ChatResponseDTO;
 import com.apink.poppin.api.chat.entity.ChatMessage;
 import com.apink.poppin.api.chat.service.ChatService;
 import lombok.RequiredArgsConstructor;
@@ -20,13 +21,15 @@ public class ChatController {
     private final SimpMessagingTemplate template;
 
     @MessageMapping("/message")
-    public void message(ChatMessageDTO chatDTO) {
-        ChatMessage chat = chatService.insertMessage(chatDTO);
+    public ChatResponseDTO message(ChatMessageDTO chatDTO) {
+        ChatResponseDTO chat = chatService.insertMessage(chatDTO);
         log.info("chat = {}", chat);
 //        chatService.sendMessage(chat); //RedisPublisher 호출
 //        template.convertAndSend("/sub/room/" + roomId, chatDTO);
         System.out.println("message = "+ chatDTO.getMessage());
         System.out.println("message = "+ chat.getMessage());
+
+        return chat;
     }
 
 

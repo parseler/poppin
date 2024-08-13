@@ -160,10 +160,6 @@ function RegistPop() {
         ...timeSlots,
         [selectedDays]: `${startTime} ~ ${endTime}`,
       });
-      // setSelectedStartTimeHour("");
-      // setSelectedStartTimeMinute("");
-      // setSelectedEndTimeHour("");
-      // setSelectedEndTimeMinute("");
     }
   };
 
@@ -193,9 +189,9 @@ function RegistPop() {
     </option>
   ));
 
-  const minuteOptions = Array.from({ length: 60 }, (_, i) => (
-    <option key={i} value={i < 10 ? `0${i}` : i}>
-      {i < 10 ? `0${i}` : i}
+  const minuteOptions = Array.from({ length: 12 }, (_, i) => (
+    <option key={i*5} value={i*5 < 10 ? `0${i*5}` : i*5}>
+      {i*5 < 10 ? `0${i*5}` : i*5}
     </option>
   ));
 

@@ -3,26 +3,26 @@ import "@css/Pop/PopDetailInfo.css";
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
 
-import locateIcon from "../../assets/locate.svg";
+import locateIcon from "@assets/locate.svg";
 import clock from "@assets/clock.svg";
 import scheduleOpen from "@assets/scheduleOpen.svg";
 import scheduleClose from "@assets/scheduleClose.svg";
 import homepageIcon from "@assets/homepageIcon.svg";
 import insta from "@assets/insta.svg";
 import parkingIcon from "@assets/popService/parkingIcon.svg";
-import feeIcon from "@assets/popService/feeIcon.svg";
+import feeIcon from "@assets/popService/noFeeIcon.svg";
 import petIcon from "@assets/popService/petIcon.svg";
-import foodIcon from "@assets/popService/parkingIcon.svg";
-import photoIcon from "@assets/popService/parkingIcon.svg";
-import ageLimitIcon from "@assets/popService/parkingIcon.svg";
-import noParkingIcon from "@assets/popService/parkingIcon.svg";
-import noFeeIcon from "@assets/popService/parkingIcon.svg";
-import noPetIcon from "@assets/popService/parkingIcon.svg";
-import noFoodIcon from "@assets/popService/parkingIcon.svg";
+import foodIcon from "@assets/popService/foodIcon.svg";
+import photoIcon from "@assets/popService/photoIcon.svg";
+import ageLimitIcon from "@assets/popService/noAgeLimitIcon.svg";
+import noParkingIcon from "@assets/popService/noParkingIcon.svg";
+import noFeeIcon from "@assets/popService/feeIcon.svg";
+import noPetIcon from "@assets/popService/noPetIcon.svg";
+import noFoodIcon from "@assets/popService/noFoodIcon.svg";
 import noPhotoIcon from "@assets/popService/noPhotoIcon.svg";
-import noAgeLimitIcon from "@assets/popService/parkingIcon.svg";
+import noAgeLimitIcon from "@assets/popService/ageLimitIcon.svg";
 
-type Category = "parking" | "fee" | "pet" | "food" | "photo" | "ageLimit";
+type Category = "parking" | "fee" | "pet" | "food" | "photo" | "age";
 
 interface InfoProps {
   isEditing: boolean;
@@ -49,7 +49,7 @@ const serviceIcons: Record<Category, { true: string; false: string }> = {
   pet: { true: petIcon, false: noPetIcon },
   food: { true: foodIcon, false: noFoodIcon },
   photo: { true: photoIcon, false: noPhotoIcon },
-  ageLimit: { true: ageLimitIcon, false: noAgeLimitIcon },
+  age: { true: ageLimitIcon, false: noAgeLimitIcon },
 };
 
 const Info: React.FC<InfoProps> = ({
@@ -76,6 +76,7 @@ const Info: React.FC<InfoProps> = ({
     {}
   );
 
+  // 운영 시간
   useEffect(() => {
     try {
       const now = new Date();
@@ -113,6 +114,7 @@ const Info: React.FC<InfoProps> = ({
     }
   }, [hours]);
 
+  // 지도 불러오기
   useEffect(() => {
     const script = document.createElement("script");
     script.src =
@@ -166,8 +168,14 @@ const Info: React.FC<InfoProps> = ({
     }
   }, [content]);
 
-  const isChecked = (value: string, checkValue: string[]): boolean => {
-    return checkValue.includes(value);
+  const isChecked = (key: string, value: string): boolean => {
+    if (key === "age") {
+      return value === "19세 이상";
+    }
+    if (key === "fee") {
+      return value === "무료";
+    }
+    return value === "가능";
   };
 
   const toggleSchedule = () => {
@@ -252,12 +260,12 @@ const Info: React.FC<InfoProps> = ({
         <div className="service-icons">
           {Object.entries(parsedContent).map(
             ([key, value]) =>
-              value && ( // 값이 존재하는 항목만 표시
+              value && (
                 <div key={key} className="service-icon">
                   <img
                     src={
                       serviceIcons[key as Category][
-                        isChecked(value, ["가능", "무료", "없음"]) ? "true" : "false"
+                        isChecked(key, value) ? "true" : "false"
                       ]
                     }
                   />
@@ -265,15 +273,26 @@ const Info: React.FC<InfoProps> = ({
                   {isEditing && (
                     <input
                       type="checkbox"
-                      checked={isChecked(value, ["가능", "무료", "없음"])}
-                      onChange={(e) =>
+                      checked={isChecked(key, value)}
+                      onChange={(e) => {
+                        const newValue = e.target.checked
+                          ? key === "age"
+                            ? "19세 이상"
+                            : key === "fee"
+                            ? "무료"
+                            : "가능"
+                          : key === "age"
+                          ? "전체연령"
+                          : key === "fee"
+                          ? "유료"
+                          : "불가능";
                         onContentChange(
                           JSON.stringify({
                             ...parsedContent,
-                            [key]: e.target.checked ? "가능" : "불가능",
+                            [key]: newValue,
                           })
-                        )
-                      }
+                        );
+                      }}
                       className="edit-checkbox"
                     />
                   )}

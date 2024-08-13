@@ -112,6 +112,58 @@ services:
       - KAFKA_CFG_ZOOKEEPER_CONNECT=zookeeper:2181
     depends_on:
       - zookeeper
+  backend-ranking-builder:
+    image: eclipse-temurin:17
+    #TODO: Replace env_file with detailed environment variables using the environment section
+    env_file:
+      - .env
+    volumes:
+      - ./ranking-service:/opt/app
+      - gradle_ranking:/opt/app/build
+    working_dir: /opt/app
+    command: "./gradlew build -x test"
+  backend-ranking:
+    image: eclipse-temurin:17
+    #TODO: Replace env_file with detailed environment variables using the environment section
+    env_file:
+      - .env
+    volumes:
+      - gradle_ranking:/opt/app/build
+    command: "java -jar /opt/app/build/libs/ranking-service-0.0.1-SNAPSHOT.jar"
+    depends_on:
+      mysql-ranking:
+        condition: service_healthy
+      redis-ranking:
+        condition: service_healthy
+      backend-ranking-builder:
+        condition: service_completed_successfully
+    develop:
+      watch:
+        - path: gradle_ranking
+          action: sync+restart
+          target: /opt/app/build
+  mysql-ranking:
+    image: mysql
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: $RANKING_MYSQL_ROOT_PASSWORD
+    #FIXME: ports should be removed before deploying application on EC2
+    ports:
+      - "3307:3306"
+    volumes:
+      - ./db/mysql-ranking/data:/var/lib/mysql
+      - ./db/mysql-ranking/initdb:/docker-entrypoint-initdb.d
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+  redis-ranking:
+    image: redis
+    restart: always
+    #FIXME: ports should be removed before deploying application on EC2
+    ports:
+      - "6380:6379"
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
 volumes:
   gradle_home:
   app_home:
+  gradle_ranking:

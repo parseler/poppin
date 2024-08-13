@@ -8,6 +8,7 @@ import com.apink.poppin.api.user.repository.UserRepository;
 import com.apink.poppin.common.auth.dto.KakaoResponse;
 import com.apink.poppin.common.auth.dto.NaverResponse;
 import com.apink.poppin.common.auth.dto.OAuth2UserResponse;
+import com.apink.poppin.common.auth.service.NicknameService;
 import com.apink.poppin.common.util.SnowflakeTsidUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.oauth2.client.userinfo.DefaultOAuth2UserService;
@@ -25,7 +26,7 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
     private final UserRepository userRepository;
     private final UserConsentRepository userConsentRepository;
     private final SnowflakeTsidUtil snowflakeTsidUtil;
-    private static int nick = 1;
+    private final NicknameService nicknameService;
 
     @Override
     public OAuth2User loadUser(OAuth2UserRequest userRequest) throws OAuth2AuthenticationException {
@@ -55,13 +56,14 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
         if(existData == null) {
             long tsid = snowflakeTsidUtil.nextId();
             System.out.println(tsid);
+            String nickname = nicknameService.createNickname();
 
             User user = User.builder()
                     .userTsid(tsid)
                     .providerId(providerId)
                     .providerName(oAuth2UserResponse.getProvider())
                     .name(oAuth2UserResponse.getName())
-                    .nickname("날으는 다람쥐" + (nick++))
+                    .nickname(nickname)
                     .email(oAuth2UserResponse.getEmail())
                     .age(oAuth2UserResponse.getAge())
                     .gender(oAuth2UserResponse.getGender())

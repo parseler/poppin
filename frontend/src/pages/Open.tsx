@@ -1,8 +1,19 @@
 import "@css/Open.css";
-import banners from "@utils/get-banner-image";
 import PopMedium02 from "@components/Home/PopMedium02";
+import { useEffect, useState } from "react";
+import { getPopupByOpen, PopupProps } from "@api/home";
 
 const Open = () => {
+  const [openPopups, setOpenPopups] = useState<PopupProps[]>([]);
+
+  useEffect(() => {
+    getPopupByOpen().then((data) => {
+      setOpenPopups(data);
+    }).catch((error) => {
+      console.error(error);
+    })
+  })
+
   return (
     <div id="open">
       <div className="open-title">
@@ -10,12 +21,12 @@ const Open = () => {
         <p>오픈 예정인 팝업의 예약 일정을 확인하세요.</p>
       </div>
       <div className="open-contents">
-        {banners.map((banner, index) => (
+        {openPopups.map((popup) => (
           <PopMedium02
-            key={index}
-            image={banner.image}
-            text={banner.text}
-            date={banner.date}
+          key={popup.popupId}
+          image={popup.images[0]} // 첫 번째 이미지만 표시, 필요에 따라 수정 가능
+          text={popup.name}
+          date={`${popup.startDate} - ${popup.endDate}`}
           />
         ))}
       </div>

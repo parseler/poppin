@@ -40,6 +40,7 @@ import MyReservationState from "@pages/ManagerPage/MyReservationState";
 import MyOnsiteReservationState from "@pages/ManagerPage/MyOnsiteReservationState";
 import MyPreReservationState from "@pages/ManagerPage/MyPreReservationState";
 import ManagerLogin from "@pages/ManagerPage/ManagerLogin";
+import SearchList from "@pages/SearchList";
 
 const queryClient = new QueryClient();
 
@@ -94,6 +95,7 @@ function App() {
           <Route path="/mypage/onsite-reservation-management" element={<Layout04><MyOnsiteReservationState /></Layout04>} />
           <Route path="/mypage/pre-reservation-management" element={<Layout04><MyPreReservationState /></Layout04>} />
           <Route path="/search" element={<Search />} />
+          <Route path="/search-list" element={<Layout01><SearchList /></Layout01>} />
         </Routes>
       </div>
     </QueryClientProvider>

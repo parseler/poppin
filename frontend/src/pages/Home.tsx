@@ -10,11 +10,16 @@ import PopupSmall from "@components/Home/PopupSmall";
 import { getUserData } from "@api/users";
 import { getTokenInfo } from "@api/axiosInstance";
 import useAuthStore from "@store/useAuthStore";
+import { getPopupByOpen, getPopupByRecommend } from "@api/home";
+import { PopupProps } from "@api/category";
 
 const Home = () => {
   const { accessToken, userTsid, userRole } = useAuthStore();
   const navigate = useNavigate();
   const [nickname, setNickname] = useState<string>("");
+
+  const [openPopups, setOpenPopups] = useState<PopupProps[]>([]);
+  const [recommendPopups, setRecommendPopups] = useState<PopupProps[]>([]);
 
   useEffect(() => {
     if (accessToken) {
@@ -28,10 +33,27 @@ const Home = () => {
             }
           })
           .catch((error) => {
-            console.error('Failed to fetch user data:', error);
+            console.error("Failed to fetch user data:", error);
           });
       }
     }
+
+    // 인기 데이터
+
+    // // 오픈 예정 데이터
+    // getPopupByOpen().then((data) => {
+    //   setOpenPopups(data);
+    // }).catch((error) => {
+    //   console.error(error);
+    // })
+
+    // 추천 데이터
+    getPopupByRecommend().then((data) => {
+      setRecommendPopups(data);
+    }).catch((error) => {
+      console.error(error);
+    })
+
   }, [accessToken, userTsid, userRole]);
 
   const goPopDetail = () => {
@@ -83,26 +105,28 @@ const Home = () => {
           <Link to={`/open`}>더보기</Link>
         </div>
         <div className="open-content">
-          {banners.map((banner, index) => (
+          {/* {openPopups.map((popup) => (
             <PopupBig
-              key={index}
-              image={banner.image}
-              text={banner.text}
-              date={banner.date}
+            key={popup.popupId}
+            image={popup.images[0]} // 첫 번째 이미지만 표시, 필요에 따라 수정 가능
+            text={popup.name}
+            date={`${popup.startDate} - ${popup.endDate}`}
             />
-          ))}
+          ))} */}
         </div>
       </section>
       <section id="recommend-section">
         {/* 비로그인이면 담당자 픽 & 로그인이면 닉네임 추천 픽 */}
-        <h1>{nickname ? `${nickname}님을 위한 추천 팝업` : "담당자 픽 추천 팝업"}</h1>
+        <h1>
+          {nickname ? `${nickname}님을 위한 추천 팝업` : "담당자 픽 추천 팝업"}
+        </h1>
         <div className="recommend-content">
-          {banners.map((banner, index) => (
+          {recommendPopups.map((popup) => (
             <PopupSmall
-              key={index}
-              image={banner.image}
-              text={banner.text}
-              date={banner.date}
+            key={popup.popupId}
+            image={popup.images[0]} // 첫 번째 이미지만 표시, 필요에 따라 수정 가능
+            text={popup.name}
+            date={`${popup.startDate} - ${popup.endDate}`}
             />
           ))}
         </div>

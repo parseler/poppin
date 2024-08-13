@@ -15,6 +15,6 @@ export interface PopupProps {
 
 // 카테고리별 팝업 조회
 export const getPopupByCategory = async (category: number) => {
-  const response = await axiosInstance.get<PopupProps[]>(`/category/${category}`);
+  const response = await axiosInstance.get<PopupProps[]>(`/popups/category/${category}`);
   return response.data;
 }

@@ -14,6 +14,7 @@ import com.apink.poppin.api.user.repository.UserRepository;
 import com.apink.poppin.common.exception.dto.BusinessLogicException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.Instant;
 import java.util.ArrayList;
@@ -71,6 +72,7 @@ public class ReviewServiceImpl implements ReviewService {
     }
 
     @Override
+    @Transactional
     public void updateReview(long reviewId, ReviewUpdateRequestDto requestDto) {
 
         Review review = reviewRepository.findById(reviewId)
@@ -79,6 +81,15 @@ public class ReviewServiceImpl implements ReviewService {
         if (review.isDeleted()) {
             throw new BusinessLogicException(REVIEW_ALREADY_DELETED);
         }
+
+        long popupId = review.getPopup().getPopupId();
+        Popup popup = popupRepository.findById(popupId)
+                        .orElseThrow(() -> new BusinessLogicException(POPUP_NOT_FOUND));
+        double currentRating = popup.getRating();
+        long count = reviewRepository.countByPopup_PopupId(popupId);
+        double newRating = (currentRating * count + requestDto.getRating()) / (count + 1);
+        popup.setRating(newRating);
+        popupRepository.save(popup);
 
         review.updateReview(requestDto);
 
@@ -99,6 +110,7 @@ public class ReviewServiceImpl implements ReviewService {
     }
 
     @Override
+    @Transactional
     public void createReview(long popupId, ReviewDto reviewDto) {
         
         User user = userRepository.findUserByUserTsid(reviewDto.getUserTsid())
@@ -106,6 +118,12 @@ public class ReviewServiceImpl implements ReviewService {
 
         Popup popup = popupRepository.findById(popupId)
                 .orElseThrow(() -> new BusinessLogicException((POPUP_NOT_FOUND)));
+
+        double currentRating = popup.getRating();
+        long count = reviewRepository.countByPopup_PopupId(popupId);
+        double newRating = (currentRating * count + reviewDto.getRating()) / (count + 1);
+        popup.setRating(newRating);
+        popupRepository.save(popup);
 
         Review review = Review.builder()
                 .popup(popup)

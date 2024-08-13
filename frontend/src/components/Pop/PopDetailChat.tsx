@@ -41,8 +41,8 @@ const Chat = () => {
   const ws = useRef<Client | null>(null);
 
   // 임시 userTsid
-  const currentUserTsid = 1;
-  const currentUserNickname = "cheolsu";
+  const currentUserTsid = 2;
+  const currentUserNickname = "younghee";
 
   // 채팅 내역 불러오기
   useEffect(() => {
@@ -207,7 +207,7 @@ const Chat = () => {
                     <img src={chat.profile} className="profile-img" />
                     <div className="chat-name">
                       <span className="nickname">{chat.sender}</span>
-                      <button className="report-button">신고하기</button>
+                      {/* <button className="report-button">신고하기</button> */}
                     </div>
                   </div>
                   <div className="chat-info-other">

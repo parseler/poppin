@@ -1,4 +1,4 @@
-import axios from "axios";
+import { axiosInstance } from "@api/axiosInstance";
 import { PopupDetail } from "@interface/popDetail";
 
 export interface PopupDTO {
@@ -56,9 +56,7 @@ export interface HeartRequestDTO {
   popupId: number;
 }
 
-const api = axios.create({
-  baseURL: "http://localhost/api",
-});
+const api = axiosInstance;
 
 const toFormData = (popupDto: Partial<PopupRequestDTO>): FormData => {
   const formData = new FormData();
@@ -157,11 +155,11 @@ export const getReviews = async (popupId: number) => {
 };
 
 // 해당 팝업의 채팅 내역 조회
-export const getHistory = async (popupId: number) =>{
+export const getHistory = async (popupId: number) => {
   const response = await api.get(`/popups/chat/${popupId}`);
   console.log("API Response:", response.data);
   return response.data;
-}
+};
 
 // 내 주변 팝업 조회 (전체)
 export const getMapPopupList = async (): Promise<PopupDetail[]> => {
@@ -185,10 +183,10 @@ export const getMapMyReservationPopup = async (): Promise<PopupDetail[]> => {
 export const insertHeart = async (data: HeartRequestDTO) => {
   const response = await api.post(`/popups/${data.popupId}/heart`, data);
   return response.data;
-}
+};
 
 // 팝업 좋아요 해제
 export const deleteHeart = async (data: HeartRequestDTO) => {
-  const response = await api.delete(`/popups/${data.popupId}/heart`, {data});
+  const response = await api.delete(`/popups/${data.popupId}/heart`, { data });
   return response.data;
-}
+};

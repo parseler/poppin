@@ -7,6 +7,8 @@ import "@css/Pop/PopDetailChat.css";
 import noticePin from "@assets/noticePin.svg";
 import sendButton from "@assets/sendButton.svg";
 import { getHistory } from "@api/apiPop";
+import { getUserData } from "@api/users";
+import useAuthStore from "@store/useAuthStore";
 
 interface ChatMessage {
   type: "me" | "other";
@@ -36,13 +38,27 @@ const Chat = () => {
   const [notice] = useState<string>(noticeContent);
   const [noticeOpen, setNoticeOpen] = useState<boolean>(false);
   const [isAutoScroll, setIsAutoScroll] = useState<boolean>(true);
+  const [userNickname, setUserNickname] = useState<string>("");
+  const [userProfileImg, setUserProfileImg] = useState<string>("");
 
   const chatMessageRef = useRef<HTMLDivElement>(null);
   const ws = useRef<Client | null>(null);
 
-  // 임시 userTsid
-  const currentUserTsid = 2;
-  const currentUserNickname = "younghee";
+  const currentUserTsid = useAuthStore((state) => state.userTsid);
+
+  // 유저 정보(닉네임, 사진 등) 불러오기
+  useEffect(() => {
+    const fetchUserInfo = async () => {
+      try {
+        const userInfo = await getUserData();
+        setUserNickname(userInfo.nickname);
+        setUserProfileImg(userInfo.profileImg);
+      } catch (error) {
+        console.error("Failed to fetch user info:", error);
+      }
+    };
+    fetchUserInfo();
+  }, []);
 
   // 채팅 내역 불러오기
   useEffect(() => {
@@ -52,7 +68,7 @@ const Chat = () => {
         if (Array.isArray(response)) {
           const formattedChats = response.map((chat) => ({
             ...chat,
-            type: chat.sender === currentUserNickname ? "me" : "other",
+            type: chat.sender === userNickname ? "me" : "other",
             nickName: chat.sender,
             profile: chat.senderImg,
             sendTime: chat.sendTime.slice(0, 5),
@@ -70,7 +86,7 @@ const Chat = () => {
     };
 
     fetchChatHistory();
-  }, [popupId]);
+  }, [popupId, userNickname]);
 
   useEffect(() => {
     const socket = new SockJS("http://localhost/ws-stomp");
@@ -91,7 +107,7 @@ const Chat = () => {
           const newMessage: ChatMessage = {
             ...receivedMessage,
             type:
-              receivedMessage.sender === currentUserNickname ? "me" : "other",
+              receivedMessage.sender === userNickname ? "me" : "other",
             sendTime: receivedMessage.sendTime.slice(0, 5),
           };
           console.log(receivedMessage.sender);
@@ -117,7 +133,7 @@ const Chat = () => {
         console.log("Disconnected from STOMP");
       }
     };
-  }, [popupId]);
+  }, [popupId, userNickname]);
 
   useEffect(() => {
     if (isAutoScroll && chatMessageRef.current) {
@@ -140,7 +156,8 @@ const Chat = () => {
       userTsid: currentUserTsid,
       message: message,
       sendTime: formattedTime,
-      sender: currentUserNickname,
+      sender: userNickname,
+      profile: userProfileImg,
     };
 
     if (ws.current && ws.current.connected) {

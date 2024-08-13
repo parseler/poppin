@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { PopupDetail } from "@interface/popDetail";
 import {
   getMapPopupList,
@@ -12,6 +13,7 @@ import upcomingMarker from "@assets/map/upcomingMarker.svg";
 import likeMarker from "@assets/map/likeMarker.svg";
 import reservationMarker from "@assets/map/reservationMarker.svg";
 import currentLocation from "@assets/map/currentLocation.svg";
+import useAuthStore from "@store/useAuthStore";
 
 const markerImages = {
   open: openMarker,
@@ -27,22 +29,17 @@ interface PopupStore {
   schedule: string;
   businessHours: string;
   markerType: "open" | "upcoming" | "like" | "reservation";
+  popupId: number;
 }
 
 const parseHours = (hoursString: string): Record<string, string> => {
-  const trimmedString = hoursString.slice(1, -1);
-  const pairs = trimmedString.split(",");
-
-  const hours: Record<string, string> = {};
-
-  pairs.forEach((pair) => {
-    const [day, time] = pair.split(":");
-    const cleanDay = day.trim().replace(/"/g, "");
-    const cleanTime = time.trim().replace(/"/g, "");
-    hours[cleanDay] = cleanTime;
-  });
-
-  return hours;
+  try {
+    const parsedHours = JSON.parse(hoursString);
+    return parsedHours;
+  } catch (error) {
+    console.error("Failed to parse hours:", error);
+    return {};
+  }
 };
 
 const getMarkerType = (
@@ -74,7 +71,6 @@ const getMarkerType = (
     return "upcoming";
   }
 
-  // 기본적으로 "open"으로 처리
   return "open";
 };
 
@@ -87,6 +83,7 @@ const convertToPopupStore = (popupDetail: PopupDetail): PopupStore => {
     schedule: `${popupDetail.startDate} - ${popupDetail.endDate}`,
     businessHours: popupDetail.hours,
     markerType: markerType,
+    popupId: popupDetail.popupId,
   };
 };
 
@@ -96,7 +93,10 @@ const Map = () => {
   const [map, setMap] = useState<kakao.maps.Map | null>(null);
   const [markers, setMarkers] = useState<kakao.maps.Marker[]>([]);
   const [popupStores, setPopupStores] = useState<PopupStore[]>([]);
+  const navigate = useNavigate();
+  const isLoggedIn = useAuthStore((state) => !state.userTsid); // 로그인 여부 확인
 
+  // 지도 초기화 및 마커 초기 설정
   useEffect(() => {
     const script = document.createElement("script");
     script.async = true;
@@ -146,9 +146,9 @@ const Map = () => {
     const fetchPopupStores = async () => {
       try {
         let data: PopupDetail[] = [];
-        if (activeButton === "like") {
+        if (activeButton === "like" && isLoggedIn) {
           data = await getMapHeartPopupByLocation(); // 좋아요 API 호출
-        } else if (activeButton === "reservation") {
+        } else if (activeButton === "reservation" && isLoggedIn) {
           data = await getMapMyReservationPopup(); // 사전예약 API 호출
         } else {
           data = await getMapPopupList(); // 전체 팝업 API 호출
@@ -160,11 +160,13 @@ const Map = () => {
         console.error("Error fetching popup stores:", error);
       }
     };
+
     fetchPopupStores();
-  }, [activeButton]);
+  }, [activeButton, isLoggedIn]);
 
   useEffect(() => {
     if (map) {
+      // 마커 초기화
       markers.forEach((marker) => marker.setMap(null));
 
       const newMarkers = popupStores.map((store) => {
@@ -189,7 +191,8 @@ const Map = () => {
 
       setMarkers(newMarkers);
     }
-  }, [map, popupStores, markers]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [map, popupStores]);
 
   const handleButtonClick = (buttonType: string) => {
     setActiveButton(buttonType);
@@ -228,18 +231,30 @@ const Map = () => {
 
   const isOpen = (store: PopupStore) => {
     const now = new Date();
-    const currentTime = now.toTimeString().split(" ")[0];
+    const currentMinutes = now.getHours() * 60 + now.getMinutes();
 
     const [startDate, endDate] = store.schedule
       .split(" - ")
       .map((dateStr) => new Date(dateStr.replace(/\./g, "-")));
-    const [openTime, closeTime] = store.businessHours.split(" - ");
+
+    const hours = store.businessHours.split(" - ");
+    const [openHour, openMinute] = hours[0].split(":").map(Number);
+    const [closeHour, closeMinute] = hours[1].split(":").map(Number);
+
+    const openMinutes = openHour * 60 + openMinute;
+    const closeMinutes = closeHour * 60 + closeMinute;
 
     const isWithinDateRange = now >= startDate && now <= endDate;
     const isWithinTimeRange =
-      currentTime >= openTime && currentTime <= closeTime;
+      currentMinutes >= openMinutes && currentMinutes <= closeMinutes;
 
     return isWithinDateRange && isWithinTimeRange;
+  };
+
+  const handleStoreClick = () => {
+    if (selectedStore) {
+      navigate(`/popupDetail/${selectedStore.popupId}`);
+    }
   };
 
   return (
@@ -252,18 +267,22 @@ const Map = () => {
         >
           전체
         </button>
-        <button
-          className={`button ${activeButton === "like" ? "active" : ""}`}
-          onClick={() => handleButtonClick("like")}
-        >
-          좋아요
-        </button>
-        <button
-          className={`button ${activeButton === "reservation" ? "active" : ""}`}
-          onClick={() => handleButtonClick("reservation")}
-        >
-          내 예약
-        </button>
+        {isLoggedIn && (
+          <>
+            <button
+              className={`button ${activeButton === "like" ? "active" : ""}`}
+              onClick={() => handleButtonClick("like")}
+            >
+              좋아요
+            </button>
+            <button
+              className={`button ${activeButton === "reservation" ? "active" : ""}`}
+              onClick={() => handleButtonClick("reservation")}
+            >
+              내 예약
+            </button>
+          </>
+        )}
       </div>
       <div id="map" className="map"></div>
       <div>
@@ -276,7 +295,7 @@ const Map = () => {
         </button>
         <div className="info">
           {selectedStore && (
-            <div className="store-info">
+            <div className="store-info" onClick={handleStoreClick}>
               <img src={selectedStore.image} alt={selectedStore.title} />
               <div className="store-details">
                 <h2>{selectedStore.title}</h2>

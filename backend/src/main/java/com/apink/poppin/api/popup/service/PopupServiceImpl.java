@@ -334,9 +334,7 @@ public class PopupServiceImpl implements PopupService {
             throw new BusinessLogicException(ExceptionCode.POPUP_NOT_FOUND);
         }
         else {
-//            long userTsid = Long.parseLong(authentication.getName());
-
-            long userTsid = 477979347861508096L;
+            long userTsid = Long.parseLong(authentication.getName());
 
             User user = userRepository.findUserByUserTsid(userTsid)
                     .orElseThrow(() -> new BusinessLogicException(ExceptionCode.USER_NOT_FOUND));

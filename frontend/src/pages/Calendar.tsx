@@ -2,8 +2,7 @@ import { useState, useEffect } from "react";
 import Calendar from "react-calendar";
 import "@css/Calendar.css";
 import "react-calendar/dist/Calendar.css";
-
-import image1 from "@assets/image1.svg";
+import { getPopupList } from "@api/apiPop"; // 전체 팝업 조회 API 함수 임포트
 
 type ViewType = "month" | "year" | "decade" | "century";
 type Value = Date | Date[] | null | [Date | null, Date | null];
@@ -16,52 +15,43 @@ interface PopupEvent {
   image: string;
 }
 
-const popupEvents: PopupEvent[] = [
-  {
-    startDate: new Date(2024, 6, 10),
-    endDate: new Date(2024, 6, 12),
-    title: "팝업스토어 A",
-    content: "내용 A",
-    image: image1,
-  },
-  {
-    startDate: new Date(2024, 6, 24),
-    endDate: new Date(2024, 6, 31),
-    title: "팝업스토어 B",
-    content: "내용 B",
-    image: image1,
-  },
-  {
-    startDate: new Date(2024, 6, 12),
-    endDate: new Date(2024, 6, 31),
-    title: "팝업스토어 C",
-    content: "내용 C",
-    image: image1,
-  },
-  {
-    startDate: new Date(2024, 6, 31),
-    endDate: new Date(2024, 6, 31),
-    title: "팝업스토어 D",
-    content: "내용 D",
-    image: image1,
-  },
-  {
-    startDate: new Date(2024, 6, 31),
-    endDate: new Date(2024, 6, 31),
-    title: "팝업스토어 E",
-    content: "내용 E",
-    image: image1,
-  },
-];
+interface PopupResponse {
+  popupId: number;
+  name: string;
+  startDate: string;
+  endDate: string;
+  description: string;
+  images: string[];
+}
 
 const CalendarPage = () => {
   const [selectedDate, setSelectedDate] = useState<Date | null>(null);
   const [currentMonth, setCurrentMonth] = useState<string>("");
+  const [popupEvents, setPopupEvents] = useState<PopupEvent[]>([]); // 팝업 이벤트 상태 추가
 
   useEffect(() => {
     const today = new Date();
     const month = today.getMonth() + 1;
     setCurrentMonth(`${month}월`);
+
+    // 전체 팝업 데이터를 가져와서 상태에 저장
+    const fetchPopupEvents = async () => {
+      try {
+        const data = await getPopupList(); // 전체 팝업 조회 API 호출
+        const events = data.map((popup: PopupResponse) => ({
+          startDate: new Date(popup.startDate),
+          endDate: new Date(popup.endDate),
+          title: popup.name,
+          content: popup.description,
+          image: popup.images[0], // 첫 번째 이미지를 사용
+        }));
+        setPopupEvents(events); // 상태에 저장
+      } catch (error) {
+        console.error("Error fetching popup events:", error);
+      }
+    };
+
+    fetchPopupEvents();
   }, []);
 
   const handleDateClick = (value: Value) => {
@@ -95,7 +85,7 @@ const CalendarPage = () => {
 
   const formatDate = (date: Date) => {
     const year = date.getFullYear();
-    const month = date.getMonth() + 1; // 월은 0부터 시작하므로 1을 더해줌
+    const month = date.getMonth() + 1;
     const day = date.getDate();
     return `${year}. ${month}. ${day}.`;
   };

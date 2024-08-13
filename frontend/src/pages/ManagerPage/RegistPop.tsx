@@ -30,8 +30,8 @@ function RegistPop() {
   const {
     storeName,
     setStoreName,
-    storeDescription,
-    setStoreDescription,
+    storeContent,
+    setStoreContent,
     selectedImages,
     setSelectedImages,
     setPopupData,
@@ -74,7 +74,7 @@ function RegistPop() {
 
     setPopupData({
       storeName,
-      storeDescription,
+      storeContent,
       selectedImages,
       startDate,
       endDate,
@@ -86,7 +86,7 @@ function RegistPop() {
     });
     console.log(
       storeName,
-      storeDescription,
+      storeContent,
       selectedImages,
       startDate,
       endDate,
@@ -344,8 +344,8 @@ function RegistPop() {
           <label>팝업스토어 소개 및 설명</label>
           <textarea
             placeholder="팝업스토어에 대한 소개 및 설명을 입력하세요"
-            value={storeDescription}
-            onChange={(e) => setStoreDescription(e.target.value)}
+            value={storeContent}
+            onChange={(e) => setStoreContent(e.target.value)}
           />
         </div>
         <div>

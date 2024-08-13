@@ -16,11 +16,11 @@ export interface PopupRequestDTO {
   address: string;
   lat: number;
   lon: number;
-  description: string;
+  content: string;
   categories: number[];
   snsUrl?: string;
   pageUrl?: string;
-  content: string;
+  description: string;
   preReservationOpenAt?: string;
   term?: number;
   maxPeoplePerSession?: number;
@@ -61,13 +61,13 @@ const api = axiosInstance;
 const toFormData = (popupDto: Partial<PopupRequestDTO>): FormData => {
   const formData = new FormData();
   formData.append("name", popupDto.name || "");
-  formData.append("description", popupDto.description || "");
+  formData.append("content", popupDto.content || "");
   formData.append("startDate", popupDto.startDate || "");
   formData.append("endDate", popupDto.endDate || "");
   formData.append("hours", popupDto.hours || "");
   formData.append("snsUrl", popupDto.snsUrl || "");
   formData.append("pageUrl", popupDto.pageUrl || "");
-  formData.append("content", popupDto.content || "");
+  formData.append("description", popupDto.description || "");
   formData.append("address", popupDto.address || "");
   if (popupDto.categories) {
     popupDto.categories.forEach((category) => {

@@ -20,11 +20,11 @@ function RegistPopOptional() {
   const {
     snsUrl,
     pageUrl,
-    content,
+    description,
     setPopupData,
     setServiceCategory,
     storeName,
-    storeDescription,
+    storeContent,
     selectedImages,
     startDate,
     endDate,
@@ -37,7 +37,7 @@ function RegistPopOptional() {
   const [localSnsUrl, setLocalSnsUrl] = useState(snsUrl || "");
   const [localPageUrl, setLocalPageUrl] = useState(pageUrl || "");
   const [activeButtons, setActiveButtons] = useState<ServiceCategories>(
-    JSON.parse(content)
+    JSON.parse(description)
   );
   const [showModal, setShowModal] = useState(false);
   const navigate = useNavigate();
@@ -54,12 +54,12 @@ function RegistPopOptional() {
     setPopupData({
       snsUrl: localSnsUrl,
       pageUrl: localPageUrl,
-      content: JSON.stringify(activeButtons),
+      description: JSON.stringify(activeButtons),
     });
     console.log({
       snsUrl: localSnsUrl,
       pageUrl: localPageUrl,
-      content: JSON.stringify(activeButtons),
+      description: JSON.stringify(activeButtons),
     });
     navigate("/regist-pop-reservation");
   };
@@ -70,13 +70,13 @@ function RegistPopOptional() {
         url: "/popups",
         popupDto: {
           name: storeName,
-          description: storeDescription,
+          content: storeContent,
           startDate: startDate || "",
           endDate: endDate || "",
           hours: JSON.stringify(timeSlots),
           snsUrl: localSnsUrl,
           pageUrl: localPageUrl,
-          content: JSON.stringify(activeButtons),
+          description: JSON.stringify(activeButtons),
           address,
           lat: lat || 0,
           lon: lon || 0,

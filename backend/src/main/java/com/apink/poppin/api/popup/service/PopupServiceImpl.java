@@ -334,9 +334,7 @@ public class PopupServiceImpl implements PopupService {
             throw new BusinessLogicException(ExceptionCode.POPUP_NOT_FOUND);
         }
         else {
-//            long userTsid = Long.parseLong(authentication.getName());
-
-            long userTsid = 477979347861508096L;
+            long userTsid = Long.parseLong(authentication.getName());
 
             User user = userRepository.findUserByUserTsid(userTsid)
                     .orElseThrow(() -> new BusinessLogicException(ExceptionCode.USER_NOT_FOUND));
@@ -849,10 +847,18 @@ public class PopupServiceImpl implements PopupService {
 
         List<Heart> hearts = heartRepository.findByUser(user);
 
+        for(Heart h : hearts) {
+            System.out.println("hearts="+h.toString());
+        }
+
         List<Popup> validHeartPopups = hearts.stream()
                 .map(Heart::getPopup)
                 .filter(popup -> popup.getEndDate().isAfter(now))
                 .toList();
+
+        for(Popup p : validHeartPopups) {
+            System.out.println(p.toString());
+        }
 
         return validHeartPopups.stream()
                 .filter(popup -> !popup.isDeleted())

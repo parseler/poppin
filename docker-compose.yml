@@ -51,6 +51,7 @@ services:
       - "27017:27017"
     volumes:
       - ./db/mongodb/data:/data/db
+      - ~/mongod.conf:/etc/mongod.conf
     healthcheck:
       test: ["CMD", "mongosh", "--eval", "'db.runCommand({ ping: 1 })'", "--quiet"]
   backend-builder:

@@ -9,8 +9,6 @@ public interface ChatService {
 
     ChatMessage insertMessage(ChatMessageDTO chatDto);
 
-//    void sendMessage(ChatMessageDTO chatDto);
-
     List<ChatMessage> getChatHistory(Long popupId);
 
 }

@@ -10,22 +10,22 @@ import ContentsIcon from "@assets/category/contents_icon.svg";
 import HobbyIcon from "@assets/category/hobby_icon.svg";
 
 export interface CategoryProps {
-    id: string,
+    id: number,
     image: string;
     text: string;
 }
 
 const categories: CategoryProps[] = [
-    {id: "beauty", image: BeautyIcon, text: "뷰티"},
-    {id: "fashion", image: FashionIcon, text: "패션"},
-    {id: "food", image: FoodIcon, text: "음식/음료"},
-    {id: "character", image: CharacterIcon, text: "캐릭터"},
-    {id: "living", image: LivingIcon, text: "리빙/금융"},
-    {id: "entertainment", image: EntertainmentIcon, text: "연예"},
-    {id: "game", image: GameIcon, text: "게임"},
-    {id: "digital", image: DigitalIcon, text: "가전/디지털"},
-    {id: "contents", image: ContentsIcon, text: "콘텐츠"},
-    {id: "hobby", image: HobbyIcon, text: "취미/여가"},
+    {id: 1, image: BeautyIcon, text: "뷰티"},
+    {id: 2, image: FashionIcon, text: "패션"},
+    {id: 3, image: FoodIcon, text: "음식/음료"},
+    {id: 4, image: CharacterIcon, text: "캐릭터"},
+    {id: 5, image: LivingIcon, text: "리빙/금융"},
+    {id: 6, image: EntertainmentIcon, text: "연예"},
+    {id: 7, image: GameIcon, text: "게임"},
+    {id: 8, image: DigitalIcon, text: "가전/디지털"},
+    {id: 9, image: ContentsIcon, text: "콘텐츠"},
+    {id: 10, image: HobbyIcon, text: "취미/여가"},
 ];
 
 export default categories;

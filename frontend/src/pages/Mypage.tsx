@@ -56,17 +56,21 @@ const Mypage: React.FC = () => {
   }, [accessToken, userTsid, userRole, setUser]);
 
   // 로그아웃
-  const handleLogout = () => {
+  const handleLogout = async () => {
     try {
-      logout();
-      useAuthStore.getState().clearTokens(); // 상태에서 토큰 및 사용자 정보 초기화
-      Cookies.remove("refresh"); // 만약 refreshToken이 쿠키에 저장되어 있는 경우 삭제
+      // 상태에서 토큰 및 사용자 정보 초기화
+      useAuthStore.getState().clearTokens();
+
       // axiosInstance의 Authorization 헤더 초기화
       delete axiosInstance.defaults.headers.common["Authorization"];
       delete axiosInstance.defaults.headers.common["userTsid"];
       delete axiosInstance.defaults.headers.common["role"];
+
       // 사용자 상태 초기화
       setUser(null);
+
+      // 서버에 로그아웃 요청
+      await logout();
     } catch (error) {
       console.error(error);
     }

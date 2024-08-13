@@ -50,7 +50,7 @@ public class CustomOAuth2SuccessHandler extends SimpleUrlAuthenticationSuccessHa
             if(!jwtTokenUtil.isExpired(refreshToken)) {
                 refresh = refreshToken;
                 response.addCookie(createCookie("refresh", refresh));
-                response.sendRedirect("http://localhost/loading");
+                response.sendRedirect("/loading");
                 return;
             } else {
                 userRefreshTokenRepository.deleteUserRefreshTokenByUser_UserTsid(userTsid);
@@ -70,9 +70,9 @@ public class CustomOAuth2SuccessHandler extends SimpleUrlAuthenticationSuccessHa
         response.addCookie(createCookie("refresh", refresh));
 
         if(customUser.isSigned()){
-            response.sendRedirect("http://localhost/mypage/loading");
+            response.sendRedirect("/mypage/loading");
         } else {
-            response.sendRedirect("http://localhost/loading");
+            response.sendRedirect("/loading");
         }
 
     }
@@ -89,6 +89,6 @@ public class CustomOAuth2SuccessHandler extends SimpleUrlAuthenticationSuccessHa
     }
 
     public void onAuthenticationFailure(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws IOException, ServletException {
-        response.sendRedirect("http://localhost");
+        response.sendRedirect("");
     }
 }

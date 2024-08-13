@@ -849,10 +849,18 @@ public class PopupServiceImpl implements PopupService {
 
         List<Heart> hearts = heartRepository.findByUser(user);
 
+        for(Heart h : hearts) {
+            System.out.println("hearts="+h.toString());
+        }
+
         List<Popup> validHeartPopups = hearts.stream()
                 .map(Heart::getPopup)
                 .filter(popup -> popup.getEndDate().isAfter(now))
                 .toList();
+
+        for(Popup p : validHeartPopups) {
+            System.out.println(p.toString());
+        }
 
         return validHeartPopups.stream()
                 .filter(popup -> !popup.isDeleted())

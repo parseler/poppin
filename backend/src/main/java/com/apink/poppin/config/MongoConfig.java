@@ -16,7 +16,7 @@ import org.springframework.data.mongodb.core.mapping.MongoMappingContext;
 @Configuration
 public class MongoConfig {
 
-    @Value("${spring.data.mongodb.test.connectionString}")
+    @Value("${spring.data.mongodb.uri}")
     private String connectionString;
 
     @Bean

@@ -8,5 +8,5 @@ import lombok.Getter;
 @Builder
 @AllArgsConstructor
 public class UpdateManagerResponseDTO {
-    private Long managerTsid;
+    private String managerTsid;
 }

@@ -1,6 +1,7 @@
 package com.apink.poppin.api.popup.repository;
 
 import com.apink.poppin.api.manager.entity.Manager;
+import com.apink.poppin.api.popup.dto.ReviewRecommendationDto;
 import com.apink.poppin.api.popup.entity.Popup;
 import com.apink.poppin.api.reservation.dto.ReservationResponseDto;
 import io.lettuce.core.dynamic.annotation.Param;
@@ -46,4 +47,17 @@ public interface PopupRepository extends JpaRepository<Popup, Long> {
             "JOIN Category c ON pc.category.id = c.id " +
             "WHERE c.name = :categoryName")
     List<Popup> findPopupsByCategoryName(@Param("categoryName") String categoryName);
+
+    @Query("SELECT p FROM Popup p WHERE p.popupId IN (SELECT pr.popup.popupId FROM PreReservation pr WHERE pr.user.userTsid = :userTsid AND pr.reservationStatement.reservationStatementId = 2)")
+    List<Popup> findReservedPopupByUserTsid(@Param("userTsid") long userTsid);
+
+    @Query("SELECT p FROM Popup p WHERE p.popupId IN (SELECT h.popup.popupId FROM Heart h WHERE h.user.userTsid = :userTsid)")
+    List<Popup> findHeartedPopupsByUserTsid(@Param("userTsid") long userTsid);
+
+    @Query("SELECT new com.apink.poppin.api.popup.dto.ReviewRecommendationDto(p.popupId, p.name, p.content, r.title, r.content) " +
+            "FROM Popup p " +
+            "JOIN Review r ON p.popupId = r.popup.popupId " +
+            "WHERE r.user.userTsid = :userTsid")
+    List<ReviewRecommendationDto> findRecommendedReviewsByUserTsid(@Param("userTsid") long userTsid);
+
 }

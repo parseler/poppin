@@ -83,8 +83,7 @@ public class SecurityConfig {
 
         http
                 .authorizeHttpRequests((auth) -> auth
-                                .requestMatchers("/login").permitAll()
-                                .requestMatchers("/api/auth/**").permitAll()
+                                .requestMatchers("/login", "/login/**","/api/auth/**").permitAll()
                                 .anyRequest().authenticated()
 //                        .requestMatchers("/login", "/logout").permitAll()
 //                        .requestMatchers("/api/users/**").hasRole("USER")
@@ -115,7 +114,6 @@ public class SecurityConfig {
 
         http
                 .oauth2Login((oauth2) -> oauth2
-                        .loginPage("/login")
                         .clientRegistrationRepository(customClientRegistrationRepo.clientRegistrationRepository())
                         .userInfoEndpoint((userInfoEndpointConfig) -> userInfoEndpointConfig
                                 .userService(customOAuth2UserService))

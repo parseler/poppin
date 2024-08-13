@@ -3,48 +3,69 @@ import { Link } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { Box, Modal } from "@mui/material";
 import { getUserData } from "@api/users";
-import axiosInstance from "@api/axiosInstance";
+import { axiosInstance } from "@api/axiosInstance";
 import { UserProps } from "@interface/users";
+import Cookies from "js-cookie";
 
-import profile from "@assets/user/profile.png";
 import loginBefore from "@assets/mypage/loginBefore.svg";
 import nextButton from "@assets/mypage/nextButton.svg";
 import profileUpdate from "@assets/mypage/profileUpdateButton.svg";
+import useAuthStore from "@store/useAuthStore";
+import { logout } from "@api/auth";
 
 const Mypage: React.FC = () => {
   const [user, setUser] = useState<UserProps | null>(null);
   const [isModal, setIsModal] = useState<boolean>(false);
+  const { accessToken, userTsid, userRole } = useAuthStore();
 
   // 사용자 정보 유무 확인
   useEffect(() => {
-    const token = axiosInstance.defaults.headers.common["Authorization"];
-
-    if (token) {
-      (async () => {
-        try {
-          const userData = await getUserData();
-          setUser({
-            nickname: userData.nickname,
-            email: userData.email,
-            phoneNumber: userData.phoneNumber,
-            categoryList: userData.categoryList,
-            agreementDto: userData.agreementDto,
-            img: userData.img,
-            role: userData.role,
-          });
-        } catch (error) {
-          console.error(error);
-        }
-      })();
+    if (accessToken) {
+      getUserData()
+        .then((data) => {
+          console.log(data);
+          if (data) {
+            setUser({
+              userTsid: userTsid !== null ? userTsid : "",
+              nickname: data.nickname ?? "",
+              email: data.email ?? "",
+              phoneNumber: data.phoneNumber ?? "",
+              userCategories: data.userCategories
+                ? data.userCategories.map((cate: any) => ({
+                    name: cate.name, // 카테고리의 이름을 가져옵니다.
+                  }))
+                : [],
+              userConsents: {
+                marketingConsent: data.userConsents?.marketingConsent ?? false,
+                marketingUpdatedAt: data.userConsents?.marketingUpdatedAt ?? "",
+                servicePushConsent:
+                  data.userConsents?.servicePushConsent ?? false,
+                serviceUpdatedAt: data.userConsents?.serviceUpdatedAt ?? "",
+              },
+              img: data.img ?? "",
+              role: userRole ?? "", // userRole이 null인 경우 빈 문자열로 설정
+            });
+          }
+        })
+        .catch((error) => {
+          console.error("Failed to fetch user data:", error);
+        });
     } else {
       setUser(null);
     }
-  }, []);
+  }, [accessToken, userTsid, userRole, setUser]);
 
   // 로그아웃
   const handleLogout = () => {
     try {
-      axiosInstance.defaults.headers.common["Authorization"] = "";
+      logout();
+      useAuthStore.getState().clearTokens(); // 상태에서 토큰 및 사용자 정보 초기화
+      Cookies.remove("refresh"); // 만약 refreshToken이 쿠키에 저장되어 있는 경우 삭제
+      // axiosInstance의 Authorization 헤더 초기화
+      delete axiosInstance.defaults.headers.common["Authorization"];
+      delete axiosInstance.defaults.headers.common["userTsid"];
+      delete axiosInstance.defaults.headers.common["role"];
+      // 사용자 상태 초기화
       setUser(null);
     } catch (error) {
       console.error(error);
@@ -58,7 +79,7 @@ const Mypage: React.FC = () => {
     } catch (error) {
       console.error(error);
     }
-  }
+  };
 
   // 모달창 열기 & 닫기
   const openModal = () => {
@@ -92,11 +113,16 @@ const Mypage: React.FC = () => {
           <div className="login-wrap">
             <div className="mypage-profile">
               <div className="mypage-profile-image">
-                {user.img === null ? (
-                  <img src={profile} alt="프로필 사진" />
-                ) : (
-                  <img src={user.img} alt="프로필 사진" />
-                )}
+                <img
+                  src={
+                    user.img instanceof File
+                      ? URL.createObjectURL(user.img)
+                      : user.img
+                      ? `http://localhost/${user.img}`
+                      : ""
+                  }
+                  alt="profile"
+                />
               </div>
               <span className="mypage-nickname">{user.nickname}</span>님
               <Link to="/mypage/update" className="profile-update">

@@ -4,10 +4,8 @@ import com.apink.poppin.api.heart.entity.Heart;
 import com.apink.poppin.api.heart.repository.HeartRepository;
 import com.apink.poppin.api.manager.entity.Manager;
 import com.apink.poppin.api.manager.repository.ManagerRepository;
-import com.apink.poppin.api.popup.dto.PopupDTO;
-import com.apink.poppin.api.popup.dto.PopupRequestDTO;
-import com.apink.poppin.api.popup.dto.PopupWithPreReservationDTO;
-import com.apink.poppin.api.popup.dto.SimilarPopupRequestDto;
+import com.apink.poppin.api.notice.dto.NoticeDto;
+import com.apink.poppin.api.popup.dto.*;
 import com.apink.poppin.api.popup.entity.Category;
 import com.apink.poppin.api.popup.entity.Popup;
 import com.apink.poppin.api.popup.entity.PopupCategory;
@@ -28,24 +26,35 @@ import com.apink.poppin.api.reservation.repository.OnsiteReservationRepository;
 import com.apink.poppin.api.reservation.repository.PreReservationInfoRepository;
 import com.apink.poppin.api.reservation.repository.PreReservationRepository;
 import com.apink.poppin.api.reservation.repository.ReservationStatementRepository;
+import com.apink.poppin.api.review.dto.ReviewDto;
+import com.apink.poppin.api.review.entity.Review;
+import com.apink.poppin.api.review.repository.ReviewRepository;
 import com.apink.poppin.api.user.entity.User;
+import com.apink.poppin.api.user.entity.UserCategory;
+import com.apink.poppin.api.user.repository.UserCategoryRepository;
 import com.apink.poppin.api.user.repository.UserRepository;
 import com.apink.poppin.common.exception.dto.BusinessLogicException;
 import com.apink.poppin.common.exception.dto.ExceptionCode;
+import com.apink.poppin.kafka.KafkaProducer;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.ParameterizedTypeReference;
+import org.springframework.data.redis.core.ValueOperations;
 import org.springframework.http.*;
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -53,6 +62,7 @@ import java.util.stream.Stream;
 @RequiredArgsConstructor
 public class PopupServiceImpl implements PopupService {
 
+    private final KafkaProducer kafkaProducer;
     private final PopupRepository popupRepository;
     private final PreReservationRepository preReservationRepository;
     private final UserRepository userRepository;
@@ -65,6 +75,9 @@ public class PopupServiceImpl implements PopupService {
     private final CategoryRepository categoryRepository;
     private final HeartRepository heartRepository;
     private final OnsiteReservationRepository onsiteReservationRepository;
+    private final ReviewRepository reviewRepository;
+    private final UserCategoryRepository userCategoryRepository;
+    private final ValueOperations<String, Object> valueOperations;
 
 
     @Value("${file.upload-dir}")
@@ -116,12 +129,15 @@ public class PopupServiceImpl implements PopupService {
     }
 
     // 팝업 상세 조회
+    @Transactional
     public PopupDTO getPopup(Long popupId) {
         Popup popup = popupRepository.findById(popupId)
                 .orElseThrow(() -> new IllegalArgumentException("Invalid popup ID"));
 
         if(popup.isDeleted())
             throw new BusinessLogicException(ExceptionCode.POPUP_NOT_FOUND);
+
+        updateHit(popupId, popup);
 
         List<String> images = popupImageRepository.findAllByPopup_PopupId(popup.getPopupId())
                 .stream()
@@ -158,6 +174,19 @@ public class PopupServiceImpl implements PopupService {
                 .build();
     }
 
+    private void updateHit(Long popupId, Popup popup) {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        if (!"anonymousUser".equals(authentication.getName()) && authentication.getName() != null) {
+            Long userTsid = Long.parseLong(authentication.getName());
+            String key = popupId + " " + userTsid;
+            if (valueOperations.get(key) == null) {
+                popup.updateHit();
+                popupRepository.save(popup);
+                valueOperations.set(key, true, 30, TimeUnit.MINUTES);
+            }
+        }
+    }
+
     // 팝업 상세 조회 (+ 사전예약 정보)
     @Override
     public PopupWithPreReservationDTO getPopupWithPreReservation(Long popupId) {
@@ -166,6 +195,8 @@ public class PopupServiceImpl implements PopupService {
 
         if(popup.isDeleted())
             throw new BusinessLogicException(ExceptionCode.POPUP_NOT_FOUND);
+
+        updateHit(popupId, popup);
 
         List<String> images = popupImageRepository.findAllByPopup_PopupId(popup.getPopupId())
                 .stream()
@@ -239,25 +270,15 @@ public class PopupServiceImpl implements PopupService {
     @Override
     public List<PopupDTO> getSimilarPopup(long popupId) {
 
-        List<Popup> popupList = popupRepository.findByEndDateGreaterThanEqualAndDeletedFalse(LocalDate.now());
-
         Popup currentPopup = popupRepository.findById(popupId)
                 .orElseThrow(() -> new IllegalArgumentException("Invalid popup ID"));
 
-        List<PopupDTO> popupListRequest = new ArrayList<>();
         PopupDTO currentPopupRequest = PopupDTO.builder()
                 .popupId(currentPopup.getPopupId())
                 .name(currentPopup.getName())
                 .content(currentPopup.getContent()).build();;
 
-        for (Popup popup : popupList) {
-            PopupDTO popupDTO = PopupDTO.builder()
-                    .popupId(popup.getPopupId())
-                    .name(popup.getName())
-                    .content(popup.getContent()).build();
-
-            popupListRequest.add(popupDTO);
-        }
+        List<PopupDTO> popupListRequest = getPopupListByNow();
 
         String url = "http://70.12.130.111:9323/similar";
         SimilarPopupRequestDto requestDto = SimilarPopupRequestDto.builder()
@@ -303,6 +324,107 @@ public class PopupServiceImpl implements PopupService {
         }
 
         return popupDtoList;
+    }
+
+    @Override
+    public List<PopupDTO> getRecommendedPopup() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        if(authentication.getName().equals("anonymousUser!!!")) {
+//            비회원 추천 수정 필요
+            throw new BusinessLogicException(ExceptionCode.POPUP_NOT_FOUND);
+        }
+        else {
+//            long userTsid = Long.parseLong(authentication.getName());
+
+            long userTsid = 477979347861508096L;
+
+            User user = userRepository.findUserByUserTsid(userTsid)
+                    .orElseThrow(() -> new BusinessLogicException(ExceptionCode.USER_NOT_FOUND));
+
+//            방문 가능한 팝업 정보
+            List<PopupDTO> popupListRequest = getPopupListByNow();
+            
+//            방문한 예약
+            List<Popup> reservedPopupList = popupRepository.findReservedPopupByUserTsid(userTsid);
+            List<PopupDTO> reservedPopupListRequest = new ArrayList<>();
+            for (Popup popup : reservedPopupList) {
+                PopupDTO popupDTO = PopupDTO.builder()
+                        .popupId(popup.getPopupId())
+                        .name(popup.getName())
+                        .content(popup.getContent()).build();
+                reservedPopupListRequest.add(popupDTO);
+            }
+
+//            리뷰를 작성한 팝업 정보
+            List<ReviewRecommendationDto> reviewDtoListRequest = popupRepository.findRecommendedReviewsByUserTsid(userTsid);
+
+//            좋아요를 누른 팝업 정보
+            List<Popup> heartedPopupList = popupRepository.findHeartedPopupsByUserTsid(userTsid);
+            List<PopupDTO> heartedPopupListRequest = new ArrayList<>();
+            for (Popup popup : heartedPopupList) {
+                PopupDTO popupDTO = PopupDTO.builder()
+                        .popupId(popup.getPopupId())
+                        .name(popup.getName())
+                        .content(popup.getContent()).build();
+
+                heartedPopupListRequest.add(popupDTO);
+            }
+
+            List<UserCategory> userCategoryList = userCategoryRepository.findByUser(user);
+            List<String> categoryListRequest = new ArrayList<>();
+            for (UserCategory userCategory : userCategoryList) {
+                categoryListRequest.add(userCategory.getCategory().getName());
+            }
+
+            String url = "http://70.12.130.111:9323/recommendation";
+            RecommendedPopupRequestDto requestDto = RecommendedPopupRequestDto.builder()
+                    .popupListRequest(popupListRequest)
+                    .reservedPopupListRequest(reservedPopupListRequest)
+                    .reviewDtoListRequest(reviewDtoListRequest)
+                    .heartedPopupListRequest(heartedPopupListRequest)
+                    .categoryListRequest(categoryListRequest).build();
+
+
+            RestTemplate restTemplate = new RestTemplate();
+            restTemplate.getMessageConverters().add(new MappingJackson2HttpMessageConverter());
+            HttpHeaders headers = new HttpHeaders();
+            headers.setContentType(MediaType.APPLICATION_JSON);
+
+            HttpEntity<RecommendedPopupRequestDto> request = new HttpEntity<>(requestDto, headers);
+            ResponseEntity<List<PopupDTO>> response = restTemplate.exchange(
+                    url,
+                    HttpMethod.POST,
+                    request,
+                    new ParameterizedTypeReference<List<PopupDTO>>() {}
+            );
+
+            List<PopupDTO> responseList = response.getBody();
+            List<PopupDTO> popupDtoList = new ArrayList<>();
+
+            assert responseList != null;
+            for (PopupDTO dto : responseList) {
+                Popup popup = popupRepository.findById(dto.getPopupId())
+                        .orElseThrow(() -> new IllegalArgumentException("Invalid popup ID"));
+
+                List<PopupImage> imageList = popupImageRepository.findAllByPopup_PopupId(popup.getPopupId());
+                List<String> imageUrl = new ArrayList<>();
+                for (PopupImage image : imageList) {
+                    if (image.getSeq() != 1) continue;
+                    imageUrl.add(image.getImg());
+                }
+                PopupDTO popupDTO = PopupDTO.builder()
+                        .popupId(popup.getPopupId())
+                        .name(popup.getName())
+                        .startDate(popup.getStartDate())
+                        .endDate(popup.getEndDate())
+                        .content(popup.getContent())
+                        .images(imageUrl).build();
+
+                popupDtoList.add(popupDTO);
+            }
+
+            return popupDtoList;
+        }
     }
 
     // 오픈 예정 팝업 조회
@@ -462,6 +584,8 @@ public class PopupServiceImpl implements PopupService {
 
         popupCategoryRepository.saveAll(popupCategories);
 
+        sendPopupPush(reqDto.getCategories(), popup.getPopupId());
+
         return PopupDTO.builder()
                 .popupId(popup.getPopupId())
                 .name(popup.getName())
@@ -548,6 +672,7 @@ public class PopupServiceImpl implements PopupService {
 
         preReservationInfoRepository.save(preReservationInfo);
 
+        sendPopupPush(reqDto.getCategories(), popup.getPopupId());
     }
 
     // 팝업 수정
@@ -878,7 +1003,6 @@ public class PopupServiceImpl implements PopupService {
         return result;
     }
 
-
     // DTO 변환
     private PreReservationResponseDTO convertToResponseDTO(PreReservation preReservation) {
         return PreReservationResponseDTO.builder()
@@ -891,6 +1015,33 @@ public class PopupServiceImpl implements PopupService {
                 .createdAt(preReservation.getCreatedAt())
                 .reservationStatementId(preReservation.getReservationStatement().getReservationStatementId())
                 .build();
+    }
+
+    private void sendPopupPush(List<Integer> categoryNames, long popupId) {
+        List<Long> userTsids = userRepository.findUserTsidsByAnyCategoryId(categoryNames);
+
+        NoticeDto.RegisteredFavoriteCategory dto = NoticeDto.RegisteredFavoriteCategory.builder()
+                .userTsid(userTsids)
+                .popupId(popupId)
+                .build();
+
+        String topic ="registered-favorite-category";
+
+        kafkaProducer.send(topic, dto);
+    }
+
+    private List<PopupDTO> getPopupListByNow() {
+        List<Popup> popupList = popupRepository.findByEndDateGreaterThanEqualAndDeletedFalse(LocalDate.now());
+        List<PopupDTO> popupListRequest = new ArrayList<>();
+        for (Popup popup : popupList) {
+            PopupDTO popupDTO = PopupDTO.builder()
+                    .popupId(popup.getPopupId())
+                    .name(popup.getName())
+                    .content(popup.getContent()).build();
+
+            popupListRequest.add(popupDTO);
+        }
+        return popupListRequest;
     }
 
 }

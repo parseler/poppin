@@ -3,7 +3,10 @@ package com.apink.poppin.api.user.service;
 import com.apink.poppin.api.heart.entity.Heart;
 import com.apink.poppin.api.heart.repository.HeartRepository;
 import com.apink.poppin.api.popup.dto.PopupDTO;
+import com.apink.poppin.api.popup.entity.Category;
+import com.apink.poppin.api.popup.repository.CategoryRepository;
 import com.apink.poppin.api.popup.repository.PopupRepository;
+import com.apink.poppin.api.popup.service.FileStorageService;
 import com.apink.poppin.api.reservation.dto.OnsiteReservationRedisDto;
 import com.apink.poppin.api.reservation.dto.PreReservationResponseDTO;
 import com.apink.poppin.api.reservation.dto.ReservationResponseDto;
@@ -15,6 +18,7 @@ import com.apink.poppin.api.review.entity.Review;
 import com.apink.poppin.api.review.repository.ReviewRepository;
 import com.apink.poppin.api.user.dto.UserDto;
 import com.apink.poppin.api.user.entity.User;
+import com.apink.poppin.api.user.entity.UserCategory;
 import com.apink.poppin.api.user.entity.UserConsent;
 import com.apink.poppin.api.user.repository.UserRepository;
 import com.apink.poppin.common.exception.dto.BusinessLogicException;
@@ -24,6 +28,7 @@ import org.springframework.data.redis.core.ValueOperations;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -35,6 +40,7 @@ import static com.apink.poppin.common.exception.dto.ExceptionCode.*;
 public class UserServiceImpl implements UserService {
 
     private static final String RESERVATION_KEY_PHONE = "ONSITE_BY_PHONE_";
+    private final FileStorageService fileStorageService;
     private final UserRepository userRepository;
     private final PopupRepository popupRepository;
     private final HeartRepository heartRepository;
@@ -43,6 +49,7 @@ public class UserServiceImpl implements UserService {
     private final OnsiteReservationRepository onsiteReservationRepository;
     private final RedisTemplate<String, Object> redisTemplate;
     private final ValueOperations<String, Object> valueOperations;
+    private final CategoryRepository categoryRepository;
 
     @Override
     @Transactional(readOnly = true)
@@ -55,37 +62,54 @@ public class UserServiceImpl implements UserService {
     public UserDto.Response findUser(long userTsid) {
         User user = findByUserByUserTsid(userTsid);
 
-        return UserDto.Response.builder()
-                .userTsid(user.getUserTsid())
-                .nickname(user.getNickname())
-                .email(user.getEmail())
-                .phoneNumber(user.getPhoneNumber())
-                .userCategories(user.getUserCategories())
-                .userConsent(user.getUserConsents())
-                .build();
-
+        return convertToResponseDTO(user);
     }
 
     @Override
     @Transactional
-    public UserDto.Response updateUser(UserDto.Put userDto) {
-        long userTsid = userDto.getUserTsid();
+    public UserDto.Response updateUser(UserDto.Put userDto, MultipartFile image) {
+        String img = "/uploads/profile.png";
+        try {
+            img = fileStorageService.storeFile(image);
 
-        User findUser = userRepository.findUserByUserTsid(userTsid)
-                .orElseThrow(() -> new RuntimeException("user not exists"));
-        UserConsent findUserConsent = findUser.getUserConsents();
+            long userTsid = Long.parseLong(userDto.getUserTsid());
 
-        findUserConsent.updateUserConsent(userDto.getUserConsents());
-        findUser.updateUser(userDto, findUserConsent);
+            User findUser = userRepository.findUserByUserTsid(userTsid)
+                    .orElseThrow(() -> new BusinessLogicException(USER_NOT_FOUND));
 
-        return convertToResponseDTO(findUser);
+            // Category 조회
+            List<Category> categories = userDto.getUserCategories().stream()
+                    .map(userCategoryDto -> categoryRepository.findByName(userCategoryDto.getName())
+                            .orElseThrow(() -> new IllegalArgumentException("Invalid category name: " + userCategoryDto.getName())))
+                    .toList();
+
+            String oldImgPath = findUser.getImg();
+
+            // 유저 정보, 카테고리 변경
+            findUser.updateUser(userDto, img, categories);
+            // 유저 동의 여부 변경
+            findUser.getUserConsents().updateUserConsent(userDto.getUserConsents());
+
+            userRepository.save(findUser);
+
+            if (oldImgPath != null && !oldImgPath.equals("/uploads/profile.png")) {
+                fileStorageService.deleteFile(oldImgPath);
+            }
+
+            return convertToResponseDTO(findUser);
+        } catch (Exception e) {
+            if (img != null && !img.equals("/uploads/profile.png")) {
+                fileStorageService.deleteFile(img);
+            }
+            throw e;
+        }
     }
 
     @Override
     @Transactional
     public void deleteUser(long userTsid) {
         User findUser = userRepository.findUserByUserTsid(userTsid)
-                .orElseThrow(() -> new RuntimeException("user not exists"));
+                .orElseThrow(() -> new BusinessLogicException(USER_NOT_FOUND));
 
         User user = User.builder()
                 .userTsid(findUser.getUserTsid())
@@ -111,7 +135,7 @@ public class UserServiceImpl implements UserService {
         long userTsid = Long.parseLong(SecurityContextHolder.getContext().getAuthentication().getName());
 
         User user = userRepository.findUserByUserTsid(userTsid)
-                        .orElseThrow(() -> new RuntimeException("user not exists"));
+                        .orElseThrow(() -> new BusinessLogicException(USER_NOT_FOUND));
 
         List<Heart> hearts = heartRepository.findByUser(user);
 
@@ -234,7 +258,7 @@ public class UserServiceImpl implements UserService {
         User user = userRepository.findUserByUserTsid(userTsid)
                 .orElseThrow(() -> new RuntimeException("user not exists"));
 
-        List<PreReservation> pres = preReservationRepository.findByUserAndReservationStatement_ReservationStatementId(user, 4);
+        List<PreReservation> pres = preReservationRepository.findByUserAndReservationStatement_ReservationStatementId(user, 4L);
 
         return Optional.ofNullable(pres)
                 .orElse(Collections.emptyList())
@@ -260,11 +284,15 @@ public class UserServiceImpl implements UserService {
 
     private UserDto.Response convertToResponseDTO(User user) {
         return UserDto.Response.builder()
-                .userTsid(user.getUserTsid())
+                .userTsid(String.valueOf(user.getUserTsid()))
                 .nickname(user.getNickname())
                 .email(user.getEmail())
+                .img(user.getImg())
                 .phoneNumber(user.getPhoneNumber())
-                .userConsent(user.getUserConsents())
+                .userCategories(user.getUserCategories().stream()
+                        .map(this::convertToCategoryDTO)
+                        .collect(Collectors.toList()))
+                .userConsents(convertToConsentDTO(user.getUserConsents()))
                 .build();
     }
 
@@ -282,19 +310,22 @@ public class UserServiceImpl implements UserService {
                 .build();
     }
 
-    private ReservationResponseDto convertToReservationDTO(PreReservation preReservation) {
 
-        return ReservationResponseDto.builder()
-                .reservationId(preReservation.getPreReservationId())
-                .title(preReservation.getPopup().getName())
-                .userName(preReservation.getUser().getName())
-                .created_at(preReservation.getCreatedAt())
 
-                .reservationDate(preReservation.getReservationDate())
-                .reservationTime(preReservation.getReservationTime())
-                .reservationCount(preReservation.getReservationCount())
-                .reservationStatement(preReservation.getReservationStatement().getReservationStatementId())
-                .kind(1)
+    private UserDto.Category convertToCategoryDTO(UserCategory userCategory) {
+        return UserDto.Category.builder()
+                .name(userCategory.getCategory().getName())
                 .build();
     }
+
+    private UserDto.Consent convertToConsentDTO(UserConsent userConsent) {
+        return UserDto.Consent.builder()
+                .marketingConsent(userConsent.getMarketingConsent())
+                .servicePushConsent(userConsent.getServicePushConsent())
+                .marketingUpdatedAt(userConsent.getMarketingUpdatedAt())
+                .serviceUpdatedAt(userConsent.getServiceUpdatedAt())
+                .build();
+    }
+
+
 }

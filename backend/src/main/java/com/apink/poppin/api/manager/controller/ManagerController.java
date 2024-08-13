@@ -26,7 +26,7 @@ public class ManagerController {
         List<ManagerListDTO> result = new ArrayList<>();
         for (Manager manager : managerList) {
             result.add(ManagerListDTO.builder()
-                    .managerTsid(manager.getManagerTsid())
+                    .managerTsid(String.valueOf(manager.getManagerTsid()))
                     .nickname(manager.getNickname())
                     .img(manager.getImg())
                     .build());
@@ -44,7 +44,7 @@ public class ManagerController {
                 .img(request.getImg())
                 .build());
         CreateManagerResponseDTO response = CreateManagerResponseDTO.builder()
-                .managerTsid(manager.getManagerTsid())
+                .managerTsid(String.valueOf(manager.getManagerTsid()))
                 .build();
         return ResponseEntity.ok(response);
     }
@@ -54,7 +54,7 @@ public class ManagerController {
     ResponseEntity<?> getMyInfo(@PathVariable Long managerTsid) {
         Manager reponse = managerService.getManager(managerTsid);
         return ResponseEntity.ok(ReadManagerResponseDTO.builder()
-                .managerTsid(reponse.getManagerTsid())
+                .managerTsid(String.valueOf(reponse.getManagerTsid()))
                 .nickname(reponse.getNickname())
                 .img(reponse.getImg())
                 .build());
@@ -84,7 +84,7 @@ public class ManagerController {
     ResponseEntity<?> getManager(@PathVariable Long managerTsid) {
         Manager manager =  managerService.getManager(managerTsid);
         return ResponseEntity.ok(ReadManagerResponseDTO.builder()
-                .managerTsid(manager.getManagerTsid())
+                .managerTsid(String.valueOf(manager.getManagerTsid()))
                 .nickname(manager.getNickname())
                 .img(manager.getImg())
                 .build());
@@ -99,7 +99,7 @@ public class ManagerController {
                 .build());
         Manager manager = managerService.getManager(managerTsid);
         UpdateManagerResponseDTO response = UpdateManagerResponseDTO.builder()
-                .managerTsid(manager.getManagerTsid())
+                .managerTsid(String.valueOf(manager.getManagerTsid()))
                 .build();
         return ResponseEntity.ok(response);
     }

@@ -1,11 +1,14 @@
 package com.apink.poppin.api.user.entity;
 
+import com.apink.poppin.api.heart.entity.Heart;
+import com.apink.poppin.api.notice.entity.Token;
+import com.apink.poppin.api.popup.entity.Category;
+import com.apink.poppin.api.reservation.entity.PreReservation;
+import com.apink.poppin.api.review.entity.Comment;
+import com.apink.poppin.api.review.entity.Review;
 import com.apink.poppin.api.user.dto.UserDto;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import org.hibernate.annotations.ColumnDefault;
 
 import java.util.List;
@@ -57,29 +60,42 @@ public class User {
     @ColumnDefault("true")
     private boolean state;
 
-    @OneToMany(mappedBy = "user")
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<UserCategory> userCategories;
 
-//    @OneToMany(mappedBy = "user", fetch = FetchType.LAZY)
-//    private List<Heart> hearts;
+    @OneToMany(mappedBy = "user", fetch = FetchType.LAZY)
+    private List<Heart> hearts;
 
-    @OneToOne(mappedBy = "user", fetch = FetchType.LAZY)
+    @Setter
+    @OneToOne(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
     private UserConsent userConsents;
 
-//    @OneToMany(mappedBy = "user", fetch = FetchType.LAZY)
-//    private List<PreReservation> preReservations;
-//
-//    @OneToMany(mappedBy = "user", fetch = FetchType.LAZY)
-//    private List<Review> reviews;
-//
-//    @OneToMany(mappedBy = "user")
-//    private List<Comment> comments;
+    @OneToMany(mappedBy = "user", fetch = FetchType.LAZY)
+    private List<PreReservation> preReservations;
 
-    public void updateUser(UserDto.Put userDto, UserConsent userConsent) {
-        this.userConsents = userConsent;
-        this.userCategories = userDto.getUserCategories();
+    @OneToMany(mappedBy = "user", fetch = FetchType.LAZY)
+    private List<Review> reviews;
+
+    @OneToMany(mappedBy = "user", fetch = FetchType.LAZY)
+    private List<Comment> comments;
+
+    @OneToMany(mappedBy = "user", fetch = FetchType.LAZY)
+    private List<Token> token;
+
+    public void updateUser(UserDto.Put userDto, String img, List<Category> categories) {
         this.nickname = userDto.getNickname();
-        this.img = userDto.getImg();
+        this.img = img;
+
+        // 유저 카테고리 바꾸기
+        List<UserCategory> userCategories = categories.stream()
+                .map(category -> UserCategory.builder()
+                        .user(this)
+                        .category(category)
+                        .build())
+                .toList();
+
+        this.userCategories.clear();
+        this.userCategories.addAll(userCategories);
     }
 
 }

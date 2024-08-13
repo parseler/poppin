@@ -53,30 +53,14 @@ public class ChatServiceImpl implements ChatService {
         return chat;
     }
 
-//    @Override
-//    public void sendMessage(ChatMessageDTO chatDto) {
-//
-//        // 유저 확인
-//        User user = userRepository.findUserByUserTsid(chatDto.getUserTsid())
-//                .orElseThrow(() -> new BusinessLogicException(USER_NOT_FOUND));
-//
-////        ChatMessageDTO chatDto = ChatMessageDTO.builder()
-////                .popupId(chat.getPopupId())
-////                .sender(chat.getSender())
-////                .message(chat.getMessage())
-////                .sendTime(chat.getSendTime())
-////                .build();
-//
-//        redisPublisher.publish(chatDto);
-//
-//    }
 
     @Override
     public List<ChatMessage> getChatHistory(Long popupId) {
         // 팝업 확인
         Popup popup = popupRepository.findById(popupId)
                 .orElseThrow(() -> new IllegalArgumentException("Invalid popup ID"));
+        List<ChatMessage> chatHistory = chatRepository.findAllByPopupId(popupId);
 
-        return chatRepository.findAllByPopupId(popupId);
+        return chatHistory;
     }
 }

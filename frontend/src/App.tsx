@@ -7,6 +7,8 @@ import Layout04 from "@components/common/Layout04";
 
 import Splash from "@pages/Splash";
 import Login from "@pages/Login";
+import Loading from "@pages/Loading";
+import MyLoading from "@pages/UserPage/MyLoading";
 import Home from "@pages/Home";
 import CalendarPage from "@pages/Calendar";
 import Map from "@pages/Map";
@@ -37,6 +39,7 @@ import Search from "@components/Search";
 import MyReservationState from "@pages/ManagerPage/MyReservationState";
 import MyOnsiteReservationState from "@pages/ManagerPage/MyOnsiteReservationState";
 import MyPreReservationState from "@pages/ManagerPage/MyPreReservationState";
+import ManagerLogin from "@pages/ManagerPage/ManagerLogin";
 
 const queryClient = new QueryClient();
 
@@ -58,6 +61,9 @@ function App() {
 
         <Routes>
           <Route path="/login" element={<Login />} />
+          <Route path="/manager/login" element={<ManagerLogin />} />
+          <Route path="/loading" element={<Loading />} />
+          <Route path="/mypage/loading" element={<MyLoading />} />
           <Route path="/" element={<Layout01><Home /></Layout01>} />
           <Route path="/calendar" element={<Layout01><CalendarPage /></Layout01>} />
           <Route path="/map" element={<Layout01><Map /></Layout01>} />

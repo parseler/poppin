@@ -46,7 +46,6 @@ public class PopupController {
     // 팝업 상세 조회
     @GetMapping("/{popupId}")
     public ResponseEntity<?> getPopup(@PathVariable("popupId") Long popupId) {
-        chatService.getChatHistory(popupId);
         boolean check = popupService.checkPreReservation(popupId);
         if (!check) {
             PopupDTO popup = popupService.getPopup(popupId);
@@ -70,6 +69,12 @@ public class PopupController {
     public ResponseEntity<List<PopupDTO>> getSimilarPopup(@PathVariable("popupId") long popupId) {
         List<PopupDTO> similarPopupList = popupService.getSimilarPopup(popupId);
         return ResponseEntity.ok(similarPopupList);
+    }
+
+    @GetMapping("/recommendation")
+    public ResponseEntity<List<PopupDTO>> getRecommendedPopup() {
+        List<PopupDTO> recommendedPopupList = popupService.getRecommendedPopup();
+        return ResponseEntity.ok(recommendedPopupList);
     }
 
     // 오픈 예정 팝업 조회
@@ -213,7 +218,8 @@ public class PopupController {
     // 팝업 채팅방 들어가기 - 채팅내역 불러오기
     @GetMapping("/chat/{popupId}")
     public ResponseEntity<List<ChatMessage>> getHistory(@PathVariable Long popupId) {
-        return new ResponseEntity<>(chatService.getChatHistory(popupId), HttpStatus.OK);
+        List<ChatMessage> chatHistory = chatService.getChatHistory(popupId);
+        return new ResponseEntity<>(chatHistory, HttpStatus.OK);
     }
 
 }

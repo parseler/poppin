@@ -2,6 +2,8 @@ package com.apink.poppin.common.oauth;
 
 import com.apink.poppin.api.user.dto.UserDto;
 import com.apink.poppin.api.user.entity.User;
+import com.apink.poppin.api.user.entity.UserConsent;
+import com.apink.poppin.api.user.repository.UserConsentRepository;
 import com.apink.poppin.api.user.repository.UserRepository;
 import com.apink.poppin.common.auth.dto.KakaoResponse;
 import com.apink.poppin.common.auth.dto.NaverResponse;
@@ -14,11 +16,14 @@ import org.springframework.security.oauth2.core.OAuth2AuthenticationException;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
+
 @Service
 @RequiredArgsConstructor
 public class CustomOAuth2UserService extends DefaultOAuth2UserService {
 
     private final UserRepository userRepository;
+    private final UserConsentRepository userConsentRepository;
     private final SnowflakeTsidUtil snowflakeTsidUtil;
     private static int nick = 1;
 
@@ -61,10 +66,20 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
                     .age(oAuth2UserResponse.getAge())
                     .gender(oAuth2UserResponse.getGender())
                     .phoneNumber(oAuth2UserResponse.getPhoneNumber())
-                    .img("IMG_URL")
+                    .img("/uploads/profile.png")
                     .role("ROLE_USER")
                     .state(true)
                     .build();
+
+            UserConsent userConsent = UserConsent.builder()
+                    .user(user)
+                    .servicePushConsent(false)
+                    .marketingConsent(false)
+                    .marketingUpdatedAt(LocalDateTime.now())
+                    .serviceUpdatedAt(LocalDateTime.now())
+                    .build();
+
+            user.setUserConsents(userConsent);
 
             userRepository.save(user);
 

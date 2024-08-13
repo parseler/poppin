@@ -49,13 +49,16 @@ axiosInstance.interceptors.response.use(
   async (error) => {
     console.log("Error in response interceptor:", error);
     const originalRequest = error.config;
+
     if (
       error.response &&
       error.response.status === 401 &&
       !originalRequest._retry
     ) {
       originalRequest._retry = true;
-      const refreshToken = useAuthStore.getState();
+
+      // 쿠키에서 refreshToken 읽기
+      const refreshToken = Cookies.get("refreshToken");
 
       if (refreshToken) {
         try {
@@ -88,11 +91,11 @@ axiosInstance.interceptors.response.use(
           return axiosInstance(originalRequest);
         } catch (err) {
           console.error("Error during reissuing token:", err);
-          return Promise.reject(err); // 추가된 에러 반환
+          return Promise.reject(err);
         }
       } else {
-        // refreshToken이 없을 경우 처리
-        console.error("No refresh token available");
+        // refreshToken이 쿠키에 없을 경우 처리
+        console.error("No refresh token available in cookies");
         // 필요한 경우, 로그아웃 처리 또는 로그인 페이지로 리디렉션할 수 있습니다.
       }
     } else {

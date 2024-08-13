@@ -69,7 +69,7 @@ public interface PopupService {
     boolean checkPreReservation(long popupId);
 
 
-    List<PopupDTO> getPopupByCategory(String category);
+    List<PopupDTO> getPopupByCategory(int categoryId);
 
     List<PopupDTO> getRecommendedPopup();
 }

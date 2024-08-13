@@ -6,8 +6,10 @@ import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import lombok.*;
 import org.hibernate.annotations.ColumnDefault;
+import org.hibernate.annotations.CreationTimestamp;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 @Builder
 @Entity
@@ -60,6 +62,9 @@ public class Popup {
 
     @ColumnDefault("false")
     private boolean deleted;
+
+    @CreationTimestamp
+    private LocalDate createdAt;
 
 
     public void updatePopup(PopupRequestDTO reqDto) {

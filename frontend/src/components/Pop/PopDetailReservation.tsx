@@ -4,6 +4,10 @@ import { useNavigate } from "react-router-dom";
 import "@css/Pop/PopDetailReservation.css";
 import "react-calendar/dist/Calendar.css";
 
+interface Hours {
+  [key: string]: string;
+}
+
 interface ReservationProps {
   title: string;
   hours: string;
@@ -34,29 +38,46 @@ const Reservation = ({
       const currentTime = new Date();
 
       if (currentTime >= openAt) {
-        const [startHourStr, endHourStr] = hours.split(" ~ ");
-        const [startHour, startMinute] = startHourStr.split(":").map(Number);
-        const [endHour, endMinute] = endHourStr.split(":").map(Number);
+        const dayOfWeek = selectedDate.toLocaleString("ko-KR", {
+          weekday: "long",
+        });
+        const trimmedDayOfWeek = dayOfWeek.substring(0, 1); // 예: '월'
 
-        const startTime = startHour * 60 + startMinute;
-        const endTime = endHour * 60 + endMinute;
-        const termInMinutes = term;
-
-        const hoursArray = [];
-
-        for (let i = startTime; i < endTime; i += termInMinutes) {
-          const hourString = Math.floor(i / 60)
-            .toString()
-            .padStart(2, "0");
-          const minuteString = (i % 60).toString().padStart(2, "0");
-          const time = `${hourString}:${minuteString}`;
-          hoursArray.push(time);
+        let parsedHours: Hours;
+        try {
+          parsedHours = JSON.parse(hours.replace(/'/g, '"'));
+        } catch (e) {
+          console.error("hours 문자열을 파싱하는 중 오류 발생:", e);
+          return;
         }
 
-        setTimes(hoursArray);
+        const timeRange = parsedHours[trimmedDayOfWeek];
+
+        if (timeRange) {
+          const [startHourStr, endHourStr] = timeRange.split(" ~ ");
+          const [startHour, startMinute] = startHourStr.split(":").map(Number);
+          const [endHour, endMinute] = endHourStr.split(":").map(Number);
+
+          const startTime = startHour * 60 + startMinute;
+          const endTime = endHour * 60 + endMinute;
+          const termInMinutes = term;
+
+          const hoursArray = [];
+
+          for (let i = startTime; i < endTime; i += termInMinutes) {
+            const hourString = Math.floor(i / 60)
+              .toString()
+              .padStart(2, "0");
+            const minuteString = (i % 60).toString().padStart(2, "0");
+            const time = `${hourString}:${minuteString}`;
+            hoursArray.push(time);
+          }
+
+          setTimes(hoursArray);
+        }
       }
     }
-  }, [preReservationOpenAt, term, hours]);
+  }, [preReservationOpenAt, term, hours, selectedDate]);
 
   const onTimeClick = (time: string) => {
     setSelectedTime(time);

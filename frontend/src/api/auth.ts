@@ -1,7 +1,8 @@
 
 import { axiosInstance } from "./axiosInstance"
 
-export const logout = () => {
-  delete axiosInstance.defaults.headers.common['Authorization'];
-  window.location.href = '/';
+// 로그아웃
+export const logout = async () => {
+  const response = await axiosInstance.get("/auth/logout");
+  return response.data;
 }

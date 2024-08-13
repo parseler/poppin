@@ -82,7 +82,7 @@ function RegistPopOptional() {
           lon: lon || 0,
           images: selectedImages,
           categories: categories,
-          managerTsid: 1,
+          managerTsid: "1",
         },
       });
       alert("팝업이 성공적으로 등록되었습니다.");
@@ -214,8 +214,8 @@ function RegistPopOptional() {
           <div>연령 제한</div>
           <div className="buttons">
             <button
-              className={activeButtons.age === "없음" ? "active" : ""}
-              onClick={() => handleButtonClick("age", "없음")}
+              className={activeButtons.age === "전체연령" ? "active" : ""}
+              onClick={() => handleButtonClick("age", "전체연령")}
             >
               없음
             </button>

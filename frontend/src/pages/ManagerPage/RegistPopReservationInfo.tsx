@@ -35,6 +35,7 @@ function RegistPopReservationInfo() {
     snsUrl,
     pageUrl,
     timeSlots,
+    content,
     preReservationOpenAt,
     term,
     maxPeoplePerSession,
@@ -64,6 +65,7 @@ function RegistPopReservationInfo() {
         snsUrl,
         pageUrl,
         timeSlots,
+        content,
         preReservationOpenAt,
         term,
         maxPeoplePerSession,
@@ -92,6 +94,7 @@ function RegistPopReservationInfo() {
         snsUrl,
         pageUrl,
         timeSlots,
+        content,
         preReservationOpenAt,
         term,
         maxPeoplePerSession,
@@ -135,7 +138,7 @@ function RegistPopReservationInfo() {
         hours: JSON.stringify(timeSlots),
         snsUrl: snsUrl || "",
         pageUrl: pageUrl || "",
-        content: storeDescription,
+        content: content || "",
         address,
         lat: lat || 0,
         lon: lon || 0,
@@ -177,9 +180,9 @@ function RegistPopReservationInfo() {
     </option>
   ));
 
-  const minuteOptions = Array.from({ length: 60 }, (_, i) => (
-    <option key={i} value={i < 10 ? `0${i}` : i}>
-      {i < 10 ? `0${i}` : i}
+  const minuteOptions = Array.from({ length: 12 }, (_, i) => (
+    <option key={i*5} value={i*5 < 10 ? `0${i*5}` : i*5}>
+      {i*5 < 10 ? `0${i*5}` : i*5}
     </option>
   ));
 

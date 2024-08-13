@@ -71,6 +71,7 @@ CREATE TABLE IF NOT EXISTS `poppin`.`popup` (
   `hit` INT NULL DEFAULT 0,
   `rating` FLOAT NULL DEFAULT 0.0,
   `deleted` TINYINT NOT NULL DEFAULT 0,
+  `created_at` TIMESTAMP NULL DEFAULT now(),
   PRIMARY KEY (`popup_id`),
   INDEX `fk_popup_manager1_idx` (`manager_tsid` ASC) VISIBLE,
   CONSTRAINT `fk_popup_manager1`

@@ -1,4 +1,10 @@
 import { useEffect, useState } from "react";
+import { PopupDetail } from "@interface/popDetail";
+import {
+  getMapPopupList,
+  getMapHeartPopupByLocation,
+  getMapMyReservationPopup,
+} from "@api/apiPop";
 import "@css/Map.css";
 
 import openMarker from "@assets/map/openMarker.svg";
@@ -6,7 +12,6 @@ import upcomingMarker from "@assets/map/upcomingMarker.svg";
 import likeMarker from "@assets/map/likeMarker.svg";
 import reservationMarker from "@assets/map/reservationMarker.svg";
 import currentLocation from "@assets/map/currentLocation.svg";
-import image from "@assets/profile.svg";
 
 const markerImages = {
   open: openMarker,
@@ -24,46 +29,73 @@ interface PopupStore {
   markerType: "open" | "upcoming" | "like" | "reservation";
 }
 
-const popupStores: PopupStore[] = [
-  {
-    position: new kakao.maps.LatLng(37.543199503368335, 127.05694800077909),
-    image: image,
-    title: "팝업스토어 Addddddddddddddddddddddddddddd",
-    schedule: "2024.07.10 - 2024.07.26",
-    businessHours: "10:00 - 22:00",
-    markerType: "open",
-  },
-  {
-    position: new kakao.maps.LatLng(37.5432241605263, 127.05719696023701),
-    image: image,
-    title: "팝업스토어 B",
-    schedule: "2024.08.01 - 2024.08.15",
-    businessHours: "09:00 - 21:00",
-    markerType: "upcoming",
-  },
-  {
-    position: new kakao.maps.LatLng(37.54417374879818, 127.05447627667286),
-    image: image,
-    title: "팝업스토어 C",
-    schedule: "2024.08.10 - 2024.08.20",
-    businessHours: "11:00 - 23:00",
-    markerType: "like",
-  },
-  {
-    position: new kakao.maps.LatLng(37.543519985087194, 127.0556328140451),
-    image: image,
-    title: "팝업스토어 D",
-    schedule: "2024.09.01 - 2024.09.10",
-    businessHours: "10:00 - 20:00",
-    markerType: "reservation",
-  },
-];
+const parseHours = (hoursString: string): Record<string, string> => {
+  const trimmedString = hoursString.slice(1, -1);
+  const pairs = trimmedString.split(",");
+
+  const hours: Record<string, string> = {};
+
+  pairs.forEach((pair) => {
+    const [day, time] = pair.split(":");
+    const cleanDay = day.trim().replace(/"/g, "");
+    const cleanTime = time.trim().replace(/"/g, "");
+    hours[cleanDay] = cleanTime;
+  });
+
+  return hours;
+};
+
+const getMarkerType = (
+  popupDetail: PopupDetail
+): "open" | "upcoming" | "like" | "reservation" => {
+  const now = new Date();
+  const currentTime = now.getHours() * 60 + now.getMinutes();
+  const currentDay = ["일", "월", "화", "수", "목", "금", "토"][now.getDay()];
+
+  const hours = parseHours(popupDetail.hours);
+  const [openTimeStr, closeTimeStr] = hours[currentDay]
+    ?.split("~")
+    .map((str) => str.trim()) || ["00:00", "23:59"];
+  const [openHour, openMinute] = openTimeStr.split(":").map(Number);
+  const [closeHour, closeMinute] = closeTimeStr.split(":").map(Number);
+
+  const openTime = openHour * 60 + openMinute;
+  const closeTime = closeHour * 60 + closeMinute;
+
+  const startDate = new Date(popupDetail.startDate);
+  const endDate = new Date(popupDetail.endDate);
+
+  if (
+    now < startDate ||
+    now > endDate ||
+    currentTime < openTime ||
+    currentTime > closeTime
+  ) {
+    return "upcoming";
+  }
+
+  // 기본적으로 "open"으로 처리
+  return "open";
+};
+
+const convertToPopupStore = (popupDetail: PopupDetail): PopupStore => {
+  const markerType = getMarkerType(popupDetail);
+  return {
+    position: new kakao.maps.LatLng(popupDetail.lat, popupDetail.lon),
+    image: popupDetail.images[0],
+    title: popupDetail.name,
+    schedule: `${popupDetail.startDate} - ${popupDetail.endDate}`,
+    businessHours: popupDetail.hours,
+    markerType: markerType,
+  };
+};
 
 const Map = () => {
   const [activeButton, setActiveButton] = useState<string>("all");
   const [selectedStore, setSelectedStore] = useState<PopupStore | null>(null);
   const [map, setMap] = useState<kakao.maps.Map | null>(null);
   const [markers, setMarkers] = useState<kakao.maps.Marker[]>([]);
+  const [popupStores, setPopupStores] = useState<PopupStore[]>([]);
 
   useEffect(() => {
     const script = document.createElement("script");
@@ -111,36 +143,53 @@ const Map = () => {
   }, []);
 
   useEffect(() => {
+    const fetchPopupStores = async () => {
+      try {
+        let data: PopupDetail[] = [];
+        if (activeButton === "like") {
+          data = await getMapHeartPopupByLocation(); // 좋아요 API 호출
+        } else if (activeButton === "reservation") {
+          data = await getMapMyReservationPopup(); // 사전예약 API 호출
+        } else {
+          data = await getMapPopupList(); // 전체 팝업 API 호출
+        }
+
+        const convertedStores = data.map(convertToPopupStore);
+        setPopupStores(convertedStores);
+      } catch (error) {
+        console.error("Error fetching popup stores:", error);
+      }
+    };
+    fetchPopupStores();
+  }, [activeButton]);
+
+  useEffect(() => {
     if (map) {
       markers.forEach((marker) => marker.setMap(null));
 
-      const filteredMarkers = popupStores
-        .filter(
-          (store) => activeButton === "all" || store.markerType === activeButton
-        )
-        .map((store) => {
-          const markerImage = new kakao.maps.MarkerImage(
-            markerImages[store.markerType],
-            new kakao.maps.Size(32, 32)
-          );
+      const newMarkers = popupStores.map((store) => {
+        const markerImage = new kakao.maps.MarkerImage(
+          markerImages[store.markerType],
+          new kakao.maps.Size(32, 32)
+        );
 
-          const marker = new kakao.maps.Marker({
-            map: map,
-            position: store.position,
-            title: store.title,
-            image: markerImage,
-          });
-
-          kakao.maps.event.addListener(marker, "click", () => {
-            setSelectedStore(store);
-          });
-
-          return marker;
+        const marker = new kakao.maps.Marker({
+          map: map,
+          position: store.position,
+          title: store.title,
+          image: markerImage,
         });
 
-      setMarkers(filteredMarkers);
+        kakao.maps.event.addListener(marker, "click", () => {
+          setSelectedStore(store);
+        });
+
+        return marker;
+      });
+
+      setMarkers(newMarkers);
     }
-  }, [map, activeButton, markers]);
+  }, [map, popupStores, markers]);
 
   const handleButtonClick = (buttonType: string) => {
     setActiveButton(buttonType);

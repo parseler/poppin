@@ -5,7 +5,10 @@ import {
   updatePopup,
   PopupRequestDTO,
   getReviews,
+  insertHeart,
+  deleteHeart,
 } from "@api/apiPop";
+import { PopupDetail } from "@interface/popDetail";
 import Slider from "react-slick";
 import PopDetailInfo from "@components/Pop/PopDetailInfo";
 import PopDetailReservation from "@components/Pop/PopDetailReservation";
@@ -25,7 +28,7 @@ import editIcon from "@assets/editIcon.svg";
 export interface ReviewListDto {
   reviewId: number;
   popupId: number;
-  userTsid: number;
+  userTsid: string;
   nickname: string;
   img: string;
   rating: number;
@@ -39,37 +42,10 @@ export interface ReviewListDto {
 export interface CommentDto {
   commentId: number;
   reviewId: number;
-  userTsid: number;
+  userTsid: string;
   nickname: string;
   content: string;
   createdAt: string;
-}
-
-interface PopupDetail {
-  popupId: number;
-  name: string;
-  startDate: string;
-  endDate: string;
-  hours: string;
-  snsUrl: string;
-  pageUrl: string;
-  content: string;
-  description: string;
-  address: string;
-  lat: number;
-  lon: number;
-  heart: number;
-  hit: number;
-  rating: number;
-  deleted: boolean;
-  managerTsId: number;
-  images: string[];
-  checkPreReservation: boolean;
-  preReservationOpenAt?: string;
-  term?: number;
-  maxPeoplePerSession?: number;
-  maxReservationsPerPerson?: number;
-  warning?: string;
 }
 
 const PopDetail = () => {
@@ -86,8 +62,10 @@ const PopDetail = () => {
   const [instagram, setInstagram] = useState<string>("");
   const [content, setContent] = useState<string>("");
   const [description, setDescription] = useState<string>("");
+  
 
   const navigate = useNavigate();
+  const currentUserTsid = "1";
 
   useEffect(() => {
     if (popupDetail) {
@@ -97,6 +75,7 @@ const PopDetail = () => {
       setInstagram(popupDetail.snsUrl);
       setContent(popupDetail.content);
       setDescription(popupDetail.description);
+      setLiked(popupDetail.heart>0);
     }
   }, [popupDetail]);
 
@@ -140,23 +119,41 @@ const PopDetail = () => {
     }),
     []
   );
+  // 좋아요 버튼
+  const toggleLike = useCallback(async () => {
+    if(!popupDetail) return;
 
-  const toggleLike = useCallback(() => {
-    setLiked((prev) => !prev);
-  }, []);
+    try{
+      if(liked){
+        await deleteHeart({userTsid: currentUserTsid, popupId: popupDetail.popupId});
+        setLiked(false);
+        setPopupDetail((prev) => prev && {...prev, heart: prev.heart-1});
+      } else {
+        await insertHeart({userTsid: currentUserTsid, popupId: popupDetail.popupId});
+        setLiked(true);
+        setPopupDetail((prev) => prev && {...prev, heart: prev.heart+1});
+      }
+    } catch(error) {
+      console.error("Error toggling like:", error);
+    }
+  }, [liked, popupDetail]);
 
+  // 탭 컴포넌트
   const onTabClick = useCallback((tab: string) => {
     setActiveTab(tab);
   }, []);
 
+  // 뒤로가기
   const onClickBack = useCallback(() => {
     navigate(-1);
   }, [navigate]);
 
+  // 팝업 수정 버튼
   const handleEditToggle = () => {
     setIsEditing((prev) => !prev);
   };
 
+  // 팝업 수정 저장 버튼
   const handleSave = async () => {
     if (!popupDetail) return;
 
@@ -182,6 +179,8 @@ const PopDetail = () => {
       console.error("Error updating popup:", error);
     }
   };
+
+  // 팝업 수정 취소 버튼
   const handleCancel = () => {
     setIsEditing(false);
   };

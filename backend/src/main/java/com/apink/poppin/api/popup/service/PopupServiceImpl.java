@@ -973,8 +973,8 @@ public class PopupServiceImpl implements PopupService {
     }
 
     @Override
-    public List<PopupDTO> getPopupByCategory(String category) {
-        List<Popup> list = popupRepository.findPopupsByCategoryName(category);
+    public List<PopupDTO> getPopupByCategory(int categoryId) {
+        List<Popup> list = popupRepository.findPopupsByCategoryName(categoryId);
 
         List<PopupDTO> result = new ArrayList<>();
         for(Popup popup : list) {

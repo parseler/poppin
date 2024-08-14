@@ -37,11 +37,11 @@ public class GlobalExceptionAdvice {
     }
 
     @ExceptionHandler(BusinessLogicException.class)
-    public ResponseEntity<ErrorResponse> handleBusinessLogicException(BusinessLogicException e) {
+    public ResponseEntity<?> handleBusinessLogicException(BusinessLogicException e) {
         log.error("BusinessLogicException", e);
         ErrorResponse errorResponse = ErrorResponse.of(e.getCode());
         log.info("Sending error response: {}", errorResponse);
-        return new ResponseEntity<>(errorResponse, HttpStatus.valueOf(errorResponse.getStatus()));
+        return new ResponseEntity<>(e, HttpStatus.valueOf(errorResponse.getStatus()));
     }
 
     @ExceptionHandler(HttpRequestMethodNotSupportedException.class)

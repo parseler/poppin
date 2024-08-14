@@ -1,13 +1,15 @@
 import { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import Calendar from "react-calendar";
 import "@css/Calendar.css";
 import "react-calendar/dist/Calendar.css";
-import { getPopupList } from "@api/apiPop"; // 전체 팝업 조회 API 함수 임포트
+import { getPopupList } from "@api/apiPop";
 
 type ViewType = "month" | "year" | "decade" | "century";
 type Value = Date | Date[] | null | [Date | null, Date | null];
 
 interface PopupEvent {
+  popupId: number;
   startDate: Date;
   endDate: Date;
   title: string;
@@ -27,7 +29,8 @@ interface PopupResponse {
 const CalendarPage = () => {
   const [selectedDate, setSelectedDate] = useState<Date | null>(null);
   const [currentMonth, setCurrentMonth] = useState<string>("");
-  const [popupEvents, setPopupEvents] = useState<PopupEvent[]>([]); // 팝업 이벤트 상태 추가
+  const [popupEvents, setPopupEvents] = useState<PopupEvent[]>([]);
+  const navigate = useNavigate();
 
   useEffect(() => {
     const today = new Date();
@@ -39,6 +42,7 @@ const CalendarPage = () => {
       try {
         const data = await getPopupList(); // 전체 팝업 조회 API 호출
         const events = data.map((popup: PopupResponse) => ({
+          popupId: popup.popupId,
           startDate: new Date(popup.startDate),
           endDate: new Date(popup.endDate),
           title: popup.name,
@@ -148,8 +152,12 @@ const CalendarPage = () => {
           </div>
           {events.length > 0 ? (
             <div className="popup-info">
-              {events.map((event, index) => (
-                <div key={index} className="popup-info-item">
+              {events.map((event) => (
+                <div
+                  key={event.popupId}
+                  className="popup-info-item"
+                  onClick={() => navigate(`/popdetail/${event.popupId}`)}
+                >
                   <img
                     src={event.image}
                     alt={event.title}

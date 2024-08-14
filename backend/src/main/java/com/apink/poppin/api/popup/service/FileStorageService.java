@@ -34,6 +34,10 @@ public class FileStorageService {
 
     public String storeFile(MultipartFile file) {
         try {
+
+            if (file == null || file.isEmpty()) {
+                return null;
+            }
             // 파일의 원래 이름을 가져옴
             String originalFileName = file.getOriginalFilename();
             // if(originalFileName.equals("/uploads/profile.png)) {

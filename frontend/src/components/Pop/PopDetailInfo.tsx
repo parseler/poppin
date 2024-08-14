@@ -1,4 +1,6 @@
 import { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
+import { getSimilarPopups, PopupDTO } from "@api/apiPop";
 import "@css/Pop/PopDetailInfo.css";
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
@@ -34,6 +36,7 @@ interface InfoProps {
   description: string;
   lat: number;
   lon: number;
+  popupId: string | undefined;
   onLocationChange: (location: string) => void;
   onHoursChange: (hours: string) => void;
   onWebsiteChange: (website: string) => void;
@@ -62,6 +65,7 @@ const Info: React.FC<InfoProps> = ({
   description,
   lat,
   lon,
+  popupId,
   onLocationChange,
   onWebsiteChange,
   onInstagramChange,
@@ -72,9 +76,11 @@ const Info: React.FC<InfoProps> = ({
   const [isBusinessOpen, setIsBusinessOpen] = useState(false);
   const [currentDay, setCurrentDay] = useState("");
   const [parsedHours, setParsedHours] = useState<Record<string, string>>({});
-  const [parsedContent, setParsedContent] = useState<Record<string, string>>(
-    {}
-  );
+  const [parsedDescription, setParsedDescription] = useState<
+    Record<string, string>
+  >({});
+  const [similarPopups, setSimilarPopups] = useState<PopupDTO[]>([]);
+  const navigate = useNavigate();
 
   // 운영 시간
   useEffect(() => {
@@ -144,11 +150,12 @@ const Info: React.FC<InfoProps> = ({
     };
   }, [lat, lon]);
 
+  // 서비스(description) 설정
   useEffect(() => {
     try {
-      if (content) {
-        const parseContent = (content: string) => {
-          const pairs = content.slice(1, -1).split(",");
+      if (description) {
+        const parsedDescription = (description: string) => {
+          const pairs = description.slice(1, -1).split(",");
           const result: Record<string, string> = {};
           pairs.forEach((pair) => {
             const [key, value] = pair.split(":");
@@ -161,13 +168,14 @@ const Info: React.FC<InfoProps> = ({
           return result;
         };
 
-        setParsedContent(parseContent(content));
+        setParsedDescription(parsedDescription(description));
       }
     } catch (error) {
-      console.error("Error parsing content:", error);
+      console.error("Error parsing desrciption:", error);
     }
-  }, [content]);
+  }, [description]);
 
+  // 서비스(description) 목록들 확인
   const isChecked = (key: string, value: string): boolean => {
     if (key === "age") {
       return value === "19세 이상";
@@ -177,7 +185,24 @@ const Info: React.FC<InfoProps> = ({
     }
     return value === "가능";
   };
+  // 유사 팝업스토어 불러오기
+  useEffect(() => {
+    if (!popupId) {
+      console.log("popupId가 없어");
+      return;
+    }
+    const fetchSimilarPopups = async () => {
+      try {
+        const data = await getSimilarPopups(Number(popupId));
+        setSimilarPopups(data);
+      } catch (error) {
+        console.error("Error fetching similar popups:", error);
+      }
+    };
+    fetchSimilarPopups();
+  }, [popupId]);
 
+  // 영업 시간 토글 버튼
   const toggleSchedule = () => {
     setIsToggleOpen(!isToggleOpen);
   };
@@ -258,7 +283,7 @@ const Info: React.FC<InfoProps> = ({
       </div>
       <div className="service">
         <div className="service-icons">
-          {Object.entries(parsedContent).map(
+          {Object.entries(parsedDescription).map(
             ([key, value]) =>
               value && (
                 <div key={key} className="service-icon">
@@ -286,9 +311,9 @@ const Info: React.FC<InfoProps> = ({
                           : key === "fee"
                           ? "유료"
                           : "불가능";
-                        onContentChange(
+                        onDescriptionChange(
                           JSON.stringify({
-                            ...parsedContent,
+                            ...parsedDescription,
                             [key]: newValue,
                           })
                         );
@@ -305,12 +330,12 @@ const Info: React.FC<InfoProps> = ({
         <div className="introduce-title">팝업 스토어 소개</div>
         {isEditing ? (
           <textarea
-            value={description}
-            onChange={(e) => onDescriptionChange(e.target.value)}
+            value={content}
+            onChange={(e) => onContentChange(e.target.value)}
             className="edit-textarea"
           />
         ) : (
-          description.split("\n").map((line, index) => (
+          content.split("\n").map((line, index) => (
             <p key={index} className="introduce-content">
               {line.trim() === "" ? <br /> : line}
             </p>
@@ -323,6 +348,22 @@ const Info: React.FC<InfoProps> = ({
           id="map"
           style={{ width: "100%", height: "250px", marginBottom: "30px" }}
         ></div>
+      </div>
+      <div className="rel-pop-title">유사 팝업스토어</div>
+      <div className="related-popups">
+        {similarPopups.map((popup) => (
+          <div
+            key={popup.popupId}
+            className="popup-item"
+            onClick={() => navigate(`/popdetail/${popup.popupId}`)}
+          >
+            <img src={`http://localhost/${popup.images[0]}`} alt={popup.name} />
+            <div className="rel-pop-info">
+              <div className="popup-title">{popup.name}</div>
+              <div className="popup-dates">{`${popup.startDate} ~ ${popup.endDate}`}</div>
+            </div>
+          </div>
+        ))}
       </div>
     </div>
   );

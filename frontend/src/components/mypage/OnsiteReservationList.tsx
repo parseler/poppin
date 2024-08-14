@@ -1,17 +1,27 @@
-import banners from "@utils/get-banner-image";
-import PopMedium03 from "./PopMedium03";
 import { Link } from "react-router-dom";
+import { ReservationProps } from "@api/mypage";
+import PopMedium03 from "./PopMedium03";
 
-const OnsiteReservationList = () => {
+interface OnsiteReservationListProps {
+  reservations: ReservationProps[];
+}
+
+const OnsiteReservationList: React.FC<OnsiteReservationListProps> = ({
+  reservations,
+}) => {
   return (
     <div id="onsite-reservation-list">
-      {banners.length > 0 ? (
-        banners.map((banner, index) => (
-          <Link to="/waiting" key={index}>
+      {reservations.length > 0 ? (
+        reservations.map((reservation) => (
+          <Link to="/waiting" key={reservation.reservationId}>
             <PopMedium03
-              image={banner.image}
-              text={banner.text}
-              date={banner.date}
+              image={
+                reservation.img instanceof File
+                  ? URL.createObjectURL(reservation.img)
+                  : reservation.img
+              }
+              text={reservation.title}
+              date={reservation.reservationDate}
             >
               <div className="waiting-link">
                 대기 순번 확인하기

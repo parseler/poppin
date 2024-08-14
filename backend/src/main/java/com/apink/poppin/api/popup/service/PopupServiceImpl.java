@@ -26,8 +26,6 @@ import com.apink.poppin.api.reservation.repository.OnsiteReservationRepository;
 import com.apink.poppin.api.reservation.repository.PreReservationInfoRepository;
 import com.apink.poppin.api.reservation.repository.PreReservationRepository;
 import com.apink.poppin.api.reservation.repository.ReservationStatementRepository;
-import com.apink.poppin.api.review.dto.ReviewDto;
-import com.apink.poppin.api.review.entity.Review;
 import com.apink.poppin.api.review.repository.ReviewRepository;
 import com.apink.poppin.api.user.entity.User;
 import com.apink.poppin.api.user.entity.UserCategory;
@@ -49,8 +47,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
 import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -117,7 +113,7 @@ public class PopupServiceImpl implements PopupService {
                             .heart(popup.getHeart())
                             .hit(popup.getHit())
                             .rating(popup.getRating())
-                            .managerTsId(popup.getManager().getManagerTsid())
+                            .managerTsId(String.valueOf(popup.getManager().getManagerTsid()))
                             .images(images)
                             .categories(categories)
                             .checkPreReservation(
@@ -167,7 +163,7 @@ public class PopupServiceImpl implements PopupService {
                 .heart(popup.getHeart())
                 .hit(popup.getHit())
                 .rating(popup.getRating())
-                .managerTsId(popup.getManager().getManagerTsid())
+                .managerTsId(String.valueOf(popup.getManager().getManagerTsid()))
                 .images(images)
                 .categories(categories)
                 .checkPreReservation(preReservationInfoRepository.existsByPopup(popup))
@@ -227,7 +223,7 @@ public class PopupServiceImpl implements PopupService {
                 .heart(popup.getHeart())
                 .hit(popup.getHit())
                 .rating(popup.getRating())
-                .managerTsId(popup.getManager().getManagerTsid())
+                .managerTsId(String.valueOf(popup.getManager().getManagerTsid()))
                 .images(images)
                 .categories(categories)
                 .checkPreReservation(preReservationInfoRepository.existsByPopup(popup))
@@ -262,7 +258,7 @@ public class PopupServiceImpl implements PopupService {
                         .heart(popup.getHeart())
                         .hit(popup.getHit())
                         .rating(popup.getRating())
-                        .managerTsId(popup.getManager().getManagerTsid())
+                        .managerTsId(String.valueOf(popup.getManager().getManagerTsid()))
                         .build())
                 .collect(Collectors.toList());
     }
@@ -329,9 +325,29 @@ public class PopupServiceImpl implements PopupService {
     @Override
     public List<PopupDTO> getRecommendedPopup() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        if(authentication.getName().equals("anonymousUser!!!")) {
-//            비회원 추천 수정 필요
-            throw new BusinessLogicException(ExceptionCode.POPUP_NOT_FOUND);
+        if("anonymousUser".equals(authentication.getName()) || authentication.getName() == null) {
+            List<Popup> list = popupRepository.findTop10ByOrderByStartDateDesc();
+            List<PopupDTO> popupDTOList = new ArrayList<>();
+
+            for (Popup popup : list) {
+                List<PopupImage> imageList = popupImageRepository.findAllByPopup_PopupId(popup.getPopupId());
+                List<String> imageUrl = new ArrayList<>();
+                for (PopupImage image : imageList) {
+                    if (image.getSeq() != 1) continue;
+                    imageUrl.add(image.getImg());
+                }
+                PopupDTO popupDTO = PopupDTO.builder()
+                        .popupId(popup.getPopupId())
+                        .name(popup.getName())
+                        .startDate(popup.getStartDate())
+                        .endDate(popup.getEndDate())
+                        .content(popup.getContent())
+                        .images(imageUrl).build();
+
+                popupDTOList.add(popupDTO);
+            }
+
+            return popupDTOList;
         }
         else {
             long userTsid = Long.parseLong(authentication.getName());
@@ -428,7 +444,7 @@ public class PopupServiceImpl implements PopupService {
     // 오픈 예정 팝업 조회
     public List<PopupDTO> getOpenPopup() {
         LocalDate now = LocalDate.now();
-        List<Popup> popups = popupRepository.findAllByEndDateAfter(now);
+        List<Popup> popups = popupRepository.findAllByStartDateAfter(now);
 
         return popups.stream()
                 .filter(popup -> !popup.isDeleted())
@@ -454,7 +470,7 @@ public class PopupServiceImpl implements PopupService {
                             .heart(popup.getHeart())
                             .hit(popup.getHit())
                             .rating(popup.getRating())
-                            .managerTsId(popup.getManager().getManagerTsid())
+                            .managerTsId(String.valueOf(popup.getManager().getManagerTsid()))
                             .images(images)
                             .checkPreReservation(preReservationInfoRepository.existsByPopup(popup))
                             .build();
@@ -526,7 +542,7 @@ public class PopupServiceImpl implements PopupService {
         return PreStatementResponseDTO.builder()
                 .preReservationId(preReservation.getPreReservationId())
                 .reservationStatementId(newStatement.getReservationStatementId())
-                .userTsid(preReservation.getUser().getUserTsid())
+                .userTsid(String.valueOf(preReservation.getUser().getUserTsid()))
                 .popupId(preReservation.getPopup().getPopupId())
                 .build();
     }
@@ -600,7 +616,7 @@ public class PopupServiceImpl implements PopupService {
                 .heart(popup.getHeart())
                 .hit(popup.getHit())
                 .rating(popup.getRating())
-                .managerTsId(popup.getManager().getManagerTsid())
+                .managerTsId(String.valueOf(popup.getManager().getManagerTsid()))
                 .images(images)
                 .categories(popupCategories.stream().map(pc -> pc.getCategory().getName()).collect(Collectors.toList()))
                 .build();
@@ -716,7 +732,7 @@ public class PopupServiceImpl implements PopupService {
                 .heart(popup.getHeart())
                 .hit(popup.getHit())
                 .rating(popup.getRating())
-                .managerTsId(popup.getManager().getManagerTsid())
+                .managerTsId(String.valueOf(popup.getManager().getManagerTsid()))
                 .images(images)
                 .categories(categories)
                 .build();
@@ -783,7 +799,7 @@ public class PopupServiceImpl implements PopupService {
                             .heart(popup.getHeart())
                             .hit(popup.getHit())
                             .rating(popup.getRating())
-                            .managerTsId(popup.getManager().getManagerTsid())
+                            .managerTsId(String.valueOf(popup.getManager().getManagerTsid()))
                             .images(images)
                             .categories(categories)
                             .checkPreReservation(preReservationInfoRepository.existsByPopup(popup))
@@ -823,7 +839,7 @@ public class PopupServiceImpl implements PopupService {
                             .heart(popup.getHeart())
                             .hit(popup.getHit())
                             .rating(popup.getRating())
-                            .managerTsId(popup.getManager().getManagerTsid())
+                            .managerTsId(String.valueOf(popup.getManager().getManagerTsid()))
                             .images(images)
                             .checkPreReservation(preReservationInfoRepository.existsByPopup(popup))
                             .build();
@@ -885,7 +901,7 @@ public class PopupServiceImpl implements PopupService {
                             .heart(popup.getHeart())
                             .hit(popup.getHit())
                             .rating(popup.getRating())
-                            .managerTsId(popup.getManager().getManagerTsid())
+                            .managerTsId(String.valueOf(popup.getManager().getManagerTsid()))
                             .images(images)
                             .checkPreReservation(preReservationInfoRepository.existsByPopup(popup))
                             .build();
@@ -952,7 +968,7 @@ public class PopupServiceImpl implements PopupService {
                             .heart(popup.getHeart())
                             .hit(popup.getHit())
                             .rating(popup.getRating())
-                            .managerTsId(popup.getManager().getManagerTsid())
+                            .managerTsId(String.valueOf(popup.getManager().getManagerTsid()))
                             .images(images)
                             .checkPreReservation(preReservationInfoRepository.existsByPopup(popup))
                             .build();
@@ -1013,7 +1029,7 @@ public class PopupServiceImpl implements PopupService {
     private PreReservationResponseDTO convertToResponseDTO(PreReservation preReservation) {
         return PreReservationResponseDTO.builder()
                 .preReservationId(preReservation.getPreReservationId())
-                .userTsid(preReservation.getUser().getUserTsid())
+                .userTsid(String.valueOf(preReservation.getUser().getUserTsid()))
                 .popupId(preReservation.getPopup().getPopupId())
                 .reservationDate(preReservation.getReservationDate())
                 .reservationTime(preReservation.getReservationTime())

@@ -60,4 +60,6 @@ public interface PopupRepository extends JpaRepository<Popup, Long> {
             "WHERE r.user.userTsid = :userTsid")
     List<ReviewRecommendationDto> findRecommendedReviewsByUserTsid(@Param("userTsid") long userTsid);
 
+    List<Popup> findTop10ByOrderByStartDateDesc();
+
 }

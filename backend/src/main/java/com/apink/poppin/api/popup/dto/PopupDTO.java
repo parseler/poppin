@@ -36,7 +36,7 @@ public class PopupDTO {
 
     private boolean deleted;
 
-    private Long managerTsId;
+    private String managerTsId;
 
     private List<String> images;
     private List<String> categories;

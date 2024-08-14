@@ -190,7 +190,8 @@
   outline: none;
 }
 
-.chat-input textarea {
+.chat-input textarea,
+.login-required {
   flex: 1;
   border: none;
   background-color: transparent;

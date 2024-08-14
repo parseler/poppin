@@ -1,6 +1,6 @@
 import "react-quill/dist/quill.snow.css";
 import ReactQuill from "react-quill";
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import { useEffect, useRef, useState } from "react";
 import Header from "@components/common/Header";
 import Menu from "@components/common/Menu";
@@ -11,6 +11,7 @@ import { getUserData } from "@api/users";
 
 const ReviewWrite: React.FC<{ popupId: number }> = ({ popupId }) => {
   const navigate = useNavigate();
+  const location = useLocation();
   const [user, setUser] = useState<UserProps | null>(null);
   const [title, setTitle] = useState("");
   const [store, setStore] = useState("");
@@ -57,6 +58,15 @@ const ReviewWrite: React.FC<{ popupId: number }> = ({ popupId }) => {
       navigate("/login");
     }
   }, [accessToken, userTsid, userRole, navigate]);
+
+  // URL에서 store 값을 가져와서 설정
+  useEffect(() => {
+    const params = new URLSearchParams(location.search);
+    const storeName = params.get("store");
+    if (storeName) {
+      setStore(storeName);
+    }
+  }, [location]);
 
   // 후기 썸네일 처리
   const handleThumbnailChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -129,6 +139,7 @@ const ReviewWrite: React.FC<{ popupId: number }> = ({ popupId }) => {
             placeholder="다녀온 팝업 스토어"
             value={store}
             onChange={(e) => setStore(e.target.value)}
+            readOnly
           />
         </div>
         <div className="review-input-thumbnail">

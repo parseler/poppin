@@ -2,7 +2,7 @@ import create from "zustand";
 
 interface PopupState {
   storeName: string;
-  storeDescription: string;
+  storeContent: string;
   selectedImages: File[];
   startDate: string | null;
   endDate: string | null;
@@ -14,7 +14,7 @@ interface PopupState {
   lon: number | null;
   snsUrl?: string;
   pageUrl?: string;
-  content: string;
+  description: string;
   preReservationOpenAt: Date | null;
   term: number;
   maxPeoplePerSession: number;
@@ -22,7 +22,7 @@ interface PopupState {
   warning: string;
   categories: number[];
   setStoreName: (name: string) => void;
-  setStoreDescription: (description: string) => void;
+  setStoreContent: (content: string) => void;
   setSelectedImages: (images: File[]) => void;
   setStartDate: (date: string | null) => void;
   setEndDate: (date: string | null) => void;
@@ -44,7 +44,7 @@ interface PopupState {
 
 const usePopupStore = create<PopupState>((set) => ({
   storeName: "",
-  storeDescription: "",
+  storeContent: "",
   selectedImages: [],
   startDate: null,
   endDate: null,
@@ -56,7 +56,7 @@ const usePopupStore = create<PopupState>((set) => ({
   lon: null,
   snsUrl: "",
   pageUrl: "",
-  content: "{}",
+  description: "{}",
   preReservationOpenAt: null,
   term: 0,
   maxPeoplePerSession: 0,
@@ -64,8 +64,7 @@ const usePopupStore = create<PopupState>((set) => ({
   warning: "",
   categories: [],
   setStoreName: (name) => set(() => ({ storeName: name })),
-  setStoreDescription: (description) =>
-    set(() => ({ storeDescription: description })),
+  setStoreContent: (content) => set(() => ({ storeContent: content })),
   setStartDate: (date) => set(() => ({ startDate: date })),
   setEndDate: (date) => set(() => ({ endDate: date })),
   setAddress: (address) => set(() => ({ address: address })),
@@ -75,12 +74,12 @@ const usePopupStore = create<PopupState>((set) => ({
   setServiceCategory: (category, value) =>
     set((state) => {
       const updatedCategories = {
-        ...JSON.parse(state.content || "{}"),
+        ...JSON.parse(state.description || "{}"),
         [category]: value,
       };
       const updatedCategoriesString = JSON.stringify(updatedCategories);
       return {
-        content: updatedCategoriesString,
+        description: updatedCategoriesString,
       };
     }),
   setSelectedDays: (days) => set(() => ({ selectedDays: days })),

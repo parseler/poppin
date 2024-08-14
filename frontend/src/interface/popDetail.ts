@@ -9,10 +9,10 @@ export interface PopupDetail {
   address: string;
   lat: number;
   lon: number;
-  description: string;
+  content: string;
   snsUrl: string;
   pageUrl: string;
-  content: string;
+  description: string;
   heart: number;
   hit: number;
   rating: number;

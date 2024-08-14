@@ -9,15 +9,17 @@ const ReviewList = () => {
   const [reviews, setReviews] = useState<ReviewListProps[]>([]);
 
   useEffect(() => {
-    async () => {
+    const fetchReviews = async () => {
       try {
         const reviewList = await getReviewListData();
         setReviews(reviewList);
       } catch (error) {
-        console.error(error);
+        console.error("Failed to fetch review list:", error);
       }
     };
-  });
+
+    fetchReviews();
+  }, []);
 
   return (
     <div id="reviews">

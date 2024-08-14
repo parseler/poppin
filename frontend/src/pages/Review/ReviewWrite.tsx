@@ -1,6 +1,6 @@
 import "react-quill/dist/quill.snow.css";
 import ReactQuill from "react-quill";
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import { useEffect, useRef, useState } from "react";
 import Header from "@components/common/Header";
 import Menu from "@components/common/Menu";
@@ -9,11 +9,13 @@ import useAuthStore from "@store/useAuthStore";
 import { UserProps } from "@interface/users";
 import { getUserData } from "@api/users";
 
-const ReviewWrite: React.FC<{ popupId: number }> = ({ popupId }) => {
+const ReviewWrite: React.FC = () => {
   const navigate = useNavigate();
+  const location = useLocation();
   const [user, setUser] = useState<UserProps | null>(null);
   const [title, setTitle] = useState("");
   const [store, setStore] = useState("");
+  const [popupId, setPopupId] = useState<number>();
   const [thumbnail, setThumbnail] = useState<File | null>(null);
   const [editorContent, setEditorContent] = useState("");
   const [rating, setRating] = useState(0);
@@ -57,6 +59,21 @@ const ReviewWrite: React.FC<{ popupId: number }> = ({ popupId }) => {
       navigate("/login");
     }
   }, [accessToken, userTsid, userRole, navigate]);
+
+  // URL에서 store 값을 가져와서 설정
+  useEffect(() => {
+    const params = new URLSearchParams(location.search);
+    const storeName = params.get("store");
+    const popupNumber = params.get("popupId");
+
+    if (storeName) {
+      setStore(storeName);
+    }
+
+    if (popupNumber) {
+      setPopupId(Number(popupNumber));
+    }
+  }, [location]);
 
   // 후기 썸네일 처리
   const handleThumbnailChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -102,9 +119,10 @@ const ReviewWrite: React.FC<{ popupId: number }> = ({ popupId }) => {
         formData.append("thumbnail", thumbnail);
       }
 
+      console.log("popupId ", popupId)
       await createReviewData(popupId, formData);
 
-      navigate(`/popup/${popupId}`);
+      navigate(`/reviews/${popupId}`);
     } catch (error) {
       console.error("Error creating review:", error);
     }
@@ -129,6 +147,7 @@ const ReviewWrite: React.FC<{ popupId: number }> = ({ popupId }) => {
             placeholder="다녀온 팝업 스토어"
             value={store}
             onChange={(e) => setStore(e.target.value)}
+            readOnly
           />
         </div>
         <div className="review-input-thumbnail">

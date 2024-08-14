@@ -118,7 +118,7 @@ services:
     env_file:
       - .env
     volumes:
-      - ./ranking-service:/opt/app
+      - ./backend-ranking:/opt/app
       - gradle_ranking:/opt/app/build
     working_dir: /opt/app
     command: "./gradlew build -x test"
@@ -146,7 +146,7 @@ services:
     image: mysql
     restart: always
     environment:
-      MYSQL_ROOT_PASSWORD: $RANKING_MYSQL_ROOT_PASSWORD
+      MYSQL_ROOT_PASSWORD: $MYSQL_RANKING_ROOT_PASSWORD
     #FIXME: ports should be removed before deploying application on EC2
     ports:
       - "3307:3306"

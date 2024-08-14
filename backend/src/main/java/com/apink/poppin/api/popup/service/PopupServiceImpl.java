@@ -428,7 +428,7 @@ public class PopupServiceImpl implements PopupService {
     // 오픈 예정 팝업 조회
     public List<PopupDTO> getOpenPopup() {
         LocalDate now = LocalDate.now();
-        List<Popup> popups = popupRepository.findAllByEndDateAfter(now);
+        List<Popup> popups = popupRepository.findAllByStartDateAfter(now);
 
         return popups.stream()
                 .filter(popup -> !popup.isDeleted())

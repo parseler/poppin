@@ -45,6 +45,7 @@ const Chat = () => {
   const ws = useRef<Client | null>(null);
 
   const currentUserTsid = useAuthStore((state) => state.userTsid);
+  const isLoggedIn = !!currentUserTsid;
 
   // 유저 정보(닉네임, 사진 등) 불러오기
   useEffect(() => {
@@ -57,8 +58,10 @@ const Chat = () => {
         console.error("Failed to fetch user info:", error);
       }
     };
-    fetchUserInfo();
-  }, []);
+    if (isLoggedIn) {
+      fetchUserInfo();
+    }
+  }, [isLoggedIn]);
 
   // 채팅 내역 불러오기
   useEffect(() => {
@@ -106,8 +109,7 @@ const Chat = () => {
           // 현재 사용자의 닉네임과 메시지의 닉네임(sender) 비교
           const newMessage: ChatMessage = {
             ...receivedMessage,
-            type:
-              receivedMessage.sender === userNickname ? "me" : "other",
+            type: receivedMessage.sender === userNickname ? "me" : "other",
             sendTime: receivedMessage.sendTime.slice(0, 5),
           };
           console.log(receivedMessage.sender);
@@ -248,16 +250,22 @@ const Chat = () => {
         ))}
       </div>
       <div className="chat-input">
-        <textarea
-          placeholder="실시간 채팅하기"
-          value={message}
-          onChange={(e) => setMessage(e.target.value)}
-          onKeyPress={handleKeyPress}
-          rows={1}
-        />
-        <button onClick={sendMessage}>
-          <img src={sendButton} />
-        </button>
+        {isLoggedIn ? (
+          <>
+            <textarea
+              placeholder="실시간 채팅하기"
+              value={message}
+              onChange={(e) => setMessage(e.target.value)}
+              onKeyPress={handleKeyPress}
+              rows={1}
+            />
+            <button onClick={sendMessage}>
+              <img src={sendButton} />
+            </button>
+          </>
+        ) : (
+          <div className="login-required">로그인이 필요합니다</div>
+        )}
       </div>
     </div>
   );

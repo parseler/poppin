@@ -41,19 +41,22 @@ const Home = () => {
     // 인기 데이터
 
     // // 오픈 예정 데이터
-    // getPopupByOpen().then((data) => {
-    //   setOpenPopups(data);
-    // }).catch((error) => {
-    //   console.error(error);
-    // })
+    getPopupByOpen()
+      .then((data) => {
+        setOpenPopups(data);
+      })
+      .catch((error) => {
+        console.error(error);
+      });
 
     // 추천 데이터
-    getPopupByRecommend().then((data) => {
-      setRecommendPopups(data);
-    }).catch((error) => {
-      console.error(error);
-    })
-
+    getPopupByRecommend()
+      .then((data) => {
+        setRecommendPopups(data);
+      })
+      .catch((error) => {
+        console.error(error);
+      });
   }, [accessToken, userTsid, userRole]);
 
   const goPopDetail = () => {
@@ -105,14 +108,14 @@ const Home = () => {
           <Link to={`/open`}>더보기</Link>
         </div>
         <div className="open-content">
-          {/* {openPopups.map((popup) => (
+          {openPopups.map((popup) => (
             <PopupBig
-            key={popup.popupId}
-            image={popup.images[0]} // 첫 번째 이미지만 표시, 필요에 따라 수정 가능
-            text={popup.name}
-            date={`${popup.startDate} - ${popup.endDate}`}
+              key={popup.popupId}
+              image={popup.images[0]} // 첫 번째 이미지만 표시, 필요에 따라 수정 가능
+              text={popup.name}
+              date={`${popup.startDate} - ${popup.endDate}`}
             />
-          ))} */}
+          ))}
         </div>
       </section>
       <section id="recommend-section">
@@ -123,10 +126,10 @@ const Home = () => {
         <div className="recommend-content">
           {recommendPopups.map((popup) => (
             <PopupSmall
-            key={popup.popupId}
-            image={popup.images[0]} // 첫 번째 이미지만 표시, 필요에 따라 수정 가능
-            text={popup.name}
-            date={`${popup.startDate} - ${popup.endDate}`}
+              key={popup.popupId}
+              image={popup.images[0]} // 첫 번째 이미지만 표시, 필요에 따라 수정 가능
+              text={popup.name}
+              date={`${popup.startDate} - ${popup.endDate}`}
             />
           ))}
         </div>

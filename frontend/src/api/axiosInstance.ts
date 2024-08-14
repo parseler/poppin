@@ -7,7 +7,7 @@ const LOCAL_URL = "http://localhost/api";
 
 const axiosInstance = axios.create({
   baseURL: LOCAL_URL,
-  timeout: 5000,
+  timeout: 3000,
   withCredentials: true, // CORS 요청에 자격 증명을 포함
 });
 

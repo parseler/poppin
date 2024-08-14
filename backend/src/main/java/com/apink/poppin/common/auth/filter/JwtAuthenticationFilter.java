@@ -30,11 +30,12 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
-//        String requestUri = request.getRequestURI();
-//        if (requestUri.matches("^\\/api\\/auth(?:\\/.*)?$") || requestUri.matches("^\\/oauth(?:\\/.*)?$")) {
-//            filterChain.doFilter(request, response);
-//            return;
-//        }
+        String requestUri = request.getRequestURI();
+        if (requestUri.matches("^\\/api\\/auth(?:\\/.*)?$") || requestUri.matches("^\\/oauth(?:\\/.*)?$")) {
+            filterChain.doFilter(request, response);
+            return;
+        }
+
         // 헤더에서 access키에 담긴 토큰을 꺼냄
         String accessToken = request.getHeader("Authorization");
 

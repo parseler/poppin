@@ -1,8 +1,6 @@
 package com.apink.poppin.common.exception.response;
 
 import com.apink.poppin.common.exception.dto.ExceptionCode;
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.Getter;
 import org.springframework.http.HttpStatus;
 import org.springframework.validation.BindingResult;
@@ -63,15 +61,6 @@ public class ErrorResponse {
                         violation.getMessage()))
                 .collect(Collectors.toList());
         return this;
-    }
-
-    public String toJson() {
-        ObjectMapper objectMapper = new ObjectMapper();
-        try {
-            return objectMapper.writeValueAsString(this);
-        } catch (JsonProcessingException e) {
-            return "{}"; // 예외 발생 시 빈 JSON 객체 반환
-        }
     }
 
     @Getter

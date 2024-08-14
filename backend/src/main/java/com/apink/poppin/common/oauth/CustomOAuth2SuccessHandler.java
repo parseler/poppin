@@ -70,9 +70,9 @@ public class CustomOAuth2SuccessHandler extends SimpleUrlAuthenticationSuccessHa
         response.addCookie(createCookie("refresh", refresh));
 
         if(customUser.isSigned()){
-            response.sendRedirect("/mypage/loading");
-        } else {
             response.sendRedirect("/loading");
+        } else {
+            response.sendRedirect("/mypage/loading");
         }
 
     }

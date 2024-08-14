@@ -27,7 +27,7 @@ public interface PreReservationRepository extends JpaRepository<PreReservation, 
     List<PreReservation> findByUserAndReservationStatement_ReservationStatementId(User user, @NotNull Long reservationStatement_reservationStatementId);
 
     @Query("SELECT new com.apink.poppin.api.reservation.dto.ReservationResponseDto(" +
-            "pr.preReservationId, p.name, u.name, pi.img, pr.createdAt, pr.reservationDate, " +
+            "pr.preReservationId, p.popupId, p.name, u.name, pi.img, pr.createdAt, pr.reservationDate, " +
             "pr.reservationTime, pr.reservationCount, rs.reservationStatementId) " +
             "FROM PreReservation pr " +
             "JOIN pr.popup p " +

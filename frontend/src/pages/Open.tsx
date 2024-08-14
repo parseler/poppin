@@ -2,13 +2,13 @@ import "@css/Open.css";
 import PopMedium02 from "@components/Home/PopMedium02";
 import { useEffect, useState } from "react";
 import { getPopupByOpen, PopupProps } from "@api/home";
-import { differenceInDays, parse, format } from "date-fns";
+import { differenceInDays, parse, isValid } from "date-fns";
 
 // ExtendedPopupProps 타입 정의
 interface ExtendedPopupProps extends Omit<PopupProps, 'startDate' | 'endDate'> {
   startDate: Date;
   endDate: Date;
-  daysDiff: number;
+  daysDiff: number; // 오늘 날짜 기준 startDate까지 남은 일수
 }
 
 const Open = () => {
@@ -20,17 +20,25 @@ const Open = () => {
         const today = new Date();
         const processedData = data.map((popup) => {
           // startDate와 endDate를 Date 객체로 변환
-          const startDate = parse(popup.startDate, 'yyyy.MM.dd', new Date());
-          const endDate = parse(popup.endDate, 'yyyy.MM.dd', new Date());
-          const daysDiff = differenceInDays(startDate, today);
-          
+          const startDate = parse(popup.startDate, 'yyyy-MM-dd', new Date());
+          const endDate = parse(popup.endDate, 'yyyy-MM-dd', new Date());
+
+          // 날짜가 유효한지 확인
+          if (!isValid(startDate) || !isValid(endDate)) {
+            console.error("Invalid date format", popup.startDate, popup.endDate);
+            return null; // 유효하지 않은 날짜는 무시
+          }
+
+          // 오늘 날짜 기준 startDate까지 남은 일수 계산
+          const daysDiff = differenceInDays(startDate, today) + 1;
+
           return {
             ...popup,
             startDate,
             endDate,
             daysDiff,
           };
-        }) as ExtendedPopupProps[];
+        }).filter(popup => popup !== null) as ExtendedPopupProps[]; // null 제거
         setOpenPopups(processedData);
       })
       .catch((error) => {
@@ -50,7 +58,7 @@ const Open = () => {
             key={popup.popupId}
             image={popup.images[0]} // 첫 번째 이미지만 표시, 필요에 따라 수정 가능
             text={popup.name}
-            date={`${format(popup.startDate, 'yyyy.MM.dd')} - ${format(popup.endDate, 'yyyy.MM.dd')}`}
+            date={`${popup.startDate.toLocaleDateString()} ~ ${popup.endDate.toLocaleDateString()}`}
             daysDiff={popup.daysDiff} // 날짜 차이를 직접 전달
           />
         ))}

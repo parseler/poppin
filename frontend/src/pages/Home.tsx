@@ -10,7 +10,7 @@ import PopupSmall from "@components/Home/PopupSmall";
 import { getUserData } from "@api/users";
 import { getTokenInfo } from "@api/axiosInstance";
 import useAuthStore from "@store/useAuthStore";
-import { getPopupByOpen, getPopupByRecommend } from "@api/home";
+import { getPopupByNew, getPopupByOpen, getPopupByRecommend } from "@api/home";
 import { PopupProps } from "@api/category";
 
 const Home = () => {
@@ -36,23 +36,31 @@ const Home = () => {
             console.error("Failed to fetch user data:", error);
           });
       }
+
+      // 추천 데이터
+      getPopupByRecommend()
+        .then((data) => {
+          setRecommendPopups(data);
+        })
+        .catch((error) => {
+          console.error(error);
+        });
+    } else {
+      // 비로그인 상태에서는 최신 팝업 10개를 가져옴
+      getPopupByNew()
+        .then((data) => {
+          const latestPopups = data.slice(0, 10); // 최신 팝업 10개만 선택
+          setRecommendPopups(latestPopups);
+        })
+        .catch((error) => {
+          console.error(error);
+        });
     }
 
-    // 인기 데이터
-
-    // // 오픈 예정 데이터
+    // 오픈 예정 데이터
     getPopupByOpen()
       .then((data) => {
         setOpenPopups(data);
-      })
-      .catch((error) => {
-        console.error(error);
-      });
-
-    // 추천 데이터
-    getPopupByRecommend()
-      .then((data) => {
-        setRecommendPopups(data);
       })
       .catch((error) => {
         console.error(error);
@@ -113,7 +121,7 @@ const Home = () => {
               key={popup.popupId}
               image={popup.images[0]} // 첫 번째 이미지만 표시, 필요에 따라 수정 가능
               text={popup.name}
-              date={`${popup.startDate} - ${popup.endDate}`}
+              date={`${popup.startDate} ~ ${popup.endDate}`}
             />
           ))}
         </div>
@@ -129,7 +137,7 @@ const Home = () => {
               key={popup.popupId}
               image={popup.images[0]} // 첫 번째 이미지만 표시, 필요에 따라 수정 가능
               text={popup.name}
-              date={`${popup.startDate} - ${popup.endDate}`}
+              date={`${popup.startDate} ~ ${popup.endDate}`}
             />
           ))}
         </div>

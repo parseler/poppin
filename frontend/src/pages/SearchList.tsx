@@ -26,13 +26,13 @@ const SearchList = () => {
         <h1>팝업 검색 결과</h1>
         <p>검색한 팝업의 상세 정보를 확인하세요.</p>
       </div>
-      <div className="open-contents">
+      <div className="search-contents">
         {searchPopups.map((popup) => (
           <PopMedium03
           key={popup.popupId}
           image={popup.images[0]} // 첫 번째 이미지만 표시, 필요에 따라 수정 가능
           text={popup.name}
-          date={`${popup.startDate} - ${popup.endDate}`}
+          date={`${popup.startDate} ~ ${popup.endDate}`}
           children={""}
           />
         ))}

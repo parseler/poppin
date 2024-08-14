@@ -1,6 +1,7 @@
 package com.apink.poppin.config;
 
 //import com.apink.poppin.api.manager.repository.ManagerRepository;
+
 import com.apink.poppin.api.manager.repository.ManagerRepository;
 import com.apink.poppin.common.auth.filter.CustomLogoutFilter;
 import com.apink.poppin.common.auth.filter.JwtAuthenticationFilter;
@@ -83,26 +84,27 @@ public class SecurityConfig {
 
         http
                 .authorizeHttpRequests((auth) -> auth
-                                .requestMatchers("/login", "/login/**","/api/auth/**", "/logout").permitAll()
-                                .requestMatchers("/api/users/**").hasRole("USER")
-                                .requestMatchers("/api/users/nickname").permitAll()
-                                .requestMatchers("/api/managers/**").hasRole("ADMIN")
-                                .requestMatchers("/api/managers/me/**").hasRole("MANAGER")
-                                .requestMatchers(HttpMethod.GET, "/api/popups/**").permitAll()
-                                .requestMatchers(HttpMethod.POST, "/api/popups/**").hasRole("USER")
-                                .requestMatchers(HttpMethod.GET, "/api/popups/*/pre-reservations").hasRole("MANAGER")
-                                .requestMatchers(HttpMethod.POST, "/api/popups").hasRole("MANAGER")
-                                .requestMatchers("/api/popups/*/onsite-reservations").hasRole("MANAGER")
-                                .requestMatchers(HttpMethod.DELETE, "/api/popups").hasRole("ADMIN")
-                                .requestMatchers(HttpMethod.DELETE, "/api/popups/*/pre-reservations/*").hasRole("USER")
-                                .requestMatchers(HttpMethod.PUT, "/api/popups/**").hasRole("MANAGER")
-                                .requestMatchers("/api/reviews/**").hasRole("USER")
-                                .requestMatchers(HttpMethod.GET, "/api/reviews/*").permitAll()
-                                .requestMatchers("/api/onsitereseravations/**").permitAll()
-                                .requestMatchers(HttpMethod.PUT, "/api/onsitereseravations").hasRole("MANAGER")
-                                .requestMatchers("/api/auth/**").permitAll()
-                                .requestMatchers("/api/auth/join", "/api/admins/**").hasRole("ADMIN")
-                                .anyRequest().authenticated()
+                        .requestMatchers("/login", "/login/**", "/api/auth/**", "/logout").permitAll()
+                        .requestMatchers("/api/users/**").hasRole("USER")
+                        .requestMatchers("/api/users/nickname").permitAll()
+                        .requestMatchers("/api/managers/**").hasRole("ADMIN")
+                        .requestMatchers("/api/managers/me/**").hasRole("MANAGER")
+                        .requestMatchers(HttpMethod.GET, "/api/popups/**").permitAll()
+                        .requestMatchers(HttpMethod.POST, "/api/popups/**").hasRole("USER")
+                        .requestMatchers(HttpMethod.GET, "/api/popups/*/pre-reservations").hasRole("MANAGER")
+                        .requestMatchers(HttpMethod.POST, "/api/popups").hasRole("MANAGER")
+                        .requestMatchers("/api/popups/*/onsite-reservations").hasRole("MANAGER")
+                        .requestMatchers(HttpMethod.DELETE, "/api/popups").hasRole("ADMIN")
+                        .requestMatchers(HttpMethod.DELETE, "/api/popups/*/pre-reservations/*").hasRole("USER")
+                        .requestMatchers(HttpMethod.PUT, "/api/popups/**").hasRole("MANAGER")
+                        .requestMatchers("/api/reviews/**").hasRole("USER")
+                        .requestMatchers(HttpMethod.GET, "/api/reviews/*").permitAll()
+                        .requestMatchers("/api/onsitereseravations/**").permitAll()
+                        .requestMatchers(HttpMethod.PUT, "/api/onsitereseravations").hasRole("MANAGER")
+                        .requestMatchers("/api/auth/**").permitAll()
+                        .requestMatchers("/api/auth/join", "/api/admins/**").hasRole("ADMIN")
+                        .requestMatchers("/ws-stomp/**").permitAll()
+                        .anyRequest().authenticated()
                 );
 
         http

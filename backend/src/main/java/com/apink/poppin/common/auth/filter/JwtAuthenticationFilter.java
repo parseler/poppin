@@ -7,7 +7,6 @@ import com.apink.poppin.api.user.dto.UserDto;
 import com.apink.poppin.common.auth.dto.CustomUserDetails;
 import com.apink.poppin.common.exception.dto.BusinessLogicException;
 import com.apink.poppin.common.exception.dto.ExceptionCode;
-import com.apink.poppin.common.exception.response.ErrorResponse;
 import com.apink.poppin.common.oauth.CustomOAuth2User;
 import com.apink.poppin.common.util.JwtTokenUtil;
 import jakarta.servlet.FilterChain;
@@ -15,7 +14,6 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -37,81 +35,68 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 //            filterChain.doFilter(request, response);
 //            return;
 //        }
+        // 헤더에서 access키에 담긴 토큰을 꺼냄
+        String accessToken = request.getHeader("Authorization");
 
-        try {
-            // 헤더에서 access키에 담긴 토큰을 꺼냄
-            String accessToken = request.getHeader("Authorization");
-
-            // 토큰이 없다면 다음 필터로 넘김
-            if (accessToken == null) {
-                filterChain.doFilter(request, response);
-                return;
-            }
-
-            System.out.println(accessToken);
-            accessToken = jwtTokenUtil.extractToken(accessToken);
-
-            // 토큰 만료 여부 확인, 만료시 다음 필터로 넘기지 않음
-            if(jwtTokenUtil.isExpired(accessToken)) {
-                throw new BusinessLogicException(ExceptionCode.AT_EXPIRED_ERROR);
-            }
-
-            // 토큰이 access인지 확인 (발급시 페이로드에 명시)
-            String category = jwtTokenUtil.getCategory(accessToken);
-
-            // 엑세스 토큰이 아니면 다음 필터로 넘기지 않음
-            if (!category.equals("access")) {
-                throw new BusinessLogicException(ExceptionCode.ACCESS_TOKEN_ERROR);
-            }
-
-            // username, role 값을 획득
-            Long username = jwtTokenUtil.getUsername(accessToken);
-            String role = jwtTokenUtil.getRole(accessToken);
-
-            if(role.equals("manager")) {
-                Manager managerData = managerRepository.findById(String.valueOf(username))
-                        .orElseThrow(() -> new BusinessLogicException(ExceptionCode.MANAGER_NOT_FOUND));
-
-                ManagerDTO manager = ManagerDTO.builder()
-                        .managerTsid(managerData.getManagerTsid())
-                        .id(managerData.getId())
-                        .role("ROLE_MANAGER")
-                        .build();
-
-                CustomUserDetails customUserDetails = new CustomUserDetails(manager);
-
-                Authentication authToken = new UsernamePasswordAuthenticationToken(customUserDetails, null, customUserDetails.getAuthorities());
-                SecurityContextHolder.getContext().setAuthentication(authToken);
-            }
-
-            else {
-                UserDto.Login user = UserDto.Login.builder()
-                        .userTsid(username)
-                        .role(role)
-                        .build();
-
-                CustomOAuth2User customUserDetails = new CustomOAuth2User(user);
-
-                Authentication authToken = new UsernamePasswordAuthenticationToken(customUserDetails, null, customUserDetails.getAuthorities());
-                SecurityContextHolder.getContext().setAuthentication(authToken);
-            }
-
+        // 토큰이 없다면 다음 필터로 넘김
+        if (accessToken == null) {
             filterChain.doFilter(request, response);
-
-        } catch (BusinessLogicException ex) {
-            // 예외 발생 시 HTTP 응답 처리
-            setErrorResponse(response, ex);
+            return;
         }
-    }
 
-    private void setErrorResponse(HttpServletResponse response, BusinessLogicException ex) throws IOException {
-        response.setStatus(HttpStatus.UNAUTHORIZED.value()); // 또는 적절한 상태 코드
-        response.setContentType("application/json");
+        System.out.println(accessToken);
+        accessToken = jwtTokenUtil.extractToken(accessToken);
 
-        ErrorResponse errorResponse = ErrorResponse.of(ex.getCode());
-        try (PrintWriter writer = response.getWriter()) {
-            writer.write(errorResponse.toJson()); // ErrorResponse를 JSON으로 변환하는 메서드 필요
-            writer.flush();
+        // 토큰 만료 여부 확인, 만료시 다음 필터로 넘기지 않음
+        if(jwtTokenUtil.isExpired(accessToken)) {
+            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+            response.setContentType("application/json");
+            response.setCharacterEncoding("UTF-8");
+            response.getWriter().write("{\"error\": \"AccessToken is expired\"}");
+            return;
         }
+
+        // 토큰이 access인지 확인 (발급시 페이로드에 명시)
+        String category = jwtTokenUtil.getCategory(accessToken);
+
+        // 엑세스 토큰이 아니면 다음 필터로 넘기지 않음
+        if (!category.equals("access")) {
+            throw new BusinessLogicException(ExceptionCode.ACCESS_TOKEN_ERROR);
+        }
+
+        // username, role 값을 획득
+        Long username = jwtTokenUtil.getUsername(accessToken);
+        String role = jwtTokenUtil.getRole(accessToken);
+
+        if(role.equals("manager")) {
+            Manager managerData = managerRepository.findById(String.valueOf(username))
+                    .orElseThrow(() -> new BusinessLogicException(ExceptionCode.MANAGER_NOT_FOUND));
+
+            ManagerDTO manager = ManagerDTO.builder()
+                    .managerTsid(managerData.getManagerTsid())
+                    .id(managerData.getId())
+                    .role("ROLE_MANAGER")
+                    .build();
+
+            CustomUserDetails customUserDetails = new CustomUserDetails(manager);
+
+            Authentication authToken = new UsernamePasswordAuthenticationToken(customUserDetails, null, customUserDetails.getAuthorities());
+            SecurityContextHolder.getContext().setAuthentication(authToken);
+        }
+
+        else {
+            UserDto.Login user = UserDto.Login.builder()
+                    .userTsid(username)
+                    .role(role)
+                    .build();
+
+            CustomOAuth2User customUserDetails = new CustomOAuth2User(user);
+
+            Authentication authToken = new UsernamePasswordAuthenticationToken(customUserDetails, null, customUserDetails.getAuthorities());
+            SecurityContextHolder.getContext().setAuthentication(authToken);
+        }
+
+
+        filterChain.doFilter(request, response);
     }
 }

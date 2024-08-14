@@ -5,7 +5,6 @@ import { Box, Modal } from "@mui/material";
 import { getUserData } from "@api/users";
 import { axiosInstance } from "@api/axiosInstance";
 import { UserProps } from "@interface/users";
-import Cookies from "js-cookie";
 
 import loginBefore from "@assets/mypage/loginBefore.svg";
 import nextButton from "@assets/mypage/nextButton.svg";

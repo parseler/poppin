@@ -1,18 +1,29 @@
 import { Link } from "react-router-dom";
-import banners from "@utils/get-banner-image";
+import { ReservationProps } from "@api/mypage";
 import PopMedium03 from "./PopMedium03";
 
-const VisitCompletionList = () => {
+interface VisitCompletionListProps {
+  reservations: ReservationProps[];
+}
+
+const VisitCompletionList: React.FC<VisitCompletionListProps> = ({ reservations }) => {
   return (
     <div id="visit-completion-list">
-      {banners.length > 0 ? (
-        banners.map((banner, index) => (
-          // 링크 넘어가면 다녀온 팝업 스토어 주소 자동으로 나와야 함
-          <Link to="/review/write" key={index}>
+      {reservations.length > 0 ? (
+        reservations.map((reservation) => (
+          // 링크를 클릭하면 다녀온 팝업 스토어 이름이 포함된 상태로 후기 작성 페이지로 이동합니다.
+          <Link
+            to={`/review/write?store=${encodeURIComponent(reservation.title)}`}
+            key={reservation.reservationId}
+          >
             <PopMedium03
-              image={banner.image}
-              text={banner.text}
-              date={banner.date}
+              image={
+                reservation.img instanceof File
+                  ? URL.createObjectURL(reservation.img)
+                  : reservation.img
+              }
+              text={reservation.title}
+              date={reservation.reservationDate}
             >
               <div className="writing-link">
                 후기 작성하기
@@ -51,6 +62,6 @@ const VisitCompletionList = () => {
       )}
     </div>
   );
-}
+};
 
 export default VisitCompletionList;

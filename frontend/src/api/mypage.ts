@@ -11,6 +11,7 @@ export interface ReservationProps {
   reservationCount: number;
   reservationStatement: number;
   kind: number;
+  popupId: number;
 }
 
 // 내가 작성한 팝업 후기

@@ -9,12 +9,13 @@ import useAuthStore from "@store/useAuthStore";
 import { UserProps } from "@interface/users";
 import { getUserData } from "@api/users";
 
-const ReviewWrite: React.FC<{ popupId: number }> = ({ popupId }) => {
+const ReviewWrite: React.FC = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const [user, setUser] = useState<UserProps | null>(null);
   const [title, setTitle] = useState("");
   const [store, setStore] = useState("");
+  const [popupId, setPopupId] = useState<number>();
   const [thumbnail, setThumbnail] = useState<File | null>(null);
   const [editorContent, setEditorContent] = useState("");
   const [rating, setRating] = useState(0);
@@ -63,8 +64,14 @@ const ReviewWrite: React.FC<{ popupId: number }> = ({ popupId }) => {
   useEffect(() => {
     const params = new URLSearchParams(location.search);
     const storeName = params.get("store");
+    const popupNumber = params.get("popupId");
+
     if (storeName) {
       setStore(storeName);
+    }
+
+    if (popupNumber) {
+      setPopupId(Number(popupNumber));
     }
   }, [location]);
 
@@ -112,9 +119,10 @@ const ReviewWrite: React.FC<{ popupId: number }> = ({ popupId }) => {
         formData.append("thumbnail", thumbnail);
       }
 
+      console.log("popupId ", popupId)
       await createReviewData(popupId, formData);
 
-      navigate(`/popup/${popupId}`);
+      navigate(`/reviews/${popupId}`);
     } catch (error) {
       console.error("Error creating review:", error);
     }

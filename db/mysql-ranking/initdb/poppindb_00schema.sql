@@ -23,6 +23,6 @@ CREATE TABLE IF NOT EXISTS `poppin`.`popup_ranking` (
   `reviewScore` FLOAT NOT NULL,
   `reviewCount` INT NOT NULL,
   `reservations` INT NOT NULL,
-  `created_date` DATE NULL DEFAULT now(),
+  `created_date` DATE NOT NULL,
   PRIMARY KEY (`popup_ranking_id`)
 ) ENGINE = InnoDB;

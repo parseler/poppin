@@ -1,5 +1,7 @@
+use poppin;
+
 -- user 테이블에 더미 데이터 삽입
-INSERT INTO poppin.user (user_tsid, provider_id, provider_name, name, nickname, email, age, gender, phone_number, role, img, state) VALUES
+INSERT INTO user (user_tsid, provider_id, provider_name, name, nickname, email, age, gender, phone_number, role, img, state) VALUES
 (1, 'provider1', 'google', '김철수', 'cheolsu', 'cheolsu@example.com', '30', 'M', '010-1234-5678', 'user', 'img1.jpg', 1),
 (2, 'provider2', 'kakao', '이영희', 'younghee', 'younghee@example.com', '25', 'F', '010-2345-6789', 'user', 'img2.jpg', 1),
 (3, 'provider3', 'naver', '박민준', 'minjun', 'minjun@example.com', '28', 'M', '010-3456-7890', 'user', 'img3.jpg', 1),
@@ -12,7 +14,7 @@ INSERT INTO poppin.user (user_tsid, provider_id, provider_name, name, nickname, 
 (10, 'provider10', 'google', '서준호', 'junho', 'junho@example.com', '33', 'M', '010-0123-4567', 'user', 'img10.jpg', 1);
 
 -- manager 테이블에 더미 데이터 삽입
-INSERT INTO poppin.manager (manager_tsid, nickname, id, password, img, state) VALUES
+INSERT INTO manager (manager_tsid, nickname, id, password, img, state) VALUES
 (1, 'manager1', 'manager1_id', 'password1', 'manager_img1.jpg', 1),
 (2, 'manager2', 'manager2_id', 'password2', 'manager_img2.jpg', 1),
 (3, 'manager3', 'manager3_id', 'password3', 'manager_img3.jpg', 1),
@@ -1744,7 +1746,7 @@ INSERT INTO popup (manager_tsid, name, lat, lon, address, start_date, end_date, 
 
 
 -- category 테이블에 더미 데이터 삽입
-INSERT INTO poppin.category (name)
+INSERT INTO category (name)
 VALUES
 ('뷰티'),
 ('패션'),
@@ -1758,7 +1760,7 @@ VALUES
 ('취미/여가');
 
 -- reservation_statement 테이블에 더미 데이터 삽입
-INSERT INTO poppin.reservation_statement (reservation_statement_name)
+INSERT INTO reservation_statement (reservation_statement_name)
 VALUES
 ('방문 전'),
 ('방문 후'),
@@ -1767,7 +1769,7 @@ VALUES
 
 
 -- popup_category 테이블에 더미 데이터 삽입
-INSERT INTO poppin.popup_category (popup_category_id, popup_id, category_id) VALUES
+INSERT INTO popup_category (popup_category_id, popup_id, category_id) VALUES
 (1, 1, 1),
 (2, 2, 2),
 (3, 3, 3),
@@ -1780,110 +1782,132 @@ INSERT INTO poppin.popup_category (popup_category_id, popup_id, category_id) VAL
 (10, 5, 1);
 
 -- popup_image 테이블에 더미 데이터 삽입
-INSERT INTO poppin.popup_image (popup_id, img, seq) VALUES
+INSERT INTO popup_image (popup_id, img, seq) VALUES
 (1, './uploads/1_img1.png', 1),
 (2, './uploads/2_img2.jpg', 1),
 (3, './uploads/3_img3.png', 1),
 (4, './uploads/4_img4.jpg', 1),
 (5, './uploads/5_img5.jpg', 1),
 (6, './uploads/6_img6.jpg', 1),
-(8, './uploads/7_img7.jpg', 1),
-(9, './uploads/8_img8.png', 1),
-(10, './uploads/9_img9.jpg', 1),
-(11, './uploads/10_img10.jpg', 1),
-(12, './uploads/11_img11.jpg', 1),
-(13, './uploads/12_img12.jpg', 1),
-(14, './uploads/13_img13.png', 1),
-(15, './uploads/14_img14.png', 1),
-(16, './uploads/15_img15.jpg', 1),
-(17, './uploads/16_img16.jpg', 1),
-(18, './uploads/17_img17.jpg', 1),
-(19, './uploads/18_img18.png', 1),
-(20, './uploads/19_img19.jpg', 1),
-(21, './uploads/20_img20.png', 1),
-(22, './uploads/21_img21.png', 1),
-(23, './uploads/22_img22.png', 1),
-(24, './uploads/23_img23.jpg', 1),
-(25, './uploads/24_img24.jpg', 1),
-(26, './uploads/25_img25.jpg', 1),
-(27, './uploads/26_img26.jpg', 1),
-(28, './uploads/27_img27.jpg', 1),
-(29, './uploads/28_img28.jpg', 1),
-(30, './uploads/29_img29.jpg', 1),
-(31, './uploads/30_img30.jpg', 1),
-(32, './uploads/31_img31.jpg', 1),
-(33, './uploads/32_img32.png', 1),
-(34, './uploads/33_img33.jpg', 1),
-(35, './uploads/34_img34.jpg', 1),
-(36, './uploads/35_img35.jpg', 1),
-(37, './uploads/36_img36.jpg', 1),
-(38, './uploads/37_img37.jpg', 1),
-(39, './uploads/38_img38.jpg', 1),
-(40, './uploads/39_img39.jpg', 1),
-(41, './uploads/40_img40.jpg', 1),
-(42, './uploads/41_img41.jpg', 1),
-(43, './uploads/42_img42.jpg', 1),
-(44, './uploads/43_img43.jpg', 1),
-(45, './uploads/44_img44.jpg', 1),
-(46, './uploads/45_img45.jpg', 1),
-(47, './uploads/46_img46.jpg', 1),
-(48, './uploads/47_img47.jpg', 1),
-(49, './uploads/48_img48.jpg', 1),
-(50, './uploads/49_img49.png', 1),
-(51, './uploads/50_img50.jpg', 1),
-(52, './uploads/51_img51.jpg', 1),
-(53, './uploads/52_img52.png', 1),
-(54, './uploads/53_img53.jpg', 1),
-(55, './uploads/54_img54.jpg', 1),
-(56, './uploads/55_img55.jpg', 1),
-(57, './uploads/56_img56.jpg', 1),
-(58, './uploads/57_img57.jpg', 1),
-(59, './uploads/58_img58.jpg', 1),
-(60, './uploads/59_img59.jpg', 1),
-(61, './uploads/60_img60.jpg', 1),
-(62, './uploads/61_img61.jpg', 1),
-(63, './uploads/62_img62.jpg', 1),
-(64, './uploads/63_img63.jpg', 1),
-(65, './uploads/64_img64.jpg', 1),
-(66, './uploads/65_img65.jpg', 1),
-(67, './uploads/66_img66.jpg', 1),
-(68, './uploads/67_img67.jpg', 1),
-(69, './uploads/68_img68.png', 1),
-(70, './uploads/69_img69.jpg', 1),
-(71, './uploads/70_img70.jpg', 1),
-(72, './uploads/71_img71.jpg', 1),
-(73, './uploads/72_img72.jpg', 1),
-(74, './uploads/73_img73.jpg', 1),
-(75, './uploads/74_img74.jpg', 1),
-(76, './uploads/75_img75.jpg', 1),
-(77, './uploads/76_img76.jpg', 1),
-(78, './uploads/77_img77.jpg', 1),
-(79, './uploads/78_img78.jpg', 1),
-(80, './uploads/79_img79.jpg', 1),
-(81, './uploads/80_img80.jpg', 1),
-(82, './uploads/81_img81.jpg', 1),
-(83, './uploads/82_img82.jpg', 1),
-(84, './uploads/83_img83.jpg', 1),
-(85, './uploads/84_img84.jpg', 1),
-(86, './uploads/85_img85.png', 1),
-(87, './uploads/86_img86.jpg', 1),
-(88, './uploads/87_img87.jpg', 1),
-(89, './uploads/88_img88.jpg', 1),
-(90, './uploads/89_img89.jpg', 1),
-(91, './uploads/90_img90.jpg', 1),
-(92, './uploads/91_img91.jpg', 1),
-(93, './uploads/92_img92.jpg', 1),
-(94, './uploads/93_img93.jpg', 1),
-(94, './uploads/94_img93-2.png', 2),
-(7, './uploads/95_img95.jpg', 1),
-(1, './uploads/98_img1-2.png', 2),
-(1, './uploads/96_img1-3.png', 3),
-(2, './uploads/97_img2-2.png', 2),
-(3, './uploads/99_img3-2.png', 3);
+(7, './uploads/7_img7.jpg', 1),
+(8, './uploads/8_img8.png', 1),
+(9, './uploads/9_img9.jpg', 1),
+(10, './uploads/10_img10.jpg', 1),
+(11, './uploads/11_img11.jpg', 1),
+(12, './uploads/12_img12.jpg', 1),
+(13, './uploads/13_img13.png', 1),
+(14, './uploads/14_img14.png', 1),
+(15, './uploads/15_img15.jpg', 1),
+(16, './uploads/16_img16.jpg', 1),
+(17, './uploads/17_img17.jpg', 1),
+(18, './uploads/18_img18.png', 1),
+(19, './uploads/19_img19.jpg', 1),
+(20, './uploads/20_img20.png', 1),
+(21, './uploads/21_img21.png', 1),
+(22, './uploads/22_img22.png', 1),
+(23, './uploads/23_img23.jpg', 1),
+(24, './uploads/24_img24.jpg', 1),
+(25, './uploads/25_img25.jpg', 1),
+(26, './uploads/26_img26.jpg', 1),
+(27, './uploads/27_img27.jpg', 1),
+(28, './uploads/28_img28.jpg', 1),
+(29, './uploads/29_img29.jpg', 1),
+(30, './uploads/30_img30.jpg', 1),
+(31, './uploads/31_img31.jpg', 1),
+(32, './uploads/32_img32.png', 1),
+(33, './uploads/33_img33.jpg', 1),
+(34, './uploads/34_img34.jpg', 1),
+(35, './uploads/35_img35.jpg', 1),
+(36, './uploads/36_img36.jpg', 1),
+(37, './uploads/37_img37.jpg', 1),
+(38, './uploads/38_img38.jpg', 1),
+(39, './uploads/39_img39.jpg', 1),
+(40, './uploads/40_img40.jpg', 1),
+(41, './uploads/41_img41.jpg', 1),
+(42, './uploads/42_img42.jpg', 1),
+(43, './uploads/43_img43.jpg', 1),
+(44, './uploads/44_img44.jpg', 1),
+(45, './uploads/45_img45.jpg', 1),
+(46, './uploads/46_img46.jpg', 1),
+(47, './uploads/47_img47.jpg', 1),
+(48, './uploads/48_img48.jpg', 1),
+(49, './uploads/49_img49.png', 1),
+(50, './uploads/50_img50.jpg', 1),
+(51, './uploads/51_img51.jpg', 1),
+(52, './uploads/52_img52.png', 1),
+(53, './uploads/53_img53.jpg', 1),
+(54, './uploads/54_img54.jpg', 1),
+(55, './uploads/55_img55.jpg', 1),
+(56, './uploads/56_img56.jpg', 1),
+(57, './uploads/57_img57.jpg', 1),
+(58, './uploads/58_img58.jpg', 1),
+(59, './uploads/59_img59.jpg', 1),
+(60, './uploads/60_img60.jpg', 1),
+(61, './uploads/61_img61.jpg', 1),
+(62, './uploads/62_img62.jpg', 1),
+(63, './uploads/63_img63.jpg', 1),
+(64, './uploads/64_img64.jpg', 1),
+(65, './uploads/65_img65.jpg', 1),
+(66, './uploads/66_img66.jpg', 1),
+(67, './uploads/67_img67.jpg', 1),
+(68, './uploads/68_img68.png', 1),
+(69, './uploads/69_img69.jpg', 1),
+(70, './uploads/70_img70.jpg', 1),
+(71, './uploads/71_img71.jpg', 1),
+(72, './uploads/72_img72.jpg', 1),
+(73, './uploads/73_img73.jpg', 1),
+(74, './uploads/74_img74.jpg', 1),
+(75, './uploads/75_img75.jpg', 1),
+(76, './uploads/76_img76.jpg', 1),
+(77, './uploads/77_img77.jpg', 1),
+(78, './uploads/78_img78.jpg', 1),
+(79, './uploads/79_img79.jpg', 1),
+(80, './uploads/80_img80.jpg', 1),
+(81, './uploads/81_img81.jpg', 1),
+(82, './uploads/82_img82.jpg', 1),
+(83, './uploads/83_img83.jpg', 1),
+(84, './uploads/84_img84.jpg', 1),
+(85, './uploads/85_img85.png', 1),
+(86, './uploads/86_img86.jpg', 1),
+(87, './uploads/87_img87.jpg', 1),
+(88, './uploads/88_img88.jpg', 1),
+(89, './uploads/89_img89.jpg', 1),
+(90, './uploads/90_img90.jpg', 1),
+(91, './uploads/91_img91.jpg', 1),
+(92, './uploads/92_img92.jpg', 1),
+(93, './uploads/93_img93.jpg', 1),
+(94, './uploads/94_img94.png', 1),
+(95, './uploads/95_img95.jpg', 1),
+(96, './uploads/96_img96.png', 1),
+(97, './uploads/94_img97.png', 1),
+(98, './uploads/94_img98.png', 1),
+(99, './uploads/94_img99.png', 1),
+(100, './uploads/94_img100.png', 1),
+(101, './uploads/94_img101.png', 1),
+(102, './uploads/94_img102.png', 1),
+(103, './uploads/94_img103.png', 1),
+(104, './uploads/94_img104.png', 1),
+(105, './uploads/94_img105.png', 1),
+(106, './uploads/94_img106.png', 1),
+(107, './uploads/94_img107.png', 1),
+(108, './uploads/94_img108.png', 1),
+(109, './uploads/94_img109.png', 1),
+(110, './uploads/94_img110.png', 1),
+(111, './uploads/94_img111.png', 1),
+(112, './uploads/94_img112.png', 1),
+(113, './uploads/94_img113.png', 1),
+(114, './uploads/94_img114.png', 1),
+(115, './uploads/94_img115.png', 1),
+(116, './uploads/94_img116.png', 1),
+(117, './uploads/94_img91-2.png', 1),
+(118, './uploads/94_img1-3.png', 1),
+(119, './uploads/94_img2-2.png', 1),
+(120, './uploads/94_img3-2.png', 1),
+(121, './uploads/94_img1-2.png', 1);
 
 
 -- heart 테이블에 더미 데이터 삽입
-INSERT INTO poppin.heart (heart_id, popup_id, user_tsid) VALUES
+INSERT INTO heart (heart_id, popup_id, user_tsid) VALUES
 (1, 1, 1),
 (2, 2, 2),
 (3, 3, 3),
@@ -1896,7 +1920,7 @@ INSERT INTO poppin.heart (heart_id, popup_id, user_tsid) VALUES
 (10, 5, 10);
 
 -- review 테이블에 더미 데이터 삽입
-INSERT INTO poppin.review (review_id, popup_id, user_tsid, rating, title, thumbnail, content, created_at, is_deleted) VALUES
+INSERT INTO review (review_id, popup_id, user_tsid, rating, title, thumbnail, content, created_at, is_deleted) VALUES
 (1, 1, 1, 4.5, '첫 번째 리뷰', 'review_img1.jpg', '첫 번째 리뷰 내용', '2024-08-01 10:00:00', 0),
 (2, 2, 2, 4.0, '두 번째 리뷰', 'review_img2.jpg', '두 번째 리뷰 내용', '2024-09-01 11:00:00', 0),
 (3, 3, 3, 3.5, '세 번째 리뷰', 'review_img3.jpg', '세 번째 리뷰 내용', '2024-10-01 12:00:00', 0),
@@ -1904,7 +1928,7 @@ INSERT INTO poppin.review (review_id, popup_id, user_tsid, rating, title, thumbn
 (5, 5, 5, 4.2, '다섯 번째 리뷰', 'review_img5.jpg', '다섯 번째 리뷰 내용', '2024-09-01 14:00:00', 0);
 
 -- review_comment 테이블에 더미 데이터 삽입
-INSERT INTO poppin.review_comment (review_comment_id, review_id, user_tsid, content, created_at, is_deleted) VALUES
+INSERT INTO review_comment (review_comment_id, review_id, user_tsid, content, created_at, is_deleted) VALUES
 (1, 1, 1, '첫 번째 댓글 내용', '2024-08-01 15:00:00', 0),
 (2, 2, 2, '두 번째 댓글 내용', '2024-09-01 16:00:00', 0),
 (3, 3, 3, '세 번째 댓글 내용', '2024-10-01 17:00:00', 0),
@@ -1912,7 +1936,7 @@ INSERT INTO poppin.review_comment (review_comment_id, review_id, user_tsid, cont
 (5, 5, 5, '다섯 번째 댓글 내용', '2024-09-01 19:00:00', 0);
 
 -- user_refresh_token 테이블에 더미 데이터 삽입
-INSERT INTO poppin.user_refresh_token (user_refresh_token_id, user_tsid, refresh_token) VALUES
+INSERT INTO user_refresh_token (user_refresh_token_id, user_tsid, refresh_token) VALUES
 (1, 1, 'refresh_token_1'),
 (2, 2, 'refresh_token_2'),
 (3, 3, 'refresh_token_3'),
@@ -1925,7 +1949,7 @@ INSERT INTO poppin.user_refresh_token (user_refresh_token_id, user_tsid, refresh
 (10, 10, 'refresh_token_10');
 
 -- manager_refresh_token 테이블에 더미 데이터 삽입
-INSERT INTO poppin.manager_refresh_token (manager_refresh_token_id, manager_tsid, refresh_token) VALUES
+INSERT INTO manager_refresh_token (manager_refresh_token_id, manager_tsid, refresh_token) VALUES
 (1, 1, 'manager_refresh_token_1'),
 (2, 2, 'manager_refresh_token_2'),
 (3, 3, 'manager_refresh_token_3'),

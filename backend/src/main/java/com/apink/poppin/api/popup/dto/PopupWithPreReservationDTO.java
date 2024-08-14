@@ -37,7 +37,7 @@ public class PopupWithPreReservationDTO {
 
     private boolean deleted;
 
-    private Long managerTsId;
+    private String managerTsId;
 
     private List<String> images;
     private List<String> categories;

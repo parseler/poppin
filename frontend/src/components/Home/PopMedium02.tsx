@@ -1,14 +1,13 @@
-import { BannerProps } from "@utils/get-banner-image";
-import { differenceInDays, parse } from "date-fns";
+interface PopMedium02Props {
+  image: string;
+  text: string;
+  date: string;
+  daysDiff: number;
+}
 
-const PopMedium02 = ({image, text, date} : BannerProps) => {
-  const today = new Date();
-  const startDate = parse(date.split(' ')[0], 'yy.MM.dd', new Date());
-  const daysDiff = differenceInDays(startDate, today);
-
+const PopMedium02 = ({ image, text, date, daysDiff }: PopMedium02Props) => {
   return (
     <div id="pop-up-medium">
-      {/* 오픈 & 예약 일정 구별해야 함! */}
       <div className="pop-open">
         <h2>오픈</h2>
         <h2>{daysDiff > 0 ? `D-${daysDiff}` : '완료'}</h2>
@@ -22,6 +21,6 @@ const PopMedium02 = ({image, text, date} : BannerProps) => {
       </div>
     </div>
   );
-}
+};
 
 export default PopMedium02;

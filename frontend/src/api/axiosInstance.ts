@@ -17,7 +17,7 @@ axiosInstance.interceptors.request.use(
     const { accessToken, userTsid, userRole } = useAuthStore.getState();
     console.log("요청아이디: ", userTsid);
     console.log("요청역할: ", userRole);
-    console.log(accessToken)
+    //console.log(accessToken)
 
     if (accessToken) {
       config.headers["Authorization"] = `${accessToken}`;
@@ -36,16 +36,7 @@ axiosInstance.interceptors.request.use(
 
 // 응답 인터셉터 설정
 axiosInstance.interceptors.response.use(
-  (response) => {
-    console.log("Response received:", response);
-
-    // 리디렉션 URL이 포함된 응답 처리
-    if (response.data && response.data.redirectUrl) {
-      window.location.href = response.data.redirectUrl;
-    }
-
-    return response;
-  },
+  (response) => response,
   async (error) => {
     console.log("Error in response interceptor:", error);
     const originalRequest = error.config;
@@ -55,15 +46,15 @@ axiosInstance.interceptors.response.use(
       error.response.status === 401 &&
       !originalRequest._retry
     ) {
+      console.log("401 Unauthorized detected, attempting to reissue token...");
       originalRequest._retry = true;
 
-      // 쿠키에서 refreshToken 읽기
       const refreshToken = Cookies.get("refreshToken");
+      console.log("Refresh token:", refreshToken);
 
       if (refreshToken) {
         try {
           console.log("Sending token reissue request...");
-          // 토큰 재발급 요청
           const responseAgain = await axios.post(
             `${LOCAL_URL}/auth/reissue`,
             { refreshToken },
@@ -75,15 +66,13 @@ axiosInstance.interceptors.response.use(
           const { accessToken: newAccessToken } = responseAgain.data;
           const tokenInfo = getTokenInfo(newAccessToken);
 
-          // 전역 상태 업데이트
           useAuthStore.getState().setTokens(
             newAccessToken,
             tokenInfo.userTsid,
-            tokenInfo.userRole,
+            tokenInfo.userRole
           );
 
-          // 요청에 새로운 토큰 설정
-          originalRequest.headers["Authorization"] = `${newAccessToken}`;
+          originalRequest.headers["Authorization"] = `Bearer ${newAccessToken}`;
           originalRequest.headers["userTsid"] = tokenInfo.userTsid;
           originalRequest.headers["role"] = tokenInfo.userRole;
 
@@ -91,12 +80,13 @@ axiosInstance.interceptors.response.use(
           return axiosInstance(originalRequest);
         } catch (err) {
           console.error("Error during reissuing token:", err);
+          // 리이슈 실패 시 추가적인 처리 필요
+          // 예: 로그아웃 처리
           return Promise.reject(err);
         }
       } else {
-        // refreshToken이 쿠키에 없을 경우 처리
         console.error("No refresh token available in cookies");
-        // 필요한 경우, 로그아웃 처리 또는 로그인 페이지로 리디렉션할 수 있습니다.
+        // 리프레시 토큰이 없을 경우 추가적인 처리 필요 (로그아웃, 재로그인 유도 등)
       }
     } else {
       console.error("Non-401 error occurred:", error.message);

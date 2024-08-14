@@ -9,6 +9,7 @@ import com.apink.poppin.api.review.service.ReviewService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
@@ -62,5 +63,12 @@ public class ReviewController {
         List<ReviewListDto> list = reviewService.getReviews();
 
         return ResponseEntity.ok(list);
+    }
+
+    @PostMapping("/image")
+    public ResponseEntity<?> uploadReviewImage(@RequestPart(value = "img", required = false) MultipartFile img) {
+        String imagePath = reviewService.uploadReviewImage(img);
+
+        return ResponseEntity.ok(imagePath);
     }
 }

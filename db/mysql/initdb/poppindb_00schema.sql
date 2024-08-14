@@ -187,6 +187,25 @@ ENGINE = InnoDB;
 
 
 -- -----------------------------------------------------
+-- Table `poppin`.`review_image`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `poppin`.`review_image` (
+  `review_image_id` INT NOT NULL AUTO_INCREMENT,
+  `review_id` INT NOT NULL,
+  `img` VARCHAR(255) NOT NULL,
+  `seq` INT NOT NULL,
+  `deleted` TINYINT(1) NOT NULL DEFAULT 0,
+  PRIMARY KEY (`review_image_id`),
+  INDEX `fk_review_image_review_idx` (`review_id` ASC) VISIBLE,
+  CONSTRAINT `fk_review_image_review`
+    FOREIGN KEY (`review_id`)
+    REFERENCES `poppin`.`review` (`review_id`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION)
+ENGINE = InnoDB;
+
+
+-- -----------------------------------------------------
 -- Table `poppin`.`comment`
 -- -----------------------------------------------------
 CREATE TABLE IF NOT EXISTS `poppin`.`comment` (

@@ -2,12 +2,12 @@ package com.apink.poppin.api.review.service;
 
 import com.apink.poppin.api.popup.entity.Popup;
 import com.apink.poppin.api.popup.repository.PopupRepository;
-import com.apink.poppin.api.review.dto.CommentDto;
-import com.apink.poppin.api.review.dto.ReviewDto;
-import com.apink.poppin.api.review.dto.ReviewListDto;
-import com.apink.poppin.api.review.dto.ReviewUpdateRequestDto;
+import com.apink.poppin.api.popup.service.FileStorageService;
+import com.apink.poppin.api.review.dto.*;
 import com.apink.poppin.api.review.entity.Comment;
 import com.apink.poppin.api.review.entity.Review;
+import com.apink.poppin.api.review.entity.ReviewImage;
+import com.apink.poppin.api.review.repository.ReviewImageRepository;
 import com.apink.poppin.api.review.repository.ReviewRepository;
 import com.apink.poppin.api.user.entity.User;
 import com.apink.poppin.api.user.repository.UserRepository;
@@ -15,6 +15,7 @@ import com.apink.poppin.common.exception.dto.BusinessLogicException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.time.Instant;
 import java.util.ArrayList;
@@ -29,6 +30,8 @@ public class ReviewServiceImpl implements ReviewService {
     private final ReviewRepository reviewRepository;
     private final UserRepository userRepository; // 나중에 삭제
     private final PopupRepository popupRepository;
+    private final FileStorageService fileStorageService;
+    private final ReviewImageRepository reviewImageRepository;
 
     @Override
     public ReviewDto getReviewById(long reviewId) {
@@ -136,7 +139,16 @@ public class ReviewServiceImpl implements ReviewService {
                 .content(reviewDto.getContent())
                 .build();
 
-        reviewRepository.save(review);
+        Review savedReview = reviewRepository.save(review);
+
+        for (ReviewImageDto reviewImageDto : reviewDto.getReviewImages()) {
+            ReviewImage reviewImage = ReviewImage.builder()
+                    .review(savedReview)
+                    .seq(reviewImageDto.getSeq())
+                    .deleted(false)
+                    .build();
+            reviewImageRepository.save(reviewImage);
+        }
     }
 
     @Override
@@ -183,5 +195,15 @@ public class ReviewServiceImpl implements ReviewService {
             list.add(dto);
         }
         return list;
+    }
+
+    @Override
+    public String uploadReviewImage(MultipartFile img) {
+        String imagePath = fileStorageService.storeFile(img);
+        if (imagePath != null) {
+            return imagePath;
+        }
+
+        throw new RuntimeException("Could not store file " + img.getOriginalFilename() + ". Please try again!");
     }
 }

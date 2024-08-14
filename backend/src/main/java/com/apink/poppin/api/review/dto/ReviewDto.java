@@ -20,6 +20,7 @@ public class ReviewDto {
     private String title;
     private String content;
     private String thumbnail;
+    private List<ReviewImageDto> reviewImages;
     private Instant createdAt;
     private List<CommentDto> commentDtoList;
 }

@@ -1899,11 +1899,11 @@ INSERT INTO popup_image (popup_id, img, seq) VALUES
 (114, './uploads/94_img114.png', 1),
 (115, './uploads/94_img115.png', 1),
 (116, './uploads/94_img116.png', 1),
-(117, './uploads/94_img91-2.png', 1),
-(118, './uploads/94_img1-3.png', 1),
-(119, './uploads/94_img2-2.png', 1),
-(120, './uploads/94_img3-2.png', 1),
-(121, './uploads/94_img1-2.png', 1);
+(117, './uploads/94_img91-2.png', 2),
+(118, './uploads/94_img1-3.png', 3),
+(119, './uploads/94_img2-2.png', 2),
+(120, './uploads/94_img3-2.png', 2),
+(121, './uploads/94_img1-2.png', 2);
 
 
 -- heart 테이블에 더미 데이터 삽입

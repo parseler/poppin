@@ -84,7 +84,9 @@ public class User {
 
     public void updateUser(UserDto.Put userDto, String img, List<Category> categories) {
         this.nickname = userDto.getNickname();
-        this.img = img;
+        if (img != null) {
+            this.img = img;
+        }
 
         // 유저 카테고리 바꾸기
         List<UserCategory> userCategories = categories.stream()

@@ -42,6 +42,7 @@ const parseHours = (hoursString: string): Record<string, string> => {
   }
 };
 
+// 마커 타입 설정
 const getMarkerType = (
   popupDetail: PopupDetail
 ): "open" | "upcoming" | "like" | "reservation" => {
@@ -50,9 +51,17 @@ const getMarkerType = (
   const currentDay = ["일", "월", "화", "수", "목", "금", "토"][now.getDay()];
 
   const hours = parseHours(popupDetail.hours);
-  const [openTimeStr, closeTimeStr] = hours[currentDay]
-    ?.split("~")
-    .map((str) => str.trim()) || ["00:00", "23:59"];
+  const hoursForCurrentDay = hours[currentDay];
+
+  // "휴무" 또는 hoursForCurrentDay가 없는 경우 처리
+  if (!hoursForCurrentDay || hoursForCurrentDay === "휴무") {
+    return "upcoming"; // "휴무"일 경우 "upcoming"으로 처리
+  }
+
+  const [openTimeStr, closeTimeStr] = hoursForCurrentDay
+    .split("~")
+    .map((str) => str.trim());
+
   const [openHour, openMinute] = openTimeStr.split(":").map(Number);
   const [closeHour, closeMinute] = closeTimeStr.split(":").map(Number);
 
@@ -74,8 +83,20 @@ const getMarkerType = (
   return "open";
 };
 
-const convertToPopupStore = (popupDetail: PopupDetail): PopupStore => {
-  const markerType = getMarkerType(popupDetail);
+const convertToPopupStore = (
+  popupDetail: PopupDetail,
+  isLiked: boolean = false,
+  isReserved: boolean = false
+): PopupStore => {
+  let markerType: "open" | "upcoming" | "like" | "reservation" =
+    getMarkerType(popupDetail);
+
+  if (isReserved) {
+    markerType = "reservation";
+  } else if (isLiked) {
+    markerType = "like";
+  }
+
   return {
     position: new kakao.maps.LatLng(popupDetail.lat, popupDetail.lon),
     image: popupDetail.images[0],
@@ -94,7 +115,7 @@ const Map = () => {
   const [markers, setMarkers] = useState<kakao.maps.Marker[]>([]);
   const [popupStores, setPopupStores] = useState<PopupStore[]>([]);
   const navigate = useNavigate();
-  const isLoggedIn = useAuthStore((state) => !state.userTsid); // 로그인 여부 확인
+  const isLoggedIn = useAuthStore((state) => state.userTsid); // 로그인 여부 확인
 
   // 지도 초기화 및 마커 초기 설정
   useEffect(() => {
@@ -142,20 +163,47 @@ const Map = () => {
     };
   }, []);
 
+  // API 호출
   useEffect(() => {
     const fetchPopupStores = async () => {
       try {
         let data: PopupDetail[] = [];
-        if (activeButton === "like" && isLoggedIn) {
-          data = await getMapHeartPopupByLocation(); // 좋아요 API 호출
-        } else if (activeButton === "reservation" && isLoggedIn) {
-          data = await getMapMyReservationPopup(); // 사전예약 API 호출
-        } else {
-          data = await getMapPopupList(); // 전체 팝업 API 호출
+        let likedPopups: PopupDetail[] = [];
+        let reservedPopups: PopupDetail[] = [];
+
+        // 로그인 도니 경우에만 좋아요, 사전예약 API 호출
+        if (isLoggedIn) {
+          [likedPopups, reservedPopups] = await Promise.all([
+            getMapHeartPopupByLocation(), // 좋아요 API 호출
+            getMapMyReservationPopup(), // 사전예약 API 호출
+          ]);
         }
 
-        const convertedStores = data.map(convertToPopupStore);
-        setPopupStores(convertedStores);
+        if (activeButton === "like") {
+          const convertedStores = likedPopups.map((popup) =>
+            convertToPopupStore(popup, true)
+          );
+          setPopupStores(convertedStores);
+        } else if (activeButton === "reservation") {
+          const convertedStores = reservedPopups.map((popup) =>
+            convertToPopupStore(popup, false, true)
+          );
+          setPopupStores(convertedStores);
+        } else {
+          data = await getMapPopupList(); // 전체 팝업 API 호출
+          const convertedStores = data.map((popup) =>
+            convertToPopupStore(
+              popup,
+              likedPopups.some(
+                (likedPopup) => likedPopup.popupId === popup.popupId
+              ),
+              reservedPopups.some(
+                (reservedPopup) => reservedPopup.popupId === popup.popupId
+              )
+            )
+          );
+          setPopupStores(convertedStores);
+        }
       } catch (error) {
         console.error("Error fetching popup stores:", error);
       }
@@ -199,6 +247,7 @@ const Map = () => {
     setSelectedStore(null);
   };
 
+  // 현위치 버튼
   const handleCurrentLocationClick = () => {
     if (navigator.geolocation) {
       navigator.geolocation.getCurrentPosition((position) => {
@@ -213,10 +262,12 @@ const Map = () => {
     }
   };
 
+  // 마커 클릭 후 해당 내용 벗어나는 이벤트 1
   const handleMapClick = () => {
     setSelectedStore(null);
   };
 
+  // 마커 클릭 후 해당 내용 벗어나는 이벤트 2
   useEffect(() => {
     if (map) {
       kakao.maps.event.addListener(map, "click", handleMapClick);
@@ -229,17 +280,30 @@ const Map = () => {
     };
   }, [map]);
 
+  // 영업중인지 오픈 예정인지 확인
   const isOpen = (store: PopupStore) => {
     const now = new Date();
     const currentMinutes = now.getHours() * 60 + now.getMinutes();
+    const currentDay = ["일", "월", "화", "수", "목", "금", "토"][now.getDay()];
 
     const [startDate, endDate] = store.schedule
       .split(" - ")
       .map((dateStr) => new Date(dateStr.replace(/\./g, "-")));
 
-    const hours = store.businessHours.split(" - ");
-    const [openHour, openMinute] = hours[0].split(":").map(Number);
-    const [closeHour, closeMinute] = hours[1].split(":").map(Number);
+    const businessHours = JSON.parse(store.businessHours);
+
+    // 현재 요일에 해당하는 영업 시간을 가져옴
+    const hoursForCurrentDay = businessHours[currentDay];
+
+    if (!hoursForCurrentDay || hoursForCurrentDay === "휴무") {
+      return false;
+    }
+
+    const [openTimeStr, closeTimeStr] = hoursForCurrentDay
+      .split(" ~ ")
+      .map((str: string) => str.trim());
+    const [openHour, openMinute] = openTimeStr.split(":").map(Number);
+    const [closeHour, closeMinute] = closeTimeStr.split(":").map(Number);
 
     const openMinutes = openHour * 60 + openMinute;
     const closeMinutes = closeHour * 60 + closeMinute;
@@ -253,7 +317,7 @@ const Map = () => {
 
   const handleStoreClick = () => {
     if (selectedStore) {
-      navigate(`/popupDetail/${selectedStore.popupId}`);
+      navigate(`/popdetail/${selectedStore.popupId}`);
     }
   };
 
@@ -276,7 +340,9 @@ const Map = () => {
               좋아요
             </button>
             <button
-              className={`button ${activeButton === "reservation" ? "active" : ""}`}
+              className={`button ${
+                activeButton === "reservation" ? "active" : ""
+              }`}
               onClick={() => handleButtonClick("reservation")}
             >
               내 예약

@@ -72,7 +72,7 @@ const Info: React.FC<InfoProps> = ({
   const [isBusinessOpen, setIsBusinessOpen] = useState(false);
   const [currentDay, setCurrentDay] = useState("");
   const [parsedHours, setParsedHours] = useState<Record<string, string>>({});
-  const [parsedContent, setParsedContent] = useState<Record<string, string>>(
+  const [parsedDescription, setParsedDescription] = useState<Record<string, string>>(
     {}
   );
 
@@ -144,11 +144,12 @@ const Info: React.FC<InfoProps> = ({
     };
   }, [lat, lon]);
 
+  // description 설정
   useEffect(() => {
     try {
-      if (content) {
-        const parseContent = (content: string) => {
-          const pairs = content.slice(1, -1).split(",");
+      if (description) {
+        const parsedDescription = (description: string) => {
+          const pairs = description.slice(1, -1).split(",");
           const result: Record<string, string> = {};
           pairs.forEach((pair) => {
             const [key, value] = pair.split(":");
@@ -161,12 +162,12 @@ const Info: React.FC<InfoProps> = ({
           return result;
         };
 
-        setParsedContent(parseContent(content));
+        setParsedDescription(parsedDescription(description));
       }
     } catch (error) {
-      console.error("Error parsing content:", error);
+      console.error("Error parsing desrciption:", error);
     }
-  }, [content]);
+  }, [description]);
 
   const isChecked = (key: string, value: string): boolean => {
     if (key === "age") {
@@ -258,7 +259,7 @@ const Info: React.FC<InfoProps> = ({
       </div>
       <div className="service">
         <div className="service-icons">
-          {Object.entries(parsedContent).map(
+          {Object.entries(parsedDescription).map(
             ([key, value]) =>
               value && (
                 <div key={key} className="service-icon">
@@ -286,9 +287,9 @@ const Info: React.FC<InfoProps> = ({
                           : key === "fee"
                           ? "유료"
                           : "불가능";
-                        onContentChange(
+                        onDescriptionChange(
                           JSON.stringify({
-                            ...parsedContent,
+                            ...parsedDescription,
                             [key]: newValue,
                           })
                         );
@@ -305,12 +306,12 @@ const Info: React.FC<InfoProps> = ({
         <div className="introduce-title">팝업 스토어 소개</div>
         {isEditing ? (
           <textarea
-            value={description}
-            onChange={(e) => onDescriptionChange(e.target.value)}
+            value={content}
+            onChange={(e) => onContentChange(e.target.value)}
             className="edit-textarea"
           />
         ) : (
-          description.split("\n").map((line, index) => (
+          content.split("\n").map((line, index) => (
             <p key={index} className="introduce-content">
               {line.trim() === "" ? <br /> : line}
             </p>

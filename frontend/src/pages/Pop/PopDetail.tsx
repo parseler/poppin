@@ -14,6 +14,7 @@ import PopDetailInfo from "@components/Pop/PopDetailInfo";
 import PopDetailReservation from "@components/Pop/PopDetailReservation";
 import PopDetailReview from "@components/Pop/PopDetailReview";
 import PopDetailChat from "@components/Pop/PopDetailChat";
+import useAuthStore from "@store/useAuthStore";
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
 import "@css/Pop/PopDetail.css";
@@ -62,10 +63,9 @@ const PopDetail = () => {
   const [instagram, setInstagram] = useState<string>("");
   const [content, setContent] = useState<string>("");
   const [description, setDescription] = useState<string>("");
-  
 
   const navigate = useNavigate();
-  const currentUserTsid = "1";
+  const { userTsid: currentUserTsid } = useAuthStore();
 
   useEffect(() => {
     if (popupDetail) {
@@ -75,7 +75,7 @@ const PopDetail = () => {
       setInstagram(popupDetail.snsUrl);
       setContent(popupDetail.content);
       setDescription(popupDetail.description);
-      setLiked(popupDetail.heart>0);
+      setLiked(popupDetail.heart > 0);
     }
   }, [popupDetail]);
 
@@ -121,22 +121,33 @@ const PopDetail = () => {
   );
   // 좋아요 버튼
   const toggleLike = useCallback(async () => {
-    if(!popupDetail) return;
+    if (!popupDetail) return;
 
-    try{
-      if(liked){
-        await deleteHeart({userTsid: currentUserTsid, popupId: popupDetail.popupId});
+    if (!currentUserTsid) {
+      alert("로그인이 필요합니다.");
+      return;
+    }
+
+    try {
+      if (liked) {
+        await deleteHeart({
+          userTsid: currentUserTsid,
+          popupId: popupDetail.popupId,
+        });
         setLiked(false);
-        setPopupDetail((prev) => prev && {...prev, heart: prev.heart-1});
+        setPopupDetail((prev) => prev && { ...prev, heart: prev.heart - 1 });
       } else {
-        await insertHeart({userTsid: currentUserTsid, popupId: popupDetail.popupId});
+        await insertHeart({
+          userTsid: currentUserTsid,
+          popupId: popupDetail.popupId,
+        });
         setLiked(true);
-        setPopupDetail((prev) => prev && {...prev, heart: prev.heart+1});
+        setPopupDetail((prev) => prev && { ...prev, heart: prev.heart + 1 });
       }
-    } catch(error) {
+    } catch (error) {
       console.error("Error toggling like:", error);
     }
-  }, [liked, popupDetail]);
+  }, [liked, popupDetail, currentUserTsid]);
 
   // 탭 컴포넌트
   const onTabClick = useCallback((tab: string) => {

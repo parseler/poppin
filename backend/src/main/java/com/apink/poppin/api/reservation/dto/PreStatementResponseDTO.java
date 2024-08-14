@@ -11,6 +11,6 @@ public class PreStatementResponseDTO {
 
     private Long preReservationId;
     private Long reservationStatementId;
-    private Long userTsid;
+    private String userTsid;
     private Long popupId;
 }

@@ -2,8 +2,14 @@ import { axiosInstance } from "@api/axiosInstance";
 import { PopupDetail } from "@interface/popDetail";
 
 export interface PopupDTO {
-  id: number;
+  popupId: number;
   name: string;
+  startDate: string;
+  endDate: string;
+  hours: string;
+  address: string;
+  content: string;
+  images: string[];
 }
 
 export interface PopupRequestDTO {
@@ -157,7 +163,6 @@ export const getReviews = async (popupId: number) => {
 // 해당 팝업의 채팅 내역 조회
 export const getHistory = async (popupId: number) => {
   const response = await api.get(`/popups/chat/${popupId}`);
-  console.log("API Response:", response.data);
   return response.data;
 };
 
@@ -188,5 +193,12 @@ export const insertHeart = async (data: HeartRequestDTO) => {
 // 팝업 좋아요 해제
 export const deleteHeart = async (data: HeartRequestDTO) => {
   const response = await api.delete(`/popups/${data.popupId}/heart`, { data });
+  return response.data;
+};
+
+// 유사 팝업 조회
+export const getSimilarPopups = async (popupId: number): Promise<PopupDTO[]> => {
+  const response = await api.get(`/popups/${popupId}/tag`);
+  console.log(response.data);
   return response.data;
 };

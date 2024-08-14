@@ -301,7 +301,7 @@ public class UserServiceImpl implements UserService {
     private PreReservationResponseDTO convertToResponseDTO(PreReservation preReservation) {
         return PreReservationResponseDTO.builder()
                 .preReservationId(preReservation.getPreReservationId())
-                .userTsid(preReservation.getUser().getUserTsid())
+                .userTsid(String.valueOf(preReservation.getUser().getUserTsid()))
                 .popupId(preReservation.getPopup().getPopupId())
                 .reservationDate(preReservation.getReservationDate())
                 .reservationTime(preReservation.getReservationTime())

@@ -18,7 +18,10 @@ const useAuthStore = create<AuthState>()(
       userTsid: null,
       userRole: null,
       setTokens: (accessToken: string, userTsid: string, userRole: string) => set({ accessToken, userTsid, userRole }),
-      clearTokens: () => set({ accessToken: null, userTsid: null, userRole: null }),
+      clearTokens: () => {
+        set({ accessToken: null, userTsid: null, userRole: null });
+        localStorage.removeItem('auth-storage'); // 로컬 스토리지에서 해당 키 제거
+      },
     }),
     {
       name: 'auth-storage', // 로컬 스토리지에 저장될 키 이름

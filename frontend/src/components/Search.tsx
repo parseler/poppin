@@ -1,21 +1,42 @@
 import "@css/Search.css";
 import { useNavigate } from "react-router-dom";
 import getIcon from "@utils/get-header-icon";
+import { useState } from "react";
 
 const Search = () => {
   const navigate = useNavigate();
-  const keywordArray = ['망그러진 곰', '세븐틴', '에이핑크', '하리보', '뉴진스', '침착맨', '카카오프렌즈'];
+  const [keyword, setKeyword] = useState<string>("");
+  // const keywordArray = ['망그러진 곰', '세븐틴', '에이핑크', '하리보', '뉴진스', '침착맨', '카카오프렌즈'];
 
   const handleBackIcon = () => {
     navigate(-1);
+  };
+
+  const handleSearchIcon = () => {
+    navigate(`/search-list?keyword=${encodeURIComponent(keyword)}`);
   };
 
   return (
     <div id="search">
       <div className="search-bar">
         <img src={getIcon("back")} alt="icon" onClick={handleBackIcon} />
-        <input type="text" placeholder="검색어를 입력하세요" />
-        <img src={getIcon("search")} alt="icon" className="search-icon" />
+        <input
+          type="text"
+          placeholder="검색어를 입력하세요"
+          value={keyword}
+          onChange={(e) => setKeyword(e.target.value)}
+          onKeyUp={(e) => {
+            if (e.key === "Enter") {
+              handleSearchIcon(); // 엔터 키 입력 시 검색 함수 호출
+            }
+          }}
+        />
+        <img
+          src={getIcon("search")}
+          alt="icon"
+          className="search-icon"
+          onClick={handleSearchIcon}
+        />
       </div>
       <div id="search-list">
         <div className="search-title">
@@ -23,7 +44,7 @@ const Search = () => {
           <p>전체 삭제</p>
         </div>
         {/* 검색어 있을 떄 화면 */}
-        <div className="search-content">
+        {/* <div className="search-content">
           {keywordArray.map((keyword, index) => (
             <div className="search-word">
               <div key={index} className="search-word-wrap">
@@ -32,7 +53,7 @@ const Search = () => {
               </div>
             </div>
           ))}
-        </div>
+        </div> */}
 
         {/* 검색어 없을 때 화면 */}
         <div className="search-content-none">

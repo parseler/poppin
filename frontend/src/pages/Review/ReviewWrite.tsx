@@ -4,13 +4,12 @@ import { useNavigate } from "react-router-dom";
 import { useEffect, useRef, useState } from "react";
 import Header from "@components/common/Header";
 import Menu from "@components/common/Menu";
-import { ReviewProps } from "@interface/reviews";
-import { UserProps } from "@interface/users";
-import { axiosInstance } from "@api/axiosInstance";
-import { getUserData } from "@api/users";
 import { createReviewData } from "@api/reviews";
+import useAuthStore from "@store/useAuthStore";
+import { UserProps } from "@interface/users";
+import { getUserData } from "@api/users";
 
-const ReviewWrite = (popupId: number) => {
+const ReviewWrite: React.FC<{ popupId: number }> = ({ popupId }) => {
   const navigate = useNavigate();
   const [user, setUser] = useState<UserProps | null>(null);
   const [title, setTitle] = useState("");
@@ -19,92 +18,97 @@ const ReviewWrite = (popupId: number) => {
   const [editorContent, setEditorContent] = useState("");
   const [rating, setRating] = useState(0);
 
+  const { accessToken, userTsid, userRole } = useAuthStore();
   const quillRef = useRef<ReactQuill | null>(null);
 
   // 사용자 정보 가져오기
   useEffect(() => {
-    const token = axiosInstance.defaults.headers.common["Authorization"];
-
-    if (token) {
-      (async () => {
-        try {
-          const userData = await getUserData();
-          setUser({
-            nickname: userData.nickname,
-            email: userData.email,
-            phoneNumber: userData.phoneNumber,
-            categoryList: userData.categoryList,
-            agreementDto: userData.agreementDto,
-            img: userData.img,
-            role: userData.role,
-          });
-        } catch (error) {
-          console.error(error);
-        }
-      })();
+    if (accessToken) {
+      getUserData()
+        .then((data) => {
+          if (data) {
+            setUser({
+              userTsid: userTsid !== null ? userTsid : "",
+              nickname: data.nickname ?? "",
+              email: data.email ?? "",
+              phoneNumber: data.phoneNumber ?? "",
+              userCategories: data.userCategories
+                ? data.userCategories.map((cate: any) => ({
+                    name: cate.name,
+                  }))
+                : [],
+              userConsents: {
+                marketingConsent: data.userConsents?.marketingConsent ?? false,
+                marketingUpdatedAt: data.userConsents?.marketingUpdatedAt ?? "",
+                servicePushConsent:
+                  data.userConsents?.servicePushConsent ?? false,
+                serviceUpdatedAt: data.userConsents?.serviceUpdatedAt ?? "",
+              },
+              img: data.img ?? "",
+              role: userRole ?? "",
+            });
+          }
+        })
+        .catch((error) => {
+          console.error("Failed to fetch user data:", error);
+        });
     } else {
       alert("로그인이 필요한 서비스입니다.");
       navigate("/login");
     }
-  }, [navigate]);
+  }, [accessToken, userTsid, userRole, navigate]);
 
-  // 후기 썸네일
-  const handleThumbnailChange = (
-    event: React.ChangeEvent<HTMLInputElement>
-  ) => {
-    if (event.target.files && event.target.files.length > 0) {
+  // 후기 썸네일 처리
+  const handleThumbnailChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    if (event.target.files && event.target.files[0]) {
       setThumbnail(event.target.files[0]);
     }
   };
 
-  // 후기 내용
+  // 후기 내용 처리
   const handleWriteContent = (content: string) => {
     setEditorContent(content);
   };
 
-  // 후기 별점
+  // 후기 별점 처리
   const handleRatingChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setRating(Number(event.target.value));
   };
 
-  // 후기 작성 완료
+  // 후기 작성 완료 처리
   const handleSubmit = async () => {
     if (!title || !editorContent || !thumbnail || !store) {
       alert("모든 필드를 입력해주세요.");
       return;
     }
 
-    // 파일을 Base64로 변환
-  const toBase64 = (file: File): Promise<string> =>
-    new Promise((resolve, reject) => {
-      const reader = new FileReader();
-      reader.readAsDataURL(file);
-      reader.onload = () => resolve(reader.result as string);
-      reader.onerror = (error) => reject(error);
-    });
-    
     try {
-      const base64Thumbnail = await toBase64(thumbnail);
+      const formData = new FormData();
 
-      const review: ReviewProps = {
+      const reviewData = {
         reviewId: 0, // 서버에서 생성된 후기를 받아올 때 설정됨
         nickname: user?.nickname ?? "",
         img: user?.img ?? "",
         rating: rating,
         title: title,
         content: editorContent,
-        thumbnail: base64Thumbnail,
         createdAt: new Date().toISOString(),
         commentDtoList: "", // 댓글 데이터 추가 필요 시 수정
       };
 
-      await createReviewData(popupId, review);
+      formData.append("reviewData", JSON.stringify(reviewData));
+
+      if (thumbnail) {
+        formData.append("thumbnail", thumbnail);
+      }
+
+      await createReviewData(popupId, formData);
+
+      navigate(`/popup/${popupId}`);
     } catch (error) {
-      console.error(error);
+      console.error("Error creating review:", error);
     }
   };
-
-  if (!user) return null;
 
   return (
     <>

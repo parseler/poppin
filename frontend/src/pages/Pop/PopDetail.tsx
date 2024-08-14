@@ -14,6 +14,7 @@ import PopDetailInfo from "@components/Pop/PopDetailInfo";
 import PopDetailReservation from "@components/Pop/PopDetailReservation";
 import PopDetailReview from "@components/Pop/PopDetailReview";
 import PopDetailChat from "@components/Pop/PopDetailChat";
+import useAuthStore from "@store/useAuthStore";
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
 import "@css/Pop/PopDetail.css";
@@ -50,11 +51,14 @@ export interface CommentDto {
 
 const PopDetail = () => {
   const { popupId } = useParams<{ popupId: string }>();
+  useEffect(() => {
+    console.log("Received popupId in PopDetail:", popupId);
+  }, [popupId]);
+
   const [popupDetail, setPopupDetail] = useState<PopupDetail | null>(null);
   const [reviews, setReviews] = useState<ReviewListDto[]>([]);
   const [activeTab, setActiveTab] = useState<string | null>("info");
   const [liked, setLiked] = useState(false);
-  const [isManager] = useState(true);
   const [isEditing, setIsEditing] = useState(false);
   const [location, setLocation] = useState<string>("");
   const [hours, setHours] = useState<string>("");
@@ -62,11 +66,16 @@ const PopDetail = () => {
   const [instagram, setInstagram] = useState<string>("");
   const [content, setContent] = useState<string>("");
   const [description, setDescription] = useState<string>("");
-  
 
   const navigate = useNavigate();
-  const currentUserTsid = "1";
+  const { userTsid: currentUserTsid, userRole } = useAuthStore();
 
+  // 페이지 로드 시 스크롤을 맨 위로 이동
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, [popupId]);
+  
+  // 팝업 정보 설정
   useEffect(() => {
     if (popupDetail) {
       setLocation(popupDetail.address);
@@ -75,10 +84,11 @@ const PopDetail = () => {
       setInstagram(popupDetail.snsUrl);
       setContent(popupDetail.content);
       setDescription(popupDetail.description);
-      setLiked(popupDetail.heart>0);
+      setLiked(popupDetail.heart > 0);
     }
   }, [popupDetail]);
 
+  // 팝업 정보 가져오기 API
   useEffect(() => {
     const fetchPopupDetail = async () => {
       if (!popupId) {
@@ -106,7 +116,7 @@ const PopDetail = () => {
     };
     fetchReviews();
   }, [popupId]);
-
+  // 이미지 슬라이더 세팅
   const settings = useMemo(
     () => ({
       dots: true,
@@ -121,22 +131,33 @@ const PopDetail = () => {
   );
   // 좋아요 버튼
   const toggleLike = useCallback(async () => {
-    if(!popupDetail) return;
+    if (!popupDetail) return;
 
-    try{
-      if(liked){
-        await deleteHeart({userTsid: currentUserTsid, popupId: popupDetail.popupId});
+    if (!currentUserTsid) {
+      alert("로그인이 필요합니다.");
+      return;
+    }
+
+    try {
+      if (liked) {
+        await deleteHeart({
+          userTsid: currentUserTsid,
+          popupId: popupDetail.popupId,
+        });
         setLiked(false);
-        setPopupDetail((prev) => prev && {...prev, heart: prev.heart-1});
+        setPopupDetail((prev) => prev && { ...prev, heart: prev.heart - 1 });
       } else {
-        await insertHeart({userTsid: currentUserTsid, popupId: popupDetail.popupId});
+        await insertHeart({
+          userTsid: currentUserTsid,
+          popupId: popupDetail.popupId,
+        });
         setLiked(true);
-        setPopupDetail((prev) => prev && {...prev, heart: prev.heart+1});
+        setPopupDetail((prev) => prev && { ...prev, heart: prev.heart + 1 });
       }
-    } catch(error) {
+    } catch (error) {
       console.error("Error toggling like:", error);
     }
-  }, [liked, popupDetail]);
+  }, [liked, popupDetail, currentUserTsid]);
 
   // 탭 컴포넌트
   const onTabClick = useCallback((tab: string) => {
@@ -216,7 +237,7 @@ const PopDetail = () => {
         >
           <img src={liked ? fillLike : noneLike} alt="좋아요" />
         </button>
-        {isManager && (
+        {userRole === "ROLE_MANAGER" && ( // 매니저 일 때만
           <>
             {!isEditing && (
               <button
@@ -338,6 +359,7 @@ const PopDetail = () => {
             description={description}
             lat={popupDetail.lat}
             lon={popupDetail.lon}
+            popupId={popupId}
             onLocationChange={setLocation}
             onHoursChange={setHours}
             onWebsiteChange={setWebsite}

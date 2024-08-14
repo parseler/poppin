@@ -1,34 +1,56 @@
 import { useState } from "react";
-import banners, { BannerProps } from "@utils/get-banner-image";
 import Modal from "@mui/material/Modal";
 import Box from "@mui/material/Box";
+import { ReservationProps, getMyPreReservationDetail } from "@api/mypage";
 import PopMedium03 from "./PopMedium03";
 
-const PreReservationList = () => {
-  const [isModal, setIsModal] = useState(false);
-  const [modalBanner, setModalBanner] = useState<BannerProps | null>(null);
+interface PreReservationListProps {
+  reservations: ReservationProps[];
+}
 
-  const openModal = (banner: BannerProps) => {
-    setIsModal(true);
-    setModalBanner(banner);
-    document.body.style.overflow = "hidden";
+const PreReservationList: React.FC<PreReservationListProps> = ({
+  reservations,
+}) => {
+  const [isModal, setIsModal] = useState(false);
+  const [modalReservation, setModalReservation] =
+    useState<ReservationProps | null>(null);
+
+  const openModal = async (reservationId: number) => {
+    try {
+      const data = await getMyPreReservationDetail(reservationId);
+      setModalReservation(data);
+      setIsModal(true);
+      document.body.style.overflow = "hidden";
+    } catch (error) {
+      console.error("Failed to fetch reservation detail:", error);
+    }
   };
 
   const closeModal = () => {
     setIsModal(false);
-    setModalBanner(null);
+    setModalReservation(null);
     document.body.style.overflow = "unset";
+  };
+
+  const getImageUrl = (img: string | File) => {
+    if (img instanceof File) {
+      return URL.createObjectURL(img);
+    }
+    return img;
   };
 
   return (
     <div id="pre-reservation-list">
-      {banners.length > 0 ? (
-        banners.map((banner, index) => (
-          <div key={index} onClick={() => openModal(banner)}>
+      {reservations.length > 0 ? (
+        reservations.map((reservation) => (
+          <div
+            key={reservation.reservationId}
+            onClick={() => openModal(reservation.reservationId)}
+          >
             <PopMedium03
-              image={banner.image}
-              text={banner.text}
-              date={banner.date}
+              image={getImageUrl(reservation.img)}
+              text={reservation.title}
+              date={reservation.reservationDate}
               children={""}
             />
           </div>
@@ -52,19 +74,27 @@ const PreReservationList = () => {
       )}
 
       {/* 모달 */}
-      {modalBanner && (
+      {modalReservation && (
         <Modal open={isModal} onClose={closeModal}>
-          <Box
-            id="reservation-modal-box"
-            onClick={(e) => e.stopPropagation()}>
+          <Box id="reservation-modal-box" onClick={(e) => e.stopPropagation()}>
             <div className="modal-overlay">
-              <img src={modalBanner.image} alt={modalBanner.text} />
-              <p className="title">{modalBanner.text}</p>
+              <img
+                src={getImageUrl(modalReservation.img)}
+                alt={modalReservation.title}
+              />
+              <p className="title">{modalReservation.title}</p>
               <div className="reservation-info">
-                <p className="name">예약자명: 김윤</p>
-                <p className="date">예약 확정일: 24.07.30</p>
-                <p className="time">입장 시간: 24.08.05 17:00</p>
-                <p className="member">입장 인원: 2명</p>
+                <p className="name">예약자명: {modalReservation.userName}</p>
+                <p className="date">
+                  예약 확정일: {modalReservation.created_at}
+                </p>
+                <p className="time">
+                  입장 시간: {modalReservation.reservationDate}{" "}
+                  {modalReservation.reservationTime}
+                </p>
+                <p className="member">
+                  입장 인원: {modalReservation.reservationCount}명
+                </p>
               </div>
             </div>
           </Box>

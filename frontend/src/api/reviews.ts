@@ -1,4 +1,3 @@
-import { ReviewProps, ReviewUpdateProps } from "@interface/reviews";
 import { axiosInstance } from "./axiosInstance";
 
 // 후기 목록 조회
@@ -14,14 +13,14 @@ export const getReviewData = async (reviewId: number) => {
 }
 
 // 후기 생성
-export const createReviewData = async (popupId: number, review: ReviewProps) => {
-  const response = await axiosInstance.post(`/popups/${popupId}/reviews`, review);
+export const createReviewData = async (popupId: number, formData: FormData) => {
+  const response = await axiosInstance.post(`/popups/${popupId}/reviews`, formData);
   return response.data;
 }
 
 // 후기 수정
-export const updateReviewData = async (reviewId: number, review: ReviewUpdateProps) => {
-  const response = await axiosInstance.put(`/reviews/${reviewId}`, review);
+export const updateReviewData = async (reviewId: number, formData: FormData) => {
+  const response = await axiosInstance.put(`/reviews/${reviewId}`, formData);
   return response.data;
 }
 
@@ -30,8 +29,6 @@ export const deleteReviewData = async (reviewId: number) => {
   const response = await axiosInstance.delete(`reviews/${reviewId}`);
   return response.data;
 }
-
-// 댓글 조회
 
 // 댓글 추가
 export const createCommentData = async (reviewId: number) => {

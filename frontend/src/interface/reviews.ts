@@ -12,11 +12,11 @@ export interface ReviewListProps {
 export interface ReviewProps {
   reviewId: number;
   nickname: string; // 작성자 정보
-  img: string; // 작성자 정보
+  img: File | null; // 작성자 정보
   rating: number;
   title: string;
   content: string;
-  thumbnail: string;
+  thumbnail: File;
   createdAt: string;
   commentDtoList: CommentProps[]; // 댓글 인터페이스 추가되면 수정
 }

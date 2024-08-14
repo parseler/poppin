@@ -1,4 +1,6 @@
 import { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
+import { getSimilarPopups, PopupDTO } from "@api/apiPop";
 import "@css/Pop/PopDetailInfo.css";
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
@@ -34,6 +36,7 @@ interface InfoProps {
   description: string;
   lat: number;
   lon: number;
+  popupId: string | undefined;
   onLocationChange: (location: string) => void;
   onHoursChange: (hours: string) => void;
   onWebsiteChange: (website: string) => void;
@@ -62,6 +65,7 @@ const Info: React.FC<InfoProps> = ({
   description,
   lat,
   lon,
+  popupId,
   onLocationChange,
   onWebsiteChange,
   onInstagramChange,
@@ -72,9 +76,11 @@ const Info: React.FC<InfoProps> = ({
   const [isBusinessOpen, setIsBusinessOpen] = useState(false);
   const [currentDay, setCurrentDay] = useState("");
   const [parsedHours, setParsedHours] = useState<Record<string, string>>({});
-  const [parsedDescription, setParsedDescription] = useState<Record<string, string>>(
-    {}
-  );
+  const [parsedDescription, setParsedDescription] = useState<
+    Record<string, string>
+  >({});
+  const [similarPopups, setSimilarPopups] = useState<PopupDTO[]>([]);
+  const navigate = useNavigate();
 
   // 운영 시간
   useEffect(() => {
@@ -144,7 +150,7 @@ const Info: React.FC<InfoProps> = ({
     };
   }, [lat, lon]);
 
-  // description 설정
+  // 서비스(description) 설정
   useEffect(() => {
     try {
       if (description) {
@@ -169,6 +175,7 @@ const Info: React.FC<InfoProps> = ({
     }
   }, [description]);
 
+  // 서비스(description) 목록들 확인
   const isChecked = (key: string, value: string): boolean => {
     if (key === "age") {
       return value === "19세 이상";
@@ -178,7 +185,24 @@ const Info: React.FC<InfoProps> = ({
     }
     return value === "가능";
   };
+  // 유사 팝업스토어 불러오기
+  useEffect(() => {
+    if (!popupId) {
+      console.log("popupId가 없어");
+      return;
+    }
+    const fetchSimilarPopups = async () => {
+      try {
+        const data = await getSimilarPopups(Number(popupId));
+        setSimilarPopups(data);
+      } catch (error) {
+        console.error("Error fetching similar popups:", error);
+      }
+    };
+    fetchSimilarPopups();
+  }, [popupId]);
 
+  // 영업 시간 토글 버튼
   const toggleSchedule = () => {
     setIsToggleOpen(!isToggleOpen);
   };
@@ -324,6 +348,22 @@ const Info: React.FC<InfoProps> = ({
           id="map"
           style={{ width: "100%", height: "250px", marginBottom: "30px" }}
         ></div>
+      </div>
+      <div className="rel-pop-title">유사 팝업스토어</div>
+      <div className="related-popups">
+        {similarPopups.map((popup) => (
+          <div
+            key={popup.popupId}
+            className="popup-item"
+            onClick={() => navigate(`/popdetail/${popup.popupId}`)}
+          >
+            <img src={`http://localhost/${popup.images[0]}`} alt={popup.name} />
+            <div className="rel-pop-info">
+              <div className="popup-title">{popup.name}</div>
+              <div className="popup-dates">{`${popup.startDate} ~ ${popup.endDate}`}</div>
+            </div>
+          </div>
+        ))}
       </div>
     </div>
   );

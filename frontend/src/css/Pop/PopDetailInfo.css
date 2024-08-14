@@ -45,7 +45,7 @@
   margin-left: 17px;
   margin-bottom: 10px;
 }
-#pop-detail-info .schedule-detail .current-day{
+#pop-detail-info .schedule-detail .current-day {
   font-weight: bold;
 }
 #pop-detail-info .schedule-detail {
@@ -187,29 +187,60 @@
 
 #pop-detail-info .related-popups {
   display: flex;
+  flex-direction: row;
+  gap: 10px;
   overflow-x: auto;
   padding: 10px 0;
-  height: 250px;
-  flex: 0 0 100%;
   margin-bottom: 10px;
 }
 
 #pop-detail-info .related-popups .popup-item {
+  position: relative;
   display: inline-block;
   margin-right: 10px;
   text-align: center;
+  width: 200px;
+  height: 200px;
+  overflow: hidden;
+  flex: 0 0 auto;
+  border-radius: 10px;
+}
+
+#pop-detail-info .related-popups .popup-item img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
 }
 
 #pop-detail-info .rel-pop-info {
-  position: static;
-  color: #222;
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  background-color: rgba(0, 0, 0, 0.4);
+  color: #fff;
+  padding: 5px;
+  box-sizing: border-box;
   font-family: "NanumSquare Neo OTF";
   font-size: 12px;
   font-style: normal;
   font-weight: 700;
   line-height: 22px;
-  bottom: 10px;
-  left: 10px;
+}
+
+#pop-detail-info .related-popups .popup-item .rel-pop-info div {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+#pop-detail-info .related-popups .popup-item .rel-pop-info .popup-title {
+  font-size: 14px;
+  font-weight: bold;
+}
+
+#pop-detail-info .related-popups .popup-item .rel-pop-info .popup-dates {
+  font-size: 12px;
 }
 
 /* 수정 모드 입력 폼 스타일 */

@@ -40,6 +40,8 @@ axiosInstance.interceptors.response.use(
   async (error) => {
     console.log("Error in response interceptor:", error);
     const originalRequest = error.config;
+      console.log(error.response.status);
+      console.log(originalRequest._retry)
 
     if (
       error.response &&
@@ -49,8 +51,9 @@ axiosInstance.interceptors.response.use(
       console.log("401 Unauthorized detected, attempting to reissue token...");
       originalRequest._retry = true;
 
-      const refreshToken = Cookies.get("refreshToken");
-      console.log("Refresh token:", refreshToken);
+      // 쿠키에서 refreshToken 읽기
+      const refreshToken = Cookies.get("refresh");
+      console.log("refresh : ", refreshToken);
 
       if (refreshToken) {
         try {
@@ -63,7 +66,9 @@ axiosInstance.interceptors.response.use(
             }
           );
 
-          const { accessToken: newAccessToken } = responseAgain.data;
+          console.log(responseAgain)
+          const newAccessToken = responseAgain.headers.authorization;
+          console.log(newAccessToken);
           const tokenInfo = getTokenInfo(newAccessToken);
 
           useAuthStore.getState().setTokens(

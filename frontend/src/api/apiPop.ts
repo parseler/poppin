@@ -164,6 +164,7 @@ export const getHistory = async (popupId: number) => {
 // 내 주변 팝업 조회 (전체)
 export const getMapPopupList = async (): Promise<PopupDetail[]> => {
   const response = await api.get("/popups/map");
+  console.log("내 주변 팝업 조회(전체) :", response.data);
   return response.data;
 };
 

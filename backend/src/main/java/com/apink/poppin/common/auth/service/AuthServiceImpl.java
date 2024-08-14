@@ -75,7 +75,7 @@ public class AuthServiceImpl implements AuthService {
 
 
         //make new JWT
-        String newAccess = jwtTokenUtil.createToken("access", username, role, 60 * 60 * 1000L);
+        String newAccess = jwtTokenUtil.createToken("access", username, role, 60 * 1000L);
         String newRefresh = jwtTokenUtil.createToken("refresh", username, role, 30 * 60 * 60 * 24 * 1000L);
 
         // refreshToken 갱신

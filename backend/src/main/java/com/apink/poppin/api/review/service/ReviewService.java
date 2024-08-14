@@ -3,6 +3,7 @@ package com.apink.poppin.api.review.service;
 import com.apink.poppin.api.review.dto.ReviewDto;
 import com.apink.poppin.api.review.dto.ReviewListDto;
 import com.apink.poppin.api.review.dto.ReviewUpdateRequestDto;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
@@ -18,4 +19,6 @@ public interface ReviewService {
     List<ReviewListDto> getReviewsByPopupId(long popupId);
 
     List<ReviewListDto> getReviews();
+
+    String uploadReviewImage(MultipartFile img);
 }

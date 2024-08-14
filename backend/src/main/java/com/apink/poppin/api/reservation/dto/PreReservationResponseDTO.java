@@ -17,7 +17,7 @@ import java.util.Date;
 @AllArgsConstructor
 public class PreReservationResponseDTO {
     private Long preReservationId;
-    private Long userTsid;
+    private String userTsid;
     private Long popupId;
 
     @JsonSerialize(using = LocalDateSerializer.class)

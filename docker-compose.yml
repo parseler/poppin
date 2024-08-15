@@ -11,6 +11,7 @@ services:
     volumes:
       - ./db/mysql/data:/var/lib/mysql
       - ./db/mysql/initdb:/docker-entrypoint-initdb.d
+      - ./db/mysql/config:/etc/mysql/conf.d
     healthcheck:
       test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
   nginx:

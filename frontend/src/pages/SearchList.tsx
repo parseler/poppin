@@ -30,7 +30,7 @@ const SearchList = () => {
       </div>
       <div className="search-contents">
         {searchPopups.map((popup) => (
-          <Link to={"/popupdetail/${popup.popupId}"}>
+          <Link to={`/popdetail/${popup.popupId}`}>
             <PopMedium03
               key={popup.popupId}
               image={popup.images[0]} // 첫 번째 이미지만 표시, 필요에 따라 수정 가능

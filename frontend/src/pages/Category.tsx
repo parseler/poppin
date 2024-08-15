@@ -1,5 +1,5 @@
 import "@css/Category.css";
-import { Link, useParams } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 import categories from "@utils/get-category-image";
 import PopupSmall from "@components/Home/PopupSmall";
 import { useEffect, useState } from "react";
@@ -7,7 +7,7 @@ import { getPopupByCategory, PopupProps } from "@api/category";
 
 const Category = () => {
   const { categoryId } = useParams<{ categoryId: string }>();
-
+  const navigate = useNavigate(); // navigate 훅을 사용
   const numericCategoryId = categoryId ? parseInt(categoryId, 10) : null;
   const category = numericCategoryId
     ? categories.find((c) => c.id === numericCategoryId)
@@ -28,6 +28,11 @@ const Category = () => {
     }
   }, [numericCategoryId]);
 
+  // 팝업 클릭 시 상세 페이지로 이동하는 함수
+  const handlePopupClick = (popupId: number) => {
+    navigate(`/popdetail/${popupId}`);
+  };
+
   return (
     <div id="category">
       <div className="category-title">
@@ -37,14 +42,17 @@ const Category = () => {
       {/* 카테고리별 팝업 목록 데이터 받아서 띄우기 */}
       <div className="category-contents">
         {popups.map((popup) => (
-          <Link to={"/popupdetail/${popup.popupId}"}>
+          <div
+            key={popup.popupId}
+            onClick={() => handlePopupClick(popup.popupId)}
+            className="pop-up-small" // 클릭 시 navigate 호출
+          >
             <PopupSmall
-              key={popup.popupId}
               image={popup.images[0]} // 첫 번째 이미지만 표시, 필요에 따라 수정 가능
               text={popup.name}
               date={`${popup.startDate} - ${popup.endDate}`}
             />
-          </Link>
+          </div>
         ))}
       </div>
 

@@ -88,7 +88,10 @@ public class ManagerServiceImpl implements ManagerService {
     @Override
     @Transactional(readOnly = true)
     public List<Manager> getManagerList() {
-        return managerRepository.findAll();
+        return managerRepository.findAll()
+                .stream()
+                .filter(Manager::getState)
+                .toList();
     }
 
     @Override

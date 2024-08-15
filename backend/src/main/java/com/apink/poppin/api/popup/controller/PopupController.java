@@ -21,6 +21,7 @@ import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.Date;
 import java.util.List;
@@ -131,8 +132,8 @@ public class PopupController {
     }
 
     @PostMapping("/{popupId}/reviews")
-    public ResponseEntity<?> createReview(@PathVariable long popupId, @RequestBody ReviewDto reviewDto) {
-        reviewService.createReview(popupId, reviewDto);
+    public ResponseEntity<?> createReview(@PathVariable long popupId, @RequestPart ReviewDto reviewDto, @RequestPart(value = "thumbnail", required = false) MultipartFile thumbnail) {
+        reviewService.createReview(popupId, reviewDto, thumbnail);
         return ResponseEntity.ok().build();
     }
 

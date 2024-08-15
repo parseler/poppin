@@ -10,11 +10,11 @@ import java.util.List;
 public interface ReviewService {
     ReviewDto getReviewById(long reviewId);
 
-    void updateReview(long reviewId, ReviewUpdateRequestDto requestDto);
+    void updateReview(long reviewId, ReviewUpdateRequestDto requestDto, MultipartFile file);
 
     void deleteReview(long reviewId);
 
-    void createReview(long popupId, ReviewDto reviewDto);
+    void createReview(long popupId, ReviewDto reviewDto, MultipartFile file);
 
     List<ReviewListDto> getReviewsByPopupId(long popupId);
 

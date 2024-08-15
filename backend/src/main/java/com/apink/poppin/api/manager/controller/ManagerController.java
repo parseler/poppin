@@ -3,9 +3,11 @@ package com.apink.poppin.api.manager.controller;
 import com.apink.poppin.api.manager.dto.*;
 import com.apink.poppin.api.manager.entity.Manager;
 import com.apink.poppin.api.manager.service.ManagerService;
+import com.apink.poppin.api.popup.dto.PopupDTO;
 import com.apink.poppin.api.popup.service.PopupService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
@@ -51,21 +53,23 @@ public class ManagerController {
 
     //TODO: JWT 토큰을 통한 조회 @PathVarialbe => @ManagerTsid
     @GetMapping("/me")
-    ResponseEntity<?> getMyInfo(@PathVariable Long managerTsid) {
-        Manager reponse = managerService.getManager(managerTsid);
+    ResponseEntity<?> getMyInfo() {
+        long managerTsid = Long.parseLong(SecurityContextHolder.getContext().getAuthentication().getName());
+        Manager response = managerService.getManager(managerTsid);
         return ResponseEntity.ok(ReadManagerResponseDTO.builder()
-                .managerTsid(String.valueOf(reponse.getManagerTsid()))
-                .nickname(reponse.getNickname())
-                .img(reponse.getImg())
+                .managerTsid(String.valueOf(response.getManagerTsid()))
+                .nickname(response.getNickname())
+                .img(response.getImg())
                 .build());
     }
 
     //TODO: 위와 같은 JWT 토큰을 통한 조회 @PathVarialbe => @ManagerTsid
     @GetMapping("/me/popups")
-    ResponseEntity<?> getMyPopups(@PathVariable Long managerTsid) {
+    ResponseEntity<?> getMyPopups() {
+        long managerTsid = Long.parseLong(SecurityContextHolder.getContext().getAuthentication().getName());
         //TODO: popupService findByID 구현
-//        popupService.getAllPopupByManager(managerTsid);
-        return ResponseEntity.ok().build();
+        List<PopupDTO> popups = popupService.getAllPopupByManager(managerTsid);
+        return ResponseEntity.ok(popups);
     }
 
     @GetMapping("/{nickname}/nickname-check")

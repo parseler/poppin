@@ -30,7 +30,7 @@ const Rank = () => {
           <PopMedium01
             key={popup.popupId}
             rank={index + 1}
-            image={popup.images[0]} // 첫 번째 이미지를 표시
+            image={popup.images} // 첫 번째 이미지를 표시
             text={popup.name}
             date={`${popup.startDate} ~ ${popup.endDate}`}
           />

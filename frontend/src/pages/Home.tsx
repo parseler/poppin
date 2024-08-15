@@ -115,7 +115,7 @@ const Home = () => {
             <Link to={`/popdetail/${popup.popupId}`}>
               <PopupBig
                 key={popup.popupId}
-                image={popup.images} // 첫 번째 이미지를 표시
+                image={popup.image} // 첫 번째 이미지를 표시
                 text={popup.name}
                 date={`${popup.startDate} ~ ${popup.endDate}`}
               />

@@ -13,6 +13,12 @@ export interface PopupProps {
   images: string[];
 }
 
+// 랭킹 조회
+export const getPopupByRank = async () => {
+  const response = await axiosInstance.get<PopupProps[]>(`/popups/rank`);
+  return response.data;
+}
+
 // 오픈 예정 팝업 조회
 export const getPopupByOpen = async () => {
   const response = await axiosInstance.get<PopupProps[]>(`/popups/open`);

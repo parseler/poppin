@@ -1,38 +1,72 @@
 import "@css/AdminPage/MyCodeManagement.css";
 import CreateButton from "@components/CreateButton";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Box, Modal } from "@mui/material";
+import {
+  getManagersData,
+  createManagerData,
+  deleteManagerData,
+  getManagerDataById,
+} from "@api/manager";
+import { ManagerListProps, ManagerProps } from "@api/manager";
 
-// 매니저 코드 목록
-const managers = [
-  {
-    id: "mangbear12",
-    password: "qwer1234!",
-    nickname: "망곰팝업담당자",
-    popup: [
-      "망그러진곰 비밀의 방 팝업스토어",
-      "망그러진곰 마법사의 방 팝업스토어",
-      "망그러진곰 추억이 담긴 방 팝업스토어",
-    ],
-  },
-  {
-    id: "choonbae1234",
-    password: "asdf5678!",
-    nickname: "춘배팝업담당자",
-    popup: ["<춘배의 여름방학 with Galaxy Z Flip6> 팝업스토어"],
-  },
-];
-
+// 매니저 코드 관리 컴포넌트
 const MyCodeManagement = () => {
+  const [managers, setManagers] = useState<ManagerListProps[]>([]);
   const [modalType, setModalType] = useState<string | null>(null);
-  const [current, setCurrent] = useState<(typeof managers)[0] | null>(null);
+  const [current, setCurrent] = useState<ManagerProps | null>(null);
 
-  const openModal = (
-    type: string,
-    manager: (typeof managers)[0] | null = null
-  ) => {
+  // 매니저 목록 조회
+  useEffect(() => {
+    const fetchManagers = async () => {
+      try {
+        const data = await getManagersData();
+        setManagers(data);
+      } catch (error) {
+        console.error("Failed to fetch managers:", error);
+      }
+    };
+
+    fetchManagers();
+  }, []);
+
+  const openModal = async (type: string, managerTsid?: string) => {
     setModalType(type);
-    setCurrent(manager);
+
+    if (type === "view" && managerTsid) {
+      try {
+        // getManagerDataById 함수 호출로 데이터를 가져와 setCurrent에 할당
+        const data = await getManagerDataById(managerTsid);
+        setCurrent({
+          managerTsid: data.managerTsid,
+          nickname: data.nickname,
+          id: data.id,
+          password: data.password,
+          role: data.role,
+          img: data.img,
+        });
+      } catch (error) {
+        console.error("Failed to fetch manager details:", error);
+      }
+    } else if (type === "delete" && managerTsid) {
+      const selectedManager = managers.find(
+        (manager) => manager.managerTsid === managerTsid
+      );
+
+      if (selectedManager) {
+        setCurrent({
+          managerTsid: selectedManager.managerTsid,
+          nickname: selectedManager.nickname,
+          id: "", // 기본값 설정
+          password: "", // 기본값 설정
+          role: "", // 기본값 설정
+          img: selectedManager.img,
+        });
+      } else {
+        setCurrent(null);
+      }
+    }
+
     document.body.style.overflow = "hidden";
   };
 
@@ -42,45 +76,61 @@ const MyCodeManagement = () => {
     document.body.style.overflow = "unset";
   };
 
+  // 매니저 코드 생성
+  const handleCreateManager = async (
+    managerData: Omit<ManagerProps, "managerTsid">
+  ) => {
+    try {
+      const newManager = await createManagerData(managerData);
+
+      // 생성 후 전체 목록을 다시 불러오기
+      const updatedManagers = await getManagersData();
+      setManagers(updatedManagers);
+
+      closeModal();
+    } catch (error) {
+      console.error("Failed to create manager:", error);
+    }
+  };
+
+  // 매니저 코드 삭제
+  const handleDeleteManager = async (managerTsid: string) => {
+    try {
+      await deleteManagerData(managerTsid);
+
+      // 삭제 후 상태에서 해당 매니저 제거
+      setManagers((prev) =>
+        prev.filter((manager) => manager.managerTsid !== managerTsid)
+      );
+
+      closeModal();
+    } catch (error) {
+      console.error("Failed to delete manager:", error);
+    }
+  };
+
   return (
     <div id="my-code-management">
       <h1>매니저 코드 관리</h1>
-      <div className="manager-search">
-        <input type="text" placeholder="닉네임 혹은 팝업 이름을 검색해주세요" />
-        <svg
-          xmlns="http://www.w3.org/2000/svg"
-          width="14"
-          height="14"
-          viewBox="0 0 14 14"
-          fill="none"
-        >
-          <path
-            d="M13.3539 12.6462L10.2245 9.51749C11.1315 8.42856 11.5838 7.03186 11.4873 5.61795C11.3908 4.20404 10.7528 2.88178 9.70623 1.92622C8.65963 0.97067 7.28492 0.455399 5.86808 0.487599C4.45125 0.519799 3.10137 1.09699 2.09926 2.0991C1.09714 3.10122 0.519951 4.4511 0.487751 5.86793C0.455551 7.28477 0.970822 8.65948 1.92638 9.70608C2.88193 10.7527 4.20419 11.3906 5.6181 11.4871C7.03201 11.5837 8.42871 11.1314 9.51764 10.2244L12.6464 13.3537C12.6928 13.4002 12.748 13.437 12.8087 13.4622C12.8694 13.4873 12.9344 13.5003 13.0001 13.5003C13.0658 13.5003 13.1309 13.4873 13.1916 13.4622C13.2523 13.437 13.3074 13.4002 13.3539 13.3537C13.4003 13.3073 13.4372 13.2521 13.4623 13.1914C13.4875 13.1307 13.5004 13.0657 13.5004 13C13.5004 12.9343 13.4875 12.8692 13.4623 12.8085C13.4372 12.7478 13.4003 12.6927 13.3539 12.6462ZM1.50014 5.99999C1.50014 5.10997 1.76406 4.23995 2.25853 3.49992C2.753 2.7599 3.4558 2.18313 4.27807 1.84253C5.10034 1.50194 6.00514 1.41282 6.87805 1.58646C7.75096 1.76009 8.55279 2.18867 9.18212 2.81801C9.81146 3.44735 10.24 4.24917 10.4137 5.12208C10.5873 5.995 10.4982 6.8998 10.1576 7.72207C9.81701 8.54433 9.24023 9.24714 8.50021 9.7416C7.76019 10.2361 6.89016 10.5 6.00014 10.5C4.80708 10.4987 3.66325 10.0241 2.81962 9.18051C1.976 8.33688 1.50147 7.19306 1.50014 5.99999Z"
-            fill="#8B8B8B"
-          />
-        </svg>
-      </div>
       <div className="manager-list">
         <table>
           <thead>
             <tr>
               <th>닉네임</th>
-              <th>팝업스토어</th>
+              <th>TS아이디</th>
               <th>삭제</th>
             </tr>
           </thead>
           <tbody>
-            {managers.map((manager, index) => (
-              <tr key={index}>
-                <td onClick={() => openModal("view", manager)}>
+            {managers.map((manager) => (
+              <tr key={manager.managerTsid}>
+                <td onClick={() => openModal("view", manager.managerTsid)}>
                   {manager.nickname}
                 </td>
-                <td>
-                  {manager.popup.length > 1
-                    ? manager.popup[0] + " 外"
-                    : manager.popup[0]}
+                <td onClick={() => openModal("view", manager.managerTsid)}>
+                  {manager.managerTsid}
                 </td>
-                <td onClick={() => openModal("delete")}>
+                <td onClick={() => openModal("delete", manager.managerTsid)}>
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
                     width="24"
@@ -110,49 +160,95 @@ const MyCodeManagement = () => {
               <div className="create-manager">
                 <div>
                   <label htmlFor="">아이디</label>
-                  <input type="text" placeholder="아이디 입력" />
+                  <input
+                    type="text"
+                    placeholder="아이디 입력"
+                    onChange={(e) => {
+                      const newId = e.target.value;
+                      setCurrent((prev) => ({
+                        ...(prev as ManagerProps),
+                        id: newId,
+                      }));
+                    }}
+                  />
                 </div>
                 <div>
                   <label htmlFor="">패스워드</label>
-                  <input type="text" placeholder="패스워드 입력" />
+                  <input
+                    type="password"
+                    placeholder="패스워드 입력"
+                    onChange={(e) => {
+                      const newPassword = e.target.value;
+                      setCurrent((prev) => ({
+                        ...(prev as ManagerProps),
+                        password: newPassword,
+                      }));
+                    }}
+                  />
                 </div>
                 <div>
                   <label htmlFor="">닉네임</label>
-                  <input type="text" placeholder="닉네임 입력" />
+                  <input
+                    type="text"
+                    placeholder="닉네임 입력"
+                    onChange={(e) => {
+                      const newNickname = e.target.value;
+                      setCurrent((prev) => ({
+                        ...(prev as ManagerProps),
+                        nickname: newNickname,
+                      }));
+                    }}
+                  />
                 </div>
               </div>
               <div className="buttons">
                 <button onClick={closeModal}>취소</button>
-                <button>생성</button>
+                <button
+                  onClick={() => {
+                    if (current) {
+                      handleCreateManager({
+                        id: current.id,
+                        password: current.password,
+                        nickname: current.nickname,
+                        role: "ROLE_MANAGER", // 기본 역할 설정
+                        img: "",
+                      });
+                    }
+                  }}
+                >
+                  생성
+                </button>
               </div>
             </div>
           )}
+
           {/* 삭제 모달 */}
-          {modalType === "delete" && (
+          {modalType === "delete" && current && (
             <div id="delete-modal">
               <p>정말 삭제하시겠습니까?</p>
               <div className="buttons">
                 <button onClick={closeModal}>취소</button>
-                <button>삭제</button>
+                <button
+                  onClick={() => handleDeleteManager(current.managerTsid)}
+                >
+                  삭제
+                </button>
               </div>
             </div>
           )}
+
           {/* 조회 모달 */}
           {modalType === "view" && current && (
             <div id="view-modal">
               <h2>매니저 정보</h2>
-              <h3>아이디</h3>
-              <p className="id">{current.id}</p>
+              <h3>TS아이디</h3>
+              <p className="id">{current.managerTsid}</p>
               <h3>닉네임</h3>
               <p className="nickname">{current.nickname}</p>
-              <h3>등록한 팝업 정보</h3>
-              <div className="pop-list">
-                {current.popup.map((popup, index) => (
-                  <p className="pop-item" key={index}>
-                    {popup}
-                  </p>
-                ))}
-              </div>
+              <h3>아이디</h3>
+              <p className="id">{current.id}</p>
+              <h3>패스워드</h3>
+              <p className="nickname">{current.password}</p>
             </div>
           )}
         </Box>

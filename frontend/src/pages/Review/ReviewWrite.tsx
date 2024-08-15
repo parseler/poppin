@@ -4,7 +4,7 @@ import { useLocation, useNavigate } from "react-router-dom";
 import { useEffect, useRef, useState } from "react";
 import Header from "@components/common/Header";
 import Menu from "@components/common/Menu";
-import { createReviewData } from "@api/reviews";
+import { createReviewData, uploadImages } from "@api/reviews";
 import useAuthStore from "@store/useAuthStore";
 import { UserProps } from "@interface/users";
 import { getUserData } from "@api/users";
@@ -87,6 +87,29 @@ const ReviewWrite: React.FC = () => {
     setEditorContent(content);
   };
 
+  // 이미지 핸들러 추가 (본문에 삽입되는 이미지 처리) - 수정된 부분
+  const imageHandler = async () => {
+    const input = document.createElement('input');
+    input.setAttribute('type', 'file');
+    input.setAttribute('accept', 'image/*');
+    input.click();
+
+    input.onchange = async () => {
+      const file = input.files ? input.files[0] : null;
+      if (file) {
+        try {
+          const uploadedImageUrl = await uploadImages(file);
+          const editor = quillRef.current?.getEditor();
+          const range = editor?.getSelection();
+          editor?.insertEmbed(range?.index || 0, 'image', uploadedImageUrl);
+        } catch (error) {
+          console.error("Error uploading image:", error);
+          alert("이미지 업로드 중 오류가 발생했습니다.");
+        }
+      }
+    };
+  };
+
   // 후기 별점 처리
   const handleRatingChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setRating(Number(event.target.value));
@@ -120,7 +143,7 @@ const ReviewWrite: React.FC = () => {
       }
 
       console.log("popupId ", popupId)
-      await createReviewData(popupId, formData);
+      await createReviewData(popupId!, formData);
 
       navigate(`/reviews/${popupId}`);
     } catch (error) {
@@ -214,7 +237,10 @@ const ReviewWrite: React.FC = () => {
           ref={quillRef}
           value={editorContent}
           onChange={handleWriteContent}
-          modules={modules}
+          modules={{
+            ...modules,
+            handlers: { image: imageHandler }
+          }}
           formats={formats}
         />
       </div>

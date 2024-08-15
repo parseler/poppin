@@ -2,7 +2,7 @@ import { axiosInstance } from "./axiosInstance";
 
 // 후기 목록 조회
 export const getReviewListData = async () => {
-  const response = await axiosInstance.get("/api/reviews");
+  const response = await axiosInstance.get("/reviews");
   return response.data;
 }
 
@@ -15,6 +15,20 @@ export const getReviewData = async (reviewId: number) => {
 // 후기 생성
 export const createReviewData = async (popupId: number, formData: FormData) => {
   const response = await axiosInstance.post(`/popups/${popupId}/reviews`, formData);
+  return response.data;
+}
+
+// 후기 본문 이미지 처리
+export const uploadImages = async (img: File): Promise<string> => {
+  const formData = new FormData();
+  formData.append('img', img);
+
+  const response = await axiosInstance.post(`/reviews/image`, formData, {
+    headers: {
+      'Content-Type': 'multipart/form-data',
+    },
+  });
+
   return response.data;
 }
 

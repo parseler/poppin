@@ -1,12 +1,24 @@
 import "@css/Rank.css";
-import banners from "@utils/get-banner-image";
+import { useEffect, useState } from "react";
 import PopMedium01 from "@components/Home/PopMedium01";
+import { getPopupByRank } from "@api/home"; // 랭킹 조회 API 함수 임포트
+import { PopupProps } from "@api/category"; // PopupProps 타입 임포트
 
 const Rank = () => {
-  const repeat = Array.from(
-    { length: 30 },
-    (_, i) => banners[i % banners.length]
-  );
+  const [rankedPopups, setRankedPopups] = useState<PopupProps[]>([]);
+
+  useEffect(() => {
+    const fetchRankedPopups = async () => {
+      try {
+        const data = await getPopupByRank();
+        setRankedPopups(data);
+      } catch (error) {
+        console.error("Failed to fetch ranked popups:", error);
+      }
+    };
+
+    fetchRankedPopups();
+  }, []);
 
   return (
     <div id="rank">
@@ -15,19 +27,18 @@ const Rank = () => {
         <p>순위는 매일 오후 12시에 갱신됩니다.</p>
       </div>
       <div className="rank-contents">
-        {repeat.map((banner, index) => (
+        {rankedPopups.map((popup, index) => (
           <PopMedium01
-            key={index}
+            key={popup.popupId}
             rank={index + 1}
-            change={index % 2 === 0 ? 1 : -1} // 임시 등락
-            image={banner.image}
-            text={banner.text}
-            date={banner.date}
+            image={popup.images[0]} // 첫 번째 이미지를 표시
+            text={popup.name}
+            date={`${popup.startDate} ~ ${popup.endDate}`}
           />
         ))}
       </div>
       <div id="page">
-        
+        {/* 페이지네이션 로직이 있다면 여기에 추가 */}
       </div>
     </div>
   );

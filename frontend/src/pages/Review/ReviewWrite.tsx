@@ -124,6 +124,7 @@ const ReviewWrite: React.FC = () => {
 
       const reviewData: ReviewProps = {
         reviewId: 0,
+        userTsid: userTsid,
         nickname: user?.nickname ?? "",
         img: user?.img ?? "",
         rating: rating,
@@ -133,7 +134,7 @@ const ReviewWrite: React.FC = () => {
         commentDtoList: [],
       };
 
-      formData.append("reviewData", JSON.stringify(reviewData));
+      formData.append("reviewDto", new Blob([JSON.stringify(reviewData)], { type: 'application/json' }));
 
       if (thumbnail) {
         formData.append("thumbnail", thumbnail);

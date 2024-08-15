@@ -2,6 +2,7 @@ import "@css/Rank.css";
 import { useEffect, useState } from "react";
 import PopMedium01 from "@components/Home/PopMedium01";
 import { getPopupByRank, RankProps } from "@api/home"; // 랭킹 조회 API 함수 임포트
+import { Link } from "react-router-dom";
 
 const Rank = () => {
   const [rankedPopups, setRankedPopups] = useState<RankProps[]>([]);
@@ -26,13 +27,15 @@ const Rank = () => {
       </div>
       <div className="rank-contents">
         {rankedPopups.map((popup, index) => (
-          <PopMedium01
-            key={popup.popupId}
-            rank={index + 1}
-            image={popup.image} // 첫 번째 이미지를 표시
-            text={popup.name}
-            date={`${popup.startDate} ~ ${popup.endDate}`}
-          />
+          <Link to={`/popdetail/${popup.popupId}`}>
+            <PopMedium01
+              key={popup.popupId}
+              rank={index + 1}
+              image={popup.image} // 첫 번째 이미지를 표시
+              text={popup.name}
+              date={`${popup.startDate} ~ ${popup.endDate}`}
+            />
+          </Link>
         ))}
       </div>
       <div id="page">

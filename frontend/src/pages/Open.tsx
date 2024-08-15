@@ -3,6 +3,7 @@ import PopMedium02 from "@components/Home/PopMedium02";
 import { useEffect, useState } from "react";
 import { getPopupByOpen, PopupProps } from "@api/home";
 import { differenceInDays, parse, isValid } from "date-fns";
+import { Link } from "react-router-dom";
 
 // ExtendedPopupProps 타입 정의
 interface ExtendedPopupProps extends Omit<PopupProps, 'startDate' | 'endDate'> {
@@ -54,13 +55,15 @@ const Open = () => {
       </div>
       <div className="open-contents">
         {openPopups.map((popup) => (
-          <PopMedium02
-            key={popup.popupId}
-            image={popup.images[0]} // 첫 번째 이미지만 표시, 필요에 따라 수정 가능
-            text={popup.name}
-            date={`${popup.startDate.toLocaleDateString()} ~ ${popup.endDate.toLocaleDateString()}`}
-            daysDiff={popup.daysDiff} // 날짜 차이를 직접 전달
-          />
+          <Link to={`/popdetail/${popup.popupId}`}>
+            <PopMedium02
+              key={popup.popupId}
+              image={popup.images[0]} // 첫 번째 이미지만 표시, 필요에 따라 수정 가능
+              text={popup.name}
+              date={`${popup.startDate.toLocaleDateString()} ~ ${popup.endDate.toLocaleDateString()}`}
+              daysDiff={popup.daysDiff} // 날짜 차이를 직접 전달
+            />
+          </Link>
         ))}
       </div>
       <div id="page"></div>

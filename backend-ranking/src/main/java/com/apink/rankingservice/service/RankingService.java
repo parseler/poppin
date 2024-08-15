@@ -3,8 +3,9 @@ package com.apink.rankingservice.service;
 import com.apink.rankingservice.entity.PopupRanking;
 import com.apink.rankingservice.repository.PopupRankingRepository;
 import com.apink.rankingservice.dto.PopupRankingDto;
-import com.apink.rankingservice.scheduler.BatchScheduler;
 import com.apink.rankingservice.util.RankCalculator;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.PersistenceContext;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.batch.item.Chunk;
@@ -12,7 +13,7 @@ import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import org.springframework.data.redis.core.RedisTemplate;
-import org.springframework.scheduling.annotation.Scheduled;
+import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
@@ -25,6 +26,8 @@ import org.slf4j.LoggerFactory;
 @RequiredArgsConstructor
 public class RankingService {
 
+    @PersistenceContext
+    private EntityManager entityManager;
     private final PopupRankingRepository popupRankingRepository;
     private final RedisTemplate<String, Object> redisTemplate;
     private static final String RANKING_KEY = "popup_rankings";
@@ -62,25 +65,20 @@ public class RankingService {
     }
 
     @Cacheable(value = "popupRank", key = "#popupId")
-    public Long getPopupRank(String popupId) {
-        return redisTemplate.opsForZSet().reverseRank(RANKING_KEY, popupId);
+    public Long getPopupRank(long popupId) {
+        long rank = redisTemplate.opsForZSet().rank(RANKING_KEY, popupId);
+        return rank + 1;
     }
 
-    @Getter
-    private static class RankedPopup {
-        private final Long popupId;
-        private final double score;
-
-        RankedPopup(Long popupId, double score) {
-            this.popupId = popupId;
-            this.score = score;
-        }
-    }
-
-    @Transactional(transactionManager = "transactionManager")
+    @Transactional
     public void deleteAllAndSave(Chunk<? extends PopupRanking> popupRankings) {
+        logger.debug("delete before");
         popupRankingRepository.deleteAll();
+        logger.debug("delete after");
+        logger.debug("data : {}", popupRankings);
+        logger.debug("save before");
         popupRankingRepository.saveAll(popupRankings);
+        logger.debug("save after");
     }
 
     private PopupRankingDto PopupRankingToPopupRankingDto(PopupRanking popupRanking) {
@@ -93,6 +91,17 @@ public class RankingService {
                 .reviewCount(popupRanking.getReviewCount())
                 .reviewScore(popupRanking.getReviewScore())
                 .build();
+    }
+
+    @Getter
+    private static class RankedPopup {
+        private final Long popupId;
+        private final double score;
+
+        RankedPopup(Long popupId, double score) {
+            this.popupId = popupId;
+            this.score = score;
+        }
     }
 
 }

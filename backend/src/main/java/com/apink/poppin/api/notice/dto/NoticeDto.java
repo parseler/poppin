@@ -67,4 +67,14 @@ public class NoticeDto {
         private List<String> tokens;
     }
 
+    @Builder
+    @Getter
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class Response {
+        private String title;
+        private String content;
+        private int kind;
+    }
+
 }

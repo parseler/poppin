@@ -5,6 +5,7 @@ import { checkNickname, getUserData, updateUserData } from "@api/users";
 import Header from "@components/common/Header";
 import Menu from "@components/common/Menu";
 import useAuthStore from "@store/useAuthStore";
+import { useTokenManagement } from "@hooks/useTokenManagement";
 
 const UserUpdate: React.FC = () => {
   const [user, setUser] = useState<UserProps>({
@@ -27,6 +28,7 @@ const UserUpdate: React.FC = () => {
   const [nicknameMsg, setNicknameMsg] = useState<string>("");
   const [nicknameCheck, setNicknameCheck] = useState<boolean>(false);
   const { userTsid, userRole } = useAuthStore();
+  const { token, saveToken } = useTokenManagement();
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -199,6 +201,11 @@ const UserUpdate: React.FC = () => {
         }
 
         const updatedData = await updateUserData(formData);
+
+        // 회원 정보가 성공적으로 업데이트된 후 토큰 저장
+        if (user && (user.userConsents.marketingConsent || user.userConsents.servicePushConsent)) {
+          await saveToken(user.userTsid);
+        }
 
         setUser((prevUser) => ({
           ...prevUser,

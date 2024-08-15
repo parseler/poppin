@@ -51,20 +51,22 @@ public class ManagerController {
 
     //TODO: JWT 토큰을 통한 조회 @PathVarialbe => @ManagerTsid
     @GetMapping("/me")
-    ResponseEntity<?> getMyInfo(@PathVariable Long managerTsid) {
-        Manager reponse = managerService.getManager(managerTsid);
+    ResponseEntity<?> getMyInfo(@PathVariable String managerTsid) {
+        long tsid = Long.parseLong(managerTsid);
+        Manager response = managerService.getManager(tsid);
         return ResponseEntity.ok(ReadManagerResponseDTO.builder()
-                .managerTsid(String.valueOf(reponse.getManagerTsid()))
-                .nickname(reponse.getNickname())
-                .img(reponse.getImg())
+                .managerTsid(String.valueOf(response.getManagerTsid()))
+                .nickname(response.getNickname())
+                .img(response.getImg())
                 .build());
     }
 
     //TODO: 위와 같은 JWT 토큰을 통한 조회 @PathVarialbe => @ManagerTsid
     @GetMapping("/me/popups")
-    ResponseEntity<?> getMyPopups(@PathVariable Long managerTsid) {
+    ResponseEntity<?> getMyPopups(@PathVariable String managerTsid) {
         //TODO: popupService findByID 구현
-//        popupService.getAllPopupByManager(managerTsid);
+        long tsid = Long.parseLong(managerTsid);
+        popupService.getAllPopupByManager(tsid);
         return ResponseEntity.ok().build();
     }
 
@@ -81,8 +83,9 @@ public class ManagerController {
     }
 
     @GetMapping("/{managerTsid}")
-    ResponseEntity<?> getManager(@PathVariable Long managerTsid) {
-        Manager manager =  managerService.getManager(managerTsid);
+    ResponseEntity<?> getManager(@PathVariable String managerTsid) {
+        long tsid = Long.parseLong(managerTsid);
+        Manager manager =  managerService.getManager(tsid);
         return ResponseEntity.ok(ManagerDTO.builder()
                 .managerTsid(String.valueOf(manager.getManagerTsid()))
                 .id(manager.getId())
@@ -108,8 +111,9 @@ public class ManagerController {
 
     //TODO: Admin 권한 확인 후 매니저 삭제
     @DeleteMapping("/{managerTsid}")
-    ResponseEntity<?> deleteManager(@PathVariable Long managerTsid) {
-        managerService.deleteManager(managerTsid);
+    ResponseEntity<?> deleteManager(@PathVariable String managerTsid) {
+        long tsid = Long.parseLong(managerTsid);
+        managerService.deleteManager(tsid);
         return ResponseEntity.ok().build();
     }
 }

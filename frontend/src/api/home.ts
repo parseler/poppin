@@ -23,7 +23,7 @@ export interface RankProps {
   hit: number;
   rating: number;
   deleted: boolean;
-  images: string;
+  image: string;
 }
 
 // 랭킹 조회

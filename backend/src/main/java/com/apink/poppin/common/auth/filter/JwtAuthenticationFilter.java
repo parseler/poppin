@@ -74,7 +74,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                     .orElseThrow(() -> new BusinessLogicException(ExceptionCode.MANAGER_NOT_FOUND));
 
             ManagerDTO manager = ManagerDTO.builder()
-                    .managerTsid(managerData.getManagerTsid())
+                    .managerTsid(String.valueOf(managerData.getManagerTsid()))
                     .id(managerData.getId())
                     .role("ROLE_MANAGER")
                     .build();

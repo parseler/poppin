@@ -32,7 +32,7 @@ public class CustomUserDetails implements UserDetails {
         return manager.getId();
     }
 
-    public long getUserTsid() {
+    public String getUserTsid() {
         return manager.getManagerTsid();
     }
 }

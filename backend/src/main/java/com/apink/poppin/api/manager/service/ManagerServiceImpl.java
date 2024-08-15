@@ -90,7 +90,7 @@ public class ManagerServiceImpl implements ManagerService {
     public List<Manager> getManagerList() {
         return managerRepository.findAll()
                 .stream()
-                .filter(manager -> !manager.getState())
+                .filter(Manager::getState)
                 .toList();
     }
 

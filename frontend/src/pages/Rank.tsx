@@ -1,11 +1,10 @@
 import "@css/Rank.css";
 import { useEffect, useState } from "react";
 import PopMedium01 from "@components/Home/PopMedium01";
-import { getPopupByRank } from "@api/home"; // 랭킹 조회 API 함수 임포트
-import { PopupProps } from "@api/category"; // PopupProps 타입 임포트
+import { getPopupByRank, RankProps } from "@api/home"; // 랭킹 조회 API 함수 임포트
 
 const Rank = () => {
-  const [rankedPopups, setRankedPopups] = useState<PopupProps[]>([]);
+  const [rankedPopups, setRankedPopups] = useState<RankProps[]>([]);
 
   useEffect(() => {
     const fetchRankedPopups = async () => {

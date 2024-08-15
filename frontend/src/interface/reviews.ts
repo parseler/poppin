@@ -12,7 +12,7 @@ export interface ReviewListProps {
 export interface ReviewProps {
   reviewId: number;
   nickname: string; // 작성자 정보
-  img: File | null; // 작성자 정보
+  img: File; // 작성자 정보
   rating: number;
   title: string;
   content: string;

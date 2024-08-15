@@ -3,6 +3,7 @@ import Modal from "@mui/material/Modal";
 import Box from "@mui/material/Box";
 import { ReservationProps, getMyPreReservationDetail } from "@api/mypage";
 import PopMedium03 from "./PopMedium03";
+import { getUserData } from "@api/users";
 
 interface PreReservationListProps {
   reservations: ReservationProps[];
@@ -14,10 +15,13 @@ const PreReservationList: React.FC<PreReservationListProps> = ({
   const [isModal, setIsModal] = useState(false);
   const [modalReservation, setModalReservation] =
     useState<ReservationProps | null>(null);
+  const [userPhoneNumber, setUserPhoneNumber] = useState<string>("");
 
   const openModal = async (reservationId: number) => {
     try {
       const data = await getMyPreReservationDetail(reservationId);
+      const userData = await getUserData();
+      setUserPhoneNumber(userData.phoneNumber);
       setModalReservation(data);
       setIsModal(true);
       document.body.style.overflow = "hidden";
@@ -84,7 +88,7 @@ const PreReservationList: React.FC<PreReservationListProps> = ({
               />
               <p className="title">{modalReservation.title}</p>
               <div className="reservation-info">
-                <p className="name">예약자명: {modalReservation.userName}</p>
+                <p className="name">예약자 번호: {userPhoneNumber}</p>
                 <p className="date">
                   예약 확정일: {modalReservation.reservationDate}
                 </p>

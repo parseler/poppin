@@ -536,7 +536,7 @@ public class PopupServiceImpl implements PopupService {
 
     // 날짜 별 사전예약자 정보 (매니저)
     // 유저 코드 합치면 유저 정보 같이 보여주기!
-    public List<PreReservationResponseDTO> getPreReservationsByDate(Date reservationDate) {
+    public List<PreReservationResponseDTO> getPreReservationsByDate(LocalDate reservationDate) {
         List<PreReservation> preReservations = preReservationRepository.findAllByReservationDate(reservationDate);
 
         return preReservations.stream()

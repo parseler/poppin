@@ -1,9 +1,9 @@
 import { useState, useEffect } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import "@css/Pop/PopReservationCheck.css";
-import useAuthStore from "@store/useAuthStore"; // zustand 스토어 불러오기
-import { getUserData } from "@api/users"; // 유저 정보를 가져오는 API
-import { createReservation } from "@api/reservation"; // 예약 생성 API
+import useAuthStore from "@store/useAuthStore";
+import { getUserData } from "@api/users";
+import { createPreReservation } from "@api/reservation";
 
 import edit from "@assets/edit.svg";
 import nextButton from "@assets/nextButton.svg";
@@ -11,14 +11,14 @@ import nextButton from "@assets/nextButton.svg";
 function PopReservationCheck() {
   const location = useLocation();
   const navigate = useNavigate();
-  const { userTsid } = useAuthStore(); // zustand에서 userTsid 가져오기
+  const { userTsid } = useAuthStore();
 
   const {
     title,
     selectedDate,
     selectedTime,
     peopleCount,
-    popupId, // 추가: popupId를 location.state에서 받아온다고 가정
+    popupId,
   } = location.state || {};
 
   const [name, setName] = useState("");
@@ -29,13 +29,12 @@ function PopReservationCheck() {
   useEffect(() => {
     const fetchUserData = async () => {
       try {
-        const userData = await getUserData(); // user.ts에서 가져온 API 호출
+        const userData = await getUserData();
         setName(userData.name || "");
         setContact(userData.contact || "");
         setEmail(userData.email || "");
       } catch (error) {
         console.error("유저 정보를 불러오는 중 에러 발생:", error);
-        // 에러 처리 로직 추가 가능 (예: 로그인 페이지로 리다이렉트 등)
       }
     };
 
@@ -52,12 +51,12 @@ function PopReservationCheck() {
     }
     try {
       // 서버로 예약 정보 전송
-      await createReservation({
-        popupId,
+      await createPreReservation(popupId, {
         userTsid,
-        date: selectedDate.toISOString().split('T')[0],
-        time: selectedTime,
-        peopleCount,
+        popupId,
+        reservationDate: selectedDate.toISOString().split('T')[0],
+        reservationTime: selectedTime,
+        reservationCount: peopleCount,
       });
       navigate("/reservation-check/finish");
     } catch (error) {

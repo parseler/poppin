@@ -4,7 +4,10 @@ import com.apink.poppin.api.heart.entity.Heart;
 import com.apink.poppin.api.heart.repository.HeartRepository;
 import com.apink.poppin.api.popup.dto.PopupDTO;
 import com.apink.poppin.api.popup.entity.Category;
+import com.apink.poppin.api.popup.entity.Popup;
+import com.apink.poppin.api.popup.entity.PopupImage;
 import com.apink.poppin.api.popup.repository.CategoryRepository;
+import com.apink.poppin.api.popup.repository.PopupImageRepository;
 import com.apink.poppin.api.popup.repository.PopupRepository;
 import com.apink.poppin.api.popup.service.FileStorageService;
 import com.apink.poppin.api.reservation.dto.OnsiteReservationRedisDto;
@@ -50,6 +53,7 @@ public class UserServiceImpl implements UserService {
     private final RedisTemplate<String, Object> redisTemplate;
     private final ValueOperations<String, Object> valueOperations;
     private final CategoryRepository categoryRepository;
+    private final PopupImageRepository popupImageRepository;
 
     @Override
     @Transactional(readOnly = true)
@@ -138,30 +142,41 @@ public class UserServiceImpl implements UserService {
                         .orElseThrow(() -> new BusinessLogicException(USER_NOT_FOUND));
 
         List<Heart> hearts = heartRepository.findByUser(user);
+        List<PopupDTO> popupDtos = new ArrayList<>();
 
-        return Optional.ofNullable(hearts)
-                .orElse(Collections.emptyList())
-                .stream()
-                .map(Heart::getPopup)
-                .filter(popup -> !popup.isDeleted())
-                .map(popup -> PopupDTO.builder()
-                        .popupId(popup.getPopupId())
-                        .name(popup.getName())
-                        .startDate(popup.getStartDate())
-                        .endDate(popup.getEndDate())
-                        .hours(popup.getHours())
-                        .snsUrl(popup.getSnsUrl())
-                        .pageUrl(popup.getPageUrl())
-                        .content(popup.getContent())
-                        .description(popup.getDescription())
-                        .address(popup.getAddress())
-                        .lat(popup.getLat())
-                        .lon(popup.getLon())
-                        .heart(popup.getHeart())
-                        .hit(popup.getHit())
-                        .rating(popup.getRating())
-                        .build())
-                .collect(Collectors.toList());
+        for(int i = 0; i < hearts.size(); i++) {
+            Heart heart = hearts.get(i);
+            Popup popup = heart.getPopup();
+
+            List<String> images = popupImageRepository.findAllByPopup_PopupId(popup.getPopupId())
+                    .stream()
+                    .sorted((img1, img2) -> Integer.compare(img1.getSeq(), img2.getSeq()))
+                    .map(PopupImage::getImg)
+                    .toList();
+
+            PopupDTO popupDto = PopupDTO.builder()
+                    .popupId(popup.getPopupId())
+                    .name(popup.getName())
+                    .startDate(popup.getStartDate())
+                    .endDate(popup.getEndDate())
+                    .hours(popup.getHours())
+                    .snsUrl(popup.getSnsUrl())
+                    .pageUrl(popup.getPageUrl())
+                    .content(popup.getContent())
+                    .description(popup.getDescription())
+                    .address(popup.getAddress())
+                    .lat(popup.getLat())
+                    .lon(popup.getLon())
+                    .heart(popup.getHeart())
+                    .images(images)
+                    .hit(popup.getHit())
+                    .rating(popup.getRating())
+                    .build();
+
+            popupDtos.add(popupDto);
+        }
+
+        return popupDtos;
     }
 
     @Override
@@ -183,6 +198,7 @@ public class UserServiceImpl implements UserService {
                         .nickname(user.getNickname())
                         .img(user.getImg())
                         .rating(review.getRating())
+                        .thumbnail(review.getThumbnail())
                         .title(review.getTitle())
                         .content(review.getContent())
                         .createdAt(review.getCreatedAt())

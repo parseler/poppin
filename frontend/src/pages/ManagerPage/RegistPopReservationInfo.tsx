@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { useMutation } from "react-query";
 import DatePicker from "react-datepicker";
 import usePopupStore from "store/usePopupStore";
+import useAuthStore from "@store/useAuthStore";
 import { createPopup } from "api/apiPop";
 import "react-datepicker/dist/react-datepicker.css";
 import "@css/ManagerPage/RegistPopReservationInfo.css";
@@ -19,6 +20,7 @@ interface HeaderProps {
 }
 
 function RegistPopReservationInfo() {
+  const { userTsid: userTsid } = useAuthStore();
   const [selectedOpenTimeHour, setSelectedOpenTimeHour] = useState<string>("");
   const [selectedOpenTimeMinute, setSelectedOpenTimeMinute] =
     useState<string>("");
@@ -49,63 +51,14 @@ function RegistPopReservationInfo() {
   } = usePopupStore();
   const navigate = useNavigate();
 
+  // 팝업 등록
   const mutation = useMutation(createPopup, {
     onSuccess: () => {
       alert("팝업이 성공적으로 등록되었습니다.");
-      console.log(
-        storeName,
-        storeContent,
-        selectedImages,
-        startDate,
-        endDate,
-        address,
-        lat,
-        lon,
-        categories,
-        snsUrl,
-        pageUrl,
-        timeSlots,
-        description,
-        preReservationOpenAt,
-        term,
-        maxPeoplePerSession,
-        maxReservationsPerPerson,
-        warning,
-        setPreReservationOpenAt,
-        setTerm,
-        setMaxPeoplePerSession,
-        setMaxReservationsPerPerson,
-        setWarning
-      );
       navigate("/regist-pop-fin");
     },
     onError: (error) => {
       console.error("Error creating popup:", error);
-      console.log(
-        storeName,
-        storeContent,
-        selectedImages,
-        startDate,
-        endDate,
-        address,
-        lat,
-        lon,
-        categories,
-        snsUrl,
-        pageUrl,
-        timeSlots,
-        description,
-        preReservationOpenAt,
-        term,
-        maxPeoplePerSession,
-        maxReservationsPerPerson,
-        warning,
-        setPreReservationOpenAt,
-        setTerm,
-        setMaxPeoplePerSession,
-        setMaxReservationsPerPerson,
-        setWarning
-      );
       alert("팝업 등록 중 오류가 발생했습니다.");
     },
   });
@@ -143,7 +96,7 @@ function RegistPopReservationInfo() {
         lat: lat || 0,
         lon: lon || 0,
         images: selectedImages,
-        managerTsid: "1",
+        managerTsid: userTsid || "",
         preReservationOpenAt: formattedPreReservationOpenAt,
         term: term || 1,
         maxPeoplePerSession: maxPeoplePerSession || 1,
@@ -152,6 +105,7 @@ function RegistPopReservationInfo() {
         categories: categories,
       },
     });
+    console.log(userTsid);
   };
 
   const renderCustomHeader = ({
@@ -174,15 +128,16 @@ function RegistPopReservationInfo() {
     </div>
   );
 
+  // 시
   const hourOptions = Array.from({ length: 24 }, (_, i) => (
     <option key={i} value={i < 10 ? `0${i}` : i}>
       {i < 10 ? `0${i}` : i}
     </option>
   ));
-
+  // 분
   const minuteOptions = Array.from({ length: 12 }, (_, i) => (
-    <option key={i*5} value={i*5 < 10 ? `0${i*5}` : i*5}>
-      {i*5 < 10 ? `0${i*5}` : i*5}
+    <option key={i * 5} value={i * 5 < 10 ? `0${i * 5}` : i * 5}>
+      {i * 5 < 10 ? `0${i * 5}` : i * 5}
     </option>
   ));
 

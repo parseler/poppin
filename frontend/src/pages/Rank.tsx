@@ -15,7 +15,6 @@ const Rank = () => {
         console.error("Failed to fetch ranked popups:", error);
       }
     };
-
     fetchRankedPopups();
   }, []);
 
@@ -30,7 +29,7 @@ const Rank = () => {
           <PopMedium01
             key={popup.popupId}
             rank={index + 1}
-            image={popup.images} // 첫 번째 이미지를 표시
+            image={popup.image} // 첫 번째 이미지를 표시
             text={popup.name}
             date={`${popup.startDate} ~ ${popup.endDate}`}
           />

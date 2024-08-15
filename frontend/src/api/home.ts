@@ -13,9 +13,22 @@ export interface PopupProps {
   images: string[];
 }
 
+export interface RankProps {
+  popupId: number;
+  name: string;
+  startDate: string;
+  endDate: string;
+  content: string;
+  heart: number;
+  hit: number;
+  rating: number;
+  deleted: boolean;
+  images: string;
+}
+
 // 랭킹 조회
 export const getPopupByRank = async () => {
-  const response = await axiosInstance.get<PopupProps[]>(`/popups/rank`);
+  const response = await axiosInstance.get<RankProps[]>(`/popups/rank`);
   return response.data;
 }
 

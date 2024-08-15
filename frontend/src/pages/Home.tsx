@@ -15,6 +15,7 @@ import {
   getPopupByOpen,
   getPopupByRank,
   getPopupByRecommend,
+  RankProps,
 } from "@api/home";
 import { PopupProps } from "@api/category";
 
@@ -23,7 +24,7 @@ const Home = () => {
   const navigate = useNavigate();
   const [nickname, setNickname] = useState<string>("");
 
-  const [bestPopups, setBestPopups] = useState<PopupProps[]>([]);
+  const [bestPopups, setBestPopups] = useState<RankProps[]>([]);
   const [openPopups, setOpenPopups] = useState<PopupProps[]>([]);
   const [recommendPopups, setRecommendPopups] = useState<PopupProps[]>([]);
 

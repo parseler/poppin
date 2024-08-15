@@ -86,11 +86,10 @@ const PreReservationList: React.FC<PreReservationListProps> = ({
               <div className="reservation-info">
                 <p className="name">예약자명: {modalReservation.userName}</p>
                 <p className="date">
-                  예약 확정일: {modalReservation.created_at}
+                  예약 확정일: {modalReservation.reservationDate}
                 </p>
                 <p className="time">
-                  입장 시간: {modalReservation.reservationDate}{" "}
-                  {modalReservation.reservationTime}
+                  입장 시간: {modalReservation.reservationTime}
                 </p>
                 <p className="member">
                   입장 인원: {modalReservation.reservationCount}명

@@ -197,8 +197,18 @@ export const deleteHeart = async (data: HeartRequestDTO) => {
 };
 
 // 유사 팝업 조회
-export const getSimilarPopups = async (popupId: number): Promise<PopupDTO[]> => {
+export const getSimilarPopups = async (
+  popupId: number
+): Promise<PopupDTO[]> => {
   const response = await api.get(`/popups/${popupId}/tag`);
   console.log(response.data);
+  return response.data;
+};
+
+// 매니저가 등록한 팝업 스토어 목록 조회 API
+export const getMyPopups = async (managerTsid: string) => {
+  const response = await api.get(`/me/popups`, {
+    params: { managerTsid },
+  });
   return response.data;
 };

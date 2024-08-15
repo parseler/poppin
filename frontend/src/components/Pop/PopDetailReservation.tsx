@@ -16,6 +16,7 @@ interface ReservationProps {
   maxPeoplePerSession?: number | null;
   maxReservationsPerPerson?: number | null;
   warning?: string | null;
+  popupId: number;
 }
 
 const Reservation = ({
@@ -25,6 +26,7 @@ const Reservation = ({
   term,
   maxReservationsPerPerson,
   warning,
+  popupId
 }: ReservationProps) => {
   const [selectedDate, setSelectedDate] = useState(new Date());
   const [selectedTime, setSelectedTime] = useState<string | null>(null);
@@ -32,6 +34,7 @@ const Reservation = ({
   const [times, setTimes] = useState<string[]>([]);
   const navigate = useNavigate();
 
+  // 시간 버튼 생성
   useEffect(() => {
     if (preReservationOpenAt && term && hours) {
       const openAt = new Date(preReservationOpenAt);
@@ -41,7 +44,7 @@ const Reservation = ({
         const dayOfWeek = selectedDate.toLocaleString("ko-KR", {
           weekday: "long",
         });
-        const trimmedDayOfWeek = dayOfWeek.substring(0, 1); // 예: '월'
+        const trimmedDayOfWeek = dayOfWeek.substring(0, 1);
 
         let parsedHours: Hours;
         try {
@@ -79,17 +82,18 @@ const Reservation = ({
     }
   }, [preReservationOpenAt, term, hours, selectedDate]);
 
+  // 예약 시간 선택
   const onTimeClick = (time: string) => {
     setSelectedTime(time);
   };
-
+  // + 버튼
   const onClickPlus = () => {
     setPeopleCount((prev) => {
       const maxPeople = maxReservationsPerPerson || 1;
       return prev < maxPeople ? prev + 1 : prev;
     });
   };
-
+  // - 버튼
   const onClickMinus = () => {
     setPeopleCount((prev) => (prev > 1 ? prev - 1 : 1));
   };
@@ -102,6 +106,7 @@ const Reservation = ({
           selectedDate,
           selectedTime,
           peopleCount,
+          popupId,
         },
       });
     } else {

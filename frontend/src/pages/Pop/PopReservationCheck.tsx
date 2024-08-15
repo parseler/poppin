@@ -1,6 +1,9 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import "@css/Pop/PopReservationCheck.css";
+import useAuthStore from "@store/useAuthStore"; // zustand 스토어 불러오기
+import { getUserData } from "@api/users"; // 유저 정보를 가져오는 API
+import { createReservation } from "@api/reservation"; // 예약 생성 API
 
 import edit from "@assets/edit.svg";
 import nextButton from "@assets/nextButton.svg";
@@ -8,23 +11,59 @@ import nextButton from "@assets/nextButton.svg";
 function PopReservationCheck() {
   const location = useLocation();
   const navigate = useNavigate();
+  const { userTsid } = useAuthStore(); // zustand에서 userTsid 가져오기
 
   const {
     title,
     selectedDate,
     selectedTime,
     peopleCount,
-    name: initialName,
-    contact: initialContact,
-    email: initialEmail,
+    popupId, // 추가: popupId를 location.state에서 받아온다고 가정
   } = location.state || {};
 
-  const [name, setName] = useState(initialName || "");
-  const [contact, setContact] = useState(initialContact || "");
-  const [email, setEmail] = useState(initialEmail || "");
+  const [name, setName] = useState("");
+  const [contact, setContact] = useState("");
+  const [email, setEmail] = useState("");
 
-  const reservationFin = () => {
-    navigate("/reservation-check/finish");
+  // 유저 정보 불러오기
+  useEffect(() => {
+    const fetchUserData = async () => {
+      try {
+        const userData = await getUserData(); // user.ts에서 가져온 API 호출
+        setName(userData.name || "");
+        setContact(userData.contact || "");
+        setEmail(userData.email || "");
+      } catch (error) {
+        console.error("유저 정보를 불러오는 중 에러 발생:", error);
+        // 에러 처리 로직 추가 가능 (예: 로그인 페이지로 리다이렉트 등)
+      }
+    };
+
+    if (userTsid) {
+      fetchUserData();
+    }
+  }, [userTsid]);
+
+  // 예약 완료 버튼 클릭 시 호출
+  const reservationFin = async () => {
+    if(!userTsid){
+      alert("로그인이 필요합니다.");
+      return;
+    }
+    try {
+      // 서버로 예약 정보 전송
+      await createReservation({
+        popupId,
+        userTsid,
+        date: selectedDate.toISOString().split('T')[0],
+        time: selectedTime,
+        peopleCount,
+      });
+      navigate("/reservation-check/finish");
+    } catch (error) {
+      console.error("예약을 완료하는 중 에러 발생:", error);
+      alert("예약을 완료하는 데 문제가 발생했습니다. 다시 시도해주세요.");
+    }
   };
 
   return (

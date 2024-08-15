@@ -19,10 +19,11 @@ const Mypage: React.FC = () => {
 
   // 사용자 정보 유무 확인
   useEffect(() => {
+    console.log("accessToken", accessToken);
     if (accessToken) {
       getUserData()
         .then((data) => {
-          console.log(data);
+          console.log("Data:", data);
           if (data) {
             setUser({
               userTsid: userTsid !== null ? userTsid : "",

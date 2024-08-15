@@ -378,6 +378,7 @@ const PopDetail = () => {
             maxPeoplePerSession={popupDetail.maxPeoplePerSession}
             maxReservationsPerPerson={popupDetail.maxReservationsPerPerson}
             warning={popupDetail.warning}
+            popupId={popupDetail.popupId}
           />
         )}
         {activeTab === "review" && <PopDetailReview reviewsData={reviews} />}

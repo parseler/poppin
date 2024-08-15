@@ -20,7 +20,7 @@ import java.util.List;
 public interface PreReservationRepository extends JpaRepository<PreReservation, Long> {
 
     // 날짜 별 사전 예약 정보
-    List<PreReservation> findAllByReservationDate(@NotNull Date reservationDate);
+    List<PreReservation> findAllByReservationDate(@NotNull LocalDate reservationDate);
 
     List<PreReservation> findByUser(User user);
 

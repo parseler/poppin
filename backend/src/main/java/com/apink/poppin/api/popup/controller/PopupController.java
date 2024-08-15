@@ -23,6 +23,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.time.LocalDate;
 import java.util.Date;
 import java.util.List;
 
@@ -94,7 +95,7 @@ public class PopupController {
 
     // 날짜 별 사전 예약자 정보 조회
     @GetMapping("/{popupId}/pre-reservations")
-    public ResponseEntity<List<PreReservationResponseDTO>> getPreReservation(@RequestParam("reservationDate") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) Date reservationDate,
+    public ResponseEntity<List<PreReservationResponseDTO>> getPreReservation(@RequestParam("reservationDate") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate reservationDate,
                                                                              @PathVariable("popupId") Long popupId) {
         List<PreReservationResponseDTO> list = popupService.getPreReservationsByDate(reservationDate);
         return new ResponseEntity<>(list, HttpStatus.OK);

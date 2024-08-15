@@ -9,6 +9,7 @@ import com.apink.poppin.api.reservation.dto.PreReservationResponseDTO;
 import com.apink.poppin.api.reservation.dto.PreStatementRequestDTO;
 import com.apink.poppin.api.reservation.dto.PreStatementResponseDTO;
 
+import java.time.LocalDate;
 import java.util.Date;
 import java.util.List;
 
@@ -37,7 +38,7 @@ public interface PopupService {
     PreReservationResponseDTO createPreReservation(PreReservationRequestDTO req);
 
     // 날짜 별 사전예약 정보
-    List<PreReservationResponseDTO> getPreReservationsByDate(Date reservationDate);
+    List<PreReservationResponseDTO> getPreReservationsByDate(LocalDate reservationDate);
 
     // 사전 예약 상태 정보 변경하기
     PreStatementResponseDTO changePreReservation(PreStatementRequestDTO reqDto);

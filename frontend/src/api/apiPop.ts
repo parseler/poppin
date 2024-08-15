@@ -207,7 +207,7 @@ export const getSimilarPopups = async (
 
 // 매니저가 등록한 팝업 스토어 목록 조회
 export const getMyPopups = async (managerTsid: string) => {
-  const response = await api.get(`/me/popups`, {
+  const response = await api.get(`/managers/me/popups`, {
     params: { managerTsid },
   });
   return response.data;

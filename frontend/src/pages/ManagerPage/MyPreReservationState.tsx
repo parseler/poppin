@@ -60,22 +60,21 @@ const MyPreReservationState = () => {
   useEffect(() => {
     const fetchReservations = async () => {
       if (!selectedDate || !popupId) return;
+      console.log(selectedDate.toISOString().split("T")[0]);
       try {
         const formattedDate = selectedDate.toISOString().split("T")[0];
-        const response = await getPreReservations(
-          parseInt(popupId, 10),
-          formattedDate
-        );
+        const response = await getPreReservations(parseInt(popupId, 10), formattedDate);
         setReservationData(response);
       } catch (error) {
         console.error("Failed to fetch reservation data:", error);
       }
     };
-
+  
     fetchReservations();
   }, [selectedDate, popupId]);
+  
 
-  // 시간 버튼 생성 로직
+  // 시간 생성 로직
   useEffect(() => {
     if (!popupDetails || !selectedDate) return;
 

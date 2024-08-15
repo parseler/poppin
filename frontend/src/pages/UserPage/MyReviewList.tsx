@@ -57,7 +57,7 @@ const MyReviewList = () => {
   return (
     <div id="my-review-list">
       <h1>내가 작성한 팝업 후기</h1>
-      <div className="review-content">
+      <div className="my-review-content">
         {writeReviews.length > 0 ? (
           writeReviews.map((review) => (
             <Link key={review.reviewId} to={`/review/${review.reviewId}`}>

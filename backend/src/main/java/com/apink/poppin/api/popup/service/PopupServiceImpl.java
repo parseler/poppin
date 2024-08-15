@@ -279,7 +279,7 @@ public class PopupServiceImpl implements PopupService {
                     .name(popup.getName())
                     .startDate(popup.getStartDate())
                     .endDate(popup.getEndDate())
-                    .img(img)
+                    .image(img)
                     .rank(i + 1)
                     .build();
 

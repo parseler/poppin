@@ -98,20 +98,7 @@ const Mypage: React.FC = () => {
 
   return (
     <div id="my-page">
-      {!user ? (
-        <div className="login-section">
-          {/* 로그인 전 */}
-          <Link to="/login">
-            <img
-              src={loginBefore}
-              className="login-before"
-              alt="로그인 전 아이콘"
-            />
-            <span>로그인 해주세요</span>
-            <img src={nextButton} alt="다음 버튼" />
-          </Link>
-        </div>
-      ) : (
+      {user && userRole ? (
         <div className="login-section">
           {/* 로그인 후 */}
           <div className="login-wrap">
@@ -138,11 +125,24 @@ const Mypage: React.FC = () => {
             </Link>
           </div>
         </div>
+      ) : (
+        <div className="login-section">
+          {/* 로그인 전 */}
+          <Link to="/login">
+            <img
+              src={loginBefore}
+              className="login-before"
+              alt="로그인 전 아이콘"
+            />
+            <span>로그인 해주세요</span>
+            <img src={nextButton} alt="다음 버튼" />
+          </Link>
+        </div>
       )}
 
       <div className="mypage-menu-section">
         <ul>
-          {user?.role === "manager" ? (
+          {userRole === "ROLE_MANAGER" ? (
             <>
               <li>
                 <Link to="/regist-pop">
@@ -163,7 +163,7 @@ const Mypage: React.FC = () => {
                 </Link>
               </li>
             </>
-          ) : user?.role === "admin" ? (
+          ) : userRole === "ROLE_ADMIN" ? (
             <>
               <li>
                 <Link to="/admin/manage-code">
@@ -235,7 +235,7 @@ const Mypage: React.FC = () => {
               <img src={nextButton} alt="다음 버튼" />
             </Link>
           </li>
-          {user?.role === "user" && (
+          {userRole === "ROLE_USER" && (
             <li>
               <Link to="" onClick={openModal}>
                 <p>회원 탈퇴</p>

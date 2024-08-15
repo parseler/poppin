@@ -410,6 +410,26 @@ CREATE TABLE IF NOT EXISTS `poppin`.`manager_refresh_token` (
     ON UPDATE NO ACTION)
 ENGINE = InnoDB;
 
+CREATE TABLE `notice` (
+  `notice_id` int NOT NULL AUTO_INCREMENT,
+  `userTsid` bigint NOT NULL,
+  `title` varchar(50) NOT NULL,
+  `content` varchar(300) NOT NULL,
+  `kind` int NOT NULL,
+  PRIMARY KEY (`notice_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+CREATE TABLE `token` (
+  `token_id` int NOT NULL AUTO_INCREMENT,
+  `user_token` varchar(255) NOT NULL,
+  `user_tsid` bigint NOT NULL,
+  PRIMARY KEY (`token_id`),
+  KEY `fk_token_user1_idx` (`user_tsid`),
+  CONSTRAINT `fk_token_user1`
+    FOREIGN KEY (`user_tsid`)
+    REFERENCES `user` (`user_tsid`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
 
 SET SQL_MODE=@OLD_SQL_MODE;
 SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS;

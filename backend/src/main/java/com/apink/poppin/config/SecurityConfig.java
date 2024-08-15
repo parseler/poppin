@@ -99,7 +99,7 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.DELETE, "/api/popups/*/pre-reservations/*").hasRole("USER")
                         .requestMatchers(HttpMethod.DELETE, "/api/popups").hasRole("ADMIN")
                         .requestMatchers(HttpMethod.PUT, "/api/popups/**").hasRole("MANAGER")
-                        .requestMatchers(HttpMethod.GET, "/api/reviews/*").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/api/reviews/**").permitAll()
                         .requestMatchers("/api/reviews/**").hasRole("USER")
                         .requestMatchers("/api/onsitereseravations/**").permitAll()
                         .requestMatchers(HttpMethod.PUT, "/api/onsitereseravations").hasRole("MANAGER")

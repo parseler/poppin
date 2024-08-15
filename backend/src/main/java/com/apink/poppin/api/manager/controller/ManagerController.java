@@ -3,6 +3,7 @@ package com.apink.poppin.api.manager.controller;
 import com.apink.poppin.api.manager.dto.*;
 import com.apink.poppin.api.manager.entity.Manager;
 import com.apink.poppin.api.manager.service.ManagerService;
+import com.apink.poppin.api.popup.dto.PopupDTO;
 import com.apink.poppin.api.popup.service.PopupService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -67,8 +68,8 @@ public class ManagerController {
     ResponseEntity<?> getMyPopups() {
         long managerTsid = Long.parseLong(SecurityContextHolder.getContext().getAuthentication().getName());
         //TODO: popupService findByID 구현
-        popupService.getAllPopupByManager(managerTsid);
-        return ResponseEntity.ok().build();
+        List<PopupDTO> popups = popupService.getAllPopupByManager(managerTsid);
+        return ResponseEntity.ok(popups);
     }
 
     @GetMapping("/{nickname}/nickname-check")

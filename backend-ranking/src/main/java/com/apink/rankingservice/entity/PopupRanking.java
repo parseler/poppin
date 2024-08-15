@@ -1,20 +1,18 @@
 package com.apink.rankingservice.entity;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import org.hibernate.annotations.ColumnDefault;
+import lombok.*;
 
+import java.io.Serializable;
 import java.time.LocalDate;
 
 @Entity
 @Builder
 @Getter
+@ToString
 @AllArgsConstructor
 @NoArgsConstructor
-public class PopupRanking {
+public class PopupRanking implements Serializable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY )

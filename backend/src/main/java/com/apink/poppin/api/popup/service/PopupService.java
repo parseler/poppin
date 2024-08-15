@@ -1,6 +1,7 @@
 package com.apink.poppin.api.popup.service;
 
 import com.apink.poppin.api.popup.dto.PopupDTO;
+import com.apink.poppin.api.popup.dto.PopupRankingDto;
 import com.apink.poppin.api.popup.dto.PopupRequestDTO;
 import com.apink.poppin.api.popup.dto.PopupWithPreReservationDTO;
 import com.apink.poppin.api.reservation.dto.PreReservationRequestDTO;
@@ -24,7 +25,7 @@ public interface PopupService {
     PopupWithPreReservationDTO getPopupWithPreReservation(Long popupId);
 
     // 인기 팝업 조회
-    List<PopupDTO> getPopupRank();
+    List<PopupRankingDto> getPopupRank();
 
     // 유사 팝업 조회
     List<PopupDTO> getSimilarPopup(long popupId);

@@ -6,6 +6,7 @@ import com.apink.poppin.api.chat.service.ChatService;
 import com.apink.poppin.api.heart.dto.HeartRequestDTO;
 import com.apink.poppin.api.heart.service.HeartService;
 import com.apink.poppin.api.popup.dto.PopupDTO;
+import com.apink.poppin.api.popup.dto.PopupRankingDto;
 import com.apink.poppin.api.popup.dto.PopupRequestDTO;
 import com.apink.poppin.api.popup.dto.PopupWithPreReservationDTO;
 import com.apink.poppin.api.popup.service.PopupService;
@@ -57,10 +58,9 @@ public class PopupController {
     }
 
     // 인기 팝업 조회
-    // 일단 좋아요 순으로 해뒀습니다!
     @GetMapping("/rank")
-    public ResponseEntity<List<PopupDTO>> getPopupRank() {
-        List<PopupDTO> rankList = popupService.getPopupRank();
+    public ResponseEntity<List<PopupRankingDto>> getPopupRank() {
+        List<PopupRankingDto> rankList = popupService.getPopupRank();
         return new ResponseEntity<>(rankList, HttpStatus.OK);
     }
 
@@ -214,12 +214,12 @@ public class PopupController {
         return ResponseEntity.ok(popupDTOList);
     }
 
-
     // 팝업 채팅방 들어가기 - 채팅내역 불러오기
     @GetMapping("/chat/{popupId}")
     public ResponseEntity<List<ChatMessage>> getHistory(@PathVariable Long popupId) {
         List<ChatMessage> chatHistory = chatService.getChatHistory(popupId);
         return new ResponseEntity<>(chatHistory, HttpStatus.OK);
     }
+
 
 }

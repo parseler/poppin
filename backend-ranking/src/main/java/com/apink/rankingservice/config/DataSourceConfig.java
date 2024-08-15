@@ -48,7 +48,7 @@ public class DataSourceConfig {
                 .build();
     }
 
-    @Bean("mainTransactionManager")
+    @Bean(name = "mainTransactionManager")
     public PlatformTransactionManager mainTransactionManager(@Qualifier("mainServiceDataSource") DataSource dataSource) {
         return new DataSourceTransactionManager(dataSource);
     }

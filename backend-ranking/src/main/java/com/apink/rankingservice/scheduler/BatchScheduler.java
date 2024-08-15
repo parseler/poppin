@@ -6,10 +6,13 @@ import org.springframework.batch.core.Job;
 import org.springframework.batch.core.JobParameters;
 import org.springframework.batch.core.JobParametersBuilder;
 import org.springframework.batch.core.launch.JobLauncher;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.util.Objects;
 
 @Component
 @RequiredArgsConstructor
@@ -18,12 +21,9 @@ public class BatchScheduler {
     private final JobLauncher jobLauncher;
     private final Job updatePopupRankingJob;
     private final RankingService rankingService;
-    private static final Logger logger = LoggerFactory.getLogger(BatchScheduler.class);
 
-    @Scheduled(cron = "0 9 2 * * ?", zone = "Asia/Seoul")
+    @Scheduled(cron = "0 31 14 * * ?", zone = "Asia/Seoul")
     public void runBatchJob() throws Exception {
-        logger.debug("실행완료");
-        logger.info("실행?");
 
         JobParameters jobParameters = new JobParametersBuilder()
                 .addLong("time", System.currentTimeMillis())

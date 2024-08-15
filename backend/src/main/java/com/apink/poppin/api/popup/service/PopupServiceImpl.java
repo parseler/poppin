@@ -75,6 +75,8 @@ public class PopupServiceImpl implements PopupService {
     private final UserCategoryRepository userCategoryRepository;
     private final ValueOperations<String, Object> valueOperations;
 
+    @Value("${ranking.service.url}")
+    private String rankingServiceUrl;
 
     @Value("${file.upload-dir}")
     private String uploadDir;
@@ -237,30 +239,54 @@ public class PopupServiceImpl implements PopupService {
 
 
     // 인기 팝업 조회
-    public List<PopupDTO> getPopupRank() {
-        List<Popup> list = popupRepository.findAllByOrderByHeartDesc();
+    public List<PopupRankingDto> getPopupRank() {
+        String url = rankingServiceUrl + "/api/rankings/top";
 
-        return list.stream()
-                .filter(popup -> !popup.isDeleted())
-                .map(popup -> PopupDTO.builder()
-                        .popupId(popup.getPopupId())
-                        .name(popup.getName())
-                        .startDate(popup.getStartDate())
-                        .endDate(popup.getEndDate())
-                        .hours(popup.getHours())
-                        .snsUrl(popup.getSnsUrl())
-                        .pageUrl(popup.getPageUrl())
-                        .content(popup.getContent())
-                        .description(popup.getDescription())
-                        .address(popup.getAddress())
-                        .lat(popup.getLat())
-                        .lon(popup.getLon())
-                        .heart(popup.getHeart())
-                        .hit(popup.getHit())
-                        .rating(popup.getRating())
-                        .managerTsId(String.valueOf(popup.getManager().getManagerTsid()))
-                        .build())
-                .collect(Collectors.toList());
+        RestTemplate restTemplate = new RestTemplate();
+        restTemplate.getMessageConverters().add(new MappingJackson2HttpMessageConverter());
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_JSON);
+
+        HttpEntity<SimilarPopupRequestDto> request = new HttpEntity<>(headers);
+        ResponseEntity<List<Long>> response = restTemplate.exchange(
+                url,
+                HttpMethod.GET,
+                request,
+                new ParameterizedTypeReference<List<Long>>() {
+                }
+        );
+
+        List<Long> responseList = response.getBody();
+        List<PopupRankingDto> popupDtoList = new ArrayList<>();
+
+        assert responseList != null;
+        for (int i = 0; i < responseList.size(); i++) {
+            long popupId = responseList.get(i);
+
+            Popup popup = popupRepository.findById(popupId)
+                    .orElseThrow(() -> new IllegalArgumentException("Invalid popup ID"));
+
+            List<PopupImage> imageList = popupImageRepository.findAllByPopup_PopupId(popupId);
+            String img = "";
+            for (PopupImage image : imageList) {
+                if (image.getSeq() == 1) {
+                    img = image.getImg();
+                }
+            }
+
+            PopupRankingDto popupDTO = PopupRankingDto.builder()
+                    .popupId(popup.getPopupId())
+                    .name(popup.getName())
+                    .startDate(popup.getStartDate())
+                    .endDate(popup.getEndDate())
+                    .img(img)
+                    .rank(i + 1)
+                    .build();
+
+            popupDtoList.add(popupDTO);
+        }
+
+        return popupDtoList;
     }
 
     @Override

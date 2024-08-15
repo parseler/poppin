@@ -1,7 +1,10 @@
 package com.apink.poppin.common.auth.service;
 
+import com.apink.poppin.api.manager.entity.Manager;
+import com.apink.poppin.api.manager.repository.ManagerRepository;
 import com.apink.poppin.api.user.entity.User;
 import com.apink.poppin.api.user.repository.UserRepository;
+import com.apink.poppin.common.auth.entity.ManagerRefreshToken;
 import com.apink.poppin.common.auth.entity.UserRefreshToken;
 import com.apink.poppin.common.auth.repository.ManagerRefreshTokenRepository;
 import com.apink.poppin.common.auth.repository.UserRefreshTokenRepository;
@@ -27,6 +30,7 @@ public class AuthServiceImpl implements AuthService {
     private final JwtTokenUtil jwtTokenUtil;
     private final ManagerRefreshTokenRepository managerRefreshTokenRepository;
     private final UserRepository userRepository;
+    private final ManagerRepository managerRepository;
 
     @Override
     @Transactional
@@ -57,7 +61,7 @@ public class AuthServiceImpl implements AuthService {
 
         // DB에 저장되어 있는지 확인
         Boolean isExist = false;
-        if(role.equals("manager")) {
+        if(role.equals("ROLE_MANAGER")) {
             isExist = managerRefreshTokenRepository.existsManagerRefreshTokenByRefresh(refresh);
         } else {
             isExist = userRefreshTokenRepository.existsUserRefreshTokenByRefresh(refresh);
@@ -78,11 +82,18 @@ public class AuthServiceImpl implements AuthService {
         String newAccess = jwtTokenUtil.createToken("access", username, role, 60 * 60 * 1000L);
         String newRefresh = jwtTokenUtil.createToken("refresh", username, role, 30 * 60 * 60 * 24 * 1000L);
 
-        // refreshToken 갱신
-        UserRefreshToken token = UserRefreshToken.builder()
-                .user(findUserByUserTsid(username))
-                .refresh(newRefresh)
-                .build();
+        if(role.equals("ROLE_MANAGER")) {
+            ManagerRefreshToken token = ManagerRefreshToken.builder()
+                    .manager(findManagerrByManagerTsid(username))
+                    .refresh(newRefresh)
+                    .build();
+        } else {
+            // refreshToken 갱신
+            UserRefreshToken token = UserRefreshToken.builder()
+                    .user(findUserByUserTsid(username))
+                    .refresh(newRefresh)
+                    .build();
+        }
 //        deleteRefreshToken(username, role);
 //        userRefreshTokenRepository.save(token);
 
@@ -107,6 +118,12 @@ public class AuthServiceImpl implements AuthService {
         Optional<User> user = userRepository.findUserByUserTsid(userTsid);
         return user
                 .orElseThrow(() -> new BusinessLogicException(ExceptionCode.USER_NOT_FOUND));
+    }
+
+    private Manager findManagerrByManagerTsid(long managerTsid) {
+        Optional<Manager> manager = managerRepository.findByManagerTsid(managerTsid);
+        return manager
+                .orElseThrow(() -> new BusinessLogicException(ExceptionCode.MANAGER_NOT_FOUND));
     }
 
     private Cookie createCookie(String key, String value) {

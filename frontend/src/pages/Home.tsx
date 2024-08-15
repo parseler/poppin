@@ -115,7 +115,7 @@ const Home = () => {
             <div key={index} onClick={index === 0 ? goPopDetail : undefined}>
               <PopupBig
                 key={popup.popupId}
-                image={popup.images[0]} // 첫 번째 이미지를 표시
+                image={popup.images} // 첫 번째 이미지를 표시
                 text={popup.name}
                 date={`${popup.startDate} ~ ${popup.endDate}`}
               />

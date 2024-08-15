@@ -76,13 +76,18 @@ public class ReviewServiceImpl implements ReviewService {
 
     @Override
     @Transactional
-    public void updateReview(long reviewId, ReviewUpdateRequestDto requestDto) {
+    public void updateReview(long reviewId, ReviewUpdateRequestDto requestDto, MultipartFile thumbnail) {
 
         Review review = reviewRepository.findById(reviewId)
                 .orElseThrow(() -> new BusinessLogicException(REVIEW_NOT_FOUND));
 
         if (review.isDeleted()) {
             throw new BusinessLogicException(REVIEW_ALREADY_DELETED);
+        }
+
+        String thumbnailPath = fileStorageService.storeFile(thumbnail);
+        if (thumbnailPath != null) {
+            requestDto.updateThumbnail(thumbnailPath);
         }
 
         long popupId = review.getPopup().getPopupId();
@@ -114,13 +119,15 @@ public class ReviewServiceImpl implements ReviewService {
 
     @Override
     @Transactional
-    public void createReview(long popupId, ReviewDto reviewDto) {
+    public void createReview(long popupId, ReviewDto reviewDto, MultipartFile thumbnail) {
         
         User user = userRepository.findUserByUserTsid(reviewDto.getUserTsid())
                 .orElseThrow(() -> new BusinessLogicException(USER_NOT_FOUND));
 
         Popup popup = popupRepository.findById(popupId)
                 .orElseThrow(() -> new BusinessLogicException((POPUP_NOT_FOUND)));
+
+        String thumbNailPath = fileStorageService.storeFile(thumbnail);
 
         double currentRating = popup.getRating();
         long count = reviewRepository.countByPopup_PopupId(popupId);
@@ -135,7 +142,7 @@ public class ReviewServiceImpl implements ReviewService {
                 .deleted(false)
                 .rating(reviewDto.getRating())
                 .title(reviewDto.getTitle())
-                .thumbnail(reviewDto.getThumbnail())
+                .thumbnail(thumbNailPath)
                 .content(reviewDto.getContent())
                 .build();
 
@@ -145,6 +152,7 @@ public class ReviewServiceImpl implements ReviewService {
             ReviewImage reviewImage = ReviewImage.builder()
                     .review(savedReview)
                     .seq(reviewImageDto.getSeq())
+                    .img(reviewImageDto.getImg())
                     .deleted(false)
                     .build();
             reviewImageRepository.save(reviewImage);

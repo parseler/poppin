@@ -1,5 +1,5 @@
 import "@css/Open.css";
-import { useSearchParams } from "react-router-dom";
+import { Link, useSearchParams } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { PopupProps } from "@api/home";
 import { search } from "@api/search";
@@ -12,11 +12,13 @@ const SearchList = () => {
 
   useEffect(() => {
     if (keyword) {
-      search(keyword).then((data) => {
-        setSearchPopips(data);
-      }).catch((error) => {
-        console.error(error);
-      })
+      search(keyword)
+        .then((data) => {
+          setSearchPopips(data);
+        })
+        .catch((error) => {
+          console.error(error);
+        });
     }
   }, [keyword]);
 
@@ -28,18 +30,18 @@ const SearchList = () => {
       </div>
       <div className="search-contents">
         {searchPopups.map((popup) => (
-          <PopMedium03
-          key={popup.popupId}
-          image={popup.images[0]} // 첫 번째 이미지만 표시, 필요에 따라 수정 가능
-          text={popup.name}
-          date={`${popup.startDate} ~ ${popup.endDate}`}
-          children={""}
-          />
+          <Link to={"/popupdetail/${popup.popupId}"}>
+            <PopMedium03
+              key={popup.popupId}
+              image={popup.images[0]} // 첫 번째 이미지만 표시, 필요에 따라 수정 가능
+              text={popup.name}
+              date={`${popup.startDate} ~ ${popup.endDate}`}
+              children={""}
+            />
+          </Link>
         ))}
       </div>
-      <div id="page">
-        
-      </div>
+      <div id="page"></div>
     </div>
   );
 };

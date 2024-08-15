@@ -29,8 +29,8 @@ public class ReviewController {
     }
 
     @PutMapping("/{reviewId}")
-    public ResponseEntity<?> updateReview(@PathVariable long reviewId, @RequestBody ReviewUpdateRequestDto requestDto) {
-        reviewService.updateReview(reviewId, requestDto);
+    public ResponseEntity<?> updateReview(@PathVariable long reviewId, @RequestPart ReviewUpdateRequestDto requestDto, @RequestPart(value = "thumbnail", required = false) MultipartFile thumbnail) {
+        reviewService.updateReview(reviewId, requestDto, thumbnail);
         return ResponseEntity.ok().build();
     }
 

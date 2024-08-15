@@ -1,6 +1,6 @@
 import "@css/Home.css";
 import { useEffect, useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import categories from "@utils/get-category-image";
 import banners from "@utils/get-banner-image";
 import Banner from "@components/Home/Banner";
@@ -20,6 +20,7 @@ import {
 import { PopupProps } from "@api/category";
 
 const Home = () => {
+  const navigate = useNavigate();
   const { accessToken, userTsid, userRole } = useAuthStore();
   const [nickname, setNickname] = useState<string>("");
 
@@ -82,6 +83,10 @@ const Home = () => {
       });
   }, [accessToken, userTsid, userRole]);
 
+  const handlePopupClick = (popupId) => {
+    navigate(`/popdetail/${popupId}`);
+  };
+
   return (
     <div id="home">
       {/* 후순위 */}
@@ -107,7 +112,7 @@ const Home = () => {
         </div>
         <div className="best-content">
           {bestPopups.map((popup) => (
-            <Link to={"/popupdetail/${popup.popupId}"}>
+            <Link to={`/popdetail/${popup.popupId}`}>
               <PopupBig
                 key={popup.popupId}
                 image={popup.images} // 첫 번째 이미지를 표시
@@ -126,7 +131,7 @@ const Home = () => {
         </div>
         <div className="open-content">
           {openPopups.map((popup) => (
-            <Link to={"/popupdetail/${popup.popupId}"}>
+            <Link to={`/popdetail/${popup.popupId}`}>
               <PopupBig
                 key={popup.popupId}
                 image={popup.images[0]} // 첫 번째 이미지만 표시, 필요에 따라 수정 가능
@@ -139,23 +144,26 @@ const Home = () => {
       </section>
 
       <section id="recommend-section">
-        {/* 비로그인이면 담당자 픽 & 로그인이면 닉네임 추천 픽 */}
-        <h1>
-          {nickname ? `${nickname}님을 위한 추천 팝업` : "담당자 픽 추천 팝업"}
-        </h1>
-        <div className="recommend-content">
-          {recommendPopups.map((popup) => (
-            <Link to={"/popupdetail/${popup.popupId}"}>
-              <PopupSmall
-                key={popup.popupId}
-                image={popup.images[0]} // 첫 번째 이미지만 표시, 필요에 따라 수정 가능
-                text={popup.name}
-                date={`${popup.startDate} ~ ${popup.endDate}`}
-              />
-            </Link>
-          ))}
-        </div>
-      </section>
+      {/* 비로그인이면 담당자 픽 & 로그인이면 닉네임 추천 픽 */}
+      <h1>
+        {nickname ? `${nickname}님을 위한 추천 팝업` : "담당자 픽 추천 팝업"}
+      </h1>
+      <div className="recommend-content">
+        {recommendPopups.map((popup) => (
+          <div
+            key={popup.popupId}
+            onClick={() => handlePopupClick(popup.popupId)} // 클릭 시 navigate 호출
+            className="pop-up-small" // CSS 클래스 추가
+          >
+            <PopupSmall
+              image={popup.images[0]} // 첫 번째 이미지만 표시, 필요에 따라 수정 가능
+              text={popup.name}
+              date={`${popup.startDate} ~ ${popup.endDate}`}
+            />
+          </div>
+        ))}
+      </div>
+    </section>
     </div>
   );
 };

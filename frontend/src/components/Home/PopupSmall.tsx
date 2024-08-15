@@ -8,9 +8,9 @@ const PopupSmall = ({ image, text, date }: BannerProps) => {
   };
 
   return (
-    <div id="pop-up-small">
+    <>
       <span className="like" onClick={toggleLike}>
-        {liked ? (
+        {/* {liked ? (
           <svg
             xmlns="http://www.w3.org/2000/svg"
             width="24"
@@ -124,7 +124,7 @@ const PopupSmall = ({ image, text, date }: BannerProps) => {
               </clipPath>
             </defs>
           </svg>
-        )}
+        )} */}
       </span>
       <div className="small-content">
         <img src={image} alt={text} />
@@ -132,7 +132,7 @@ const PopupSmall = ({ image, text, date }: BannerProps) => {
         <p className="small-name">{text}</p>
         <p className="small-date">{date}</p>
       </div>
-    </div>
+    </>
   );
 };
 

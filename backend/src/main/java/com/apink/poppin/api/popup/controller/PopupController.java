@@ -133,7 +133,7 @@ public class PopupController {
     }
 
     @PostMapping("/{popupId}/reviews")
-    public ResponseEntity<?> createReview(@PathVariable long popupId, @RequestPart ReviewDto reviewDto, @RequestPart(value = "thumbnail", required = false) MultipartFile thumbnail) {
+    public ResponseEntity<?> createReview(@PathVariable long popupId, @RequestPart(value = "thumbnail", required = false) MultipartFile thumbnail, @RequestPart ReviewDto reviewDto) {
         reviewService.createReview(popupId, reviewDto, thumbnail);
         return ResponseEntity.ok().build();
     }

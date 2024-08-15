@@ -68,6 +68,7 @@ public class ReviewServiceImpl implements ReviewService {
                 .rating(review.getRating())
                 .userTsid(user.getUserTsid())
                 .nickname(user.getNickname())
+                .thumbnail(review.getThumbnail())
                 .img(user.getImg())
                 .createdAt(review.getCreatedAt())
                 .commentDtoList(comments)
@@ -120,6 +121,7 @@ public class ReviewServiceImpl implements ReviewService {
     @Override
     @Transactional
     public void createReview(long popupId, ReviewDto reviewDto, MultipartFile thumbnail) {
+        System.out.println("reviewDto = " + reviewDto.getUserTsid());
         
         User user = userRepository.findUserByUserTsid(reviewDto.getUserTsid())
                 .orElseThrow(() -> new BusinessLogicException(USER_NOT_FOUND));
@@ -148,14 +150,16 @@ public class ReviewServiceImpl implements ReviewService {
 
         Review savedReview = reviewRepository.save(review);
 
-        for (ReviewImageDto reviewImageDto : reviewDto.getReviewImages()) {
-            ReviewImage reviewImage = ReviewImage.builder()
-                    .review(savedReview)
-                    .seq(reviewImageDto.getSeq())
-                    .img(reviewImageDto.getImg())
-                    .deleted(false)
-                    .build();
-            reviewImageRepository.save(reviewImage);
+        if (reviewDto.getReviewImages() != null) {
+            for (ReviewImageDto reviewImageDto : reviewDto.getReviewImages()) {
+                ReviewImage reviewImage = ReviewImage.builder()
+                        .review(savedReview)
+                        .seq(reviewImageDto.getSeq())
+                        .img(reviewImageDto.getImg())
+                        .deleted(false)
+                        .build();
+                reviewImageRepository.save(reviewImage);
+            }
         }
     }
 

@@ -11,6 +11,7 @@ export interface ReviewListProps {
 
 export interface ReviewProps {
   reviewId: number;
+  userTsid: string;
   nickname: string; // 작성자 정보
   img: File; // 작성자 정보
   rating: number;

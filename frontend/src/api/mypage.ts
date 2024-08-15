@@ -1,3 +1,4 @@
+import { ReviewProps } from "@interface/reviews";
 import { axiosInstance } from "./axiosInstance"
 
 export interface ReservationProps {
@@ -15,7 +16,7 @@ export interface ReservationProps {
 }
 
 // 내가 작성한 팝업 후기
-export const getMyReviews = async () => {
+export const getMyReviews = async (): Promise<ReviewProps[]> => {
   const resposne = await axiosInstance.get(`/users/me/popups/reviews`);
   return resposne.data;
 }

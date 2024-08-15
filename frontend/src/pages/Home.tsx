@@ -1,6 +1,6 @@
 import "@css/Home.css";
 import { useEffect, useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 import categories from "@utils/get-category-image";
 import banners from "@utils/get-banner-image";
 import Banner from "@components/Home/Banner";
@@ -18,11 +18,9 @@ import {
   RankProps,
 } from "@api/home";
 import { PopupProps } from "@api/category";
-import { getManagerData } from "@api/manager";
 
 const Home = () => {
   const { accessToken, userTsid, userRole } = useAuthStore();
-  const navigate = useNavigate();
   const [nickname, setNickname] = useState<string>("");
 
   const [bestPopups, setBestPopups] = useState<RankProps[]>([]);
@@ -33,30 +31,16 @@ const Home = () => {
     if (accessToken) {
       const tokenInfo = getTokenInfo(accessToken);
 
-      if (tokenInfo.userTsid && tokenInfo.userRole) {
-        if (userRole === "ROLE_MANAGER") {
-          // 매니저 전용 데이터 가져오기
-          getManagerData()
-            .then((data) => {
-              if (data && data.nickname) {
-                setNickname(data.nickname); // 매니저의 닉네임 설정
-              }
-            })
-            .catch((error) => {
-              console.error("Failed to fetch manager data:", error);
-            });
-        } else {
-          // 일반 사용자 데이터 가져오기
-          getUserData()
-            .then((data) => {
-              if (data && data.nickname) {
-                setNickname(data.nickname); // 일반 사용자의 닉네임 설정
-              }
-            })
-            .catch((error) => {
-              console.error("Failed to fetch user data:", error);
-            });
-        }
+      if (tokenInfo.userTsid && tokenInfo.userRole === "ROLE_USER") {
+        getUserData()
+          .then((data) => {
+            if (data && data.nickname) {
+              setNickname(data.nickname);
+            }
+          })
+          .catch((error) => {
+            console.error("Failed to fetch user data:", error);
+          });
       }
 
       // 추천 데이터
@@ -98,10 +82,6 @@ const Home = () => {
       });
   }, [accessToken, userTsid, userRole]);
 
-  const goPopDetail = () => {
-    navigate("/popdetail");
-  };
-
   return (
     <div id="home">
       {/* 후순위 */}
@@ -126,15 +106,15 @@ const Home = () => {
           <Link to={`/rank`}>더보기</Link>
         </div>
         <div className="best-content">
-          {bestPopups.map((popup, index) => (
-            <div key={index} onClick={index === 0 ? goPopDetail : undefined}>
+          {bestPopups.map((popup) => (
+            <Link to={"/popupdetail/${popup.popupId}"}>
               <PopupBig
                 key={popup.popupId}
                 image={popup.images[0]} // 첫 번째 이미지를 표시
                 text={popup.name}
                 date={`${popup.startDate} ~ ${popup.endDate}`}
               />
-            </div>
+            </Link>
           ))}
         </div>
       </section>
@@ -146,12 +126,14 @@ const Home = () => {
         </div>
         <div className="open-content">
           {openPopups.map((popup) => (
-            <PopupBig
-              key={popup.popupId}
-              image={popup.images[0]} // 첫 번째 이미지만 표시, 필요에 따라 수정 가능
-              text={popup.name}
-              date={`${popup.startDate} ~ ${popup.endDate}`}
-            />
+            <Link to={"/popupdetail/${popup.popupId}"}>
+              <PopupBig
+                key={popup.popupId}
+                image={popup.images[0]} // 첫 번째 이미지만 표시, 필요에 따라 수정 가능
+                text={popup.name}
+                date={`${popup.startDate} ~ ${popup.endDate}`}
+              />
+            </Link>
           ))}
         </div>
       </section>
@@ -163,12 +145,14 @@ const Home = () => {
         </h1>
         <div className="recommend-content">
           {recommendPopups.map((popup) => (
-            <PopupSmall
-              key={popup.popupId}
-              image={popup.images[0]} // 첫 번째 이미지만 표시, 필요에 따라 수정 가능
-              text={popup.name}
-              date={`${popup.startDate} ~ ${popup.endDate}`}
-            />
+            <Link to={"/popupdetail/${popup.popupId}"}>
+              <PopupSmall
+                key={popup.popupId}
+                image={popup.images[0]} // 첫 번째 이미지만 표시, 필요에 따라 수정 가능
+                text={popup.name}
+                date={`${popup.startDate} ~ ${popup.endDate}`}
+              />
+            </Link>
           ))}
         </div>
       </section>

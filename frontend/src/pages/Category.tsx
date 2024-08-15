@@ -1,5 +1,5 @@
 import "@css/Category.css";
-import { useParams } from "react-router-dom";
+import { Link, useParams } from "react-router-dom";
 import categories from "@utils/get-category-image";
 import PopupSmall from "@components/Home/PopupSmall";
 import { useEffect, useState } from "react";
@@ -37,12 +37,14 @@ const Category = () => {
       {/* 카테고리별 팝업 목록 데이터 받아서 띄우기 */}
       <div className="category-contents">
         {popups.map((popup) => (
-          <PopupSmall
-            key={popup.popupId}
-            image={popup.images[0]} // 첫 번째 이미지만 표시, 필요에 따라 수정 가능
-            text={popup.name}
-            date={`${popup.startDate} - ${popup.endDate}`}
-          />
+          <Link to={"/popupdetail/${popup.popupId}"}>
+            <PopupSmall
+              key={popup.popupId}
+              image={popup.images[0]} // 첫 번째 이미지만 표시, 필요에 따라 수정 가능
+              text={popup.name}
+              date={`${popup.startDate} - ${popup.endDate}`}
+            />
+          </Link>
         ))}
       </div>
 

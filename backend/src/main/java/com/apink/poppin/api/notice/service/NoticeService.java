@@ -214,6 +214,7 @@ public class NoticeService {
 
     public void createAdvertisement(NoticeDto.Advertisement advertisement) {
         String topic = "advertisement";
+        System.out.println(advertisement.getTokens());
 
         NoticeDto.Advertisement notice = NoticeDto.Advertisement.builder()
                 .title(advertisement.getTitle())

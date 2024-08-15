@@ -1,6 +1,8 @@
 import { Route, Routes } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { QueryClient, QueryClientProvider } from 'react-query';
+import { onMessageListener } from './firebase';
+import { useCallback } from 'react';
 import Layout01 from "@components/common/Layout01";
 import Layout02 from "@components/common/Layout02";
 import Layout04 from "@components/common/Layout04";
@@ -42,10 +44,39 @@ import MyPreReservationState from "@pages/ManagerPage/MyPreReservationState";
 import ManagerLogin from "@pages/ManagerPage/ManagerLogin";
 import SearchList from "@pages/SearchList";
 
+interface PayloadNotification {
+  title: string;
+  body: string;
+}
+
+interface MessagePayload {
+  notification: PayloadNotification;
+}
+
 const queryClient = new QueryClient();
 
 function App() {
   const [isLoading, setIsLoading] = useState(true);
+  const [notification, setNotification] = useState({title: '', body: ''});
+
+  const showNotification = useCallback((title: string, body: string) => {
+    console.log('Showing notification:', title, body);
+    if ('Notification' in window && Notification.permission === 'granted') {
+      new Notification(title, {
+        body: body,
+        icon: '/firebase-logo.png'
+      });
+    }
+    console.log(1);
+    setNotification({ title, body });
+  }, []);
+
+  onMessageListener()
+      .then((payload: MessagePayload) => {
+        console.log('Message received. ', payload);
+        showNotification(payload.notification.title, payload.notification.body);
+      })
+      .catch((err: Error) => console.log('Failed to receive message: ', err));
 
   useEffect(() => {
     const timer = setTimeout(() => {

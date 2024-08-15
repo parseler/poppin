@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import usePopupStore from "store/usePopupStore";
+import useAuthStore from "@store/useAuthStore";
 import { createPopup } from "@api/apiPop";
 import "@css/ManagerPage/RegistPopOptional.css";
 import secondStep from "@assets/registPop/secondStep.svg";
@@ -32,8 +33,9 @@ function RegistPopOptional() {
     lat,
     lon,
     timeSlots,
-    categories
+    categories,
   } = usePopupStore();
+  const { userTsid: userTsid } = useAuthStore();
   const [localSnsUrl, setLocalSnsUrl] = useState(snsUrl || "");
   const [localPageUrl, setLocalPageUrl] = useState(pageUrl || "");
   const [activeButtons, setActiveButtons] = useState<ServiceCategories>(
@@ -47,7 +49,10 @@ function RegistPopOptional() {
       ...prev,
       [category]: prev[category] === value ? "" : value,
     }));
-    setServiceCategory(category, activeButtons[category] === value ? "" : value);
+    setServiceCategory(
+      category,
+      activeButtons[category] === value ? "" : value
+    );
   };
 
   const handleSubmit = () => {
@@ -82,7 +87,7 @@ function RegistPopOptional() {
           lon: lon || 0,
           images: selectedImages,
           categories: categories,
-          managerTsid: "1",
+          managerTsid: userTsid || "",
         },
       });
       alert("팝업이 성공적으로 등록되었습니다.");

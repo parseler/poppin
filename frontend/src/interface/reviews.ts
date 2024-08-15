@@ -1,11 +1,11 @@
 export interface ReviewListProps {
   reviewId: number;
   nickname: string;
-  img: string;
+  img: File;
   rating: number;
   title: string;
   content: string;
-  thumbnail: string;
+  thumbnail: File;
   createdAt: string;
 }
 
@@ -24,7 +24,7 @@ export interface ReviewProps {
 export interface ReviewUpdateProps {
   rating: number;
   title: string;
-  thumbnail: string;
+  thumbnail: File;
   content: string;
 }
 

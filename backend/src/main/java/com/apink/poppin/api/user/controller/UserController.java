@@ -1,5 +1,7 @@
 package com.apink.poppin.api.user.controller;
 
+import com.apink.poppin.api.notice.dto.NoticeDto;
+import com.apink.poppin.api.notice.service.NoticeService;
 import com.apink.poppin.api.popup.dto.PopupDTO;
 import com.apink.poppin.api.reservation.dto.PreReservationResponseDTO;
 import com.apink.poppin.api.reservation.dto.ReservationResponseDto;
@@ -28,6 +30,7 @@ import static com.apink.poppin.common.exception.dto.ExceptionCode.*;
 public class UserController {
 
     private final UserService userService;
+    private final NoticeService noticeService;
     private static final Logger logger = LoggerFactory.getLogger(UserController.class);
 
     // 닉네임 중복 확인
@@ -83,16 +86,6 @@ public class UserController {
         return ResponseEntity.ok().build();
     }
 
-//    @GetMapping("/me/recent-search")
-//    public ResponseEntity<?> recentSearch() {
-//
-//    }
-//
-//    @GetMapping("/me/recommended-popups")
-//    public ResponseEntity<?> findRecommendedPopup() {
-//
-//    }
-
     // 내가 좋아요한 팝업 조회
     @GetMapping("/me/popups/heart")
     public ResponseEntity<?> findHeartPopup() {
@@ -134,19 +127,22 @@ public class UserController {
 
     }
 
-//    // 알림 조회
-//    @GetMapping("/me/notifications")
-//    public ResponseEntity<?> findNotification() {
-//
-//
-//        return ResponseEntity.ok().build();
-//    }
-//
-//    // 알림 전체 삭제
-//    @DeleteMapping("/me/notifications")
-//    public ResponseEntity<?> deleteNotification() {
-//
-//        return ResponseEntity.ok().build();
-//    }
+    // 알림 조회
+    @GetMapping("/me/notifications")
+    public ResponseEntity<?> findNotification() {
+        long userTsid = Long.parseLong(SecurityContextHolder.getContext().getAuthentication().getName());
+        List<NoticeDto.Response> notices = noticeService.getNotices(userTsid);
+
+        return ResponseEntity.ok(notices);
+    }
+
+    // 알림 전체 삭제
+    @DeleteMapping("/me/notifications")
+    public ResponseEntity<?> deleteNotification() {
+        long userTsid = Long.parseLong(SecurityContextHolder.getContext().getAuthentication().getName());
+        noticeService.deleteNotices(userTsid);
+
+        return ResponseEntity.ok().build();
+    }
 
 }

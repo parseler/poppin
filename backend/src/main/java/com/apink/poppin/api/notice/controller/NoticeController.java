@@ -39,19 +39,4 @@ public class NoticeController {
         return ResponseEntity.ok().build();
     }
 
-    @GetMapping("")
-    public ResponseEntity<?> getNotices() {
-        long userTsid = Long.parseLong(SecurityContextHolder.getContext().getAuthentication().getName());
-        List<NoticeDto.Response> notices = noticeService.getNotices(userTsid);
-
-        return ResponseEntity.ok(notices);
-    }
-
-    @DeleteMapping("")
-    public ResponseEntity<?> deleteNotices() {
-        long userTsid = Long.parseLong(SecurityContextHolder.getContext().getAuthentication().getName());
-        noticeService.deleteNotices(userTsid);
-
-        return ResponseEntity.ok().build();
-    }
 }

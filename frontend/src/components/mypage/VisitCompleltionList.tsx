@@ -13,7 +13,7 @@ const VisitCompletionList: React.FC<VisitCompletionListProps> = ({ reservations 
         reservations.map((reservation) => (
           // 링크를 클릭하면 다녀온 팝업 스토어 이름이 포함된 상태로 후기 작성 페이지로 이동합니다.
           <Link
-            to={`/review/write?store=${encodeURIComponent(reservation.title)}`}
+            to={`/review/write?store=${encodeURIComponent(reservation.title)}&popupId=${reservation.popupId}`}
             key={reservation.reservationId}
           >
             <PopMedium03

@@ -26,7 +26,7 @@ public interface PopupRepository extends JpaRepository<Popup, Long> {
     List<Popup> findAllByStartDateAfter(LocalDate now);
 
     @Query("SELECT new com.apink.poppin.api.reservation.dto.ReservationResponseDto(" +
-            "p.name, pi.img) " +
+            "p.popupId, p.name, pi.img) " +
             "FROM Popup p " +
             "LEFT JOIN PopupImage pi ON pi.popup.popupId = p.popupId AND pi.seq = 1 " +
             "WHERE p.popupId = :popupId")

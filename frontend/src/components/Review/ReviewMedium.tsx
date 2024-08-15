@@ -5,8 +5,6 @@ const ReviewMedium = ({
   thumbnail,
   title,
   rating,
-  content,
-  createdAt,
 }: ReviewListProps) => {
   return (
     <div id="review-medium" data-id={reviewId}>

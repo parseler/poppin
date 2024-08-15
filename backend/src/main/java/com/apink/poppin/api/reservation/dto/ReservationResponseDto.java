@@ -13,6 +13,7 @@ import java.time.LocalTime;
 public class ReservationResponseDto {
 
     private long reservationId;
+    private long popupId;
     private String title;
     private String userName;
     private String img;
@@ -26,8 +27,9 @@ public class ReservationResponseDto {
     public ReservationResponseDto() {}
 
     // pre reservation
-    public ReservationResponseDto(long reservationId, String title, String userName, String img, LocalDate created_at, LocalDate reservationDate, LocalTime reservationTime, Integer reservationCount, long reservationStatement) {
+    public ReservationResponseDto(long reservationId, long popupId, String title, String userName, String img, LocalDate created_at, LocalDate reservationDate, LocalTime reservationTime, Integer reservationCount, long reservationStatement) {
         this.reservationId = reservationId;
+        this.popupId = popupId;
         this.title = title;
         this.userName = userName;
         this.img = img;
@@ -40,8 +42,9 @@ public class ReservationResponseDto {
     }
 
     // onsite reservation
-    public ReservationResponseDto(long reservationId, String title, String img, LocalDate reservationDate, Integer reservationCount, long reservationStatement) {
+    public ReservationResponseDto(long reservationId, long popupId, String title, String img, LocalDate reservationDate, Integer reservationCount, long reservationStatement) {
         this.reservationId = reservationId;
+        this.popupId = popupId;
         this.title = title;
         this.img = img;
         this.reservationDate = reservationDate;
@@ -50,8 +53,9 @@ public class ReservationResponseDto {
         this.kind = 2;
     }
 
-    public ReservationResponseDto(String title, String img) {
+    public ReservationResponseDto(long popupId, String title, String img) {
         this.title = title;
+        this.popupId = popupId;
         this.img = img;
     }
 

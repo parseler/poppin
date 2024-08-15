@@ -373,6 +373,10 @@
   margin: 0 20px 32px;
 }
 
+.my-review-content {
+  margin: 0 20px;
+}
+
 /* MyReservattionList */
 #my-reservation-list {
   margin: 32px 0;

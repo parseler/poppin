@@ -26,7 +26,7 @@ public class CustomUserDetailsService implements UserDetailsService {
         System.out.println(username);
 
         ManagerDTO managerData = ManagerDTO.builder()
-                .managerTsid(manager.getManagerTsid())
+                .managerTsid(String.valueOf(manager.getManagerTsid()))
                 .id(manager.getId())
                 .password(manager.getPassword())
                 .build();

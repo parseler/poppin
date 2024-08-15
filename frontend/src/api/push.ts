@@ -2,8 +2,7 @@ import { axiosInstance } from "./axiosInstance";
 
 interface PushProps {
   title: string;
-  body: string;
-  scheduledTime: number; // 유닉스 타임스탬프 형식의 예약된 시간
+  content: string;
 }
 
 // 푸쉬 토큰 처리

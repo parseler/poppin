@@ -10,7 +10,7 @@ import java.time.LocalDate;
 @AllArgsConstructor
 @NoArgsConstructor
 public class PopupRankingDto {
-    private Long popupId;
+    private long popupId;
     private LocalDate creationDate;
     private int views;
     private int likes;

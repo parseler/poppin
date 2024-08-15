@@ -20,7 +20,7 @@ public class RankCalculator {
         // 기본 점수 계산
         double viewScore = popup.getViews() * VIEW_WEIGHT;
         double likeScore = popup.getLikes() * LIKE_WEIGHT;
-        double reviewScore = calculateBayesianAverage(popup.getReviewScore(), popup.getReviewCount());
+        double reviewScore = calculateBayesianAverage(popup.getReviewScore(), Math.toIntExact(popup.getReviewCount()));
         double reservationScore = popup.getReservations() * RESERVATION_WEIGHT;
 
         // 총점 계산

@@ -57,6 +57,7 @@ function PopReservationCheck() {
         reservationDate: selectedDate.toISOString().split('T')[0],
         reservationTime: selectedTime,
         reservationCount: peopleCount,
+        reservationStatementId: 1
       });
       navigate("/reservation-check/finish");
     } catch (error) {

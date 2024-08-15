@@ -66,6 +66,20 @@ server {
         proxy_set_header X-Forwarded-Proto $scheme;
     }
 
+    location /login {
+            # POST 요청만 백엔드 서버로 전달
+            limit_except POST {
+                deny all;  # POST 이외의 메서드는 허용하지 않음
+            }
+    
+            # POST 요청에 대해서만 백엔드로 프록시 전달
+            proxy_pass ${BACKEND_URL}/login;
+            proxy_set_header Host $http_host;
+            proxy_set_header X-Real-IP $remote_addr;
+            proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+            proxy_set_header X-Forwarded-Proto $scheme;
+    }
+
     location /oauth2/ {
         access_log /var/log/nginx/access.log proxy_log;
         proxy_pass  ${BACKEND_URL}/oauth2/;

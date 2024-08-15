@@ -6,6 +6,7 @@ import com.apink.poppin.api.manager.service.ManagerService;
 import com.apink.poppin.api.popup.service.PopupService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
@@ -51,9 +52,9 @@ public class ManagerController {
 
     //TODO: JWT 토큰을 통한 조회 @PathVarialbe => @ManagerTsid
     @GetMapping("/me")
-    ResponseEntity<?> getMyInfo(@PathVariable String managerTsid) {
-        long tsid = Long.parseLong(managerTsid);
-        Manager response = managerService.getManager(tsid);
+    ResponseEntity<?> getMyInfo() {
+        long managerTsid = Long.parseLong(SecurityContextHolder.getContext().getAuthentication().getName());
+        Manager response = managerService.getManager(managerTsid);
         return ResponseEntity.ok(ReadManagerResponseDTO.builder()
                 .managerTsid(String.valueOf(response.getManagerTsid()))
                 .nickname(response.getNickname())
@@ -63,10 +64,10 @@ public class ManagerController {
 
     //TODO: 위와 같은 JWT 토큰을 통한 조회 @PathVarialbe => @ManagerTsid
     @GetMapping("/me/popups")
-    ResponseEntity<?> getMyPopups(@PathVariable String managerTsid) {
+    ResponseEntity<?> getMyPopups() {
+        long managerTsid = Long.parseLong(SecurityContextHolder.getContext().getAuthentication().getName());
         //TODO: popupService findByID 구현
-        long tsid = Long.parseLong(managerTsid);
-        popupService.getAllPopupByManager(tsid);
+        popupService.getAllPopupByManager(managerTsid);
         return ResponseEntity.ok().build();
     }
 
@@ -83,9 +84,8 @@ public class ManagerController {
     }
 
     @GetMapping("/{managerTsid}")
-    ResponseEntity<?> getManager(@PathVariable String managerTsid) {
-        long tsid = Long.parseLong(managerTsid);
-        Manager manager =  managerService.getManager(tsid);
+    ResponseEntity<?> getManager(@PathVariable Long managerTsid) {
+        Manager manager =  managerService.getManager(managerTsid);
         return ResponseEntity.ok(ManagerDTO.builder()
                 .managerTsid(String.valueOf(manager.getManagerTsid()))
                 .id(manager.getId())
@@ -111,9 +111,8 @@ public class ManagerController {
 
     //TODO: Admin 권한 확인 후 매니저 삭제
     @DeleteMapping("/{managerTsid}")
-    ResponseEntity<?> deleteManager(@PathVariable String managerTsid) {
-        long tsid = Long.parseLong(managerTsid);
-        managerService.deleteManager(tsid);
+    ResponseEntity<?> deleteManager(@PathVariable Long managerTsid) {
+        managerService.deleteManager(managerTsid);
         return ResponseEntity.ok().build();
     }
 }

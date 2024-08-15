@@ -12,4 +12,8 @@ public class ReviewUpdateRequestDto {
     String title;
     String thumbnail;
     String content;
+
+    public void updateThumbnail(String thumbnail) {
+        this.thumbnail = thumbnail;
+    }
 }

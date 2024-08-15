@@ -222,4 +222,27 @@ public class NoticeService {
 
         kafkaProducer.send(topic, notice);
     }
+
+    @Transactional(readOnly = true)
+    public List<NoticeDto.Response> getNotices(long userTsid) {
+        List<Notice> responses = noticeRepository.findByUserTsid(userTsid);
+
+        return responses.stream()
+                .map(this::noticeToResponse)
+                .toList();
+    }
+
+    @Transactional
+    public void deleteNotices(long userTsid) {
+        noticeRepository.deleteByUserTsid(userTsid);
+    }
+
+    public NoticeDto.Response noticeToResponse(Notice notice) {
+        return NoticeDto.Response.builder()
+                .title(notice.getTitle())
+                .content(notice.getContent())
+                .kind(notice.getKind())
+                .build();
+    }
+
 }

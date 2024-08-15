@@ -83,8 +83,10 @@ public class ManagerController {
     @GetMapping("/{managerTsid}")
     ResponseEntity<?> getManager(@PathVariable Long managerTsid) {
         Manager manager =  managerService.getManager(managerTsid);
-        return ResponseEntity.ok(ReadManagerResponseDTO.builder()
+        return ResponseEntity.ok(ManagerDTO.builder()
                 .managerTsid(String.valueOf(manager.getManagerTsid()))
+                .id(manager.getId())
+                .password(manager.getPassword())
                 .nickname(manager.getNickname())
                 .img(manager.getImg())
                 .build());

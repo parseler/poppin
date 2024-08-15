@@ -9,7 +9,7 @@ import lombok.ToString;
 @Builder
 @AllArgsConstructor
 public class ManagerDTO {
-    private Long managerTsid;
+    private String managerTsid;
     private String nickname;
     private String id;
     private String password;

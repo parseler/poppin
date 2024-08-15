@@ -12,6 +12,7 @@ public class ReviewListDto {
     private long userTsid;
     private String nickname;
     private String img;
+    private String thumbnail;
     private float rating;
     private String title;
     private String content;

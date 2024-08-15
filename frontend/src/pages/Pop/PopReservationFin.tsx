@@ -1,8 +1,15 @@
+import { useNavigate } from "react-router-dom";
 import "@css/Pop/PopReservationFin.css";
 
 import finishCheck from "@assets/registPop/finishCheck.svg";
 
 function ReservationFin() {
+  const navigate = useNavigate();
+
+  const handleReservationCheck = () => {
+    navigate("/mypage/reservation");
+  };
+
   return (
     <div id="pop-reservation-finish">
       <img src={finishCheck} />
@@ -11,7 +18,7 @@ function ReservationFin() {
         마이페이지에서 예약 내역을 확인하실 수 있습니다.
       </div>
       <div className="reservation-fin">
-        <button>예약 확인하기</button>
+        <button onClick={handleReservationCheck}>예약 확인하기</button>{" "}
       </div>
     </div>
   );

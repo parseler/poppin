@@ -60,7 +60,6 @@ const MyPreReservationState = () => {
   useEffect(() => {
     const fetchReservations = async () => {
       if (!selectedDate || !popupId) return;
-      console.log(selectedDate.toISOString().split("T")[0]);
       try {
         const formattedDate = selectedDate.toISOString().split("T")[0];
         const response = await getPreReservations(parseInt(popupId, 10), formattedDate);
@@ -73,7 +72,6 @@ const MyPreReservationState = () => {
     fetchReservations();
   }, [selectedDate, popupId]);
   
-
   // 시간 생성 로직
   useEffect(() => {
     if (!popupDetails || !selectedDate) return;
@@ -149,23 +147,6 @@ const MyPreReservationState = () => {
     return phone.replace(/-/g, "");
   };
 
-  const getTileClassName = ({ date, view }: { date: Date; view: string }) => {
-    if (view === "month") {
-      const day = date.getDay();
-      const today = new Date();
-      if (date.toDateString() === today.toDateString()) {
-        return "today";
-      } else if (day === 0) {
-        return "sunday";
-      } else if (day === 6) {
-        return "saturday";
-      } else {
-        return "";
-      }
-    }
-    return "";
-  };
-
   const filteredData = reservationData.filter((item) => {
     const isDateMatch =
       selectedDate &&
@@ -192,7 +173,7 @@ const MyPreReservationState = () => {
             date.toDateString() ===
               (selectedDate && selectedDate.toDateString())
               ? "selected-date"
-              : getTileClassName({ date, view })
+              : ""
           }
           prevLabel={<button>{"<"}</button>}
           nextLabel={<button>{">"}</button>}

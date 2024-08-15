@@ -10,7 +10,12 @@ import PopupSmall from "@components/Home/PopupSmall";
 import { getUserData } from "@api/users";
 import { getTokenInfo } from "@api/axiosInstance";
 import useAuthStore from "@store/useAuthStore";
-import { getPopupByNew, getPopupByOpen, getPopupByRecommend } from "@api/home";
+import {
+  getPopupByNew,
+  getPopupByOpen,
+  getPopupByRank,
+  getPopupByRecommend,
+} from "@api/home";
 import { PopupProps } from "@api/category";
 
 const Home = () => {
@@ -18,6 +23,7 @@ const Home = () => {
   const navigate = useNavigate();
   const [nickname, setNickname] = useState<string>("");
 
+  const [bestPopups, setBestPopups] = useState<PopupProps[]>([]);
   const [openPopups, setOpenPopups] = useState<PopupProps[]>([]);
   const [recommendPopups, setRecommendPopups] = useState<PopupProps[]>([]);
 
@@ -57,6 +63,15 @@ const Home = () => {
         });
     }
 
+    // 오늘 가장 인기있는 팝업 데이터
+    getPopupByRank()
+      .then((data) => {
+        setBestPopups(data);
+      })
+      .catch((error) => {
+        console.error(error);
+      });
+
     // 오픈 예정 데이터
     getPopupByOpen()
       .then((data) => {
@@ -89,27 +104,25 @@ const Home = () => {
         ))}
       </section>
 
-      {/* 데이터 받아와서 수정해야 함 */}
       <section id="best-section">
         <div className="best-title">
           <h1>오늘 가장 인기있는 팝업</h1>
           <Link to={`/rank`}>더보기</Link>
         </div>
         <div className="best-content">
-          {banners.map((banner, index) => (
+          {bestPopups.map((popup, index) => (
             <div key={index} onClick={index === 0 ? goPopDetail : undefined}>
               <PopupBig
-                key={index}
-                image={banner.image}
-                text={banner.text}
-                date={banner.date}
+                key={popup.popupId}
+                image={popup.images[0]} // 첫 번째 이미지를 표시
+                text={popup.name}
+                date={`${popup.startDate} ~ ${popup.endDate}`}
               />
             </div>
           ))}
         </div>
       </section>
 
-      {/* 데이터 받아와서 수정해야 함 */}
       <section id="open-section">
         <div className="open-title">
           <h1>곧 오픈 예정인 팝업</h1>
@@ -126,6 +139,7 @@ const Home = () => {
           ))}
         </div>
       </section>
+
       <section id="recommend-section">
         {/* 비로그인이면 담당자 픽 & 로그인이면 닉네임 추천 픽 */}
         <h1>

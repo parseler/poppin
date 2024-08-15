@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { getPopupList } from "@api/apiPop";
+import useAuthStore from "@store/useAuthStore";
 
 import nextButton from "@assets/mypage/nextButton.svg";
 import none from "@assets/none.svg";
@@ -11,13 +12,13 @@ interface Popup {
   name: string;
   startDate: string;
   endDate: string;
-  managerTsId: number;
+  managerTsId: string;
   hours: string;
 }
 
 function OnsitePopList() {
   const [popups, setPopups] = useState<Popup[]>([]);
-  const managerTsid = 1;
+  const { userTsid: userTsid } = useAuthStore();
 
   useEffect(() => {
     const fetchPopups = async () => {
@@ -31,18 +32,20 @@ function OnsitePopList() {
           const startDate = new Date(popup.startDate);
           const endDate = new Date(popup.endDate);
           if (
-            popup.managerTsId !== managerTsid ||
+            popup.managerTsId !== userTsid ||
             currentDateTime < startDate ||
             currentDateTime > endDate
           ) {
             return false;
           }
 
-          if(startDate<currentDateTime && currentDateTime<endDate) return true;
+          if (startDate < currentDateTime && currentDateTime < endDate)
+            return true;
 
           const hoursObject = parseHoursFromString(popup.hours);
-          if (!hoursObject[currentDay]) return currentDateTime >= startDate && currentDateTime <= endDate;
-          
+          if (!hoursObject[currentDay])
+            return currentDateTime >= startDate && currentDateTime <= endDate;
+
           const hours = hoursObject[currentDay];
           const [start, end] = hours.split(" ~ ");
           const [startHour, startMinute] = start.split(":").map(Number);
@@ -64,7 +67,7 @@ function OnsitePopList() {
       }
     };
     fetchPopups();
-  }, []);
+  }, [userTsid]);
 
   const parseHoursFromString = (
     hoursString: string
@@ -78,9 +81,16 @@ function OnsitePopList() {
     <div id="onsite-registed-list">
       {popups.length > 0 ? (
         popups.map((popup, index) => (
-          <Link to={`/popdetail/${popup.popupId}`} key={index} className="popup-card">
+          <Link
+            to={`/popdetail/${popup.popupId}`}
+            key={index}
+            className="popup-card"
+          >
             <div className="popup-image">
-              <img src={`http://localhost/${popup.images[0].replace('./','')}`} alt={popup.name} />
+              <img
+                src={`http://localhost/${popup.images[0].replace("./", "")}`}
+                alt={popup.name}
+              />
             </div>
             <div className="popup-details">
               <p className="popup-name">{popup.name}</p>

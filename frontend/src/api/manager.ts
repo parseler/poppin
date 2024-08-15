@@ -15,6 +15,12 @@ export interface ManagerProps {
   img: string;
 }
 
+// 매니저 정보 조회
+export const getManagerData = async () => {
+  const response = await axiosInstance.get(`/managers/me`);
+  return response.data;
+};
+
 // 매니저 코드 전체 조회
 export const getManagersData = async (): Promise<ManagerListProps[]> => {
   const response = await axiosInstance.get<ManagerListProps[]>('/managers');

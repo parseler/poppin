@@ -11,6 +11,7 @@ import nextButton from "@assets/mypage/nextButton.svg";
 import profileUpdate from "@assets/mypage/profileUpdateButton.svg";
 import useAuthStore from "@store/useAuthStore";
 import { logout } from "@api/auth";
+import { getManagerData } from "@api/manager";
 
 const Mypage: React.FC = () => {
   const [user, setUser] = useState<UserProps | null>(null);
@@ -19,11 +20,11 @@ const Mypage: React.FC = () => {
 
   // 사용자 정보 유무 확인
   useEffect(() => {
-    console.log("accessToken", accessToken);
     if (accessToken) {
-      getUserData()
+      const fetchUserData = userRole === "ROLE_MANAGER" ? getManagerData : getUserData;
+
+      fetchUserData()
         .then((data) => {
-          console.log("Data:", data);
           if (data) {
             setUser({
               userTsid: userTsid !== null ? userTsid : "",
@@ -32,7 +33,7 @@ const Mypage: React.FC = () => {
               phoneNumber: data.phoneNumber ?? "",
               userCategories: data.userCategories
                 ? data.userCategories.map((cate: any) => ({
-                    name: cate.name, // 카테고리의 이름을 가져옵니다.
+                    name: cate.name,
                   }))
                 : [],
               userConsents: {
@@ -53,7 +54,7 @@ const Mypage: React.FC = () => {
     } else {
       setUser(null);
     }
-  }, [accessToken, userTsid, userRole, setUser]);
+  }, [accessToken, userTsid, userRole]);
 
   // 로그아웃
   const handleLogout = async () => {

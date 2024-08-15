@@ -18,6 +18,7 @@ import {
   RankProps,
 } from "@api/home";
 import { PopupProps } from "@api/category";
+import { getManagerData } from "@api/manager";
 
 const Home = () => {
   const { accessToken, userTsid, userRole } = useAuthStore();
@@ -33,15 +34,29 @@ const Home = () => {
       const tokenInfo = getTokenInfo(accessToken);
 
       if (tokenInfo.userTsid && tokenInfo.userRole) {
-        getUserData()
-          .then((data) => {
-            if (data && data.nickname) {
-              setNickname(data.nickname);
-            }
-          })
-          .catch((error) => {
-            console.error("Failed to fetch user data:", error);
-          });
+        if (userRole === "ROLE_MANAGER") {
+          // 매니저 전용 데이터 가져오기
+          getManagerData()
+            .then((data) => {
+              if (data && data.nickname) {
+                setNickname(data.nickname); // 매니저의 닉네임 설정
+              }
+            })
+            .catch((error) => {
+              console.error("Failed to fetch manager data:", error);
+            });
+        } else {
+          // 일반 사용자 데이터 가져오기
+          getUserData()
+            .then((data) => {
+              if (data && data.nickname) {
+                setNickname(data.nickname); // 일반 사용자의 닉네임 설정
+              }
+            })
+            .catch((error) => {
+              console.error("Failed to fetch user data:", error);
+            });
+        }
       }
 
       // 추천 데이터

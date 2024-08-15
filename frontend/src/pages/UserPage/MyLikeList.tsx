@@ -1,25 +1,42 @@
+import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import PopMedium03 from "@components/mypage/PopMedium03";
-import banners from "@utils/get-banner-image";
+import { getMyLike } from "@api/mypage"; // 내가 좋아요한 팝업 API 호출 함수 임포트
+import { PopupProps } from "@api/home";
 
 const MyLikeList = () => {
   const navigate = useNavigate();
+  const [likedPopups, setLikedPopups] = useState<PopupProps[]>([]);
 
-  const goPopDetail = () => {
-    navigate("/popdetail");
+  // 내가 좋아요한 팝업 데이터를 불러오는 함수
+  useEffect(() => {
+    const fetchLikedPopups = async () => {
+      try {
+        const data = await getMyLike();
+        setLikedPopups(data);
+      } catch (error) {
+        console.error("Failed to fetch liked popups:", error);
+      }
+    };
+
+    fetchLikedPopups();
+  }, []);
+
+  const goPopDetail = (popupId: number) => {
+    navigate(`/popdetail/${popupId}`);
   };
 
   return (
     <div id="my-like-list">
       <h1>내가 좋아요한 팝업</h1>
       <div className="like-contents">
-        {banners.length > 0 ? (
-          banners.map((banner, index) => (
-            <div key={index} onClick={index === 0 ? goPopDetail : undefined}>
+        {likedPopups.length > 0 ? (
+          likedPopups.map((popup, index) => (
+            <div key={index} onClick={() => goPopDetail(popup.popupId)}>
               <PopMedium03
-                image={banner.image}
-                text={banner.text}
-                date={banner.date}
+                image={popup.images[0]} // 첫 번째 이미지를 표시
+                text={popup.name}
+                date={`${popup.startDate} ~ ${popup.endDate}`}
                 children=""
               />
             </div>

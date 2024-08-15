@@ -1,8 +1,7 @@
 import React, { useState, useEffect } from "react";
-
 import "@css/AdminPage/MyNotification.css";
-
 import deleteIcon from "@assets/deleteIcon.svg";
+import { sendPush } from "@api/push";
 
 interface Notification {
   time: string;
@@ -50,7 +49,7 @@ function MyNotification() {
     }
   }, [showEditModal, selectedNotification]);
 
-  const handleAddNotification = (event: React.FormEvent) => {
+  const handleAddNotification = async (event: React.FormEvent) => {
     event.preventDefault();
     const { year, month, day, hour, minute } = selectedDate;
     const form = event.target as HTMLFormElement;
@@ -77,37 +76,48 @@ function MyNotification() {
       return;
     }
 
-    const updatedNotifications = [...notifications, newNotification];
-    updatedNotifications.sort((a, b) => {
-      const aTime = new Date(
-        2000 + parseInt(a.time.split(". ")[0]),
-        parseInt(a.time.split(". ")[1]) - 1,
-        parseInt(a.time.split(". ")[2]),
-        parseInt(a.time.split(". ")[3].split(":")[0]),
-        parseInt(a.time.split(". ")[3].split(":")[1])
-      ).getTime();
-      const bTime = new Date(
-        2000 + parseInt(b.time.split(". ")[0]),
-        parseInt(b.time.split(". ")[1]) - 1,
-        parseInt(b.time.split(". ")[2]),
-        parseInt(b.time.split(". ")[3].split(":")[0]),
-        parseInt(b.time.split(". ")[3].split(":")[1])
-      ).getTime();
-      return aTime - bTime;
-    });
-    setNotifications(updatedNotifications);
-    setShowModal(false);
+    try {
+      // 푸시 알림을 생성하여 서버에 전송
+      await sendPush({
+        title: newNotification.title,
+        body: newNotification.content,
+        scheduledTime: selectedDateTime,
+      });
+
+      // 생성된 알림을 로컬 상태에 저장
+      const updatedNotifications = [...notifications, newNotification];
+      updatedNotifications.sort((a, b) => {
+        const aTime = new Date(
+          2000 + parseInt(a.time.split(". ")[0]),
+          parseInt(a.time.split(". ")[1]) - 1,
+          parseInt(a.time.split(". ")[2]),
+          parseInt(a.time.split(". ")[3].split(":")[0]),
+          parseInt(a.time.split(". ")[3].split(":")[1])
+        ).getTime();
+        const bTime = new Date(
+          2000 + parseInt(b.time.split(". ")[0]),
+          parseInt(b.time.split(". ")[1]) - 1,
+          parseInt(b.time.split(". ")[2]),
+          parseInt(b.time.split(". ")[3].split(":")[0]),
+          parseInt(b.time.split(". ")[3].split(":")[1])
+        ).getTime();
+        return aTime - bTime;
+      });
+      setNotifications(updatedNotifications);
+      setShowModal(false);
+    } catch (error) {
+      console.error("Error scheduling push notification:", error);
+      alert("알림 예약 중 오류가 발생했습니다.");
+    }
   };
 
-  const handleEditNotification = (event: React.FormEvent) => {
+  const handleEditNotification = async (event: React.FormEvent) => {
     event.preventDefault();
     const { year, month, day, hour, minute } = selectedDate;
     const form = event.target as HTMLFormElement;
-    const updatedNotification = {
-      ...selectedNotification,
-      time: `${year.slice(2)}. ${parseInt(month)}. ${parseInt(
-        day
-      )}. ${hour}:${minute}`,
+    const updatedNotification: Notification = {
+      ...selectedNotification!,
+      time: `${year.slice(2)}. ${parseInt(month)}. ${parseInt(day)}. ${hour}:${minute}`,
       title: (form.elements.namedItem("title") as HTMLInputElement).value,
       content: (form.elements.namedItem("content") as HTMLTextAreaElement).value,
       status: selectedNotification?.status || "대기",
@@ -127,13 +137,27 @@ function MyNotification() {
       return;
     }
 
-    const updatedNotifications = notifications.map((notification) =>
-      notification === selectedNotification ? updatedNotification : notification
-    );
+    try {
+      // 수정된 푸시 알림을 서버에 전송
+      await sendPush({
+        title: updatedNotification.title,
+        body: updatedNotification.content,
+        scheduledTime: selectedDateTime,
+      });
 
-    setNotifications(updatedNotifications);
-    setShowEditModal(false);
+      // 수정된 알림을 로컬 상태에 저장
+      const updatedNotifications = notifications.map((notification) =>
+        notification === selectedNotification ? updatedNotification : notification
+      );
+
+      setNotifications(updatedNotifications);
+      setShowEditModal(false);
+    } catch (error) {
+      console.error("Error updating notification:", error);
+      alert("알림 수정 중 오류가 발생했습니다.");
+    }
   };
+
 
   const handleDateChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     const { name, value } = e.target;

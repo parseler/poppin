@@ -29,8 +29,8 @@
   - REST API
   - Redis
 * 배포 환경
-  - URL: // 웹 서비스, 랜딩 페이지, 프로젝트 소개 등의 배포 URL 기입
-  - 테스트 계정: // 로그인이 필요한 경우, 사용 가능한 테스트 계정(ID/PW) 기입
+  - URL: https://i11a806.p.ssafy.io/
+  - 테스트 계정: sinphoto@naver.com / Rhakwnr2! (카카오 로그인)
 
 ## 팀 소개
 * 김윤: 팀장, 프론트엔드 개발, 와이어프레임 작성
@@ -42,6 +42,38 @@
 
 ## 프로젝트 상세 설명
 ### 1️⃣ 개발 환경
+#### - FE
+- React: 18.3.1
+- Axios: 1.7.2
+- Node: 22.5.1
+- Vite: 5.3.1
+- Typescript: 4.0.0
+- Zustand: 4.5.4
+- Nginx: 1.27.0
+#### - BE
+- Java: 17.0.12
+- Spring Boot: 3.3.2
+- Eclipse-temurin: 17.0.12
+- Mongo: 7.0.12
+- Redis: 7.2.5
+- Mysql: 9.0.1
+- Zookeeper: 3.9.2
+- Kafka: 3.5.2
+
 ### 2️⃣ 기술 스택
+#### - FE
+React, TypeScript, zustand, axios, firebase
+#### - BE
+Java, Spring Boot, JPA, MySQL, MongoDB, Redis
+
 ### 3️⃣ ERD
+![ERD](https://lab.ssafy.com/s11-webmobile1-sub2/S11P12A806/-/raw/dev/img/ERD.png)
+
 ### 4️⃣ Architecture
+![Architecture](https://lab.ssafy.com/s11-webmobile1-sub2/S11P12A806/-/raw/dev/img/Architecture.png)
+
+### 5️⃣ 상세 기능
+#### - 사용자 소셜 로그인
+#### - 회원 정보 수정
+#### - 메인 페이지 (랭킹, 오픈 예정, 추천, 검색)
+#### - 팝업 상세 조회 페이지 (상세, 예약, 후기)

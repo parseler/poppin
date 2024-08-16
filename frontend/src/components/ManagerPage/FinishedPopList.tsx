@@ -73,7 +73,7 @@ function FinishedPopList() {
           >
             <div className="popup-image">
               <img
-                src={`http://localhost/${popup.images[0].replace("./", "")}`}
+                src={`/${popup.images[0].replace("./", "")}`}
                 alt={popup.name}
               />
             </div>

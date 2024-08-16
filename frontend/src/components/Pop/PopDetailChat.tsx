@@ -92,7 +92,8 @@ const Chat = () => {
   }, [popupId, userNickname]);
 
   useEffect(() => {
-    const socket = new SockJS("http://localhost/ws-stomp");
+    const baseUrl = import.meta.env.VITE_DOMAIN_NAME; 
+    const socket = new SockJS(`https://${baseUrl}/ws-stomp`);
     const stompClient = new Client({
       webSocketFactory: () => socket,
       reconnectDelay: 5000,

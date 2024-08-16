@@ -3,7 +3,8 @@ import Cookies from "js-cookie";
 import { getTokenInfo } from "@utils/get-decoding";
 import useAuthStore from "@store/useAuthStore";
 
-const LOCAL_URL = "http://localhost/api";
+const domainUrl = import.meta.env.VITE_DOMAIN_NAME;
+const LOCAL_URL = `https://${domainUrl}/api`;
 
 const axiosInstance = axios.create({
   baseURL: LOCAL_URL,

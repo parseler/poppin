@@ -96,7 +96,7 @@ public class UserServiceImpl implements UserService {
 
             userRepository.save(findUser);
 
-            if (oldImgPath != null && !oldImgPath.equals("/uploads/profile.png")) {
+            if (image != null && oldImgPath != null && !oldImgPath.equals("/uploads/profile.png")) {
                 fileStorageService.deleteFile(oldImgPath);
             }
 

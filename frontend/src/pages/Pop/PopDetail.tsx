@@ -217,7 +217,7 @@ const PopDetail = () => {
           {popupDetail.images.map((image: string, index: number) => (
             <div className="slider-slide" key={index}>
               <img
-                src={`http://localhost/${image.replace("./", "")}`}
+                src={`/${image.replace("./", "")}`}
                 alt={`팝업스토어 이미지 ${index + 1}`}
               />
             </div>

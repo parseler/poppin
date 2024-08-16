@@ -7,6 +7,7 @@ import naver from "@assets/login/icon_naver.png";
 const Login = () => {
   const [clickCount, setClickCount] = useState(0);
   const navigate = useNavigate();
+  const domainUrl = import.meta.env.VITE_DOMAIN_NAME;
 
   const handleLogoClick = () => {
     setClickCount((prevCount) => prevCount + 1);
@@ -21,11 +22,11 @@ const Login = () => {
   };
 
   const handleKakaoLogin = () => {
-    window.location.href = `http://localhost/oauth2/authorization/kakao`;
+    window.location.href = `http://${domainUrl}/oauth2/authorization/kakao`;
   };
 
   const handleNaverLogin = () => {
-    window.location.href = `http://localhost/oauth2/authorization/naver`;
+    window.location.href = `http://${domainUrl}/oauth2/authorization/naver`;
   };
 
   return (

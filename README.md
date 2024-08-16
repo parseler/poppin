@@ -74,6 +74,11 @@ Java, Spring Boot, JPA, MySQL, MongoDB, Redis
 
 ### 5️⃣ 상세 기능
 #### - 사용자 소셜 로그인
-#### - 회원 정보 수정
+#### - 사용자 정보 수정 페이지
 #### - 메인 페이지 (랭킹, 오픈 예정, 추천, 검색)
-#### - 팝업 상세 조회 페이지 (상세, 예약, 후기)
+![ranking](https://lab.ssafy.com/s11-webmobile1-sub2/S11P12A806/-/raw/dev/img/phone_%EB%9E%AD%ED%82%B9.png)
+![recommend](https://lab.ssafy.com/s11-webmobile1-sub2/S11P12A806/-/raw/dev/img/phone_%EC%B6%94%EC%B2%9C.png)
+#### - 캘린더 및 지도 페이지
+![calendar](https://lab.ssafy.com/s11-webmobile1-sub2/S11P12A806/-/raw/dev/img/phone_%EC%BA%98%EB%A6%B0%EB%8D%94.png?ref_type=heads)
+![map](https://lab.ssafy.com/s11-webmobile1-sub2/S11P12A806/-/raw/dev/img/phone_%EC%A7%80%EB%8F%84.png?ref_type=heads)
+#### - 팝업 상세 조회 페이지 (상세, 예약, 후기, 채팅)

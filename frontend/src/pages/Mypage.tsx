@@ -97,6 +97,7 @@ const Mypage: React.FC = () => {
     document.body.style.overflow = "unset";
   };
 
+  const baseUrl = import.meta.env.VITE_DOMAIN_NAME;
   return (
     <div id="my-page">
       {user && userRole ? (
@@ -110,7 +111,7 @@ const Mypage: React.FC = () => {
                     user.img instanceof File
                       ? URL.createObjectURL(user.img)
                       : user.img
-                      ? `http://localhost/${user.img}`
+                      ? `http://${baseUrl}/${user.img.replace("./", "")}`
                       : ""
                   }
                   alt="profile"

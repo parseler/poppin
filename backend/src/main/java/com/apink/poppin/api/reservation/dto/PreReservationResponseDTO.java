@@ -19,6 +19,7 @@ public class PreReservationResponseDTO {
     private Long preReservationId;
     private String userTsid;
     private Long popupId;
+    private String img;
 
     @JsonSerialize(using = LocalDateSerializer.class)
     @JsonDeserialize(using = LocalDateDeserializer.class)

@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { CommentProps } from "@interface/reviews";
 import { deleteCommentData, createCommentData } from "@api/reviews";
 import useAuthStore from "@store/useAuthStore"; // Zustand 스토어 가져오기
@@ -9,6 +9,7 @@ interface CommentListProps {
   onDelete: (commentId: number) => void; // 댓글 삭제를 처리할 콜백 함수
 }
 
+const baseUrl = "http://localhost";
 const ReviewComment: React.FC<CommentListProps> = ({ reviewId, commentList, onDelete }) => {
   const [isOpen, setIsOpen] = useState(false);
   const [newComment, setNewComment] = useState("");
@@ -38,12 +39,19 @@ const ReviewComment: React.FC<CommentListProps> = ({ reviewId, commentList, onDe
     if (!newComment.trim()) return;
 
     try {
-      await createCommentData(reviewId, newComment);
+      await createCommentData(reviewId, { content: newComment });
       setNewComment(""); // 댓글 작성 후 입력 필드 초기화
       // 여기서 댓글 리스트를 새로고침하거나 추가하는 로직을 구현해야 합니다.
+      window.location.href = window.location.href;
     } catch (error) {
       console.error("Failed to create comment:", error);
     }
+  };
+
+  const getImageUrl = (img: string | File | undefined) => {
+    if (!img) return "no image";
+    console.log("img", img);
+    return `${baseUrl}${img}`;
   };
 
   return (
@@ -68,7 +76,7 @@ const ReviewComment: React.FC<CommentListProps> = ({ reviewId, commentList, onDe
                 <div className="comment-profile">
                   <div className="comment-image">
                     <img
-                      src={comment.img}
+                      src={getImageUrl(comment.img)}
                       alt="댓글 작성자 프로필 사진"
                     />
                   </div>

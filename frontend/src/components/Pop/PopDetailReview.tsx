@@ -8,11 +8,18 @@ interface ReviewProps {
   reviewsData: ReviewListDto[];
 }
 
+const baseUrl = "http://localhost"
 const Review: React.FC<ReviewProps> = ({ reviewsData }) => {
   const [visibleCount, setVisibleCount] = useState<number>(10);
 
   const loadMore = () => {
     setVisibleCount((prevCount) => prevCount + 10);
+  };
+
+  const getImageUrl = (img: string | File | undefined) => {
+    if (!img) return "no image";
+    console.log("img", img);
+    return `${baseUrl}${img}`;
   };
 
   return (
@@ -21,7 +28,7 @@ const Review: React.FC<ReviewProps> = ({ reviewsData }) => {
         reviewsData.slice(0, visibleCount).map((review, index) => (
           <div className="pop-review" key={index}>
             <div className="profile">
-              <img src={review.img} alt="프로필" />
+              <img src={getImageUrl(review.img)} alt="프로필" />
               <div>
                 <div className="nickname">{review.nickname}</div>
                 <div className="review-date">{review.createdAt}</div>
@@ -29,11 +36,10 @@ const Review: React.FC<ReviewProps> = ({ reviewsData }) => {
             </div>
             <div className="review-images">
               {review.thumbnail && (
-                <img src={review.thumbnail} alt="리뷰 이미지" />
+                <img src={getImageUrl(review.thumbnail)} alt="리뷰 이미지" />
               )}
             </div>
             <div className="review-title">{review.title}</div>
-            <div className="review-content">{review.content}</div>
           </div>
         ))
       ) : (

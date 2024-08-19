@@ -25,7 +25,7 @@ public class SocialClientRegistration {
         return ClientRegistration.withRegistrationId("naver")
                 .clientId(naverClientId)
                 .clientSecret(naverClientSecret)
-                .redirectUri("http://localhost/login/oauth2/code/naver")
+                .redirectUri("http://localhost/api/login/oauth2/code/naver")
                 .authorizationGrantType(AuthorizationGrantType.AUTHORIZATION_CODE)
                 .scope("name", "email")
                 .authorizationUri("https://nid.naver.com/oauth2.0/authorize")
@@ -39,7 +39,7 @@ public class SocialClientRegistration {
 
         return ClientRegistration.withRegistrationId("kakao")
                 .clientId(kakaoClientId)
-                .redirectUri("http://localhost/login/oauth2/code/kakao")
+                .redirectUri("http://localhost/api/login/oauth2/code/kakao")
                 .authorizationGrantType(AuthorizationGrantType.AUTHORIZATION_CODE)
                 .scope("profile_nickname", "account_email", "name", "gender", "age_range", "phone_number")
                 .authorizationUri("https://kauth.kakao.com/oauth/authorize")

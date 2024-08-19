@@ -1,6 +1,7 @@
 package com.apink.poppin.api.user.service;
 
 import com.apink.poppin.api.popup.dto.PopupDTO;
+import com.apink.poppin.api.reservation.dto.PreReservationCancelledDto;
 import com.apink.poppin.api.reservation.dto.PreReservationResponseDTO;
 import com.apink.poppin.api.reservation.dto.ReservationResponseDto;
 import com.apink.poppin.api.review.dto.ReviewListDto;
@@ -25,7 +26,7 @@ public interface UserService {
 
     PreReservationResponseDTO findPreReservation(long prereservationId);
 
-    List<PreReservationResponseDTO> findCancelledPreReservations();
+    List<PreReservationCancelledDto> findCancelledPreReservations();
 
     List<ReservationResponseDto> findReservations();
 }

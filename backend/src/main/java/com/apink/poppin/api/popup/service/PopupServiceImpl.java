@@ -606,7 +606,7 @@ public class PopupServiceImpl implements PopupService {
             PopupImage popupImage = PopupImage.builder()
                     .popup(popup)
                     .img(images.get(i))
-                    .seq(i)
+                    .seq(i + 1)
                     .build();
             popupImageRepository.save(popupImage);
         }
@@ -682,7 +682,7 @@ public class PopupServiceImpl implements PopupService {
             PopupImage popupImage = PopupImage.builder()
                     .popup(popup)
                     .img(images.get(i))
-                    .seq(i)
+                    .seq(i + 1)
                     .build();
             popupImageRepository.save(popupImage);
         }

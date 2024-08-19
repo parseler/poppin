@@ -25,13 +25,21 @@ import java.io.IOException;
 import java.util.Collection;
 import java.util.Iterator;
 
-@RequiredArgsConstructor
 public class LoginFilter extends UsernamePasswordAuthenticationFilter {
 
     private final AuthenticationManager authenticationManager;
     private final JwtTokenUtil jwtTokenUtil;
     private final ManagerRepository managerRepository;
     private final ManagerRefreshTokenRepository managerRefreshTokenRepository;
+
+    public LoginFilter(AuthenticationManager authenticationManager, JwtTokenUtil jwtTokenUtil
+            , ManagerRepository managerRepository, ManagerRefreshTokenRepository managerRefreshTokenRepository) {
+        super.setFilterProcessesUrl("/login/manager");
+        this.authenticationManager = authenticationManager;
+        this.jwtTokenUtil = jwtTokenUtil;
+        this.managerRepository = managerRepository;
+        this.managerRefreshTokenRepository = managerRefreshTokenRepository;
+    }
 
     @Override
     public Authentication attemptAuthentication(HttpServletRequest request, HttpServletResponse response) throws AuthenticationException {

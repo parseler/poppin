@@ -6,7 +6,21 @@ interface VisitCompletionListProps {
   reservations: ReservationProps[];
 }
 
+const baseUrl = "http://localhost";
 const VisitCompletionList: React.FC<VisitCompletionListProps> = ({ reservations }) => {
+
+  const getImageUrl = (img: string | File | null | undefined) => {
+    if (!img) {
+      return ""; // 기본값을 반환하거나 적절한 오류 처리
+    }
+    if (img instanceof File) {
+      return URL.createObjectURL(img);
+    }
+    return typeof img === "string" && img.startsWith("http")
+        ? img
+        : `${baseUrl}${img}`;
+  };
+
   return (
     <div id="visit-completion-list">
       {reservations.length > 0 ? (
@@ -17,13 +31,9 @@ const VisitCompletionList: React.FC<VisitCompletionListProps> = ({ reservations 
             key={reservation.reservationId}
           >
             <PopMedium03
-              image={
-                reservation.img instanceof File
-                  ? URL.createObjectURL(reservation.img)
-                  : reservation.img
-              }
-              text={reservation.title}
-              date={reservation.reservationDate}
+                image={getImageUrl(reservation.img)}
+                text={reservation.title}
+                date={reservation.reservationDate}
             >
               <div className="writing-link">
                 후기 작성하기

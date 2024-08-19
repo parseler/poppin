@@ -10,7 +10,7 @@ export interface PopupProps {
   hit: number;
   rating: number;
   deleted: boolean;
-  images: string[];
+  images: string[] | string;
 }
 
 export interface RankProps {

@@ -45,7 +45,7 @@ export const deleteReviewData = async (reviewId: number) => {
 }
 
 // 댓글 추가
-export const createCommentData = async (reviewId: number, comment: { content: string }) => {
+export const createCommentData = async (reviewId: number, comment: { content: string}) => {
   const response = await axiosInstance.post(`/reviews/${reviewId}/comments`, comment);
   return response.data;
 }

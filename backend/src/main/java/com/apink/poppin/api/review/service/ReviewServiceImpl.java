@@ -201,6 +201,7 @@ public class ReviewServiceImpl implements ReviewService {
                     .userTsid(review.getUser().getUserTsid())
                     .nickname(review.getUser().getNickname())
                     .img(review.getUser().getImg())
+                    .thumbnail(review.getThumbnail())
                     .content(review.getContent())
                     .createdAt(review.getCreatedAt())
                     .rating(review.getRating())

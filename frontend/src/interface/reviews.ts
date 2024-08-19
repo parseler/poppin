@@ -1,23 +1,23 @@
 export interface ReviewListProps {
   reviewId: number;
   nickname: string;
-  img: File;
+  img: string;
   rating: number;
   title: string;
   content: string;
-  thumbnail: File;
+  thumbnail: string;
   createdAt: string;
 }
 
 export interface ReviewProps {
   reviewId: number;
   userTsid: string;
-  nickname: string; // 작성자 정보
-  img: File; // 작성자 정보
+  nickname: string;
+  img: string;
   rating: number;
   title: string;
   content: string;
-  thumbnail: File;
+  thumbnail: string;
   createdAt: string;
   commentDtoList: CommentProps[]; // 댓글 인터페이스 추가되면 수정
 }
@@ -25,7 +25,7 @@ export interface ReviewProps {
 export interface ReviewUpdateProps {
   rating: number;
   title: string;
-  thumbnail: File;
+  thumbnail: string;
   content: string;
 }
 

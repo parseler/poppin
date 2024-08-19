@@ -3,6 +3,7 @@ package com.apink.poppin.api.user.controller;
 import com.apink.poppin.api.notice.dto.NoticeDto;
 import com.apink.poppin.api.notice.service.NoticeService;
 import com.apink.poppin.api.popup.dto.PopupDTO;
+import com.apink.poppin.api.reservation.dto.PreReservationCancelledDto;
 import com.apink.poppin.api.reservation.dto.PreReservationResponseDTO;
 import com.apink.poppin.api.reservation.dto.ReservationResponseDto;
 import com.apink.poppin.api.review.dto.ReviewListDto;
@@ -121,7 +122,7 @@ public class UserController {
     // 취소된 예약 조회
     @GetMapping("/me/popups/cancelled-reservation")
     public ResponseEntity<?> findCancelledReservation() {
-        List<PreReservationResponseDTO> preReservations = userService.findCancelledPreReservations();
+        List<PreReservationCancelledDto> preReservations = userService.findCancelledPreReservations();
 
         return ResponseEntity.ok(preReservations);
 

@@ -1,6 +1,7 @@
 package com.apink.poppin.api.review.service;
 
 import com.apink.poppin.api.notice.dto.NoticeDto;
+import com.apink.poppin.api.review.dto.CommentCreateDto;
 import com.apink.poppin.api.review.dto.CommentDto;
 import com.apink.poppin.api.review.entity.Comment;
 import com.apink.poppin.api.review.entity.Review;
@@ -26,18 +27,17 @@ public class CommentServiceImpl implements CommentService {
 
     @Override
     @Transactional
-    public Comment createComment(long reviewId, CommentDto commentDto) {
+    public Comment createComment(long reviewId, CommentCreateDto commentDto, long userTsid) {
+        User user = userRepository.findUserByUserTsid(userTsid)
+                .orElseThrow(() -> new BusinessLogicException(ExceptionCode.USER_NOT_FOUND));
 
-        if (reviewId != commentDto.getReviewId()) {
-            throw new BusinessLogicException(ExceptionCode.COMMENT_CREATE_FAILED);
-        }
+        Review review = reviewRepository.findById(reviewId)
+                .orElseThrow(() -> new BusinessLogicException(ExceptionCode.REVIEW_NOT_FOUND));
 
-        Review review = getReview(commentDto.getReviewId());
-        User user = getUser(commentDto.getUserTsid());
-        Comment parent = getParent(commentDto.getParent());
+//        Comment parent = getParent(commentDto.getParent());
 
         Comment comment = new Comment();
-        comment.createComment(commentDto, review, user, parent);
+        comment.createComment(commentDto, review, user, null);
 
         NoticeDto.MadeComment madeComment = NoticeDto.MadeComment.builder()
                 .userTsid(review.getUser().getUserTsid())

@@ -11,6 +11,7 @@ import com.apink.poppin.api.popup.repository.PopupImageRepository;
 import com.apink.poppin.api.popup.repository.PopupRepository;
 import com.apink.poppin.api.popup.service.FileStorageService;
 import com.apink.poppin.api.reservation.dto.OnsiteReservationRedisDto;
+import com.apink.poppin.api.reservation.dto.PreReservationCancelledDto;
 import com.apink.poppin.api.reservation.dto.PreReservationResponseDTO;
 import com.apink.poppin.api.reservation.dto.ReservationResponseDto;
 import com.apink.poppin.api.reservation.entity.PreReservation;
@@ -96,7 +97,7 @@ public class UserServiceImpl implements UserService {
 
             userRepository.save(findUser);
 
-            if (oldImgPath != null && !oldImgPath.equals("/uploads/profile.png")) {
+            if (image != null && oldImgPath != null && !oldImgPath.equals("/uploads/profile.png")) {
                 fileStorageService.deleteFile(oldImgPath);
             }
 
@@ -214,8 +215,11 @@ public class UserServiceImpl implements UserService {
     public PreReservationResponseDTO findPreReservation(long prereservationId) {
         PreReservation pre = preReservationRepository.findById(prereservationId)
                 .orElseThrow(() -> new RuntimeException("pre-reservation is null"));
+        List<String> images = popupImageRepository.findAllByPopup_PopupId(pre.getPopup().getPopupId()).stream()
+                .map(popupImage -> popupImage.getImg())
+                .toList();
 
-        return this.convertToResponseDTO(pre);
+        return convertToReservationResponseDTO(pre, images.get(0));
     }
 
     @Override
@@ -269,7 +273,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     @Transactional(readOnly = true)
-    public List<PreReservationResponseDTO> findCancelledPreReservations() {
+    public List<PreReservationCancelledDto> findCancelledPreReservations() {
         long userTsid = Long.parseLong(SecurityContextHolder.getContext().getAuthentication().getName());
 
         User user = userRepository.findUserByUserTsid(userTsid)
@@ -314,7 +318,22 @@ public class UserServiceImpl implements UserService {
     }
 
     // DTO 변환
-    private PreReservationResponseDTO convertToResponseDTO(PreReservation preReservation) {
+    private PreReservationCancelledDto convertToResponseDTO(PreReservation preReservation) {
+        return PreReservationCancelledDto.builder()
+                .preReservationId(preReservation.getPreReservationId())
+                .userTsid(String.valueOf(preReservation.getUser().getUserTsid()))
+                .popupId(preReservation.getPopup().getPopupId())
+                .images(preReservation.getUser().getImg())
+                .reservationDate(preReservation.getReservationDate())
+                .reservationTime(preReservation.getReservationTime())
+                .reservationCount(preReservation.getReservationCount())
+                .createdAt(preReservation.getCreatedAt())
+                .reservationStatementId(preReservation.getReservationStatement().getReservationStatementId())
+                .build();
+    }
+
+    // DTO 변환
+    private PreReservationResponseDTO convertToReservationResponseDTO(PreReservation preReservation, String img) {
         return PreReservationResponseDTO.builder()
                 .preReservationId(preReservation.getPreReservationId())
                 .userTsid(String.valueOf(preReservation.getUser().getUserTsid()))
@@ -324,6 +343,7 @@ public class UserServiceImpl implements UserService {
                 .reservationCount(preReservation.getReservationCount())
                 .createdAt(preReservation.getCreatedAt())
                 .reservationStatementId(preReservation.getReservationStatement().getReservationStatementId())
+                .img(img)
                 .build();
     }
 

@@ -1,13 +1,11 @@
 package com.apink.poppin.api.review.controller;
 
-import com.apink.poppin.api.review.dto.CommentDto;
-import com.apink.poppin.api.review.dto.ReviewDto;
-import com.apink.poppin.api.review.dto.ReviewListDto;
-import com.apink.poppin.api.review.dto.ReviewUpdateRequestDto;
+import com.apink.poppin.api.review.dto.*;
 import com.apink.poppin.api.review.service.CommentService;
 import com.apink.poppin.api.review.service.ReviewService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -41,8 +39,9 @@ public class ReviewController {
     }
 
     @PostMapping("/{reviewId}/comments")
-    public ResponseEntity<?> createComment(@PathVariable long reviewId, @RequestBody CommentDto commentDto) {
-        commentService.createComment(reviewId, commentDto);
+    public ResponseEntity<?> createComment(@PathVariable long reviewId, @RequestBody CommentCreateDto commentDto) {
+        long userTsid = Long.parseLong(SecurityContextHolder.getContext().getAuthentication().getName());
+        commentService.createComment(reviewId, commentDto, userTsid);
         return ResponseEntity.ok().build();
     }
 

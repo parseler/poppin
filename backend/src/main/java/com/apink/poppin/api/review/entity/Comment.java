@@ -1,5 +1,6 @@
 package com.apink.poppin.api.review.entity;
 
+import com.apink.poppin.api.review.dto.CommentCreateDto;
 import com.apink.poppin.api.review.dto.CommentDto;
 import com.apink.poppin.api.user.entity.User;
 import jakarta.persistence.*;
@@ -11,6 +12,7 @@ import lombok.NoArgsConstructor;
 import org.hibernate.annotations.ColumnDefault;
 
 import java.time.Instant;
+import java.time.LocalDateTime;
 
 @Getter
 @Entity
@@ -36,14 +38,14 @@ public class Comment {
 
     @ColumnDefault("CURRENT_TIMESTAMP")
     @Column(name = "created_at")
-    private Instant createdAt;
+    private LocalDateTime createdAt;
 
     @NotNull
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "user_tsid", nullable = false)
     private User user;
 
-        @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "parent")
     private Comment parent;
 
@@ -52,10 +54,10 @@ public class Comment {
     @Column(name = "is_deleted", nullable = false)
     private boolean isDeleted;
 
-    public void createComment(CommentDto commentDto, Review review, User user, Comment parent) {
+    public void createComment(CommentCreateDto commentDto, Review review, User user, Comment parent) {
         this.review = review;
         this.content = commentDto.getContent();
-        this.createdAt = Instant.now();
+        this.createdAt = LocalDateTime.now();
         this.user = user;
         this.isDeleted = false;
         this.parent = parent;

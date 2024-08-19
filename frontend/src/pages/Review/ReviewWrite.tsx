@@ -91,6 +91,8 @@ const ReviewWrite: React.FC = () => {
   };
 
   const imageHandler = () => {
+    const baseUrl = "http://localhost";
+
     const input = document.createElement('input');
     input.setAttribute('type', 'file');
     input.setAttribute('accept', 'image/*');
@@ -104,8 +106,17 @@ const ReviewWrite: React.FC = () => {
           const editor = quillRef.current?.getEditor();
           const range = editor?.getSelection();
           if (range) {
-            editor.insertEmbed(range.index, 'image', uploadedImageUrl);
+            editor.insertEmbed(range.index, 'image', baseUrl + uploadedImageUrl);
+
+            setTimeout(() => {
+              const img = editor.root.querySelector(`img[src="${baseUrl + uploadedImageUrl}"]`);
+              if (img) {
+                img.className = 'custom-image';
+              }
+            }, 0);
           }
+
+
         } catch (error) {
           console.error("Error uploading image:", error);
         }
@@ -143,7 +154,7 @@ const ReviewWrite: React.FC = () => {
       console.log("popupId ", popupId);
       await createReviewData(popupId!, formData);
 
-      navigate(`/reviews/${popupId}`);
+      navigate(`/mypage/review`);
     } catch (error) {
       console.error("Error creating review:", error);
     }

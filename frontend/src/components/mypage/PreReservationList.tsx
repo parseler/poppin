@@ -9,6 +9,8 @@ interface PreReservationListProps {
   reservations: ReservationProps[];
 }
 
+const baseUrl = "http://localhost";
+
 const PreReservationList: React.FC<PreReservationListProps> = ({
   reservations,
 }) => {
@@ -36,11 +38,10 @@ const PreReservationList: React.FC<PreReservationListProps> = ({
     document.body.style.overflow = "unset";
   };
 
-  const getImageUrl = (img: string | File) => {
-    if (img instanceof File) {
-      return URL.createObjectURL(img);
-    }
-    return img;
+  const getImageUrl = (img: string | File | undefined) => {
+    if (!img) return "no image";
+      console.log("img", img);
+      return `${baseUrl}${img}`;
   };
 
   return (

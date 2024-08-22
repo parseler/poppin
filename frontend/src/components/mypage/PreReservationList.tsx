@@ -36,29 +36,38 @@ const PreReservationList: React.FC<PreReservationListProps> = ({
     document.body.style.overflow = "unset";
   };
 
-  const getImageUrl = (img: string | File) => {
+  const baseUrl = import.meta.env.VITE_DOMAIN_NAME;
+  const getImageUrl = (img: string | File | undefined) => {
+    if (!img) return "";
     if (img instanceof File) {
       return URL.createObjectURL(img);
+    } else if (typeof img === "string" && img.startsWith("http")) {
+      return img;
+    } else {
+      return `https://${baseUrl}${img}`;
     }
-    return img;
   };
 
   return (
     <div id="pre-reservation-list">
       {reservations.length > 0 ? (
-        reservations.map((reservation) => (
-          <div
-            key={reservation.reservationId}
-            onClick={() => openModal(reservation.reservationId)}
-          >
-            <PopMedium03
-              image={getImageUrl(reservation.img)}
-              text={reservation.title}
-              date={reservation.reservationDate}
-              children={""}
-            />
-          </div>
-        ))
+        reservations.map((reservation) => {
+          const imageUrl = getImageUrl(reservation.img);
+
+          return (
+            <div
+              key={reservation.reservationId}
+              onClick={() => openModal(reservation.reservationId)}
+            >
+              <PopMedium03
+                image={imageUrl} // 이미지 URL을 바로 처리하여 전달
+                text={reservation.title}
+                date={reservation.reservationDate}
+                children={""}
+              />
+            </div>
+          );
+        })
       ) : (
         <div className="like-contents-none">
           <svg

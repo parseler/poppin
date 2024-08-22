@@ -33,21 +33,28 @@ const MyCancelList = () => {
     document.body.style.overflow = "unset";
   };
 
+  const baseUrl = import.meta.env.VITE_DOMAIN_NAME;
   return (
     <div id="my-cancel-list">
       <h1>예약이 취소된 팝업</h1>
       <div className="my-cancel-content">
         {cancelledPopups.length > 0 ? (
-          cancelledPopups.map((popup, index) => (
-            <div key={index} onClick={() => openModal(popup)}>
-              <PopMedium03
-                image={popup.images[0]} // 첫 번째 이미지만 표시
-                text={popup.name}
-                date={`${popup.startDate} ~ ${popup.endDate}`}
-                children={""}
-              />
-            </div>
-          ))
+          cancelledPopups.map((popup, index) => {
+            const imageUrl = popup.images[0].startsWith("http")
+              ? popup.images[0]
+              : `https://${baseUrl}${popup.images[0]}`;
+
+            return (
+              <div key={index} onClick={() => openModal(popup)}>
+                <PopMedium03
+                  image={imageUrl} // 첫 번째 이미지를 표시
+                  text={popup.name}
+                  date={`${popup.startDate} ~ ${popup.endDate}`}
+                  children={""}
+                />
+              </div>
+            );
+          })
         ) : (
           <div className="like-contents-none">
             <svg
@@ -71,7 +78,14 @@ const MyCancelList = () => {
           <Modal open={isModal} onClose={closeModal}>
             <Box id="reservation-modal-box" onClick={(e) => e.stopPropagation()}>
               <div className="modal-overlay">
-                <img src={modalPopup.images[0]} alt={modalPopup.name} />
+                <img
+                  src={
+                    modalPopup.images[0].startsWith("http")
+                      ? modalPopup.images[0]
+                      : `https://${baseUrl}${modalPopup.images[0]}`
+                  }
+                  alt={modalPopup.name}
+                />
                 <p className="title">{modalPopup.name}</p>
                 <div className="reservation-info">
                   <p className="name">예약자명: 김윤</p>

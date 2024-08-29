@@ -47,6 +47,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
         System.out.println(accessToken);
         accessToken = jwtTokenUtil.extractToken(accessToken);
+        System.out.println("extract" + accessToken);
 
         // 토큰 만료 여부 확인, 만료시 다음 필터로 넘기지 않음
         if(jwtTokenUtil.isExpired(accessToken)) {

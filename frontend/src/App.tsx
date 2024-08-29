@@ -43,6 +43,7 @@ import MyOnsiteReservationState from "@pages/ManagerPage/MyOnsiteReservationStat
 import MyPreReservationState from "@pages/ManagerPage/MyPreReservationState";
 import ManagerLogin from "@pages/ManagerPage/ManagerLogin";
 import SearchList from "@pages/SearchList";
+import OnsiteReservationRegist from "@pages/ManagerPage/OnsiteReservationRegist";
 
 interface PayloadNotification {
   title: string;
@@ -127,6 +128,7 @@ function App() {
           <Route path="/mypage/pre-reservation-management/:popupId" element={<Layout04><MyPreReservationState /></Layout04>} />
           <Route path="/search" element={<Search />} />
           <Route path="/search-list" element={<Layout02><SearchList /></Layout02>} />
+          <Route path="/onsite-reservation/:popupId" element={<Layout02><OnsiteReservationRegist /></Layout02>} />
         </Routes>
       </div>
     </QueryClientProvider>

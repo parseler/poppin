@@ -81,6 +81,8 @@ axiosInstance.interceptors.response.use(
           originalRequest.headers["userTsid"] = tokenInfo.userTsid;
           originalRequest.headers["role"] = tokenInfo.userRole;
 
+          console.log("왜 됨?" + originalRequest.headers);
+
           console.log("Resending original request with new access token...");
           return axiosInstance(originalRequest);
         } catch (err) {

@@ -50,3 +50,25 @@ a {
 	text-decoration: none;
 	color: black;
 }
+
+/* #root {
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	min-height: 100vh;
+    background-color: grey;
+}
+
+.App {
+    width: 480px;
+    background-color: white;
+	box-sizing: border-box;
+}
+
+#header {
+	width: 480px;
+}
+
+#menu {
+	width: 480px;
+} */

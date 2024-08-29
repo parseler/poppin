@@ -81,11 +81,17 @@
 #category-section {
     display: flex;
     flex-wrap: wrap;
-    justify-content: center;
+    justify-content: space-between;
     text-align: center;
     gap: 8px;
-    width: 336px;
+    width: calc(100vw - 40px);
     margin: 0 auto 32px;
+}
+
+@media only screen and (max-width: 360px) {
+    #category-section {
+        gap: 0;
+    }
 }
 
 #category-section a {

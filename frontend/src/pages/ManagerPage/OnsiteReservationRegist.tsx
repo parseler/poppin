@@ -1,10 +1,23 @@
+import '@css/OnsiteReservationRegist.css';
+import poppinWhite from "@assets/poppin_white.svg";
+import popupImage from "@assets/image1.svg";
+import { Link } from 'react-router-dom';
+
 const OnsiteReservationRegist = () => {
   return (
     <div id="onsite-reservation-regist">
       {/* 팝업아이디, 이름, 폰넘버, 방문날짜, 예약상태아이디?가뭐임?, 몇명가는지, 대기번호 */}
+      <div className='logo'>
+        <img src={poppinWhite} />
+      </div>
 
       <div className="content">
         <h3>현장 예약 정보</h3>
+
+        <div className="pop-image">
+          <img src={popupImage} />
+        </div>
+        <div className="pop-title">베베 더 월드 팝업스토어 망그러진 곰돌곰돌 끼요오오오오오옷</div>
 
         <div className="content-input">
             <div className="reservation-name">
@@ -26,6 +39,7 @@ const OnsiteReservationRegist = () => {
         </div>
 
         <button>현장 예약 등록하기</button>
+        <Link to='/mypage'>팝핀으로 이동하기</Link>
       </div>
     </div>
   );

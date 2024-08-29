@@ -128,7 +128,7 @@ function App() {
           <Route path="/mypage/pre-reservation-management/:popupId" element={<Layout04><MyPreReservationState /></Layout04>} />
           <Route path="/search" element={<Search />} />
           <Route path="/search-list" element={<Layout02><SearchList /></Layout02>} />
-          <Route path="/onsite-reservation/:popupId" element={<Layout02><OnsiteReservationRegist /></Layout02>} />
+          <Route path="/onsite-reservation/:popupId" element={<OnsiteReservationRegist />} />
         </Routes>
       </div>
     </QueryClientProvider>

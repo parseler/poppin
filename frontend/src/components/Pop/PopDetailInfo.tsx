@@ -7,8 +7,8 @@ import "slick-carousel/slick/slick-theme.css";
 
 import locateIcon from "@assets/locate.svg";
 import clock from "@assets/clock.svg";
-import scheduleOpen from "@assets/scheduleOpen.svg";
-import scheduleClose from "@assets/scheduleClose.svg";
+import scheduleOpen from "@assets/schedule_open.svg";
+import scheduleClose from "@assets/schedule_close.svg";
 import homepageIcon from "@assets/homepageIcon.svg";
 import insta from "@assets/insta.svg";
 import parkingIcon from "@assets/popService/parkingIcon.svg";

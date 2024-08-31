@@ -44,9 +44,9 @@
   background-color: #ccc;
   border-radius: 4px;
   cursor: pointer;
-  font-family: "NanumSquare Neo OTF";
   font-size: 14px;
 }
+
 /* 수정 취소, 완료 버튼 스타일 */
 #pop-detail .edit-buttons {
   position: absolute;
@@ -64,7 +64,6 @@
   border: 1px solid #8b8b8b;
   border-radius: 6px;
   cursor: pointer;
-  font-family: "NanumSquare Neo OTF";
   font-size: 14px;
 }
 
@@ -75,7 +74,6 @@
   padding: 10px;
   border-radius: 6px;
   cursor: pointer;
-  font-family: "NanumSquare Neo OTF";
   font-size: 14px;
 }
 
@@ -87,8 +85,7 @@
 
 #pop-detail .slider-container img {
   width: 100%;
-  height: auto;
-  max-height: 90%;
+  aspect-ratio: 1;
   object-fit: contain;
 }
 
@@ -132,7 +129,6 @@
   padding-bottom: 5px;
   color: #000;
   font-feature-settings: "clig" off, "liga" off;
-  font-family: "NanumSquare Neo OTF";
   font-size: 20px;
   font-style: normal;
   font-weight: 800;
@@ -143,7 +139,6 @@
 
 #pop-detail .date {
   color: #000;
-  font-family: "NanumSquare Neo OTF";
   font-size: 14px;
   font-style: normal;
   font-weight: 700;

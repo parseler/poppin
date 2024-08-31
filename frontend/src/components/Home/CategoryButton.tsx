@@ -3,7 +3,7 @@ import { CategoryProps } from "@utils/get-category-image";
 
 const CategoryButton = ({ id, image, text }: CategoryProps) => {
   return (
-    <Link to={`/${id}`} className="category-button">
+    <Link to={`/category/${id}`} className="category-button">
       <div className="category-image">
         <img src={image} alt={text} />
       </div>

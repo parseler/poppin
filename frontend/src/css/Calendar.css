@@ -53,14 +53,14 @@
   justify-content: flex-start;
   flex-direction: column;
   padding: 0px;
-  height: 75px;
+  height: 12vh;
   transition: height 0.3s ease;
 }
 
 #calendar .react-calendar__tile abbr {
   border-radius: 100%;
   width: 30px;
-  height: 28px;
+  height: 30px;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -131,7 +131,7 @@
 }
 
 #calendar .react-calendar__navigation {
-  height: 30px;
+  height: 6vh;
   align-items: center;
   margin-top: 5px;
   margin-bottom: 15px;
@@ -257,7 +257,7 @@
 .popup-info-item {
   display: flex;
   align-items: center;
-  margin-left: 25px;
+  margin: 0 25px;
 }
 
 .popup-info-image {
@@ -273,6 +273,7 @@
 }
 
 .popup-info-text-title {
+  width: 100%;
   color: #222;
   font-size: 16px;
   font-style: normal;

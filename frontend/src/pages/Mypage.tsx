@@ -21,7 +21,8 @@ const Mypage: React.FC = () => {
   // 사용자 정보 유무 확인
   useEffect(() => {
     if (accessToken) {
-      const fetchUserData = userRole === "ROLE_MANAGER" ? getManagerData : getUserData;
+      const fetchUserData =
+        userRole === "ROLE_MANAGER" ? getManagerData : getUserData;
 
       fetchUserData()
         .then((data) => {
@@ -141,86 +142,88 @@ const Mypage: React.FC = () => {
         </div>
       )}
 
-      <div className="mypage-menu-section">
-        <ul>
-          {userRole === "ROLE_MANAGER" ? (
-            <>
-              <li>
-                <Link to="/regist-pop">
-                  <p>팝업 등록</p>
-                  <img src={nextButton} alt="다음 버튼" />
-                </Link>
-              </li>
-              <li>
-                <Link to="/mypage/my-popups">
-                  <p>내가 등록한 팝업</p>
-                  <img src={nextButton} alt="다음 버튼" />
-                </Link>
-              </li>
-              <li>
-                <Link to="/mypage/reservation-management">
-                  <p>예약자 현황 관리</p>
-                  <img src={nextButton} alt="다음 버튼" />
-                </Link>
-              </li>
-            </>
-          ) : userRole === "ROLE_ADMIN" ? (
-            <>
-              <li>
-                <Link to="/admin/manage-code">
-                  <p>매니저 코드 관리</p>
-                  <img src={nextButton} alt="다음 버튼" />
-                </Link>
-              </li>
-              <li>
-                <Link to="">
-                  <p>배너 관리</p>
-                  <img src={nextButton} alt="다음 버튼" />
-                </Link>
-              </li>
-              <li>
-                <Link to="/admin/notification">
-                  <p>알림 관리</p>
-                  <img src={nextButton} alt="다음 버튼" />
-                </Link>
-              </li>
-              <li>
-                <Link to="">
-                  <p>신고 관리</p>
-                  <img src={nextButton} alt="다음 버튼" />
-                </Link>
-              </li>
-            </>
-          ) : (
-            <>
-              <li>
-                <Link to="/mypage/review">
-                  <p>내가 작성한 팝업 후기</p>
-                  <img src={nextButton} alt="다음 버튼" />
-                </Link>
-              </li>
-              <li>
-                <Link to="/mypage/like">
-                  <p>내가 좋아요한 팝업</p>
-                  <img src={nextButton} alt="다음 버튼" />
-                </Link>
-              </li>
-              <li>
-                <Link to="/mypage/reservation">
-                  <p>내가 예약한 팝업</p>
-                  <img src={nextButton} alt="다음 버튼" />
-                </Link>
-              </li>
-              <li>
-                <Link to="/mypage/cancel">
-                  <p>예약이 취소된 팝업</p>
-                  <img src={nextButton} alt="다음 버튼" />
-                </Link>
-              </li>
-            </>
-          )}
-        </ul>
-      </div>
+      {userRole === "ROLE_MANAGER" ? (
+        <div className="mypage-menu-section">
+          <ul>
+            <li>
+              <Link to="/regist-pop">
+                <p>팝업 등록</p>
+                <img src={nextButton} alt="다음 버튼" />
+              </Link>
+            </li>
+            <li>
+              <Link to="/mypage/my-popups">
+                <p>내가 등록한 팝업</p>
+                <img src={nextButton} alt="다음 버튼" />
+              </Link>
+            </li>
+            <li>
+              <Link to="/mypage/reservation-management">
+                <p>예약자 현황 관리</p>
+                <img src={nextButton} alt="다음 버튼" />
+              </Link>
+            </li>
+          </ul>
+        </div>
+      ) : userRole === "ROLE_ADMIN" ? (
+        <div className="mypage-menu-section">
+          <ul>
+            <li>
+              <Link to="/admin/manage-code">
+                <p>매니저 코드 관리</p>
+                <img src={nextButton} alt="다음 버튼" />
+              </Link>
+            </li>
+            <li>
+              <Link to="">
+                <p>배너 관리</p>
+                <img src={nextButton} alt="다음 버튼" />
+              </Link>
+            </li>
+            <li>
+              <Link to="/admin/notification">
+                <p>알림 관리</p>
+                <img src={nextButton} alt="다음 버튼" />
+              </Link>
+            </li>
+            <li>
+              <Link to="">
+                <p>신고 관리</p>
+                <img src={nextButton} alt="다음 버튼" />
+              </Link>
+            </li>
+          </ul>
+        </div>
+      ) : userRole === "ROLE_USER" ? (
+        <div className="mypage-menu-section">
+          <ul>
+            <li>
+              <Link to="/mypage/review">
+                <p>내가 작성한 팝업 후기</p>
+                <img src={nextButton} alt="다음 버튼" />
+              </Link>
+            </li>
+            <li>
+              <Link to="/mypage/like">
+                <p>내가 좋아요한 팝업</p>
+                <img src={nextButton} alt="다음 버튼" />
+              </Link>
+            </li>
+            <li>
+              <Link to="/mypage/reservation">
+                <p>내가 예약한 팝업</p>
+                <img src={nextButton} alt="다음 버튼" />
+              </Link>
+            </li>
+            <li>
+              <Link to="/mypage/cancel">
+                <p>예약이 취소된 팝업</p>
+                <img src={nextButton} alt="다음 버튼" />
+              </Link>
+            </li>
+          </ul>
+        </div>
+      ) : ("")}
 
       <div className="notice-section">
         <ul>

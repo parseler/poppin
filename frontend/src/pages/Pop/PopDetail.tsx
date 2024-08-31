@@ -164,11 +164,6 @@ const PopDetail = () => {
     setActiveTab(tab);
   }, []);
 
-  // 뒤로가기
-  const onClickBack = useCallback(() => {
-    navigate(-1);
-  }, [navigate]);
-
   // 팝업 수정 버튼
   const handleEditToggle = () => {
     setIsEditing((prev) => !prev);
@@ -223,13 +218,6 @@ const PopDetail = () => {
             </div>
           ))}
         </Slider>
-        <button
-          className="back-button"
-          onClick={onClickBack}
-          aria-label="뒤로가기"
-        >
-          <img src={backButton} alt="뒤로가기" />
-        </button>
         <button
           onClick={toggleLike}
           className="like-button"

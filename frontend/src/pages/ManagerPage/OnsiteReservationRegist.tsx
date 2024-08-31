@@ -1,6 +1,5 @@
 import '@css/OnsiteReservationRegist.css';
 import poppinWhite from "@assets/poppin_white.svg";
-import popupImage from "@assets/image1.svg";
 import { Link } from 'react-router-dom';
 
 const OnsiteReservationRegist = () => {
@@ -12,11 +11,7 @@ const OnsiteReservationRegist = () => {
       </div>
 
       <div className="content">
-        <h3>현장 예약 정보</h3>
-
-        <div className="pop-image">
-          <img src={popupImage} />
-        </div>
+        <h3>현장 예약 정보 입력</h3>
         <div className="pop-title">베베 더 월드 팝업스토어 망그러진 곰돌곰돌 끼요오오오오오옷</div>
 
         <div className="content-input">

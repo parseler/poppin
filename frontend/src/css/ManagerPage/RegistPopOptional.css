@@ -8,7 +8,6 @@
 #regist-pop-optional .optional-info-title {
   color: #000;
   text-align: center;
-  font-family: "NanumSquare Neo OTF";
   font-size: 16px;
   font-style: normal;
   font-weight: 700;
@@ -25,7 +24,6 @@
 }
 #regist-pop-optional .sns .sns-title {
   color: #000;
-  font-family: "NanumSquare Neo OTF";
   font-size: 16px;
   font-style: normal;
   font-weight: 400;
@@ -35,7 +33,6 @@
 #regist-pop-optional .sns input {
   padding-left: 10px;
   color: #8b8b8b;
-  font-family: "NanumSquare Neo OTF";
   font-size: 14px;
   font-style: normal;
   font-weight: 400;
@@ -51,7 +48,6 @@
 }
 #regist-pop-optional .homepage .homepage-title {
   color: #000;
-  font-family: "NanumSquare Neo OTF";
   font-size: 16px;
   font-style: normal;
   font-weight: 400;
@@ -61,7 +57,6 @@
 #regist-pop-optional .homepage input {
   padding-left: 10px;
   color: #8b8b8b;
-  font-family: "NanumSquare Neo OTF";
   font-size: 14px;
   font-style: normal;
   font-weight: 400;
@@ -77,7 +72,6 @@
 }
 #regist-pop-optional .more-details-title {
   color: #000;
-  font-family: "NanumSquare Neo OTF";
   font-size: 16px;
   font-style: normal;
   font-weight: 400;
@@ -102,7 +96,6 @@
 #regist-pop-optional .more-details .photo div,
 #regist-pop-optional .more-details .age div {
   color: #000;
-  font-family: "NanumSquare Neo OTF";
   font-size: 14px;
   font-style: normal;
   font-weight: 400;
@@ -116,7 +109,6 @@
 #regist-pop-optional .more-details .age button {
   color: #8b8b8b;
   text-align: center;
-  font-family: "NanumSquare Neo OTF";
   font-size: 14px;
   font-style: normal;
   font-weight: 400;
@@ -142,7 +134,6 @@
 #regist-pop-optional .omit-or-regist .omit {
   color: #fff;
   text-align: center;
-  font-family: "NanumSquare Neo OTF";
   font-size: 16px;
   font-style: normal;
   font-weight: 700;
@@ -158,7 +149,6 @@
 #regist-pop-optional .omit-or-regist .regist {
   color: #fff;
   text-align: center;
-  font-family: "NanumSquare Neo OTF";
   font-size: 16px;
   font-style: normal;
   font-weight: 700;
@@ -192,7 +182,6 @@
   height: auto;
 }
 #regist-pop-optional .modal-header {
-  font-family: "NanumSquare Neo OTF";
   font-size: 16px;
   font-weight: 400;
   margin-top: 20px;
@@ -206,7 +195,6 @@
 }
 #regist-pop-optional .modal-footer button {
   padding: 8px 16px;
-  font-family: "NanumSquare Neo OTF";
   font-size: 12px;
   font-weight: 400;
   border-radius: 6px;

@@ -23,7 +23,6 @@
   width: 85%;
   color: #000;
   font-feature-settings: "clig" off, "liga" off;
-  font-family: "NanumSquare Neo OTF";
   font-size: 16px;
   font-style: normal;
   font-weight: 400;
@@ -46,7 +45,6 @@
 #pop-reservation-check .pop-title-check {
   color: #000;
   font-feature-settings: "clig" off, "liga" off;
-  font-family: "NanumSquare Neo OTF";
   font-size: 18px;
   font-style: normal;
   font-weight: 700;
@@ -59,7 +57,6 @@
 #pop-reservation-check .pop-people-check {
   color: #000;
   font-feature-settings: "clig" off, "liga" off;
-  font-family: "NanumSquare Neo OTF";
   font-size: 14px;
   font-style: normal;
   font-weight: 400;
@@ -75,7 +72,6 @@
   margin-right: 20px;
   color: #8b8b8b;
   font-feature-settings: "clig" off, "liga" off;
-  font-family: "NanumSquare Neo OTF";
   font-size: 14px;
   font-style: normal;
   font-weight: 400;
@@ -95,7 +91,6 @@
 #pop-reservation-check .person-content-title {
   color: #000;
   font-feature-settings: "clig" off, "liga" off;
-  font-family: "NanumSquare Neo OTF";
   font-size: 18px;
   font-style: normal;
   font-weight: 700;
@@ -110,7 +105,6 @@
   padding-bottom: 2px;
   color: #000;
   font-feature-settings: "clig" off, "liga" off;
-  font-family: "NanumSquare Neo OTF";
   font-size: 12px;
   font-style: normal;
   font-weight: 400;
@@ -123,7 +117,6 @@
 #pop-reservation-check .person-email-check {
   color: #000;
   font-feature-settings: "clig" off, "liga" off;
-  font-family: "NanumSquare Neo OTF";
   font-size: 10px;
   font-style: normal;
   font-weight: 300;
@@ -147,7 +140,6 @@
 #pop-reservation-check .agree-title {
   color: #000;
   font-feature-settings: "clig" off, "liga" off;
-  font-family: "NanumSquare Neo OTF";
   font-size: 18px;
   font-style: normal;
   font-weight: 700;
@@ -160,7 +152,6 @@
 #pop-reservation-check .agree-offer {
   color: #8b8b8b;
   font-feature-settings: "clig" off, "liga" off;
-  font-family: "NanumSquare Neo OTF";
   font-size: 14px;
   font-style: normal;
   font-weight: 400;
@@ -182,7 +173,6 @@
   width: 80%;
   color: #8b8b8b;
   font-feature-settings: "clig" off, "liga" off;
-  font-family: "NanumSquare Neo OTF";
   font-size: 12px;
   font-style: normal;
   font-weight: 400;
@@ -206,7 +196,6 @@
   box-shadow: 0px 4px 12px 0px rgba(153, 153, 153, 0.25);
   color: #fff;
   text-align: center;
-  font-family: "NanumSquare Neo OTF";
   font-size: 16px;
   font-style: normal;
   font-weight: 700;

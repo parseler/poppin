@@ -13,7 +13,6 @@
 #regist-pop-reservation .regist-pop-reservation-title {
   color: #000;
   text-align: center;
-  font-family: "NanumSquare Neo OTF";
   font-size: 16px;
   font-style: normal;
   font-weight: 700;
@@ -28,7 +27,6 @@
 
 #regist-pop-reservation .select-reservation-type .select-type-title {
   color: #000;
-  font-family: "NanumSquare Neo OTF";
   font-size: 16px;
   font-style: normal;
   font-weight: 400;
@@ -37,7 +35,6 @@
 }
 #regist-pop-reservation .select-reservation-type .select-type {
   color: #000;
-  font-family: "NanumSquare Neo OTF";
   font-size: 14px;
   font-style: normal;
   font-weight: 400;
@@ -98,7 +95,6 @@
 }
 #regist-pop-reservation .setting-onsite-reservation .onsite-reservation-title {
   color: #000;
-  font-family: "NanumSquare Neo OTF";
   font-size: 16px;
   font-style: normal;
   font-weight: 400;
@@ -109,7 +105,6 @@
   .setting-onsite-reservation
   .onsite-reservation-content {
   color: #000;
-  font-family: "NanumSquare Neo OTF";
   font-size: 16px;
   font-style: normal;
   font-weight: 400;
@@ -122,7 +117,6 @@
 }
 #regist-pop-reservation .onsite-reservation-schedule-title {
   color: #000;
-  font-family: "NanumSquare Neo OTF";
   font-size: 14px;
   font-style: normal;
   font-weight: 400;
@@ -131,7 +125,6 @@
 }
 #regist-pop-reservation .onsite-reservation-schedule {
   color: #000;
-  font-family: "NanumSquare Neo OTF";
   font-size: 12px;
   font-style: normal;
   font-weight: 400;
@@ -154,7 +147,6 @@
   border: 1px solid #ccc;
   margin: 0;
   color: #8b8b8b;
-  font-family: "NanumSquare Neo OTF";
   font-size: 12px;
   font-style: normal;
   font-weight: 400;
@@ -206,7 +198,6 @@
   box-sizing: border-box;
   color: white;
   text-align: center;
-  font-family: "NanumSquare Neo OTF";
   font-size: 12px;
   font-style: normal;
   font-weight: 400;
@@ -222,7 +213,6 @@
   flex-direction: column;
   line-height: 25px;
   color: #000;
-  font-family: "NanumSquare Neo OTF";
   font-size: 14px;
   font-style: normal;
   font-weight: 500;
@@ -234,7 +224,6 @@
   .setting-advance-reservation
   .advance-reservation-title {
   color: #000;
-  font-family: "NanumSquare Neo OTF";
   font-size: 16px;
   font-style: normal;
   font-weight: 400;
@@ -245,7 +234,6 @@
   .setting-advance-reservation
   .advance-reservation-content {
   color: #000;
-  font-family: "NanumSquare Neo OTF";
   font-size: 16px;
   font-style: normal;
   font-weight: 400;
@@ -394,7 +382,6 @@
 #regist-pop-reservation .regist-finish button {
   color: #fff;
   text-align: center;
-  font-family: "NanumSquare Neo OTF";
   font-size: 16px;
   font-style: normal;
   font-weight: 700;
@@ -440,7 +427,6 @@
 /* 현재 월의 텍스트 스타일 */
 #regist-pop-reservation .react-datepicker__current-month {
   color: #d4145a;
-  font-family: "NanumSquare Neo OTF";
   font-size: 13px;
   font-weight: bold;
 }
@@ -448,7 +434,6 @@
 /* 요일 이름 스타일 */
 #regist-pop-reservation .react-datepicker__day-name {
   color: #d4145a;
-  font-family: "NanumSquare Neo OTF";
   font-size: 10px;
   padding: 2px;
 }
@@ -456,7 +441,6 @@
 /* 날짜 스타일 */
 #regist-pop-reservation .react-datepicker__day {
   color: #cacaca;
-  font-family: "NanumSquare Neo OTF";
   font-size: 10px;
   border-radius: 50%;
   transition: background-color 0.3s, color 0.3s;
@@ -501,7 +485,6 @@
 }
 
 #regist-pop-reservation .custom-header__date {
-  font-family: "NanumSquare Neo OTF";
   font-size: 13px;
   font-weight: bold;
   width: 50px;

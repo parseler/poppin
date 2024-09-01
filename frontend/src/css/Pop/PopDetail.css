@@ -157,7 +157,6 @@
 
 #pop-detail .score {
   color: #222;
-  font-family: "NanumSquare Neo OTF";
   font-size: 14px;
   font-style: normal;
   font-weight: 400;
@@ -172,7 +171,6 @@
 
 #pop-detail .like {
   color: #222;
-  font-family: "NanumSquare Neo OTF";
   font-size: 14px;
   font-style: normal;
   font-weight: 400;
@@ -206,7 +204,6 @@
   background: none;
   border: none;
   color: #8b8b8b;
-  font-family: "NanumSquare Neo OTF";
   font-size: 16px;
   font-weight: 400;
   cursor: pointer;

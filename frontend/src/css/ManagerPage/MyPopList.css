@@ -72,7 +72,6 @@
 }
 .popup-details .popup-name {
   color: #222;
-  font-family: "NanumSquare Neo OTF";
   font-size: 16px;
   font-style: normal;
   font-weight: 700;
@@ -82,7 +81,6 @@
 
 .popup-details .popup-date {
   color: #222;
-  font-family: "NanumSquare Neo OTF";
   font-size: 12px;
   font-style: normal;
   font-weight: 400;

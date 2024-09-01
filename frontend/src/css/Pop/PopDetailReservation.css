@@ -1,6 +1,5 @@
 #pop-reservation .content-title {
   color: #222;
-  font-family: "NanumSquare Neo OTF";
   font-size: 16px;
   font-style: normal;
   font-weight: 700;
@@ -133,7 +132,6 @@
   color: #222;
   text-align: justify;
   font-feature-settings: "clig" off, "liga" off;
-  font-family: "NanumSquare Neo OTF";
   font-size: 14px;
   font-style: normal;
   font-weight: 400;
@@ -192,7 +190,6 @@
   margin: 0 10px;
   color: #222;
   text-align: center;
-  font-family: "NanumSquare Neo OTF";
   font-size: 14px;
   font-style: normal;
   font-weight: 400;
@@ -207,7 +204,6 @@
   margin-bottom: 20px;
   padding: 20px;
   color: #222;
-  font-family: "NanumSquare Neo OTF";
   font-size: 12px;
   font-style: normal;
   font-weight: 400;
@@ -230,7 +226,6 @@
   box-shadow: 0px 4px 12px 0px rgba(153, 153, 153, 0.25);
   color: #fff;
   text-align: center;
-  font-family: "NanumSquare Neo OTF";
   font-size: 16px;
   font-style: normal;
   font-weight: 700;

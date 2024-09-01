@@ -45,9 +45,12 @@ const Home = () => {
       }
 
       // 추천 데이터
-      getPopupByRecommend()
+      // getPopupByRecommend()
+      getPopupByNew()
         .then((data) => {
-          setRecommendPopups(data);
+          const latestPopups = data.slice(0, 10); // 최신 팝업 10개만 선택
+          setRecommendPopups(latestPopups);
+          // setRecommendPopups(data);
         })
         .catch((error) => {
           console.error(error);

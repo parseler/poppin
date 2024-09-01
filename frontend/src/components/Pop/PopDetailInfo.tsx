@@ -23,6 +23,7 @@ import noPetIcon from "@assets/popService/noPetIcon.svg";
 import noFoodIcon from "@assets/popService/noFoodIcon.svg";
 import noPhotoIcon from "@assets/popService/noPhotoIcon.svg";
 import noAgeLimitIcon from "@assets/popService/ageLimitIcon.svg";
+import { getPopupByNew, PopupProps } from "@api/home";
 
 type Category = "parking" | "fee" | "pet" | "food" | "photo" | "age";
 
@@ -79,7 +80,7 @@ const Info: React.FC<InfoProps> = ({
   const [parsedDescription, setParsedDescription] = useState<
     Record<string, string>
   >({});
-  const [similarPopups, setSimilarPopups] = useState<PopupDTO[]>([]);
+  const [similarPopups, setSimilarPopups] = useState<PopupProps[]>([]);
   const navigate = useNavigate();
 
   // 운영 시간
@@ -193,8 +194,10 @@ const Info: React.FC<InfoProps> = ({
     }
     const fetchSimilarPopups = async () => {
       try {
-        const data = await getSimilarPopups(Number(popupId));
-        setSimilarPopups(data);
+
+        const data = await getPopupByNew();
+        // const data = await getSimilarPopups(Number(popupId));
+        setSimilarPopups(data.slice(0, 5));
       } catch (error) {
         console.error("Error fetching similar popups:", error);
       }

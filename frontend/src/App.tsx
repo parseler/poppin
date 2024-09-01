@@ -45,6 +45,8 @@ import ManagerLogin from "@pages/ManagerPage/ManagerLogin";
 import SearchList from "@pages/SearchList";
 import OnsiteReservationRegist from "@pages/ManagerPage/OnsiteReservationRegist";
 import Error from "@pages/Error";
+import OnsiteReservationMain from "@pages/ManagerPage/OnsiteReservationMain";
+import OnsiteReservationFin from "@pages/ManagerPage/OnsiteReservationFin";
 
 interface PayloadNotification {
   title: string;
@@ -111,7 +113,7 @@ function App() {
           <Route path="/popdetail/:popupId" element={<Layout02><PopDetail /></Layout02>} />
           <Route path="/reservation-check" element={<Layout04><PopReservationCheck /></Layout04>} />
           <Route path="/reservation-check/finish" element={<Layout04><PopReservationFin /></Layout04>} />
-          <Route path="/waiting" element={<Waiting />} />
+          <Route path="/waiting/:phoneNumber" element={<Waiting />} />
           <Route path="/regist-pop" element={<Layout04><RegistPop /></Layout04>} />
           <Route path="/regist-pop-optional" element={<Layout04><RegistPopOptional /></Layout04>} />
           <Route path="/regist-pop-fin" element={<Layout04><RegistFin /></Layout04>} />
@@ -129,7 +131,9 @@ function App() {
           <Route path="/mypage/pre-reservation-management/:popupId" element={<Layout04><MyPreReservationState /></Layout04>} />
           <Route path="/search" element={<Search />} />
           <Route path="/search-list" element={<Layout02><SearchList /></Layout02>} />
+          <Route path="/onsite-reservation" element={<OnsiteReservationMain />} />
           <Route path="/onsite-reservation/:popupId" element={<OnsiteReservationRegist />} />
+          <Route path="/onsite-reservation/finish" element={<OnsiteReservationFin />} />
           <Route path="*" element={<Layout02><Error /></Layout02>} />
         </Routes>
       </div>

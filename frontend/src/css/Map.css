@@ -57,7 +57,7 @@
 
 #mappage .map {
   width: 100%;
-  height: calc(100% - 250px);
+  height: calc(100vh - 250px);
 }
 
 #mappage .current-location {

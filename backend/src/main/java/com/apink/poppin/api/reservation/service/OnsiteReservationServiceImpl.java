@@ -76,6 +76,7 @@ public class OnsiteReservationServiceImpl implements OnsiteReservationService {
         OnsiteReservation reservation = OnsiteReservation.builder()
                 .popup(popup)
                 .phoneNumber(onsiteReservationDto.getPhoneNumber())
+                .name(onsiteReservationDto.getName())
                 .visitedDate(LocalDate.now())
                 .reservationStatement(reservationStatement)
                 .reservationCount(onsiteReservationDto.getReservationCount())
@@ -129,6 +130,7 @@ public class OnsiteReservationServiceImpl implements OnsiteReservationService {
 
         return OnsiteReservationDto.builder()
                 .onsiteReservationId(onsiteReservation.getOnsiteReservationId())
+                .name(onsiteReservation.getName())
                 .popupId(onsiteReservation.getPopup().getPopupId())
                 .reservationStatementId(onsiteReservation.getReservationStatement().getReservationStatementId())
                 .reservationCount(onsiteReservation.getReservationCount())

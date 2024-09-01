@@ -50,3 +50,21 @@ export const createPreReservation = async (popupId: number, data: PreReservation
   );
   return response.data;
 };
+
+// 현장 예약 생성
+export interface OnsiteReservationRequestDTO {
+  popupId: number;
+  name: string;
+  phoneNumber : string;
+  reservationCount: number;
+  reservationStatementId : number;
+}
+
+// 현장 예약 하기
+export const createOnsiteReservation = async (data: OnsiteReservationRequestDTO) => {
+  const response = await axiosInstance.post<OnsiteReservationRequestDTO>(
+      `/onsite-reservations`,
+      data
+  );
+  return response.data;
+}

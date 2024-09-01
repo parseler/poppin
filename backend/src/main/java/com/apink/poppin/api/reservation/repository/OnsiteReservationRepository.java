@@ -20,7 +20,7 @@ public interface OnsiteReservationRepository extends JpaRepository<OnsiteReserva
     Optional<OnsiteReservation> findById(@NonNull Long id);
 
     @Query("SELECT new com.apink.poppin.api.reservation.dto.ReservationResponseDto(" +
-            "r.onsiteReservationId, p.popupId, p.name, pi.img, r.visitedDate," +
+            "r.onsiteReservationId, r.name, p.popupId, p.name, pi.img, r.visitedDate," +
             "r.reservationCount, rs.reservationStatementId) " +
             "FROM OnsiteReservation r " +
             "JOIN r.popup p " +

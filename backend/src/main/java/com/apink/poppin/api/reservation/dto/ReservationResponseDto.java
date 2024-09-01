@@ -42,8 +42,9 @@ public class ReservationResponseDto {
     }
 
     // onsite reservation
-    public ReservationResponseDto(long reservationId, long popupId, String title, String img, LocalDate reservationDate, Integer reservationCount, long reservationStatement) {
+    public ReservationResponseDto(long reservationId, String userName, long popupId, String title, String img, LocalDate reservationDate, Integer reservationCount, long reservationStatement) {
         this.reservationId = reservationId;
+        this.userName = userName;
         this.popupId = popupId;
         this.title = title;
         this.img = img;

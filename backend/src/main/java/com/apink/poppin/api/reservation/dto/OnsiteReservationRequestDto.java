@@ -7,6 +7,7 @@ import lombok.Getter;
 @Builder
 public class OnsiteReservationRequestDto {
     private Long onsiteReservationId;
+    private String name;
     private Long popupId;
     private String phoneNumber;
     private Long reservationStatementId;

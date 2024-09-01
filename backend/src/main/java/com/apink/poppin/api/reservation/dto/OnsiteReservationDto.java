@@ -19,6 +19,7 @@ public class OnsiteReservationDto {
     private Long onsiteReservationId;
 
     private Long popupId;
+    private String name;
     private String phoneNumber;
 
     @JsonSerialize(using = LocalDateSerializer.class)
@@ -43,6 +44,7 @@ public class OnsiteReservationDto {
 
     public void makeDtoWithRedisDto(OnsiteReservationRedisDto onsiteReservationRedisDto) {
         this.onsiteReservationId = onsiteReservationRedisDto.getOnsiteReservationRedisId();
+        this.name = onsiteReservationRedisDto.getName();
         this.popupId = onsiteReservationRedisDto.getPopupId();
         this.phoneNumber = onsiteReservationRedisDto.getPhoneNumber();
         this.visitedDate = onsiteReservationRedisDto.getVisitedDate();

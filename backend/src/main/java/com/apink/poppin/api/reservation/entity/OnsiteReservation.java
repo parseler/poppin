@@ -25,6 +25,10 @@ public class OnsiteReservation {
     @JoinColumn(name = "popup_id", nullable = false)
     private Popup popup;
 
+    @NotNull
+    @Column(nullable = false, length = 20)
+    private String name;
+
     @Size(max = 16)
     @NotNull
     @Column(nullable = false, length = 16)

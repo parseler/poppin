@@ -13,7 +13,7 @@ const ManagerLogin = () => {
 
   const handleLogin = async () => {
     try {
-      const response = await fetch("/login", {
+      const response = await fetch("/login/manager", {
         method: "POST",
         headers: {
           "Content-Type": "application/x-www-form-urlencoded",
@@ -37,6 +37,7 @@ const ManagerLogin = () => {
           }
         }
       } else {
+        console.log(response);
         alert("로그인 실패: 아이디 또는 비밀번호를 확인하세요.");
       }
     } catch (error) {

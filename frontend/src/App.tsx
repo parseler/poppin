@@ -131,9 +131,9 @@ function App() {
           <Route path="/mypage/pre-reservation-management/:popupId" element={<Layout04><MyPreReservationState /></Layout04>} />
           <Route path="/search" element={<Search />} />
           <Route path="/search-list" element={<Layout02><SearchList /></Layout02>} />
-          <Route path="/onsite-reservation" element={<OnsiteReservationMain />} />
-          <Route path="/onsite-reservation/:popupId" element={<OnsiteReservationRegist />} />
-          <Route path="/onsite-reservation/finish" element={<OnsiteReservationFin />} />
+          <Route path="/onsite-reservation/:popupId" element={<OnsiteReservationMain />} />
+          <Route path="/onsite-reservation/regist/:popupId" element={<OnsiteReservationRegist />} />
+          <Route path="/onsite-reservation/finish/:popupId" element={<OnsiteReservationFin />} />
           <Route path="*" element={<Layout02><Error /></Layout02>} />
         </Routes>
       </div>

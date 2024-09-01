@@ -10,7 +10,7 @@ const OnsiteReservationFin = () => {
         카카오톡으로 전송된 링크를 통해 <br/>
         실시간 예약 상황을 확인할 수 있습니다.
       </div>
-      <Link to='/onsite-reservation'>예약 메인으로 돌아가기</Link>
+      <Link to='/onsite-reservation/{popupId}'>예약 메인으로 돌아가기</Link>
     </div>
   );
 };

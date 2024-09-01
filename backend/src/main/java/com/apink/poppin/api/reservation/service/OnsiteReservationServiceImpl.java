@@ -5,6 +5,7 @@ import com.apink.poppin.api.popup.repository.PopupRepository;
 import com.apink.poppin.api.reservation.dto.OnsiteReservationDto;
 import com.apink.poppin.api.reservation.dto.OnsiteReservationRedisDto;
 import com.apink.poppin.api.reservation.dto.OnsiteReservationRequestDto;
+import com.apink.poppin.api.reservation.dto.OnsiteReservationWaitingDto;
 import com.apink.poppin.api.reservation.entity.OnsiteReservation;
 import com.apink.poppin.api.reservation.entity.ReservationStatement;
 import com.apink.poppin.api.reservation.repository.OnsiteReservationRepository;
@@ -105,10 +106,12 @@ public class OnsiteReservationServiceImpl implements OnsiteReservationService {
     }
 
     @Override
-    public OnsiteReservationDto getOnsiteReservationByKakaoLink(long onsiteReservationId, long popupId) {
+    public OnsiteReservationWaitingDto getOnsiteReservationByKakaoLink(long onsiteReservationId, long popupId) {
 
         String keyByPopup = RESERVATION_KEY_POPUP + popupId;
         Set<Object> reservations = zSetOperations.rangeByScore(keyByPopup, 0, Double.MAX_VALUE);
+        OnsiteReservation onsiteReservation = onsiteReservationRepository.findById(onsiteReservationId)
+                .orElseThrow(() -> new BusinessLogicException(ExceptionCode.ONSITE_NOT_FOUND));
 
         assert reservations != null;
         for (Object obj : reservations) {
@@ -117,21 +120,20 @@ public class OnsiteReservationServiceImpl implements OnsiteReservationService {
 
                     Integer rank = getRank(keyByPopup, redisDto);
 
-                    OnsiteReservationDto dto = OnsiteReservationDto.builder().build();
+                    OnsiteReservationWaitingDto dto = OnsiteReservationWaitingDto.builder().build();
                     dto.makeDtoWithRedisDto(redisDto);
                     dto.setRank(rank);
+                    dto.setPopupName(onsiteReservation.getPopup().getName());
                     return dto;
                 }
             }
         }
 
-        OnsiteReservation onsiteReservation = onsiteReservationRepository.findById(onsiteReservationId)
-                .orElseThrow(() -> new BusinessLogicException(ExceptionCode.ONSITE_NOT_FOUND));
-
-        return OnsiteReservationDto.builder()
+        return OnsiteReservationWaitingDto.builder()
                 .onsiteReservationId(onsiteReservation.getOnsiteReservationId())
                 .name(onsiteReservation.getName())
                 .popupId(onsiteReservation.getPopup().getPopupId())
+                .popupName(onsiteReservation.getPopup().getName())
                 .reservationStatementId(onsiteReservation.getReservationStatement().getReservationStatementId())
                 .reservationCount(onsiteReservation.getReservationCount())
                 .phoneNumber(onsiteReservation.getPhoneNumber())
@@ -141,7 +143,7 @@ public class OnsiteReservationServiceImpl implements OnsiteReservationService {
     }
 
     @Override
-    public OnsiteReservationDto getOnsiteReservationByPhoneNumber(String phoneNumber) {
+    public OnsiteReservationWaitingDto getOnsiteReservationByPhoneNumber(String phoneNumber) {
 
         String keyByPhonePattern = RESERVATION_KEY_PHONE + phoneNumber;
         Set<String> keys = redisTemplate.keys(keyByPhonePattern + "*");
@@ -154,9 +156,13 @@ public class OnsiteReservationServiceImpl implements OnsiteReservationService {
                     String keyByPopup = RESERVATION_KEY_POPUP + redisDto.getPopupId();
                     Integer rank = getRank(keyByPopup, redisDto);
 
-                    OnsiteReservationDto onsiteReservationDto = OnsiteReservationDto.builder().build();
+                    Popup popup = popupRepository.findById(redisDto.getPopupId())
+                            .orElseThrow(() -> new BusinessLogicException(ExceptionCode.POPUP_NOT_FOUND));
+
+                    OnsiteReservationWaitingDto onsiteReservationDto = OnsiteReservationWaitingDto.builder().build();
                     onsiteReservationDto.makeDtoWithRedisDto(redisDto);
                     onsiteReservationDto.setRank(rank);
+                    onsiteReservationDto.setPopupName(popup.getName());
                     return onsiteReservationDto;
                 }
             }

@@ -113,7 +113,7 @@ function App() {
           <Route path="/popdetail/:popupId" element={<Layout02><PopDetail /></Layout02>} />
           <Route path="/reservation-check" element={<Layout04><PopReservationCheck /></Layout04>} />
           <Route path="/reservation-check/finish" element={<Layout04><PopReservationFin /></Layout04>} />
-          <Route path="/waiting/:phoneNumber" element={<Waiting />} />
+          <Route path="/waiting/:popupId/reservations/:reservationId" element={<Waiting />} />
           <Route path="/regist-pop" element={<Layout04><RegistPop /></Layout04>} />
           <Route path="/regist-pop-optional" element={<Layout04><RegistPopOptional /></Layout04>} />
           <Route path="/regist-pop-fin" element={<Layout04><RegistFin /></Layout04>} />

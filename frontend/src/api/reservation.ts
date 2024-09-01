@@ -68,3 +68,25 @@ export const createOnsiteReservation = async (data: OnsiteReservationRequestDTO)
   );
   return response.data;
 }
+
+// 현장 예약 조회
+export interface OnsiteReservation {
+  onsiteReservationId: number;
+  popupId: number;
+  name: string;
+  popupName: string;
+  phoneNumber : string;
+  visitedDate : string;
+  reservationCount: number;
+  reservationStatementId : number;
+  waitNumber : number;
+  rank : number;
+}
+
+// 현장 예약 조회
+export const getOnsiteReservation = async (popupId : string | undefined, reservationId : string | undefined) => {
+  const response = await axiosInstance.get<OnsiteReservation>(
+      `/onsite-reservations/${reservationId}/popups/${popupId}`,
+  );
+  return response.data;
+}

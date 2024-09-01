@@ -26,7 +26,7 @@ public interface OnsiteReservationRepository extends JpaRepository<OnsiteReserva
             "JOIN r.popup p " +
             "JOIN r.reservationStatement rs " +
             "LEFT JOIN PopupImage pi ON pi.popup.popupId = p.popupId AND pi.seq = 1 " +
-            "WHERE r.phoneNumber = :phoneNumber")
+            "WHERE r.phoneNumber = :phoneNumber AND rs.reservationStatementId = 2")
     List<ReservationResponseDto> findReservationsByPhoneNumber(@Param("phoneNumber") String phoneNumber);
 
     // 전화번호로 예약목록 찾기

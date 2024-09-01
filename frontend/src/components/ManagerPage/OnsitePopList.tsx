@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
-import { getPopupList } from "@api/apiPop";
+import {getMyPopups} from "@api/apiPop";
 import useAuthStore from "@store/useAuthStore";
 
 import nextButton from "@assets/mypage/nextButton.svg";
@@ -19,11 +19,12 @@ interface Popup {
 function OnsitePopList() {
   const [popups, setPopups] = useState<Popup[]>([]);
   const { userTsid: userTsid } = useAuthStore();
+  const managerTsid = userTsid;
 
   useEffect(() => {
     const fetchPopups = async () => {
       try {
-        const response = await getPopupList();
+        const response = await getMyPopups(managerTsid)
         const currentDateTime = new Date();
         const currentDay = currentDateTime.toLocaleString("ko-KR", {
           weekday: "short",
@@ -32,7 +33,7 @@ function OnsitePopList() {
           const startDate = new Date(popup.startDate);
           const endDate = new Date(popup.endDate);
           if (
-            popup.managerTsId !== userTsid ||
+            popup.managerTsId !== managerTsid ||
             currentDateTime < startDate ||
             currentDateTime > endDate
           ) {
@@ -81,8 +82,7 @@ function OnsitePopList() {
     <div id="onsite-registed-list">
       {popups.length > 0 ? (
         popups.map((popup, index) => (
-          <Link
-            to={`/popdetail/${popup.popupId}`}
+          <div
             key={index}
             className="popup-card"
           >
@@ -96,16 +96,24 @@ function OnsitePopList() {
               <p className="popup-name">{popup.name}</p>
               <p className="popup-date">{`${popup.startDate} ~ ${popup.endDate}`}</p>
               <div className="go-detail-page">
-                상세 페이지로 이동
-                <img src={nextButton} />
+                <Link to={`/popdetail/${popup.popupId}`} className="popup-link">
+                  상세 페이지로 이동
+                  <img src={nextButton} alt="Next" />
+                </Link>
+              </div>
+              <div className="go-detail-page">
+                <Link to={`/onsite-reservation/${popup.popupId}`} className="popup-link">
+                  현장 예약 페이지로 이동
+                  <img src={nextButton} alt="Next" />
+                </Link>
               </div>
             </div>
-          </Link>
+          </div>
         ))
       ) : (
-        <div className="none-registed-contents">
-          <img src={none} />
-          <p>아직 등록한 팝업이 없습니다.</p>
+          <div className="none-registed-contents">
+            <img src={none}/>
+            <p>아직 등록한 팝업이 없습니다.</p>
         </div>
       )}
     </div>

@@ -19,7 +19,6 @@ import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
 import "@css/Pop/PopDetail.css";
 
-import backButton from "@assets/backButton.svg";
 import scoreIcon from "@assets/scoreIcon.svg";
 import likeIcon from "@assets/likeIcon.svg";
 import noneLike from "@assets/noneLike.svg";
@@ -67,7 +66,7 @@ const PopDetail = () => {
   const [content, setContent] = useState<string>("");
   const [description, setDescription] = useState<string>("");
 
-  const navigate = useNavigate();
+
   const { userTsid: currentUserTsid, userRole } = useAuthStore();
 
   // 페이지 로드 시 스크롤을 맨 위로 이동

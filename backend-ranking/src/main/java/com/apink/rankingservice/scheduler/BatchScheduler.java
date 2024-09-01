@@ -22,7 +22,7 @@ public class BatchScheduler {
     private final Job updatePopupRankingJob;
     private final RankingService rankingService;
 
-    @Scheduled(cron = "0 31 14 * * ?", zone = "Asia/Seoul")
+    @Scheduled(cron = "0 55 14 * * ?", zone = "Asia/Seoul")
     public void runBatchJob() throws Exception {
 
         JobParameters jobParameters = new JobParametersBuilder()

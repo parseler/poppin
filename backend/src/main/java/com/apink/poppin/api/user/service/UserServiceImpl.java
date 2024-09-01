@@ -246,6 +246,7 @@ public class UserServiceImpl implements UserService {
 
                 ReservationResponseDto reservation = ReservationResponseDto.builder()
                         .reservationId(redisDto.getOnsiteReservationRedisId())
+                        .userName(redisDto.getName())
                         .popupId(redisDto.getPopupId())
                         .title(reservationResponseDto.getTitle())
                         .img(reservationResponseDto.getImg())

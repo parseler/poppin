@@ -1,9 +1,10 @@
 import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
-import { getPopupList } from "@api/apiPop";
+import {getMyPopups} from "@api/apiPop";
 
 import nextButton from "@assets/mypage/nextButton.svg";
 import none from "@assets/none.svg";
+import useAuthStore from "@store/useAuthStore.ts";
 
 interface Popup {
   popupId: number;
@@ -11,18 +12,19 @@ interface Popup {
   name: string;
   startDate: string;
   endDate: string;
-  managerTsId: number;
+  managerTsId: string;
   hours: string;
 }
 
 function FinishedPopList() {
   const [popups, setPopups] = useState<Popup[]>([]);
-  const managerTsid = 1;
+  const { userTsid: userTsid } = useAuthStore();
+  const managerTsid = userTsid;
 
   useEffect(() => {
     const fetchPopups = async () => {
       try {
-        const response = await getPopupList();
+        const response = await getMyPopups(managerTsid)
         const currentDateTime = new Date();
         const currentDay = currentDateTime.toLocaleString("ko-KR", {
           weekday: "short",
@@ -45,8 +47,7 @@ function FinishedPopList() {
           const endDateTime = new Date(endDate);
           endDateTime.setHours(endHour, endMinute, 0, 0);
           return currentDateTime > endDateTime;
-        });
-
+        })
         setPopups(finishedPopups);
       } catch (error) {
         console.error("Error fetching popups:", error);

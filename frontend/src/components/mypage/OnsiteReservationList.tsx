@@ -27,7 +27,7 @@ const OnsiteReservationList: React.FC<OnsiteReservationListProps> = ({
         <div id="onsite-reservation-list">
             {reservations.length > 0 ? (
                 reservations.map((reservation) => (
-                    <Link to="/waiting" key={reservation.reservationId}>
+                    <Link to={`/waiting/${reservation.popupId}/reservations/${reservation.reservationId}`} key={reservation.reservationId}>
                         <PopMedium03
                             image={getImageUrl(reservation.img)}
                             text={reservation.title}

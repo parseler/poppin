@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import "@css/OnsiteReservationRegist.css";
 import poppinWhite from "@assets/poppin_white.svg";
-import { Link, useParams } from "react-router-dom";
+import {Link, useNavigate, useParams} from "react-router-dom";
 import { createOnsiteReservation } from "@api/reservation";
 import { getPopupDetail } from "@api/apiPop";
 import { PopupDetail } from "@interface/popDetail"; // PopupDetail 인터페이스를 import
@@ -18,6 +18,7 @@ const OnsiteReservationRegist = () => {
   const [error, setError] = useState<string | null>(null);
 
   const { popupId } = useParams();
+  const navigate = useNavigate();
 
   useEffect(() => {
     const fetchPopupInfo = async () => {
@@ -55,6 +56,8 @@ const OnsiteReservationRegist = () => {
     } catch (error) {
       console.error("Error creating reservation:", error);
     }
+
+    navigate(`/onsite-reservation/${popupId}`);
   };
 
   if (loading) return <div>로딩 중...</div>;
@@ -133,7 +136,7 @@ const OnsiteReservationRegist = () => {
           </div>
           <button type="submit">현장 예약 등록하기</button>
         </form>
-        <Link to="/onsite-reservation/{popupId}">뒤로가기</Link>
+        <Link to={`/onsite-reservation/${popupId}`}>뒤로가기</Link>
       </div>
     </div>
   );

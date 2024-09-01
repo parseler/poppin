@@ -3,6 +3,7 @@ package com.apink.poppin.api.reservation.controller;
 import com.apink.poppin.api.reservation.dto.OnsiteReservationDto;
 import com.apink.poppin.api.reservation.dto.OnsiteReservationRedisDto;
 import com.apink.poppin.api.reservation.dto.OnsiteReservationRequestDto;
+import com.apink.poppin.api.reservation.dto.OnsiteReservationWaitingDto;
 import com.apink.poppin.api.reservation.service.OnsiteReservationService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -25,14 +26,14 @@ public class OnsiteReservationController {
 
     @GetMapping("/{onsiteReservationId}/popups/{popupId}")
     public ResponseEntity<?> getOnsiteReservationByKakaoLink(@PathVariable Long onsiteReservationId, @PathVariable Long popupId) {
-        OnsiteReservationDto onsite = onsiteReservationService.getOnsiteReservationByKakaoLink(onsiteReservationId, popupId);
+        OnsiteReservationWaitingDto onsite = onsiteReservationService.getOnsiteReservationByKakaoLink(onsiteReservationId, popupId);
 
         return ResponseEntity.ok(onsite);
     }
 
     @GetMapping("/{phoneNumber}")
     public ResponseEntity<?> getOnsiteReservationByPhoneNumber(@PathVariable String phoneNumber) {
-        OnsiteReservationDto onsiteReservationDto = onsiteReservationService.getOnsiteReservationByPhoneNumber(phoneNumber);
+        OnsiteReservationWaitingDto onsiteReservationDto = onsiteReservationService.getOnsiteReservationByPhoneNumber(phoneNumber);
 
         return ResponseEntity.ok().body(onsiteReservationDto);
     }

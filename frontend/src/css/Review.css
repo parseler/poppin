@@ -222,6 +222,11 @@
   aspect-ratio: 1;
 }
 
+.review-detail-content img {
+  width: 100%;
+  height: 100%;
+}
+
 .thumbnail-black {
   width: 100%;
   height: 100%;

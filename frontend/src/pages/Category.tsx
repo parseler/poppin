@@ -5,6 +5,7 @@ import PopupSmall from "@components/Home/PopupSmall";
 import { useEffect, useState } from "react";
 import { getPopupByCategory, PopupProps } from "@api/category";
 
+const baseUrl = "http://localhost";
 const Category = () => {
   const { categoryId } = useParams<{ categoryId: string }>();
   const navigate = useNavigate(); // navigate 훅을 사용
@@ -33,6 +34,12 @@ const Category = () => {
     navigate(`/popdetail/${popupId}`);
   };
 
+  const getImageUrl = (img: string | File | undefined) => {
+      if (!img) return "no image";
+      console.log("img", img);
+      return `${baseUrl}${img}`;
+  };
+
   return (
     <div id="category">
       <div className="category-title">
@@ -48,7 +55,7 @@ const Category = () => {
             className="pop-up-small" // 클릭 시 navigate 호출
           >
             <PopupSmall
-              image={popup.images[0]} // 첫 번째 이미지만 표시, 필요에 따라 수정 가능
+              image={getImageUrl(popup.images[0])} // 첫 번째 이미지만 표시, 필요에 따라 수정 가능
               text={popup.name}
               date={`${popup.startDate} - ${popup.endDate}`}
             />

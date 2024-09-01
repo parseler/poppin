@@ -3,15 +3,16 @@ package com.apink.poppin.api.reservation.service;
 import com.apink.poppin.api.reservation.dto.OnsiteReservationDto;
 import com.apink.poppin.api.reservation.dto.OnsiteReservationRedisDto;
 import com.apink.poppin.api.reservation.dto.OnsiteReservationRequestDto;
+import com.apink.poppin.api.reservation.dto.OnsiteReservationWaitingDto;
 
 import java.util.List;
 
 public interface OnsiteReservationService {
     OnsiteReservationRedisDto createOnsiteReservation(OnsiteReservationDto onsiteReservationDto);
 
-    OnsiteReservationDto getOnsiteReservationByKakaoLink(long onsiteReservationId, long popupId);
+    OnsiteReservationWaitingDto getOnsiteReservationByKakaoLink(long onsiteReservationId, long popupId);
 
-    OnsiteReservationDto getOnsiteReservationByPhoneNumber(String phoneNumber);
+    OnsiteReservationWaitingDto getOnsiteReservationByPhoneNumber(String phoneNumber);
 
     OnsiteReservationDto changeOnsiteReservation(OnsiteReservationRequestDto onsiteReservationRequestDto);
 

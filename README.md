@@ -17,7 +17,7 @@
 
 ### 3️⃣ 주요 기능
 - 개인 맞춤형 팝업스토어 추천
-- 
+- 조회수, 좋아요, 별점, 예약 건수 등 다양한 조건 기반 팝업스토어 랭킹 산정
 - 채팅을 통한 팝업스토어 운영 매니저 및 관심있는 사람들과 실시간 소통
 - 팝업스토어 온라인 사전 예약 및 현장 예약
 
@@ -75,81 +75,43 @@
 
 ### 3️⃣ ERD
 <div align='center'>
-  <img src='./docs//ERD.png' width='600px'>
+  <img src='./docs/ERD.png' width='600px'>
 </div>
 
 ## 🎨 화면 구성
 ### 1️⃣ User (팝업스토어 이용자)
 #### 메인 화면
+<img src='./docs/메인.gif' alt='메인' width='280px'>
 
 #### 팝업스토어 달력 & 지도
+<img src='./docs/지도_캘린더.gif' alt='지도_캘린더' width='280px'>
 
 #### 팝업스토어 상세
+<img src='./docs/팝업 상세.gif' alt='팝업 상세' width='280px'>
 
-#### 팝업스토어 예약
+#### 팝업스토어 사전 예약 등록
+<img src='./docs/사전 예약.gif' alt='사전 예약' width='280px'>
+
+#### 팝업스토어 현장 예약 대기
+<img src='./docs/현장 예약.gif' alt='현장 예약' width='280px'>
 
 #### 팝업스토어 후기 작성 및 조회
+<img src='./docs/후기.gif' alt='후기' width='280px'>
 
 ### 2️⃣ Manager (팝업스토어 운영 매니저)
 #### 매니저 로그인
+<img src='./docs/관리자 로그인.gif' alt='매니저 로그인' width='280px'>
 
 #### 팝업스토어 등록
+<img src='./docs/팝업 등록.gif' alt='팝업 등록' width='280px'>
 
-#### 팝업스토어 예약 관리
+#### 팝업스토어 현장 예약 등록
+<img src='./docs/현장 예약 유저.gif' alt='현장 예약 등록' width='280px'>
+
 
 ## 👥 참여 인원 및 역할
+### 💗TEAM APINK💗
 |김윤|김남석|김찬규|민예림|박영남|최다환|
 |:---:|:---:|:---:|:---:|:---:|:---:|
-|<img src='https://soopool.art/image/acnh/animal/Chevre.png' alt='윤이' width='70px'>|<img src='https://soopool.art/image/acnh/animal/Zoe.png' alt='소면' width='70px'>|<img src='https://soopool.art/image/acnh/animal/Raymond.png' alt='잭슨' width='55px'>|<img src='https://soopool.art/image/acnh/animal/Lolly.png' alt='사이다' width='55px'>|<img src='https://soopool.art/image/acnh/animal/Bill.png' alt='코코아' width='60px'>|<img src='https://i.namu.wiki/i/J9qcyBHu17Dm6ddi9CpYDKiMirAfbvCniEZiNOKpvIkfT1niodU-ggO3FOJnH8gSpBgd4XHWP35LBW3GUUGLlg.webp' alt='너굴' width='60px'>|
+|<img src='https://soopool.art/image/acnh/animal/Chevre.png' alt='윤이' width='70px'>|<img src='https://soopool.art/image/acnh/animal/Zoe.png' alt='소면' width='70px'>|<img src='https://soopool.art/image/acnh/animal/Raymond.png' alt='잭슨' width='55px'>|<img src='https://soopool.art/image/acnh/animal/Lolly.png' alt='사이다' width='55px'>|<img src='https://soopool.art/image/acnh/animal/Bill.png' alt='코코아' width='60px'>|<img src='https://soopool.art/img/infoac/NPC/Tom_Nook/Tom_Nook_acaf.png' alt='너굴' width='70px'>|
 |**FE, Leader**|**BE**|**Infra**|**BE**|**FE**|**BE**|
-
-<!-- # 웹/모바일(웹 기술) 스켈레톤 프로젝트
-
-## 카테고리
-
-| Application | Domain | Language | Framework |
-| ---- | ---- | ---- | ---- |
-| :white_check_mark: Desktop Web | :black_square_button: AI | :black_square_button: JavaScript | :black_square_button: Vue.js |
-| :white_check_mark: Mobile Web | :black_square_button: Big Data | :white_check_mark: TypeScript | :white_check_mark: React |
-| :white_check_mark: Responsive Web | :black_square_button: Blockchain | :black_square_button: C/C++ | :black_square_button: Angular |
-| :black_square_button: Android App | :black_square_button: IoT | :black_square_button: C# | :black_square_button: Node.js |
-| :black_square_button: iOS App | :black_square_button: AR/VR/Metaverse | :black_square_button: Python | :black_square_button: Flask/Django |
-| :black_square_button: Desktop App | :black_square_button: Game | :white_check_mark: Java | :white_check_mark: Spring/Springboot |
-| | | :black_square_button: Kotlin | | -->
-
-<!-- 필수 항목 -->
-
-<!-- ## 프로젝트 소개
-
-* 프로젝트명: 개인 맞춤형 팝업 스토어 추천 플랫폼 **'팝핀(Popping)'**
-* 서비스 특징: 하나의 문화로 자리잡은 팝업 스토어에 대한 정보들을 보다 쉽고 빠르게 제공한다.
-* 주요 기능
-  - 다양한 조건에 따른 팝업 스토어 조회 (랭킹순, 오픈 예정순 등)
-  - 사용자 맞춤 팝업 스토어 추천
-  - 팝업 스토어별 그룹 채팅
-  - 팝업 스토어 예약 및 예약자 관리
-* 주요 기술
-  - WebSocket
-  - JWT Authentication
-  - REST API
-* 참조 리소스
-  * Vuetify: 디자인 전반 적용
-  * Vue Argon Design System: 디자인 전반 적용
-  * Vue Black Dashboard Pro(유료): 캘린더 컴포넌트 사용
-  * AR Core: 구글에서 제공하는 AR 지원 라이브러리. 이미지 인식 및 오버레이 영상에 활용
-  * Color Thief: 이미지 색상 추출 라이브러리. 커버 사진 색상 추출 및 배경 변경에 활용
-  * Animation.css: CSS 애니메이션 지원 라이브러리. 메인 페이지 진입 애니메이션에 활용
-* 배포 환경
-  - URL: // 웹 서비스, 랜딩 페이지, 프로젝트 소개 등의 배포 URL 기입
-  - 테스트 계정: // 로그인이 필요한 경우, 사용 가능한 테스트 계정(ID/PW) 기입
-
-## 팀 소개
-* 김윤: 팀장, 프론트엔드 개발, 와이어프레임 작성
-* 김남석: 백엔드 개발
-* 김찬규: 백엔드 개발
-* 박영남: 프론트엔드 개발 개발, 와이어프레임 작성
-* 최다환: 백엔드 개발
-
-## 프로젝트 상세 설명
-
-// 개발 환경, 기술 스택, 시스템 구성도, ERD, 기능 상세 설명 등 -->

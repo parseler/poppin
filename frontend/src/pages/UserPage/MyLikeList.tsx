@@ -22,6 +22,7 @@ const MyLikeList = () => {
     fetchLikedPopups();
   }, []);
 
+  const baseUrl = import.meta.env.VITE_DOMAIN_NAME;
   const goPopDetail = (popupId: number) => {
     navigate(`/popdetail/${popupId}`);
   };
@@ -31,16 +32,23 @@ const MyLikeList = () => {
       <h1>내가 좋아요한 팝업</h1>
       <div className="like-contents">
         {likedPopups.length > 0 ? (
-          likedPopups.map((popup, index) => (
-            <div key={index} onClick={() => goPopDetail(popup.popupId)}>
-              <PopMedium03
-                image={popup.images[0]} // 첫 번째 이미지를 표시
-                text={popup.name}
-                date={`${popup.startDate} ~ ${popup.endDate}`}
-                children=""
-              />
-            </div>
-          ))
+          likedPopups.map((popup) => {
+            // 이미지 URL을 처리하여 localhost를 붙이는 로직
+            const imageUrl = popup.images[0].startsWith("http")
+              ? popup.images[0]
+              : `https://${baseUrl}${popup.images[0]}`;
+
+            return (
+              <div key={popup.popupId} onClick={() => goPopDetail(popup.popupId)}>
+                <PopMedium03
+                  image={imageUrl} // 첫 번째 이미지를 표시
+                  text={popup.name}
+                  date={`${popup.startDate} ~ ${popup.endDate}`}
+                  children=""
+                />
+              </div>
+            );
+          })
         ) : (
           <div className="like-contents-none">
             <svg

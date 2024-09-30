@@ -13,7 +13,7 @@ const ManagerLogin = () => {
 
   const handleLogin = async () => {
     try {
-      const response = await fetch("/login/api", {
+      const response = await fetch("/login/manager", {
         method: "POST",
         headers: {
           "Content-Type": "application/x-www-form-urlencoded",

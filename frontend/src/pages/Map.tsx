@@ -122,7 +122,7 @@ const Map = () => {
     const script = document.createElement("script");
     script.async = true;
     script.src =
-      "//dapi.kakao.com/v2/maps/sdk.js?appkey=c306f7459b9ef7c16b36d8fea7076bb1&autoload=false";
+      "https://dapi.kakao.com/v2/maps/sdk.js?appkey=c306f7459b9ef7c16b36d8fea7076bb1&autoload=false";
     document.head.appendChild(script);
 
     script.onload = () => {

@@ -27,24 +27,58 @@
   - WebSocket
   - JWT Authentication
   - REST API
-* 참조 리소스
-  * Vuetify: 디자인 전반 적용
-  * Vue Argon Design System: 디자인 전반 적용
-  * Vue Black Dashboard Pro(유료): 캘린더 컴포넌트 사용
-  * AR Core: 구글에서 제공하는 AR 지원 라이브러리. 이미지 인식 및 오버레이 영상에 활용
-  * Color Thief: 이미지 색상 추출 라이브러리. 커버 사진 색상 추출 및 배경 변경에 활용
-  * Animation.css: CSS 애니메이션 지원 라이브러리. 메인 페이지 진입 애니메이션에 활용
+  - Redis
 * 배포 환경
-  - URL: // 웹 서비스, 랜딩 페이지, 프로젝트 소개 등의 배포 URL 기입
-  - 테스트 계정: // 로그인이 필요한 경우, 사용 가능한 테스트 계정(ID/PW) 기입
+  - URL: https://i11a806.p.ssafy.io/
+  - 테스트 계정: sinphoto@naver.com / Rhakwnr2! (카카오 로그인)
 
 ## 팀 소개
 * 김윤: 팀장, 프론트엔드 개발, 와이어프레임 작성
-* 김남석: 백엔드 개발
-* 김찬규: 백엔드 개발
-* 박영남: 프론트엔드 개발 개발, 와이어프레임 작성
-* 최다환: 백엔드 개발
+* 김남석: 백엔드 개발, DB 설계
+* 김찬규: 백엔드 개발, DB 설계
+* 민예림: 백엔드 개발, DB 설계, UCC 제작
+* 박영남: 프론트엔드 개발, 와이어프레임 작성
+* 최다환: 백엔드 개발, DB 설계, 발표
 
 ## 프로젝트 상세 설명
+### 1️⃣ 개발 환경
+#### - FE
+- React: 18.3.1
+- Axios: 1.7.2
+- Node: 22.5.1
+- Vite: 5.3.1
+- Typescript: 4.0.0
+- Zustand: 4.5.4
+- Nginx: 1.27.0
+#### - BE
+- Java: 17.0.12
+- Spring Boot: 3.3.2
+- Eclipse-temurin: 17.0.12
+- Mongo: 7.0.12
+- Redis: 7.2.5
+- Mysql: 9.0.1
+- Zookeeper: 3.9.2
+- Kafka: 3.5.2
 
-// 개발 환경, 기술 스택, 시스템 구성도, ERD, 기능 상세 설명 등
+### 2️⃣ 기술 스택
+#### - FE
+React, TypeScript, zustand, axios, firebase
+#### - BE
+Java, Spring Boot, JPA, MySQL, MongoDB, Redis
+
+### 3️⃣ ERD
+![ERD](https://lab.ssafy.com/s11-webmobile1-sub2/S11P12A806/-/raw/dev/img/ERD.png)
+
+### 4️⃣ Architecture
+![Architecture](https://lab.ssafy.com/s11-webmobile1-sub2/S11P12A806/-/raw/dev/img/Architecture.png)
+
+### 5️⃣ 상세 기능
+#### - 사용자 소셜 로그인
+#### - 사용자 정보 수정 페이지
+#### - 메인 페이지 (랭킹, 오픈 예정, 추천, 검색)
+![ranking](https://lab.ssafy.com/s11-webmobile1-sub2/S11P12A806/-/raw/dev/img/phone_%EB%9E%AD%ED%82%B9.png)
+![recommend](https://lab.ssafy.com/s11-webmobile1-sub2/S11P12A806/-/raw/dev/img/phone_%EC%B6%94%EC%B2%9C.png)
+#### - 캘린더 및 지도 페이지
+![calendar](https://lab.ssafy.com/s11-webmobile1-sub2/S11P12A806/-/raw/dev/img/phone_%EC%BA%98%EB%A6%B0%EB%8D%94.png?ref_type=heads)
+![map](https://lab.ssafy.com/s11-webmobile1-sub2/S11P12A806/-/raw/dev/img/phone_%EC%A7%80%EB%8F%84.png?ref_type=heads)
+#### - 팝업 상세 조회 페이지 (상세, 예약, 후기, 채팅)
